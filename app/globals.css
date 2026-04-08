@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+@theme {
+  --color-primary: #14281D;
+  --color-secondary: #E2D4B9;
+  --color-accent: #87F56;
+  --color-border-dark: #30360E;
+  --color-background-is: #FFFCDC;
+
+  --font-noto-bengali: var(--font-noto-bengali);
+  --font-poppins: var(--font-poppins);
+}
+
+:root {
+  --background: #FFFCDC;
+  --foreground: #14281D;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-noto-bengali), var(--font-poppins), sans-serif;
+}
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  .glass-card {
+    background: rgba(255, 252, 220, 0.4);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(48, 54, 14, 0.1);
+    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  }
+
+  .shadow-islamic {
+    box-shadow: 0 4px 0 #30360E;
+  }
+
+  .shadow-islamic-lg {
+    box-shadow: 0 8px 0 #30360E;
+  }
+
+  .hover-shadow-islamic:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 0 #30360E;
+  }
+}
