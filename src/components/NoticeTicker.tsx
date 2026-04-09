@@ -1,56 +1,30 @@
-"use client"
-
-import { Megaphone, ChevronRight } from "lucide-react"
-import { motion } from "framer-motion"
-import Link from "next/link"
+'use client';
+import React from 'react';
+import { Megaphone } from 'lucide-react';
 
 const notices = [
-  "২০২৬ সালের বার্ষিক পরীক্ষার সময়সূচী প্রকাশিত হয়েছে।",
-  "নতুন কোর্সে ভর্তির শেষ সময় ৩০ শে এপ্রিল পর্যন্ত বাড়ানো হয়েছে।",
-  "অনলাইন লাইব্রেরিতে নতুন ২০০+ কিতাব যুক্ত করা হয়েছে।",
-  "রমজান উপলক্ষ্যে বিশেষ দাওয়াহ প্রোগ্রাম শুরু হচ্ছে।",
-]
+  "ভর্তি চলছে! আগামী শিক্ষাবর্ষের জন্য ভর্তি প্রক্রিয়া শুরু হয়েছে",
+  "আগামী শুক্রবার বাদ জুমা বিশেষ তাফসিরুল কুরআন মাহফিল অনুষ্ঠিত হবে",
+  "অনলাইন ইসলামিক কোর্সের রেজিস্ট্রেশন শুরু হয়েছে, দ্রুত সিট বুক করুন",
+];
 
 export default function NoticeTicker() {
   return (
-    <section className="px-4 lg:px-8 py-4">
-      <div className="max-w-screen-xl mx-auto flex items-stretch h-12 bg-white rounded-full overflow-hidden border border-[#30360E]/20 shadow-sm">
-        {/* Badge */}
-        <div className="bg-gradient-to-r from-[#14281D] to-[#30360E] text-white px-6 flex items-center justify-center gap-2 font-bold text-sm tracking-wide shrink-0">
-          <Megaphone size={16} />
-          নোটিশ
-        </div>
-
-        {/* Ticker Container */}
-        <div className="flex-1 relative overflow-hidden group">
-          <motion.div
-            animate={{ y: ["0%", "-100%"] }}
-            transition={{
-              duration: 10,
-              repeat: Infinity,
-              ease: "linear",
-            }}
-            className="flex flex-col h-full group-hover:[animation-play-state:paused]"
-          >
-            {/* Duplicating for seamless loop */}
-            {[...notices, ...notices].map((notice, i) => (
-              <div 
-                key={i} 
-                className="h-12 flex items-center px-4 whitespace-nowrap text-sm font-medium text-[#14281D]/80 hover:text-[#14281D] cursor-pointer"
-              >
-                <Link href="/notices" className="hover:underline">
-                  {notice}
-                </Link>
-              </div>
-            ))}
-          </motion.div>
-        </div>
-
-        {/* Action Button */}
-        <button className="px-4 border-l border-gray-100 flex items-center justify-center text-[#14281D]/50 hover:text-[#14281D] hover:bg-gray-50 transition-colors">
-          <ChevronRight size={20} />
-        </button>
+    <div className="bg-islamic-green text-white flex items-center py-2 px-4 shadow-md">
+      <div className="flex items-center gap-2 bg-islamic-green-light px-3 py-1 rounded font-semibold whitespace-nowrap z-10 shadow-sm">
+        <Megaphone size={18} className="text-islamic-gold-light" />
+        <span>নোটিশ বোর্ড</span>
       </div>
-    </section>
-  )
+      <div className="overflow-hidden whitespace-nowrap ml-4 flex-grow relative">
+        {/* Simple CSS animation ticker */}
+        <div className="inline-block animate-[ticker_20s_linear_infinite] whitespace-nowrap">
+          {notices.map((notice, i) => (
+            <span key={i} className="mx-8 font-medium">
+              ★ {notice}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
 }

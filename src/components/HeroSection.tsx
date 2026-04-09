@@ -6,19 +6,19 @@ import Link from "next/link"
 
 const slides = [
   {
-    image: "https://images.unsplash.com/photo-1584551246679-0daf3d275d0f?q=80&w=2000",
+    image: "https://i.ibb.co.com/wFj6PRdp/slider-1.webp",
     title: "শুদ্ধভাবে কুরআন শিক্ষা হোন সফল দুনিয়া ও আখিরাতে",
     subtitle: "সহজ পদ্ধতিতে তাজবীদসহ কুরআন শিক্ষা ও হিফজ প্রোগ্রাম",
     tag: "ভর্তি চলছে"
   },
   {
-    image: "https://images.unsplash.com/photo-1590077428593-a55bb07c4665?q=80&w=2000",
+    image: "https://i.ibb.co.com/Sw8Byf5N/slider-2.webp",
     title: "ইলমে দ্বীন অর্জন হোক আপনার নিত্যদিনের সঙ্গী",
     subtitle: "আরবী ভাষা ও মৌলিক ইসলামি শিক্ষা কোর্স",
     tag: "নতুন ব্যাচ"
   },
   {
-    image: "https://images.unsplash.com/photo-1542646048-c31393698006?q=80&w=2000",
+    image: "https://i.ibb.co.com/xSs952FC/slider-3.webp",
     title: "আধুনিক ও ইসলামি শিক্ষার এক অপূর্ব সমন্বয়",
     subtitle: "একটি আদর্শ মানুষ গড়ার অনন্য বিদ্যাপীঠ",
     tag: "২০২৬ শিক্ষাবর্ষ"
@@ -97,12 +97,12 @@ export default function HeroSection() {
       </button>
 
       {/* Indicators */}
-      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2">
+      <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-30 flex gap-2 cursor-pointer">
         {slides.map((_, index) => (
           <button 
             key={index}
             onClick={() => setCurrentSlide(index)}
-            className={`w-3 h-3 rounded-full transition-all ${index === currentSlide ? "bg-[#87F56] w-8" : "bg-white/30"}`}
+            className={`w-3 h-3 rounded-full transition-all cursor-pointer ${index === currentSlide ? "bg-[#87F56] w-8" : "bg-white/30"}`}
           />
         ))}
       </div>
