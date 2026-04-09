@@ -18,7 +18,7 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { motion } from "framer-motion"
-import { cn } from "@/lib/utils"
+import { cn } from "../lib/utils"
 
 const categories = [
   { name: "আরবী ভাষা", icon: Languages, courses: 5, color: "bg-blue-50/50" },

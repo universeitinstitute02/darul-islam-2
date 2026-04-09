@@ -1,10 +1,10 @@
-import HeroSection from "@/components/HeroSection";
-import NoticeTicker from "@/components/NoticeTicker";
-import CategoryGrid from "@/components/CategoryGrid";
-import TeacherGrid from "@/components/TeacherGrid";
-import DonationBanner from "@/components/DonationBanner";
-import ReviewSection from "@/components/ReviewSection";
-import ActivitiesSection from "@/components/ActivitiesSection";
+import ActivitiesSection from "../components/ActivitiesSection";
+import CategoryGrid from "../components/CategoryGrid";
+import DonationBanner from "../components/DonationBanner";
+import HeroSection from "../components/HeroSection";
+import NoticeTicker from "../components/NoticeTicker";
+import ReviewSection from "../components/ReviewSection";
+import TeacherGrid from "../components/TeacherGrid";
 
 export default function Home() {
   return (
