@@ -4,6 +4,7 @@ import DonationBanner from "../components/DonationBanner";
 import HeroSection from "../components/HeroSection";
 import NoticeTicker from "../components/NoticeTicker";
 import ReviewSection from "../components/ReviewSection";
+import StatusCounter from "../components/StatusCounter";
 import TeacherGrid from "../components/TeacherGrid";
 
 export default function Home() {
@@ -14,6 +15,9 @@ export default function Home() {
 
       {/* Dynamic Progress/Notice Bar */}
       <NoticeTicker />
+
+      {/* Dynamic Progress/Notice Bar */}
+      <StatusCounter />
 
       {/* Main Activities & Quick Access */}
       <ActivitiesSection />
