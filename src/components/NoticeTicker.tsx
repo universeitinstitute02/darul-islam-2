@@ -13,7 +13,7 @@ export default function NoticeTicker() {
     <div className="bg-islamic-green text-white flex items-center py-2 px-4 shadow-md">
       <div className="flex items-center gap-2 bg-islamic-green-light px-3 py-1 rounded font-semibold whitespace-nowrap z-10 shadow-sm">
         <Megaphone size={18} className="text-islamic-gold-light" />
-        <span>নোটিশ বোর্ড</span>
+        <span className='text-sm'>নোটিশ বোর্ড</span>
       </div>
       <div className="overflow-hidden whitespace-nowrap ml-4 flex-grow relative">
         {/* Simple CSS animation ticker */}

@@ -16,11 +16,12 @@ export default function Home() {
       {/* Dynamic Progress/Notice Bar */}
       <NoticeTicker />
 
-      {/* Dynamic Progress/Notice Bar */}
-      <StatusCounter />
-
       {/* Main Activities & Quick Access */}
       <ActivitiesSection />
+
+      {/* Dynamic Progress/Notice Bar */}
+      <StatusCounter />
+      {/* Gallery Section */}
 
       {/* Subject-wise Courses (Category Grid) */}
       <CategoryGrid />
