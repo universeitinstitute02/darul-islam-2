@@ -5,17 +5,17 @@ import { Image as ImageIcon, Video, Play, Maximize2, ExternalLink } from "lucide
 import { useState } from "react"
 
 const images = [
-  { id: 1, title: "মাদরাসা ভবন", category: "ক্যাম্পাস", url: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=800&auto=format&fit=crop" },
-  { id: 2, title: "শ্রেণিকক্ষ", category: "একাডেমিক", url: "https://images.unsplash.com/photo-1577891772449-b003666b6c20?w=800&auto=format&fit=crop" },
-  { id: 3, title: "ইসলামি সেমিনার", category: "ইভেন্ট", url: "https://images.unsplash.com/photo-1540317580114-1e7492c3a5e8?w=800&auto=format&fit=crop" },
-  { id: 4, title: "বার্ষিক ক্রীড়া", category: "ইভেন্ট", url: "https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?w=800&auto=format&fit=crop" },
-  { id: 5, title: "লাইব্রেরি ভবন", category: "ক্যাম্পাস", url: "https://images.unsplash.com/photo-1507842217343-583f20270319?w=800&auto=format&fit=crop" },
-  { id: 6, title: "পরীক্ষা হল", category: "একাডেমিক", url: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?w=800&auto=format&fit=crop" }
+  { id: 1, title: "মাদরাসা ভবন", category: "ক্যাম্পাস", url: "https://i.ibb.co.com/wFj6PRdp/slider-1.webp" },
+  { id: 2, title: "শ্রেণিকক্ষ", category: "একাডেমিক", url: "https://i.ibb.co.com/Sw8Byf5N/slider-2.webp" },
+  { id: 3, title: "ইসলামি সেমিনার", category: "ইভেন্ট", url: "https://i.ibb.co.com/xSs952FC/slider-3.webp" },
+  { id: 4, title: "বার্ষিক ক্রীড়া", category: "ইভেন্ট", url: "https://i.ibb.co.com/wFj6PRdp/slider-1.webp" },
+  { id: 5, title: "লাইব্রেরি ভবন", category: "ক্যাম্পাস", url: "https://i.ibb.co.com/Sw8Byf5N/slider-2.webp" },
+  { id: 6, title: "পরীক্ষা হল", category: "একাডেমিক", url: "https://i.ibb.co.com/xSs952FC/slider-3.webp" }
 ]
 
 const videos = [
-  { id: 1, title: "প্রতিষ্ঠানের পরিচিতি ভিডিও", duration: "৫:৪৫", thumbnail: "https://images.unsplash.com/photo-1548013146-72479768bbaa?w=800&auto=format&fit=crop" },
-  { id: 2, title: "বার্ষিক কনফারেন্স ২০২৪", duration: "১২:২০", thumbnail: "https://images.unsplash.com/photo-1540317580114-1e7492c3a5e8?w=800&auto=format&fit=crop" }
+  { id: 1, title: "প্রতিষ্ঠানের পরিচিতি ভিডিও", duration: "৫:৪৫", thumbnail: "https://i.ibb.co.com/wFj6PRdp/slider-1.webp" },
+  { id: 2, title: "বার্ষিক কনফারেন্স ২০২৪", duration: "১২:২০", thumbnail: "https://i.ibb.co.com/Sw8Byf5N/slider-2.webp" }
 ]
 
 export default function GalleryPage() {

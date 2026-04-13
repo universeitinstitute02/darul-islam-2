@@ -6,7 +6,6 @@ import {
   Home, 
   BookOpen, 
   University, 
-  ShoppingBag, 
   HandHeart, 
   User, 
   Menu, 
@@ -98,7 +97,7 @@ export default function Navbar() {
   return (
     <>
       {/* Header Bar */}
-      <header className="bg-[#14281D] shadow-md sticky top-0 z-[60]">
+      <header className="bg-[#14281D] z-[60]">
         <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-2 border-b border-white/10 lg:px-8">
           <Link href="/" className="flex items-center gap-3 group">
             <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center transition-transform group-hover:scale-110">
