@@ -6,6 +6,7 @@ import NoticeTicker from "../components/NoticeTicker";
 import ReviewSection from "../components/ReviewSection";
 import StatusCounter from "../components/StatusCounter";
 import TeacherGrid from "../components/TeacherGrid";
+import HomeGallery from "../components/HomeGallery";
 
 export default function Home() {
   return (
@@ -22,7 +23,7 @@ export default function Home() {
       {/* Dynamic Progress/Notice Bar */}
       <StatusCounter />
       {/* Gallery Section */}
-
+      <HomeGallery />
       {/* Subject-wise Courses (Category Grid) */}
       <CategoryGrid />
 
