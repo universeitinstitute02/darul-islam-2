@@ -30,9 +30,8 @@ import { cn } from "../lib/utils"
 
 const navItems = [
   { name: "হোম", href: "/", icon: Home },
-  { name: "লাইব্রেরি", href: "/library", icon: BookOpen },
   { name: "শিক্ষা", href: "/education", icon: University },
-
+  { name: "লাইব্রেরি", href: "/library", icon: BookOpen },
   { name: "নোটিশ", href: "/notices", icon: FileText },
   { name: "দান", href: "/donation", icon: HandHeart },
   { name: "প্রোফাইল", href: "/profile", icon: User },
@@ -118,8 +117,8 @@ export default function Navbar() {
         </div>
 
         {/* 6 Icon Nav (Desktop/Mobile overlay) */}
-        <nav className="bg-[#E2D4B9] border-b border-black/5">
-          <div className="max-w-screen-xl mx-auto grid grid-cols-6 h-14">
+        <nav className="bg-green-100 border-b border-black/5">
+          <div className="max-w-screen-xl mx-auto grid grid-cols-6 h-12">
             {navItems.map((item) => {
               const Icon = item.icon
               return (

@@ -81,7 +81,7 @@ export default function HeroSection() {
                 <div className="flex gap-2 lg:gap-4 pt-1">
                   <Link
                     href="/admission"
-                    className="bg-red-600 text-[#14281D] px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all hover:translate-y-[-2px]"
+                    className="bg-red-600 text-white px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all hover:translate-y-[-2px]"
                   >
                     ভর্তি হতে ক্লিক করুন <PlayCircle size={16} />
                   </Link>

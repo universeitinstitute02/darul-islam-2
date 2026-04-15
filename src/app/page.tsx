@@ -23,6 +23,7 @@ export default function Home() {
       {/* Dynamic Progress/Notice Bar */}
       <StatusCounter />
       {/* Gallery Section */}
+      
       <HomeGallery />
       {/* Subject-wise Courses (Category Grid) */}
       <CategoryGrid />
