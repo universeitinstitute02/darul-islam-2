@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative h-[150px] lg:h-[500px] overflow-hidden">
+    <section className="relative h-[150px] md:h-[300px] lg:h-[500px] overflow-hidden">
       
       {/* Slides */}
       {slides.map((slide, index) => (
@@ -60,10 +60,10 @@ export default function HeroSection() {
           {/* Content */}
           <div className="absolute inset-0 z-20 flex items-center">
             <div className="max-w-screen-xl mx-auto w-full px-3 lg:px-8">
-              <div className="max-w-2xl space-y-2 lg:space-y-6">
+              <div className="max-w-2xl space-y-2 lg:space-y-2">
 
                 {/* Tag */}
-                <span className="inline-block bg-[#87F56] text-[#14281D] px-2 py-0.5 lg:px-4 lg:py-1.5 rounded-full font-bold text-[10px] lg:text-base">
+                <span className="inline-block bg-[#87F56] text-[#14281D] px-2 py-0.5 lg:px-4 lg:py-1 rounded-full font-bold text-[10px] lg:text-base">
                   {slide.tag}
                 </span>
 

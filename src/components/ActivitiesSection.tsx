@@ -25,7 +25,7 @@ const activities = [
 
 export default function ActivitiesSection() {
   return (
-    <section className="px-3 py-3 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
+    <section className="px-3 py-3 md:py-10 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
       
       {/* Background blur */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-green-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -88,12 +88,7 @@ export default function ActivitiesSection() {
                 >
                   বিস্তারিত <ArrowRight size={14} />
                 </Link>
-
               </div>
-
-              {/* Bottom accent */}
-              <div className="absolute bottom-0 left-0 h-1 w-0 bg-green-500 group-hover:w-full transition-all duration-300"></div>
-
             </motion.div>
           ))}
 

@@ -70,7 +70,7 @@ export default function TeacherSlider() {
   }
 
   return (
-    <section className="px-4 py-7 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
+    <section className="px-4 py-7 md:py-10 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
 
       {/* bg blur */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-green-200/30 blur-3xl rounded-full -translate-y-1/2 translate-x-1/2" />

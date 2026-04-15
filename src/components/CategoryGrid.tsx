@@ -24,7 +24,7 @@ const categories = [
 
 export default function CategoryGrid() {
   return (
-    <section className="px-4 py-5 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
+    <section className="px-4 py-5 md:py-10 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
 
       {/* background blur */}
       <div className="absolute top-0 right-0 w-80 h-80 bg-green-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />

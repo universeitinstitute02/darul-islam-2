@@ -1,5 +1,3 @@
-'use client';
-import React from 'react';
 import { Megaphone } from 'lucide-react';
 
 const notices = [
@@ -10,7 +8,7 @@ const notices = [
 
 export default function NoticeTicker() {
   return (
-    <div className="bg-islamic-green text-white flex items-center py-2 px-1 shadow-md">
+    <div className="bg-islamic-green text-white flex items-center py-2 px-1 md:px-4 lg:px-10 shadow-md">
       <div className="flex items-center gap-2 bg-islamic-green-light px-3 py-1 rounded font-semibold whitespace-nowrap z-10 shadow-sm">
         <Megaphone size={18} className="text-islamic-gold-light" />
         <span className='text-sm'>নোটিশ বোর্ড</span>

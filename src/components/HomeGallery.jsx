@@ -17,7 +17,7 @@ const HomeGallery = () => {
   const [selectedImage, setSelectedImage] = useState(null);
 
   return (
-    <section className="py-4 px-3 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
+    <section className="py-4 md:py-10 px-3 lg:px-8 bg-gradient-to-br from-green-50 via-white to-green-100 relative overflow-hidden">
       
       {/* background blur */}
       <div className="absolute top-0 right-0 w-72 h-72 bg-green-200/30 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
@@ -26,7 +26,7 @@ const HomeGallery = () => {
       <div className="max-w-screen-xl mx-auto relative z-10 space-y-6">
 
         {/* Header */}
-        <div className="text-center md:text-left max-w-xl space-y-2">
+        <div className="mx-auto text-center max-w-xl space-y-2">
           <h2 className="text-2xl lg:text-4xl font-extrabold text-green-800">
             লাইফ এট দারুল ইসলাম
           </h2>
@@ -35,7 +35,7 @@ const HomeGallery = () => {
           </p>
 
           {/* accent line */}
-          <div className="w-16 h-1 bg-green-500 rounded-full mx-auto md:mx-0"></div>
+          <div className="w-16 h-1 bg-green-500 rounded-full mx-auto"></div>
         </div>
 
         {/* Gallery */}
