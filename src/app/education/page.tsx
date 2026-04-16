@@ -5,11 +5,7 @@ import {
   University,
   Users,
   BookOpen,
-  Building2,
-  Crown,
   Clock,
-  Calendar,
-  Armchair,
   Layers,
   Scroll,
   Languages,
@@ -19,84 +15,18 @@ import {
   DoorOpen,
   UserRound,
   ArrowRight,
-  LucideIcon,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
-
-const stats = [
-  { label: "শিক্ষার্থী", count: "৩৫০+", icon: Users },
-  { label: "শিক্ষক", count: "২৫", icon: UserRound },
-
-  { label: "কোর্স", count: "১৮", icon: BookOpen },
-  { label: "বিভাগ", count: "৬", icon: Building2 },
-];
+import { courses } from "@/src/lib/data";
 
 const categories = [
   { name: "সকল", icon: Layers },
-
   { name: "কুরআন", icon: BookOpen },
   { name: "হাদিস", icon: Scroll },
   { name: "আরবি", icon: Languages },
   { name: "ফিকহ", icon: Scale },
   { name: "তাফসির", icon: Book },
-];
-
-const courses = [
-  {
-    title: "হিফযুল কুরআন",
-    type: "হিফয",
-    duration: "২ বছর",
-    desc: "তাজবীদ সহ সম্পূর্ণ কুরআন মুখস্থ",
-    price: "বিনামূল্যে",
-    seats: "২৫ আসন",
-    icon: BookOpen,
-  },
-  {
-    title: "আলিম কোর্স",
-    type: "আলিম",
-    duration: "৬ বছর",
-    desc: "হাদিস, ফিকহ, তাফসির, আরবি",
-    price: "মাসিক ৫০০৳",
-    seats: "৪০ আসন",
-    icon: University,
-  },
-  {
-    title: "আরবি ভাষা কোর্স",
-    type: "আরবি",
-    duration: "১ বছর",
-    desc: "গ্রামার ও স্পোকেন আরবি",
-    price: "মাসিক ৩০০৳",
-    seats: "৩০ আসন",
-    icon: Languages,
-  },
-  {
-    title: "তাজবীদ ও কিরাত",
-    type: "তাজবীদ",
-    duration: "৬ মাস",
-    desc: "প্রাকটিক্যাল তাজবীদ",
-    price: "মাসিক ২০০৳",
-    seats: "২০ আসন",
-    icon: Mic,
-  },
-  {
-    title: "ফিকহুল ইবাদাত",
-    type: "ফিকহ",
-    duration: "১ বছর",
-    desc: "তাহারাহ, সালাত, সিয়াম",
-    price: "মাসিক ২৫০৳",
-    seats: "৩৫ আসন",
-    icon: Scale,
-  },
-  {
-    title: "তাফসিরুল কুরআন",
-    type: "তাফসির",
-    duration: "২ বছর",
-    desc: "সূরা বাকারা ও অন্যান্য",
-    price: "মাসিক ৪০০৳",
-    seats: "২৫ আসন",
-    icon: Book,
-  },
 ];
 
 const admissionDates = [
@@ -119,18 +49,21 @@ export default function EducationPage() {
   const [search, setSearch] = useState("");
 
   //  Filter + Search
-  const filteredCourses = courses.filter((c) => {
-    const matchCategory = activeTab === "সকল" || c.type === activeTab;
+ const filteredCourses = courses.filter((c) => {
+  const matchCategory =
+    activeTab === "সকল" || c.category === activeTab;
 
-    const matchSearch = c.title.toLowerCase().includes(search.toLowerCase());
+  const matchSearch = c.title
+    .toLowerCase()
+    .includes(search.toLowerCase());
 
-    return matchCategory && matchSearch;
-  });
+  return matchCategory && matchSearch;
+});
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FFFCDC]">
+    <section className="flex flex-col min-h-screen bg-[#FFFCDC]">
       {/* Hero Section */}
-      <section className="relative h-48 lg:h-64 bg-gradient-to-br from-emerald-800 to-teal-900 flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <div className="relative h-48 lg:h-64 bg-gradient-to-br from-emerald-800 to-teal-900 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
@@ -153,9 +86,9 @@ export default function EducationPage() {
             </span>
           </div>
         </div>
-      </section>
+      </div>
 
-      <main className="max-w-screen-xl mx-auto w-full px-4 py-12 space-y-12">
+      <div className="max-w-screen-xl mx-auto w-full px-4 space-y-12">
         <div className="min-h-screen bg-[#FFFCDC] px-4 py-10">
           {/* 🔍 Search */}
           <div className="max-w-xl mx-auto mb-8">
@@ -169,51 +102,107 @@ export default function EducationPage() {
           </div>
 
           {/* Categories */}
-          <section className=" space-y-6 mb-8 ">
-            <div className="flex justify-center gap-3 overflow-x-auto no-scrollbar pb-2">
+          <div className="space-y-6 mb-8">
+            <div className="flex gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-2 px-1 sm:px-0 snap-x snap-mandatory">
               {categories.map((cat, i) => (
                 <button
                   key={i}
                   onClick={() => setActiveTab(cat.name)}
-                  className={`flex items-center gap-3 px-8 py-3.5 rounded-full font-bold whitespace-nowrap transition-all border ${
-                    activeTab === cat.name
-                      ? "bg-[#14281D] text-[#E2D4B9] border-[#14281D] shadow-lg"
-                      : "bg-white text-[#14281D]/60 border-[#14281D]/5 hover:bg-white/80"
-                  }`}
+                  className={`snap-start flex items-center gap-2 sm:gap-3 
+        px-4 sm:px-6 md:px-8 
+        py-2.5 sm:py-3.5 
+        rounded-full font-semibold sm:font-bold 
+        whitespace-nowrap transition-all border text-sm sm:text-base
+        
+        ${
+          activeTab === cat.name
+            ? "bg-green-700 text-white border-green-700 shadow-md"
+            : "bg-white text-gray-600 border-gray-200 hover:bg-green-50"
+        }`}
                 >
-                  <cat.icon size={18} /> {cat.name}
+                  <cat.icon size={16} className="sm:w-[18px] sm:h-[18px]" />
+                  {cat.name}
                 </button>
               ))}
             </div>
-          </section>
+          </div>
 
           {/* 📚 Courses */}
-          <div className="grid md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-            <AnimatePresence mode="wait">
-              {filteredCourses.map((c, i) => (
-                <motion.div
-                  key={c.title}
-                  layout
-                  initial={{ opacity: 0, scale: 0.9 }}
-                  animate={{ opacity: 1, scale: 1 }}
-                  exit={{ opacity: 0, scale: 0.9 }}
-                  transition={{ duration: 0.3 }}
-                  className="bg-white p-6 rounded-3xl shadow-xl flex gap-4 items-center"
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-5xl mx-auto">
+            <AnimatePresence>
+              {filteredCourses.map((course) => (
+                <Link
+                  key={course.slug}
+                  href={`/education/${course.slug}`}
+                  className="block h-full"
                 >
-                  <div className="w-20 h-20 bg-[#14281D]/10 rounded-2xl flex items-center justify-center">
-                    <c.icon size={32} />
-                  </div>
+                  <motion.div
+                    layout
+                    initial={{ opacity: 0, scale: 0.9 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0, scale: 0.9 }}
+                    className="group bg-white rounded-[2rem] overflow-hidden border border-green-100 shadow-sm hover:shadow-2xl transition-all duration-500 flex flex-col h-full"
+                  >
+                    {/* Image */}
+                    <div className="relative aspect-[16/10] overflow-hidden">
+                      <img
+                        src={course.image}
+                        alt={course.title}
+                        className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
+                      />
 
-                  <div className="flex-1">
-                    <h3 className="font-black text-lg">{c.title}</h3>
-                    <p className="text-xs text-gray-500">{c.desc}</p>
+                      {/* Badge */}
+                      <div className="absolute top-4 left-4 flex gap-2">
+                        <span className="bg-white/90 text-green-700 px-3 py-1 rounded-full text-[10px] font-bold">
+                          {course.category}
+                        </span>
 
-                    <div className="flex justify-between mt-3 text-sm">
-                      <span>{c.price}</span>
-                      <span>{c.seats}</span>
+                        <span
+                          className={`px-3 py-1 rounded-full text-[10px] font-bold text-white ${
+                            course.level === "Beginner"
+                              ? "bg-green-500"
+                              : course.level === "Intermediate"
+                                ? "bg-green-600"
+                                : "bg-green-800"
+                          }`}
+                        >
+                          {course.level}
+                        </span>
+                      </div>
                     </div>
-                  </div>
-                </motion.div>
+
+                    {/* Content */}
+                    <div className="p-6 flex flex-col flex-grow">
+                      <div className="flex items-center gap-4 text-[10px] text-gray-400 font-bold mb-3">
+                        <span className="flex items-center gap-1">
+                          <Clock size={12} /> {course.duration}
+                        </span>
+                        <span className="flex items-center gap-1">
+                          <Users size={12} /> {course.studentsCount}
+                        </span>
+                      </div>
+
+                      <h3 className="text-lg font-bold mb-2 group-hover:text-green-600">
+                        {course.title}
+                      </h3>
+
+                      <p className="text-gray-500 text-sm mb-4">
+                        {course.description}
+                      </p>
+
+                      <div className="mt-auto flex justify-between items-center">
+                        <span className="font-bold text-green-700">
+                          {course.price}
+                        </span>
+
+                        <span className="flex items-center gap-2 text-sm font-bold text-green-700">
+                          বিস্তারিত
+                          <ArrowRight size={16} />
+                        </span>
+                      </div>
+                    </div>
+                  </motion.div>
+                </Link>
               ))}
             </AnimatePresence>
           </div>
@@ -282,7 +271,7 @@ export default function EducationPage() {
             ))}
           </div>
         </section>
-      </main>
-    </div>
+      </div>
+    </section>
   );
 }
