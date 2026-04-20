@@ -1,12 +1,12 @@
-import ActivitiesSection from "../components/ActivitiesSection";
-import CategoryGrid from "../components/CategoryGrid";
-import DonationBanner from "../components/DonationBanner";
-import HeroSection from "../components/HeroSection";
-import NoticeTicker from "../components/NoticeTicker";
-import ReviewSection from "../components/ReviewSection";
-import StatusCounter from "../components/StatusCounter";
-import TeacherGrid from "../components/TeacherGrid";
-import HomeGallery from "../components/HomeGallery";
+import DonationBanner from "@/src/components/DonationBanner";
+import ActivitiesSection from "@/src/components/mainLayout/home/ActivitiesSection";
+import CategoryGrid from "@/src/components/mainLayout/home/CategoryGrid";
+import HeroSection from "@/src/components/mainLayout/home/HeroSection";
+import NoticeTicker from "@/src/components/mainLayout/home/NoticeTicker";
+import ReviewSection from "@/src/components/mainLayout/home/ReviewSection";
+import StatusCounter from "@/src/components/mainLayout/home/StatusCounter";
+import HomeGallery from "@/src/components/mainLayout/home/HomeGallery";
+import TeacherGrid from "@/src/components/mainLayout/home/TeacherGrid";
 
 export default function Home() {
   return (
@@ -23,7 +23,7 @@ export default function Home() {
       {/* Dynamic Progress/Notice Bar */}
       <StatusCounter />
       {/* Gallery Section */}
-      
+
       <HomeGallery />
       {/* Subject-wise Courses (Category Grid) */}
       <CategoryGrid />
