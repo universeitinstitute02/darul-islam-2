@@ -103,7 +103,7 @@ export default function EducationPage() {
 
           {/* Categories */}
           <div className="space-y-6 mb-8">
-            <div className="flex gap-2 sm:gap-3 overflow-x-auto no-scrollbar pb-2 px-1 sm:px-0 snap-x snap-mandatory">
+            <div className="flex gap-2 lg:justify-center sm:gap-3 overflow-x-auto no-scrollbar pb-2 px-1 sm:px-0 snap-x snap-mandatory">
               {categories.map((cat, i) => (
                 <button
                   key={i}

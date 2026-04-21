@@ -15,7 +15,7 @@ export default function NoticeTicker() {
       </div>
       <div className="overflow-hidden whitespace-nowrap ml-4 flex-grow relative">
         {/* Simple CSS animation ticker */}
-        <div className="inline-block animate-[ticker_20s_linear_infinite] whitespace-nowrap">
+        <div className="inline-block animate-[ticker_40s_linear_infinite] whitespace-nowrap">
           {notices.map((notice, i) => (
             <span key={i} className="mx-8 font-medium">
               ★ {notice}

@@ -14,10 +14,10 @@ import Link from "next/link"
 import { motion } from "framer-motion"
 
 const categories = [
-  { name: "কুরআন শিক্ষা", icon: Library, courses: 3 },
-  { name: "আরবী ভাষা", icon: Languages, courses: 5 },
-  { name: "হাদীস", icon: BookMarked, courses: 2 },
-  { name: "হোমস্কুলিং", icon: HomeIcon, courses: 1 },
+  { name: "কুরআন বিভাগ", icon: Library, courses: 3 },
+  { name: "ইসলামিক স্কুল", icon: Languages, courses: 5 },
+  { name: "ইসলামিক কালচারাল", icon: BookMarked, courses: 2 },
+  { name: "আফটার স্কুল", icon: HomeIcon, courses: 1 },
   { name: "সীরাহ ও ইতিহাস", icon: History, courses: 6 },
   { name: "সুন্নাহ লাইফস্টাইল", icon: Sun, courses: 5 },
 ]
@@ -40,7 +40,7 @@ export default function CategoryGrid() {
             viewport={{ once: true }}
             className="inline-block px-4 py-1.5 bg-green-100 text-green-700 rounded-full text-xs font-bold tracking-widest"
           >
-            কোর্স ক্যাটাগরি
+            বিভাগসমূহ
           </motion.div>
 
           <h2 className="text-2xl lg:text-4xl font-extrabold text-green-800">

@@ -1,11 +1,11 @@
 @import "tailwindcss";
 
 @theme {
-  --color-primary: #14281D;
-  --color-secondary: #E2D4B9;
+  --color-primary: #14281d;
+  --color-secondary: #e2d4b9;
   --color-accent: #87F56;
-  --color-border-dark: #30360E;
-  --color-background-is: #FFFCDC;
+  --color-border-dark: #30360e;
+  --color-background-is: #fffcdc;
   --color-islamic-green: #0a593a;
   --color-islamic-green-light: #168055;
   --color-islamic-gold: #d4af37;
@@ -14,8 +14,8 @@
 }
 
 :root {
-  --background: #FFFCDC;
-  --foreground: #14281D;
+  --background: #fffcdc;
+  --foreground: #14281d;
 }
 
 body {
@@ -35,20 +35,22 @@ body {
     background: rgba(255, 252, 220, 0.4);
     backdrop-filter: blur(8px);
     border: 1px solid rgba(48, 54, 14, 0.1);
-    box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    box-shadow:
+      0 4px 6px -1px rgba(0, 0, 0, 0.1),
+      0 2px 4px -1px rgba(0, 0, 0, 0.06);
   }
 
   .shadow-islamic {
-    box-shadow: 0 4px 0 #30360E;
+    box-shadow: 0 4px 0 #30360e;
   }
 
   .shadow-islamic-lg {
-    box-shadow: 0 8px 0 #30360E;
+    box-shadow: 0 8px 0 #30360e;
   }
 
   .hover-shadow-islamic:hover {
     transform: translateY(-4px);
-    box-shadow: 0 8px 0 #30360E;
+    box-shadow: 0 8px 0 #30360e;
   }
 }
 
@@ -58,19 +60,57 @@ body {
 }
 
 @keyframes ticker {
-  0% { transform: translateX(100%); }
-  100% { transform: translateX(-100%); }
+  0% {
+    transform: translateX(100%);
+  }
+  100% {
+    transform: translateX(-100%);
+  }
 }
 /* -------- Testimonial------------ */
 @keyframes marqueeScroll {
-          0% { transform: translateX(0%); }
-          100% { transform: translateX(-50%); }
-        }
+  0% {
+    transform: translateX(0%);
+  }
+  100% {
+    transform: translateX(-50%);
+  }
+}
 
-        .marquee {
-          animation: marqueeScroll 30s linear infinite;
-        }
+.marquee {
+  animation: marqueeScroll 30s linear infinite;
+}
 
-        .marquee-reverse {
-          animation-direction: reverse;
-        }
+.marquee-reverse {
+  animation-direction: reverse;
+}
+
+/* pagination নিচে নামানো */
+.teacher-swiper .swiper-pagination {
+  margin-top: 20px;
+  position: relative;
+}
+
+/* active dot green */
+.teacher-swiper .swiper-pagination-bullet {
+  background: #86efac; /* light green */
+  opacity: 1;
+}
+
+.teacher-swiper .swiper-pagination-bullet-active {
+  background: #16a34a; /* main green */
+  width: 20px;
+  border-radius: 10px;
+}
+
+/* navigation button color */
+.teacher-swiper .swiper-button-next,
+.teacher-swiper .swiper-button-prev {
+  color: #16a34a;
+}
+
+/* hover effect off */
+.teacher-swiper .swiper-button-next:hover,
+.teacher-swiper .swiper-button-prev:hover {
+  color: #16a34a;
+}
