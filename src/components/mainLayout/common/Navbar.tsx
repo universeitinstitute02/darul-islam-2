@@ -26,7 +26,6 @@ import {
   BellRing,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
-import { cn } from "../lib/utils";
 
 /* ---------------- NAV DATA ---------------- */
 
