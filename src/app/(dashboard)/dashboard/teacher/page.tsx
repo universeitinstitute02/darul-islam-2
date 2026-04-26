@@ -10,8 +10,6 @@ export default function TeacherDashboardPage() {
 
       {/* ২. কোর্স ও রিসোর্স ম্যানেজমেন্ট সেকশন */}
       <CourseManagement />
-
-      {/* এখানে ৩ নম্বর সেকশন (Student Tracker) আসবে সামনে */}
     </div>
   );
 }

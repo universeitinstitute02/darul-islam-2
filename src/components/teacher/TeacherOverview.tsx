@@ -72,46 +72,6 @@ const TeacherOverview = () => {
 
   return (
     <div className="p-4 md:p-6 space-y-6 md:space-y-8 bg-[#F9FBFA] ">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 border-b border-neutral-200 pb-5">
-        <div>
-          <h1 className="text-2xl md:text-3xl font-bold text-[#105D38]">
-            শিক্ষক প্যানেল
-          </h1>
-          <p className="text-sm md:text-base text-neutral-500">
-            স্বাগতম ওস্তাদ! আপনার ড্যাশবোর্ড চেক করুন।
-          </p>
-        </div>
-        <motion.button
-          whileTap={{ scale: 0.95 }}
-          className="w-full sm:w-auto bg-[#C5A059] text-white px-5 py-3 rounded-xl font-bold flex items-center justify-center gap-2 shadow-md active:bg-[#b38f4d]"
-        >
-          <PlusCircle size={20} />
-          নতুন কোর্স
-        </motion.button>
-      </div>
-
-      {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
-        {stats.map((stat, idx) => (
-          <motion.div
-            key={stat.id}
-            initial={{ opacity: 0, scale: 0.9 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ delay: idx * 0.1 }}
-            className={`bg-white p-4 md:p-6 rounded-2xl border border-neutral-100 shadow-sm ${idx === 2 ? "col-span-2 md:col-span-1" : ""}`}
-          >
-            <stat.icon className={`${stat.color} mb-2 md:mb-4`} size={24} />
-            <h3 className="text-2xl md:text-4xl font-extrabold text-neutral-800">
-              <CountUp end={stat.value} duration={2} />
-            </h3>
-            <p className="text-xs md:text-sm text-neutral-500 font-medium">
-              {stat.label}
-            </p>
-          </motion.div>
-        ))}
-      </div>
-
       {/* Course List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
