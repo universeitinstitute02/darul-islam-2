@@ -1,45 +1,145 @@
-import React from 'react';
-import { Home, BookOpen, Settings, LayoutDashboard, LogOut, FileText } from 'lucide-react';
+"use client";
+import React, { useState } from "react";
+import Link from "next/link";
+import { usePathname } from "next/navigation"; // একটিভ রুট ট্র্যাক করার জন্য
+import {
+  Home,
+  BookOpen,
+  Settings,
+  LayoutDashboard,
+  LogOut,
+  FileCheck,
+  Menu,
+  X,
+} from "lucide-react";
 
-export default function DashboardLayout({ children }: { children: React.ReactNode }) {
+export default function DashboardLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const [isSidebarOpen, setSidebarOpen] = useState(false);
+  const pathname = usePathname(); // বর্তমান ইউআরএল নিবে
+
+  const navLinks = [
+    { name: "ওভারভিউ", href: "/dashboard", icon: Home },
+    {
+      name: "আমার কোর্সসমূহ",
+      href: "/dashboard/teacher/my-course",
+      icon: BookOpen,
+    },
+    {
+      name: "টিচার ড্যাশবোর্ড",
+      href: "/dashboard/teacher/teacher-dashboard",
+      icon: BookOpen,
+    },
+    {
+      name: "সদস্যবৃন্দ",
+      href: "/dashboard/teacher/teacher-list",
+      icon: BookOpen,
+    },
+    {
+      name: "অ্যাসাইনমেন্ট ও মূল্যায়ন",
+      href: "/dashboard/teacher/assignment",
+      icon: FileCheck,
+    },
+    {
+      name: "প্রোফাইল সেটিংস",
+      href: "/dashboard/teacher/profile",
+      icon: Settings,
+    },
+  ];
+
   return (
-    <div className="flex h-screen bg-neutral-100 mt-1">
+    <div className="flex h-screen bg-neutral-100">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
-      <aside className="w-64 bg-islamic-green text-white flex flex-col hidden md:flex rounded-tr-2xl shadow-xl overflow-hidden z-20">
-         <div className="p-6 border-b border-green-800 flex items-center gap-3">
+      <aside
+        className={`
+        fixed inset-y-0 left-0 z-50 w-64 bg-[#105D38] text-white flex flex-col 
+        transition-transform duration-300 transform md:relative md:translate-x-0
+        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+        rounded-tr-2xl shadow-xl overflow-hidden
+      `}
+      >
+        <div className="p-6 border-b border-green-800 flex items-center justify-between">
+          <div className="flex items-center gap-3">
             <LayoutDashboard />
             <h2 className="text-xl font-bold">ড্যাশবোর্ড</h2>
-         </div>
-         <nav className="flex-1 p-4 space-y-2">
-            <a href="/dashboard" className="flex items-center gap-3 p-3 bg-islamic-green-light rounded text-white font-medium">
-               <Home size={20} /> ওভারভিউ
-            </a>
-            <a href="#" className="flex items-center gap-3 p-3 hover:bg-islamic-green-light rounded text-green-100 font-medium transition">
-               <BookOpen size={20} /> আমার কোর্সসমূহ
-            </a>
-            <a href="#" className="flex items-center gap-3 p-3 hover:bg-islamic-green-light rounded text-green-100 font-medium transition">
-               <FileText size={20} /> পেমেন্ট ও রসিদ
-            </a>
-            <a href="#" className="flex items-center gap-3 p-3 hover:bg-islamic-green-light rounded text-green-100 font-medium transition">
-               <Settings size={20} /> প্রোফাইল সেটিংস
-            </a>
-            {/* Directing to Teacher for Mockup purposes */}
-            <a href="/dashboard/teacher" className="flex items-center gap-3 p-3 hover:bg-islamic-gold hover:text-islamic-green rounded text-islamic-gold font-medium transition mt-8 border border-islamic-gold">
-               শিক্ষক প্যানেল দেখুন
-            </a>
-         </nav>
-         <div className="p-4 border-t border-green-800">
-            <button className="flex items-center gap-3 w-full p-3 hover:bg-red-600 rounded text-green-100 hover:text-white font-medium transition">
-               <LogOut size={20} /> লগআউট
-            </button>
-         </div>
+          </div>
+          {/* Mobile Close Button */}
+          <button
+            className="md:hidden text-white"
+            onClick={() => setSidebarOpen(false)}
+          >
+            <X size={24} />
+          </button>
+        </div>
+
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
+          {navLinks.map((link) => {
+            const isActive = pathname === link.href;
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setSidebarOpen(false)} // মোবাইলে ক্লিক করলে বন্ধ হবে
+                className={`flex items-center gap-3 p-3 rounded-xl font-medium transition-all ${
+                  isActive
+                    ? "bg-[#C5A059] text-white shadow-lg" // একটিভ স্টাইল
+                    : "text-green-100 hover:bg-green-800/50"
+                }`}
+              >
+                <link.icon size={20} /> {link.name}
+              </Link>
+            );
+          })}
+
+          <Link
+            href="/dashboard/teacher"
+            className="flex items-center gap-3 p-3 hover:bg-[#C5A059] hover:text-white rounded-xl text-[#C5A059] font-bold transition mt-8 border border-[#C5A059]"
+          >
+            শিক্ষক প্যানেল দেখুন
+          </Link>
+        </nav>
+
+        <div className="p-4 border-t border-green-800">
+          <button className="flex items-center gap-3 w-full p-3 hover:bg-red-600 rounded-xl text-green-100 hover:text-white font-medium transition">
+            <LogOut size={20} /> লগআউট
+          </button>
+        </div>
       </aside>
 
       {/* Main Content Area */}
-      <main className="flex-1 flex flex-col h-full overflow-hidden">
-         <div className="overflow-y-auto p-8 h-full bg-neutral-50 shadow-inner">
-            {children}
-         </div>
+      <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
+        {/* Mobile Top Header (Search bar এর নিচে বা উপরে দিতে পারেন) */}
+        <header className="md:hidden bg-white p-4 border-b flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <div className="w-8 h-8 bg-[#105D38] rounded-lg flex items-center justify-center text-white font-bold">
+              ও
+            </div>
+            <span className="font-bold text-neutral-800 uppercase tracking-tight">
+              Ostad
+            </span>
+          </div>
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="p-2 text-neutral-600"
+          >
+            <Menu size={24} />
+          </button>
+        </header>
+
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-neutral-50">
+          {children}
+        </div>
       </main>
     </div>
   );
