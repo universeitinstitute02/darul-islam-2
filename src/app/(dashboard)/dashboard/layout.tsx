@@ -1,7 +1,7 @@
 "use client";
 import React, { useState } from "react";
 import Link from "next/link";
-import { usePathname } from "next/navigation"; // একটিভ রুট ট্র্যাক করার জন্য
+import { usePathname } from "next/navigation";
 import {
   Home,
   BookOpen,
@@ -19,18 +19,23 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
-  const pathname = usePathname(); // বর্তমান ইউআরএল নিবে
+  const pathname = usePathname();
 
   const navLinks = [
     { name: "ওভারভিউ", href: "/dashboard", icon: Home },
+    {
+      name: "টিচার ড্যাশবোর্ড",
+      href: "/dashboard/teacher/teacher-dashboard",
+      icon: BookOpen,
+    },
     {
       name: "আমার কোর্সসমূহ",
       href: "/dashboard/teacher/my-course",
       icon: BookOpen,
     },
     {
-      name: "টিচার ড্যাশবোর্ড",
-      href: "/dashboard/teacher/teacher-dashboard",
+      name: "ক্লাস লিঙ্ক",
+      href: "/dashboard/teacher/class-link",
       icon: BookOpen,
     },
     {
@@ -41,6 +46,11 @@ export default function DashboardLayout({
     {
       name: "অ্যাসাইনমেন্ট ও মূল্যায়ন",
       href: "/dashboard/teacher/assignment",
+      icon: FileCheck,
+    },
+    {
+      name: "নোটিশ বোর্ড",
+      href: "/dashboard/teacher/notice-board",
       icon: FileCheck,
     },
     {
