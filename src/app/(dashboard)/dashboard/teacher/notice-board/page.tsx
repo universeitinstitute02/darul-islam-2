@@ -509,18 +509,23 @@ export default function NoticePage() {
         <div className="fixed top-0 right-0 w-[500px] h-[500px] bg-indigo-100/60 rounded-full blur-3xl pointer-events-none -translate-y-1/2 translate-x-1/3 z-0" />
         <div className="fixed bottom-0 left-0 w-[400px] h-[400px] bg-violet-100/50 rounded-full blur-3xl pointer-events-none translate-y-1/2 -translate-x-1/3 z-0" />
 
-        {/* ── Navbar ── */}
-        <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-100">
-          <div className="max-w-4xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between gap-4">
-            <div className="flex items-center gap-2.5">
-              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-indigo-500 to-violet-500 flex items-center justify-center">
-                <svg className="w-3.5 h-3.5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
-                </svg>
-              </div>
-              <span className="text-sm font-bold text-slate-800 tracking-tight">
-                Notice Board
-              </span>
+        <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8">
+
+
+          <div className="mb-8 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-emerald-600 mb-2">
+                Instructor Portal
+              </p>
+              <h1 className="text-3xl sm:text-4xl font-bold text-slate-900 tracking-tight leading-tight">
+                Notice{" "}
+                <span className="text-transparent bg-clip-text bg-gradient-to-r from-emerald-500 to-teal-400">
+                  Board
+                </span>
+              </h1>
+              <p className="text-sm text-slate-500 mt-2">
+                Post announcements — students see them instantly across all devices.
+              </p>
             </div>
 
             <div className="flex items-center gap-2">
@@ -540,25 +545,7 @@ export default function NoticePage() {
               </button>
             </div>
           </div>
-        </header>
 
-        <main className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 py-8">
-
-          {/* ── Page heading ── */}
-          <div className="mb-8">
-            <p className="text-[11px] font-bold uppercase tracking-[0.2em] text-indigo-500 mb-2">
-              Instructor Portal
-            </p>
-            <h1 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight leading-tight">
-              Notice{" "}
-              <span className="text-transparent bg-clip-text bg-gradient-to-r from-indigo-500 to-violet-500">
-                Board
-              </span>
-            </h1>
-            <p className="text-sm text-slate-500 mt-2">
-              Post announcements — students see them instantly across all devices.
-            </p>
-          </div>
 
           {/* ── Stats strip ── */}
           <div className="grid grid-cols-3 gap-3 mb-7">
