@@ -51,7 +51,7 @@ const drawerMenuItems = [
   {
     name: "একাডেমিক বিবরণ",
     submenu: [
-      { name: "শিক্ষক প্রোফাইল", href: "/teachers", icon: Users },
+      { name: "শিক্ষক প্রোফাইল", href: "/dashboard/teacher", icon: Users },
       { name: "একাডেমিক", href: "/education", icon: University },
       { name: "ভর্তি ফর্ম", href: "/admission", icon: FileText },
       { name: "নোটিশ বোর্ড", href: "/notices", icon: FileText },
