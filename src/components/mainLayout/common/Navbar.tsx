@@ -76,8 +76,12 @@ const drawerMenuItems = [
   {
     name: "অ্যাকাউন্ট",
     submenu: [
-      { name: "লগইন", href: "/login", icon: LogIn },
-      { name: "রেজিস্ট্রেশন", href: "/register", icon: UserPlus },
+      { name: "লগইন", href: "/auth-dashboard/login", icon: LogIn },
+      {
+        name: "রেজিস্ট্রেশন",
+        href: "/auth-dashboard/register",
+        icon: UserPlus,
+      },
       { name: "প্রোফাইল", href: "/profile", icon: User },
       { name: "সেটিংস", href: "/profile", icon: Settings },
     ],
