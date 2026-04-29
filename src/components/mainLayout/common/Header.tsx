@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import {
   Home,
   University,
@@ -24,9 +24,24 @@ import {
   LogIn,
   UserPlus,
   BellRing,
+  LucideIcon, // LucideIcon টাইপটি ইমপোর্ট করুন
 } from "lucide-react";
 
-const drawerMenuItems = [
+// মেনু আইটেমের জন্য টাইপ ডিফাইন করা (TypeScript এরর এড়াতে)
+interface SubmenuItem {
+  name: string;
+  href: string;
+  icon: LucideIcon;
+}
+
+interface MenuItem {
+  name: string;
+  href?: string;
+  icon?: LucideIcon;
+  submenu?: SubmenuItem[];
+}
+
+const drawerMenuItems: MenuItem[] = [
   { name: "হোম", href: "/", icon: Home },
   {
     name: "আমাদের সম্পর্কে",
@@ -64,8 +79,12 @@ const drawerMenuItems = [
   {
     name: "অ্যাকাউন্ট",
     submenu: [
-      { name: "লগইন", href: "/login", icon: LogIn },
-      { name: "রেজিস্ট্রেশন", href: "/register", icon: UserPlus },
+      { name: "লগইন", href: "/auth-dashboard/login", icon: LogIn },
+      {
+        name: "রেজিস্ট্রেশন",
+        href: "/auth-dashboard/register",
+        icon: UserPlus,
+      },
       { name: "প্রোফাইল", href: "/profile", icon: User },
       { name: "সেটিংস", href: "/profile", icon: Settings },
     ],
@@ -81,16 +100,13 @@ const Header = () => {
   };
 
   return (
-    // 'fixed' এবং 'top-0' ব্যবহার করে এটিকে স্থায়ীভাবে আটকে দেওয়া হয়েছে।
-    // স্ক্রল করলেও এটি নড়বে না।
     <nav className="fixed top-0 left-0 w-full z-50 bg-[#14281D] shadow-md border-b border-white/10">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3 lg:px-8">
-        {/* Logo Section */}
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
             <span className="text-[#14281D] font-bold text-xl">DI</span>
           </div>
-          <div className="flex flex-col">
+          <div className="flex flex-col text-left">
             <span className="text-white font-bold text-lg lg:text-2xl">
               দারুল ইসলাম ইনস্টিটিউট
             </span>
@@ -100,9 +116,11 @@ const Header = () => {
           </div>
         </Link>
 
-        {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          <Link href="/notice" className="text-white hover:text-yellow-400 transition">
+          <Link
+            href="/notice"
+            className="text-white hover:text-yellow-400 transition"
+          >
             <BellRing size={24} />
           </Link>
           <button
@@ -114,11 +132,9 @@ const Header = () => {
         </div>
       </div>
 
-      {/* ---------------- DRAWER (SIDEBAR) ---------------- */}
       <AnimatePresence>
         {isOpen && (
           <>
-            {/* Overlay */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -127,81 +143,81 @@ const Header = () => {
               className="fixed inset-0 bg-black/60 z-[70] backdrop-blur-sm"
             />
 
-            {/* Sidebar Content */}
             <motion.aside
               initial={{ x: "100%" }}
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-[320px] bg-[#E2D4B9] z-[80] shadow-2xl flex flex-col"
+              className="fixed top-0 right-0 h-full w-[85%] max-w-[320px] bg-[#E2D4B9] z-[80] shadow-2xl flex flex-col text-left"
             >
-              {/* Drawer Header */}
               <div className="bg-[#14281D] p-5 flex justify-between items-center shrink-0">
                 <span className="text-white font-bold text-lg">মেনু</span>
-                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-white/10 rounded-full transition">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 hover:bg-white/10 rounded-full transition"
+                >
                   <X className="text-white" />
                 </button>
               </div>
 
-              {/* Drawer Menu Items */}
               <div className="p-4 overflow-y-auto flex-1">
                 <ul className="space-y-3">
-                  {drawerMenuItems.map((item) => (
-                    <li key={item.name}>
-                      {item.submenu ? (
-                        <>
-                          <button
-                            onClick={() => toggleSubmenu(item.name)}
-                            className="w-full flex justify-between items-center p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition"
+                  {drawerMenuItems.map((item) => {
+                    const Icon = item.icon; // বড় হাতের অক্ষরে ডিক্লেয়ার করা জরুরি
+                    return (
+                      <li key={item.name}>
+                        {item.submenu ? (
+                          <>
+                            <button
+                              onClick={() => toggleSubmenu(item.name)}
+                              className="w-full flex justify-between items-center p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition text-left"
+                            >
+                              <span>{item.name}</span>
+                              <ChevronRight
+                                size={18}
+                                className={`transition-transform duration-300 ${openSubmenu === item.name ? "rotate-90" : ""}`}
+                              />
+                            </button>
+                            <AnimatePresence>
+                              {openSubmenu === item.name && (
+                                <motion.ul
+                                  initial={{ height: 0, opacity: 0 }}
+                                  animate={{ height: "auto", opacity: 1 }}
+                                  exit={{ height: 0, opacity: 0 }}
+                                  className="pl-4 border-l-2 border-[#14281D]/20 mt-2 space-y-1 overflow-hidden"
+                                >
+                                  {item.submenu.map((sub) => {
+                                    const SubIcon = sub.icon;
+                                    return (
+                                      <li key={sub.name}>
+                                        <Link
+                                          href={sub.href}
+                                          onClick={() => setIsOpen(false)}
+                                          className="flex items-center gap-3 p-2.5 text-sm text-[#14281D]/80 hover:text-[#14281D] hover:bg-white/40 rounded-md transition"
+                                        >
+                                          <SubIcon size={16} />
+                                          {sub.name}
+                                        </Link>
+                                      </li>
+                                    );
+                                  })}
+                                </motion.ul>
+                              )}
+                            </AnimatePresence>
+                          </>
+                        ) : (
+                          <Link
+                            href={item.href || "#"}
+                            onClick={() => setIsOpen(false)}
+                            className="flex items-center gap-3 p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition"
                           >
-                            <span>{item.name}</span>
-                            <ChevronRight
-                              size={18}
-                              className={`transition-transform duration-300 ${
-                                openSubmenu === item.name ? "rotate-90" : ""
-                              }`}
-                            />
-                          </button>
-
-                          <AnimatePresence>
-                            {openSubmenu === item.name && (
-                              <motion.ul
-                                initial={{ height: 0, opacity: 0 }}
-                                animate={{ height: "auto", opacity: 1 }}
-                                exit={{ height: 0, opacity: 0 }}
-                                className="pl-4 border-l-2 border-[#14281D]/20 mt-2 space-y-1 overflow-hidden"
-                              >
-                                {item.submenu.map((sub) => {
-                                  const SubIcon = sub.icon;
-                                  return (
-                                    <li key={sub.name}>
-                                      <Link
-                                        href={sub.href}
-                                        onClick={() => setIsOpen(false)}
-                                        className="flex items-center gap-3 p-2.5 text-sm text-[#14281D]/80 hover:text-[#14281D] hover:bg-white/40 rounded-md transition"
-                                      >
-                                        <SubIcon size={16} />
-                                        {sub.name}
-                                      </Link>
-                                    </li>
-                                  );
-                                })}
-                              </motion.ul>
-                            )}
-                          </AnimatePresence>
-                        </>
-                      ) : (
-                        <Link
-                          href={item.href || "#"}
-                          onClick={() => setIsOpen(false)}
-                          className="flex items-center gap-3 p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition"
-                        >
-                          {item.icon && <item.icon size={18} />}
-                          {item.name}
-                        </Link>
-                      )}
-                    </li>
-                  ))}
+                            {Icon && <Icon size={18} />}
+                            {item.name}
+                          </Link>
+                        )}
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             </motion.aside>
