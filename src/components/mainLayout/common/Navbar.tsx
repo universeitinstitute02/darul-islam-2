@@ -10,7 +10,7 @@ import {
   User,
   BellRing,
 } from "lucide-react";
-import { motion} from "framer-motion";
+import { motion } from "framer-motion";
 
 /* ---------------- NAV DATA ---------------- */
 const navItems = [
@@ -19,7 +19,7 @@ const navItems = [
   { name: "লাইব্রেরি", href: "/library", icon: BookOpen },
   { name: "নোটিশ", href: "/notices", icon: BellRing },
   { name: "দান", href: "/donation", icon: HandHeart },
-  { name: "প্রোফাইল", href: "/profile", icon: User },
+  { name: "প্রোফাইল", href: "/student-profile", icon: User },
 ];
 
 export default function Navbar() {
@@ -100,7 +100,7 @@ export default function Navbar() {
           </nav>
         </div>
       </motion.div>
-      
+
       {/* নেভবারটি ফিক্সড হওয়ার কারণে কন্টেন্ট যাতে ঢেকে না যায় সেজন্য স্পেসার */}
       <div className="h-14"></div>
     </>
