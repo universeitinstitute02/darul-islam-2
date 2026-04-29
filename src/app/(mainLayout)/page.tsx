@@ -1,48 +1,150 @@
 import React from "react";
 import HeroSection from "@/src/components/mainLayout/home/HeroSection";
-import { Quote, User, GraduationCap, School, Book, PenTool, CheckCircle2 } from "lucide-react";
 
-/* ── UI COMPONENTS ── */
+/* ── COMPONENTS ── */
 
 const SectionHeading = ({ children }: { children: React.ReactNode }) => (
   <div className="text-center">
-    <h2 className="text-2xl md:text-4xl font-bold text-green-800 inline-block relative">
+    <h2 className="text-xl md:text-2xl font-bold text-green-800 inline-block relative">
       {children}
-      <span className="block h-1 bg-green-700 mt-2 mx-auto w-1/2 rounded-full shadow-sm" />
+      <span className="block h-0.5 bg-green-700 mt-1 mx-auto w-3/4 rounded-full" />
     </h2>
   </div>
 );
 
+/* ── ICONS ── */
+
+const CheckIcon = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5 text-green-600"
+    viewBox="0 0 20 20"
+    fill="currentColor"
+  >
+    <path
+      fillRule="evenodd"
+      d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+      clipRule="evenodd"
+    />
+  </svg>
+);
 const PrimaryButton = ({ children }: { children: React.ReactNode }) => (
-  <button className="bg-green-700 hover:bg-green-800 transition-all active:scale-95 text-white text-sm md:text-base font-semibold px-8 py-3 rounded-full shadow-lg hover:shadow-green-200">
+  <button className="bg-green-700 hover:bg-green-800 transition-colors text-white text-sm font-semibold px-6 py-2.5 rounded-full shadow-md">
     {children}
   </button>
 );
-
-/* ── ICONS ── */
-
 const Features = {
   Teacher: () => (
-    <User className="h-10 w-10" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z"
+      />
+    </svg>
   ),
   Mosque: () => (
-    <School className="h-10 w-10" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4"
+      />
+    </svg>
   ),
   Graduation: () => (
-    <GraduationCap className="h-10 w-10" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 14l9-5-9-5-9 5 9 5z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-3.422L12 14z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20 9v5" />
+    </svg>
   ),
   Online: () => (
-    <PenTool className="h-10 w-10" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"
+      />
+    </svg>
   ),
 };
-
 const QuoteIcon = () => (
-  <Quote className="h-8 w-8 text-green-200" />
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-6 w-6 text-green-300"
+    viewBox="0 0 24 24"
+    fill="currentColor"
+  >
+    <path d="M14.017 21v-7.391c0-5.704 3.731-9.57 8.983-10.609l.995 2.151c-2.432.917-3.995 3.638-3.995 5.849h4v10h-9.983zm-14.017 0v-7.391c0-5.704 3.748-9.57 9-10.609l.996 2.151c-2.433.917-3.996 3.638-3.996 5.849h3.983v10h-9.983z" />
+  </svg>
+);
+
+const ChevronRight = () => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    className="h-5 w-5 text-gray-400"
+    fill="none"
+    viewBox="0 0 24 24"
+    stroke="currentColor"
+    strokeWidth={2}
+  >
+    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+  </svg>
 );
 
 const Icons = {
   BookOpen: () => (
-    <Book className="h-10 w-10 text-green-700" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
+      />
+    </svg>
   ),
   Quran: () => (
     <svg
@@ -62,10 +164,42 @@ const Icons = {
     </svg>
   ),
   Pen: () => (
-    <PenTool className="h-10 w-10 text-green-700" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2.414a2 2 0 01.586-1.414z"
+      />
+    </svg>
   ),
   GradCap: () => (
-    <GraduationCap className="h-10 w-10 text-green-700" />
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      className="h-10 w-10 text-green-700"
+      fill="none"
+      viewBox="0 0 24 24"
+      stroke="currentColor"
+      strokeWidth={1.5}
+    >
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 14l9-5-9-5-9 5 9 5z"
+      />
+      <path
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-3.422L12 14z"
+      />
+      <path strokeLinecap="round" strokeLinejoin="round" d="M20 9v5" />
+    </svg>
   ),
 };
 
@@ -74,299 +208,305 @@ const Icons = {
 export default function Home() {
   return (
     <main
-      className="min-h-screen bg-[#fafafb] pb-16"
+      className="min-h-screen bg-white"
       style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
     >
       {/* Hero Section with Slides */}
       <HeroSection />
 
       {/* ── ABOUT SECTION ── */}
-      <section className="bg-gradient-to-b from-[#f0f7f0] to-white px-5 py-16 text-center">
+      <section className="bg-[#f0f7f0] px-5 py-8 text-center">
         <div className="max-w-4xl mx-auto">
-          <h2 className="text-3xl md:text-5xl font-extrabold text-green-900 mb-6">
+          <div className="flex justify-center gap-1 mb-3">
+            {[...Array(7)].map((_, i) => (
+              <span
+                key={i}
+                className="w-1.5 h-1.5 rounded-full bg-green-700 inline-block"
+              />
+            ))}
+          </div>
+          <h2 className="text-2xl font-bold text-green-800 mb-3">
             আমাদের সম্পর্কে
           </h2>
-          <p className="text-lg text-gray-700 leading-relaxed mb-10 max-w-3xl mx-auto">
-            দারুল ইসলাম ইনস্টিটিউট ইসলামী শিক্ষা ও আধুনিক শিক্ষার এক অনন্য সমন্বয়। আমরা বিশ্বাস করি একনিষ্ঠ দ্বীনি শিক্ষা ও আধুনিক জ্ঞানই পারে একটি উন্নত জাতি গঠন করতে। নৈতিকতা, একাডেমিক শ্রেষ্ঠত্ব ও মানবিক গুণাবলি বিকাশে আমরা বদ্ধপরিকর।
+          <p className="text-sm text-gray-600 leading-6 mb-5 max-w-xs md:max-w-xl mx-auto">
+            দারুল ইসলাম ইনস্টিটিউট ইসলামী শিক্ষা ও আধুনিক শিক্ষার সমন্বয় ঘটিয়ে
+            নৈতিক, একাডেমিক ও মানবিক গুণাবলি বিকাশে প্রতিজ্ঞাবদ্ধ।
           </p>
-          <button className="bg-green-700 hover:bg-green-800 transition-all active:scale-95 text-white text-lg font-bold px-10 py-4 rounded-full shadow-xl hover:shadow-green-200">
-            বিস্তারিত জানুন
+          <button className="bg-green-700 hover:bg-green-800 transition-colors text-white text-sm font-semibold px-6 py-2.5 rounded-full">
+            আরো পড়ুন
           </button>
         </div>
       </section>
 
-      {/* ── ACADEMIC DEPARTMENTS ── */}
-      <section className="px-5 py-20 max-w-7xl mx-auto">
-        <SectionHeading>একাডেমিক বিভাগ</SectionHeading>
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-6 md:gap-10 mt-16">
+      {/* ── COURSES ── */}
+      <section className="px-5 py-8 max-w-6xl mx-auto">
+        <SectionHeading>কোর্সসমূহ</SectionHeading>
+        {/* Mobile: 4 cols (original) | PC: 4 cols */}
+        <div className="grid grid-cols-4 gap-3 mt-6">
           {[
             {
               icon: <Icons.BookOpen />,
               title: "নূরানী বিভাগ",
-              sub: "সহজ ও শুদ্ধ কুরআন শিক্ষা",
-              color: "bg-blue-50 border-blue-100"
+              sub: "নূরানী শিক্ষা",
             },
             {
               icon: <Icons.Quran />,
               title: "হিফজ বিভাগ",
-              sub: "তাজবীদসহ হিফজুল কুরআন",
-              color: "bg-green-50 border-green-100"
+              sub: "বিভাগীয় কুরআন",
             },
-            { 
-              icon: <Icons.Pen />, 
-              title: "কিতাব বিভাগ", 
-              sub: "মৌলিক ও উচ্চতর দ্বীনি শিক্ষা",
-              color: "bg-amber-50 border-amber-100"
-            },
+            { icon: <Icons.Pen />, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
             {
               icon: <Icons.GradCap />,
               title: "সাধারণ শিক্ষা",
-              sub: "আধুনিক ও মানসম্মত স্কুলিং",
-              color: "bg-purple-50 border-purple-100"
+              sub: "আধুনিক শিক্ষা",
             },
           ].map((d, i) => (
             <div
               key={i}
-              className="flex flex-col items-center text-center gap-4 p-8 rounded-3xl bg-white border border-gray-100 shadow-sm hover:shadow-xl transition-all hover:-translate-y-2 group"
+              className="flex flex-col items-center text-center gap-2"
             >
-              <div className={`flex items-center justify-center w-24 h-24 rounded-2xl border-2 ${d.color} group-hover:scale-110 transition-transform`}>
+              <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-xl border border-green-200 bg-white shadow-sm">
                 {d.icon}
               </div>
-              <h3 className="text-xl md:text-2xl font-black text-gray-800">
+              <p className="text-xs font-semibold text-gray-800 leading-tight">
                 {d.title}
-              </h3>
-              <p className="text-sm text-gray-500 font-medium leading-tight">{d.sub}</p>
+              </p>
+              <p className="text-[10px] text-gray-500 leading-tight">{d.sub}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+      {/* ── ACADEMIC DEPARTMENTS ── */}
+
+      <section className="px-5 py-8 max-w-6xl mx-auto">
+        <SectionHeading>একাডেমিক বিভাগ</SectionHeading>
+        {/* Mobile: 4 cols (original) | PC: 4 cols */}
+        <div className="grid grid-cols-4 gap-3 mt-6">
+          {[
+            {
+              icon: <Icons.BookOpen />,
+              title: "নূরানী বিভাগ",
+              sub: "নূরানী শিক্ষা",
+            },
+            {
+              icon: <Icons.Quran />,
+              title: "হিফজ বিভাগ",
+              sub: "বিভাগীয় কুরআন",
+            },
+            { icon: <Icons.Pen />, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
+            {
+              icon: <Icons.GradCap />,
+              title: "সাধারণ শিক্ষা",
+              sub: "আধুনিক শিক্ষা",
+            },
+          ].map((d, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center text-center gap-2"
+            >
+              <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-xl border border-green-200 bg-white shadow-sm">
+                {d.icon}
+              </div>
+              <p className="text-xs font-semibold text-gray-800 leading-tight">
+                {d.title}
+              </p>
+              <p className="text-[10px] text-gray-500 leading-tight">{d.sub}</p>
             </div>
           ))}
         </div>
       </section>
 
       {/* ── TEACHERS ── */}
-      <section className="bg-white px-5 py-20 border-y border-gray-50">
-        <div className="max-w-7xl mx-auto">
-          <SectionHeading>আমাদের অভিজ্ঞ শিক্ষকবৃন্দ</SectionHeading>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-10 mt-16">
+      <section className="bg-[#f0f7f0] px-5 py-8">
+        <div className="max-w-6xl mx-auto">
+          <SectionHeading>আমাদের শিক্ষকবৃন্দ</SectionHeading>
+          {/* Mobile: 3 cols (original) | PC: 3 cols */}
+          <div className="grid grid-cols-3 gap-4 mt-6">
             {[
-              { name: "মুফতি আব্দুল্লাহ", role: "হাদিস বিশেষজ্ঞ", image: "https://i.ibb.co/FVTN0wM/group.jpg" },
-              { name: "মাওলানা ইমরান", role: "কুরআন বিশেষজ্ঞ", image: "https://i.ibb.co/ZJp5fC5/classroom.jpg" },
-              { name: "মুফতি সাইফুল ইসলাম", role: "আরবি ভাষা বিশেষজ্ঞ", image: "https://i.ibb.co/0yH0H4s/building.jpg" },
+              { name: "মুফতি আব্দুল্লাহ", role: "হাদিস বিশেষজ্ঞ" },
+              { name: "মাওলানা ইমরান", role: "কুরআন বিশেষজ্ঞ" },
+              { name: "মুফতি সাইফুল ইসলাম", role: "আরবি ভাষা বিশেষজ্ঞ" },
             ].map((t, i) => (
               <div
                 key={i}
-                className="flex flex-col items-center text-center gap-4 bg-[#f8faf8] p-8 rounded-[40px] border border-green-50 shadow-inner group"
+                className="flex flex-col items-center text-center gap-2"
               >
-                <div className="w-32 h-32 md:w-40 md:h-40 rounded-full bg-white border-8 border-white overflow-hidden shadow-xl group-hover:scale-105 transition-transform">
-                  <div className="w-full h-full bg-gray-200 flex items-center justify-center text-green-700">
-                    <User size={64} />
-                  </div>
+                <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-gray-300 border-2 border-green-200 overflow-hidden flex items-end justify-center">
+                  <svg
+                    viewBox="0 0 80 80"
+                    className="w-full h-full"
+                    fill="none"
+                  >
+                    <circle cx="40" cy="28" r="14" fill="#9ca3af" />
+                    <ellipse cx="40" cy="70" rx="22" ry="16" fill="#9ca3af" />
+                  </svg>
                 </div>
-                <div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-1">
-                    {t.name}
-                  </h4>
-                  <p className="text-green-700 font-bold uppercase tracking-wider text-xs">{t.role}</p>
-                </div>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-center mt-12">
-            <PrimaryButton>সকল শিক্ষক দেখুন</PrimaryButton>
-          </div>
-        </div>
-      </section>
-
-      {/* ── ADMISSION INFO ── */}
-      <section className="px-5 py-24 max-w-5xl mx-auto text-center">
-        <div className="bg-green-900 rounded-[50px] p-10 md:p-20 text-white shadow-2xl relative overflow-hidden">
-          <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-32 -mt-32" />
-          <div className="absolute bottom-0 left-0 w-48 h-48 bg-white/5 rounded-full -ml-24 -mb-24" />
-          
-          <h2 className="text-3xl md:text-5xl font-black mb-6">ভর্তি তথ্য ২০২৬</h2>
-          <p className="text-green-100 text-lg mb-12 opacity-90">সহজ ৩টি ধাপে আপনার ভর্তি প্রক্রিয়া সম্পন্ন করুন</p>
-          
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-16 relative z-10">
-            {[
-              { t: "ফরম পূরণ", d: "অনলাইনে ফরম পূরণ করুন" },
-              { t: "কাগজপত্র", d: "প্রয়োজনীয় নথি জমা দিন" },
-              { t: "ভর্তি নিশ্চিত", d: "সাক্ষাৎকার ও ফি প্রদান" },
-            ].map((item, i) => (
-              <div key={i} className="flex flex-col items-center">
-                <div className="w-14 h-14 bg-white text-green-900 rounded-2xl flex items-center justify-center font-black text-2xl mb-4 shadow-lg">
-                  {i+1}
-                </div>
-                <h3 className="text-xl font-bold mb-2">{item.t}</h3>
-                <p className="text-sm text-green-200">{item.d}</p>
-              </div>
-            ))}
-          </div>
-          
-          <div className="flex flex-wrap justify-center gap-6 relative z-10">
-            <button className="bg-white text-green-900 hover:bg-green-50 transition-all font-black px-10 py-4 rounded-2xl shadow-xl">
-              এখনই আবেদন করুন
-            </button>
-            <button className="border-2 border-white/30 hover:bg-white/10 transition-all text-white font-bold px-10 py-4 rounded-2xl">
-              ভর্তি গাইডলাইন
-            </button>
-          </div>
-        </div>
-      </section>
-
-      {/* ── NOTICE BOARD ── */}
-      <section className="px-5 py-20 max-w-5xl mx-auto">
-        <SectionHeading>নোটিশ বোর্ড</SectionHeading>
-        <div className="mt-12 bg-white rounded-[32px] overflow-hidden shadow-xl border border-gray-100">
-          <div className="bg-green-800 px-8 py-4 flex items-center justify-between">
-            <span className="text-white font-bold">সর্বশেষ আপডেট</span>
-            <div className="flex gap-1">
-              {[1, 2, 3].map(i => <div key={i} className="w-2 h-2 rounded-full bg-white/30" />)}
-            </div>
-          </div>
-          <div className="divide-y divide-gray-50">
-            {[
-              {
-                title: "বার্ষিক পরীক্ষা ২০২৪ এর সময়সূচি প্রকাশ",
-                date: "20 May 2024",
-                tag: "জরুরী"
-              },
-              { title: "নতুন সেশনের ভর্তি শুরু", date: "18 May 2024", tag: "নতুন" },
-              { title: "ঈদুল ফিতরের ছুটি সংক্রান্ত নোটিশ", date: "15 May 2024", tag: "নোটিশ" },
-            ].map((notice, i) => (
-              <div
-                key={i}
-                className="flex items-center justify-between gap-4 p-6 md:p-8 hover:bg-gray-50 transition-colors group cursor-pointer"
-              >
-                <div className="flex items-center gap-4">
-                   <div className="hidden md:flex w-12 h-12 bg-green-50 text-green-700 rounded-xl items-center justify-center group-hover:bg-green-700 group-hover:text-white transition-colors">
-                     <Book size={20} />
-                   </div>
-                   <div>
-                    <p className="text-lg font-bold text-gray-800 mb-1">
-                      {notice.title}
-                    </p>
-                    <span className="bg-green-100 text-green-700 text-[10px] px-2 py-0.5 rounded-md font-bold uppercase">{notice.tag}</span>
-                   </div>
-                </div>
-                <p className="text-sm text-gray-400 font-bold whitespace-nowrap">
-                  {notice.date}
+                <p className="text-xs md:text-base font-bold text-gray-800 leading-tight">
+                  {t.name}
                 </p>
+                <p className="text-[10px] md:text-xs text-gray-500">{t.role}</p>
               </div>
             ))}
           </div>
-          <div className="p-8 bg-gray-50/50 text-center">
-            <button className="text-green-700 font-black hover:underline flex items-center justify-center gap-2 mx-auto">
-              সকল নোটিশ দেখুন <PenTool size={16} />
+          <div className="flex justify-center mt-6">
+            <button className="bg-green-700 hover:bg-green-800 transition-colors text-white text-sm font-semibold px-6 py-2.5 rounded-full">
+              সব শিক্ষক দেখুন
             </button>
           </div>
         </div>
       </section>
 
-      {/* ── GALLERY ── */}
-      <section className="px-5 py-20 bg-white">
-        <div className="max-w-7xl mx-auto text-center">
-          <SectionHeading>ফটো গ্যালারি</SectionHeading>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mt-16 mb-12">
-            {[
-              "https://i.ibb.co/FVTN0wM/group.jpg",
-              "https://i.ibb.co/ZJp5fC5/classroom.jpg",
-              "https://i.ibb.co/0yH0H4s/building.jpg",
-              "https://i.ibb.co/FVTN0wM/group.jpg",
-              "https://i.ibb.co/ZJp5fC5/classroom.jpg",
-              "https://i.ibb.co/0yH0H4s/building.jpg",
-            ].map((src, i) => (
-              <div
-                key={i}
-                className="group relative aspect-[4/3] rounded-[32px] overflow-hidden shadow-lg hover:shadow-2xl transition-all"
-              >
-                <img
-                  src={src}
-                  alt={`Gallery ${i + 1}`}
-                  className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
-                />
-                <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                  <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center text-green-900 scale-0 group-hover:scale-100 transition-transform">
-                    <CheckCircle2 />
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-          <PrimaryButton>গ্যালারি দেখুন</PrimaryButton>
+      {/* ── 1. ADMISSION INFO ── */}
+      <section className="px-5 py-10 max-w-xl mx-auto text-center">
+        <SectionHeading>ভর্তি তথ্য</SectionHeading>
+        <div className="space-y-3.5 text-left inline-block mb-8">
+          {[
+            "ভর্তি হতে অনলাইন ফরম পূরণ করুন",
+            "প্রয়োজনীয় কাগজপত্র জমা দিন",
+            "ভর্তি পরীক্ষা (প্রয়োজ্য ক্ষেত্রে)",
+          ].map((text, i) => (
+            <div key={i} className="flex items-center gap-3">
+              <CheckIcon />
+              <span className="text-sm md:text-base text-gray-700">{text}</span>
+            </div>
+          ))}
+        </div>
+        <div>
+          <PrimaryButton>এখনই আবেদন করুন</PrimaryButton>
         </div>
       </section>
 
-      {/* ── WHY CHOOSE US ── */}
-      <section className="bg-green-50 px-5 py-24 rounded-[60px] mx-5 my-10 border border-green-100">
-        <div className="max-w-7xl mx-auto text-center">
-          <h2 className="text-3xl md:text-5xl font-black text-gray-900 mb-6">
+      {/* ── 2. NOTICE BOARD ── */}
+      <section className="bg-white px-5 py-10 max-w-4xl mx-auto rounded-2xl shadow-sm border border-gray-100 mb-10">
+        <SectionHeading>নোটিশ বোর্ড</SectionHeading>
+        <div className="space-y-1.5 mb-8">
+          {[
+            {
+              title: "বার্ষিক পরীক্ষা ২০২৪ এর সময়সূচি প্রকাশ",
+              date: "20 May 2024",
+            },
+            { title: "নতুন সেশনের ভর্তি শুরু", date: "18 May 2024" },
+            { title: "ঈদুল ফিতরের ছুটি সংক্রান্ত নোটিশ", date: "15 May 2024" },
+          ].map((notice, i) => (
+            <div
+              key={i}
+              className="flex items-center justify-between gap-4 border-b border-gray-100 py-3 last:border-b-0 px-1"
+            >
+              <p className="text-sm md:text-base text-gray-800 flex-1">
+                {notice.title}
+              </p>
+              <p className="text-xs md:text-sm text-gray-500 whitespace-nowrap">
+                {notice.date}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div className="text-center">
+          <PrimaryButton>সব নোটিশ দেখুন</PrimaryButton>
+        </div>
+      </section>
+
+      {/* ── 3. GALLERY ── */}
+      <section className="px-5 py-10 max-w-6xl mx-auto text-center">
+        <SectionHeading>গ্যালারি</SectionHeading>
+        {/* Mobile: 1 col, md+: 3 cols */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
+          {[
+            "https://i.ibb.co/FVTN0wM/group.jpg",
+            "https://i.ibb.co/ZJp5fC5/classroom.jpg",
+            "https://i.ibb.co/0yH0H4s/building.jpg",
+          ].map((src, i) => (
+            <div
+              key={i}
+              className="aspect-[4/3] rounded-xl overflow-hidden shadow-md border-4 border-white ring-1 ring-gray-100"
+            >
+              <img
+                src={src}
+                alt={`Gallery Image ${i + 1}`}
+                className="w-full h-full object-cover"
+              />
+            </div>
+          ))}
+        </div>
+        <div>
+          <PrimaryButton>সব ছবি দেখুন</PrimaryButton>
+        </div>
+      </section>
+
+      {/* ── 4. WHY CHOOSE US ── */}
+      <section className="bg-white px-5 py-12 max-w-6xl mx-auto mb-10">
+        <div className="text-center mb-10">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
             কেন আমাদের বেছে নিবেন?
           </h2>
-          <p className="text-gray-600 max-w-2xl mx-auto mb-16 text-lg">
-            দারুল ইসলাম ইনস্টিটিউট নৈতিক ও আধুনিক শিক্ষার এক অনন্য সমন্বয় যা শিক্ষার্থীদের আদর্শ মানুষ হিসেবে গড়ে তোলে।
+          <p className="text-gray-600 max-w-lg mx-auto text-sm md:text-base">
+            দারুল ইসলাম ইনস্টিটিউট নৈতিক ও আধুনিক শিক্ষার এক অনন্য সমন্বয়।
           </p>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              { icon: <Features.Teacher />, title: "অভিজ্ঞ শিক্ষক", d: "দেশসেরা ওলামা ও অভিজ্ঞ শিক্ষকমণ্ডলী" },
-              { icon: <Features.Mosque />, title: "ইসলামিক পরিবেশ", d: "সুন্নাহ ভিত্তিক আদর্শ জীবনচর্চা" },
-              { icon: <Features.Graduation />, title: "মানসম্মত শিক্ষা", d: "আধুনিক ও দ্বীনি শিক্ষার সমন্বয়" },
-              { icon: <Features.Online />, title: "অনলাইন সুবিধা", d: "ডিজিটাল লার্নিং ও প্রগ্রেস মনিটরিং" },
-            ].map((feature, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center gap-5 bg-white p-10 rounded-[40px] shadow-sm hover:shadow-xl transition-all"
-              >
-                <div className="w-20 h-20 bg-green-900 text-white rounded-3xl flex items-center justify-center shadow-lg">
-                  {feature.icon}
-                </div>
-                <h3 className="text-xl font-bold text-gray-900">{feature.title}</h3>
-                <p className="text-sm text-gray-500 leading-relaxed">{feature.d}</p>
+        </div>
+        {/* Mobile: 2 cols, md+: 4 cols */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+          {[
+            { icon: <Features.Teacher />, title: "অভিজ্ঞ শিক্ষক" },
+            { icon: <Features.Mosque />, title: "ইসলামিক পরিবেশ" },
+            { icon: <Features.Graduation />, title: "মানসম্মত শিক্ষা" },
+            { icon: <Features.Online />, title: "অনলাইন সুবিধা" },
+          ].map((feature, i) => (
+            <div
+              key={i}
+              className="flex flex-col items-center gap-3 bg-[#f8faf8] p-5 rounded-2xl border border-green-50 shadow-inner"
+            >
+              <div className="p-3 bg-white rounded-full shadow-md border border-gray-50">
+                {feature.icon}
               </div>
-            ))}
-          </div>
+              <p className="text-sm md:text-base font-semibold text-green-900 leading-tight">
+                {feature.title}
+              </p>
+            </div>
+          ))}
         </div>
       </section>
 
-      {/* ── TESTIMONIALS ── */}
-      <section className="px-5 py-24 max-w-7xl mx-auto">
+      {/* ── 5. TESTIMONIALS ── */}
+      <section className="px-5 py-12 max-w-6xl mx-auto">
         <SectionHeading>অভিভাবক ও শিক্ষার্থীদের মতামত</SectionHeading>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-16">
+        {/* Mobile: 1 col, md+: 3 cols */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mt-8">
           {[
             {
               quote:
-                "দারুল ইসলাম ইনস্টিটিউট আমার সন্তানের জন্য সেরা প্রতিষ্ঠান। এখানকার পড়াশোনার মান এবং পরিবেশ অত্যন্ত চমৎকার।",
+                "দারুল ইসলাম ইনস্টিটিউট আমার সন্তানের জন্য সেরা প্রতিষ্ঠান।",
               name: "মোঃ রফিকুল ইসলাম",
               role: "অভিভাবক",
             },
             {
-              quote: "এখানে পড়ে আমার দ্বীন ও সাধারণ জ্ঞান অনেক উন্নত হয়েছে। আমি নিজেকে একজন ভালো মানুষ হিসেবে গড়ে তোলার সাহস পেয়েছি।",
+              quote: "এখানে পড়ে আমার দ্বীন ও সাধারণ জ্ঞান অনেক উন্নত হয়েছে।",
               name: "আরিফ বিন সাদ",
               role: "শিক্ষার্থী",
             },
             {
-              quote: "শিক্ষকরা খুব যত্নশীল এবং সহযোগী। তারা প্রতিটি শিক্ষার্থীর ব্যক্তিগত উন্নতির দিকে খেয়াল রাখেন।",
+              quote: "শিক্ষকরা খুব যত্নশীল এবং সহযোগী।",
               name: "সাদিয়া আক্তার",
               role: "অভিভাবক",
             },
           ].map((testimonial, i) => (
             <div
               key={i}
-              className="bg-white p-10 rounded-[48px] shadow-xl border border-gray-50 flex flex-col gap-8 relative group hover:border-green-200 transition-all"
+              className="bg-white p-6 rounded-2xl shadow-lg border border-gray-100 flex flex-col gap-4 relative overflow-hidden group"
             >
-              <div className="absolute top-8 right-10 opacity-10 group-hover:opacity-30 transition-opacity">
+              <div className="absolute -top-3 -left-3 opacity-30 group-hover:opacity-100 transition-opacity">
                 <QuoteIcon />
               </div>
-              <div className="flex-1 text-lg text-gray-700 leading-relaxed pt-4 italic">
+              <div className="flex-1 text-gray-700 leading-relaxed pt-2">
+                <span className="text-6xl text-green-500 font-serif leading-none float-left mr-1 mt-[-10px]">
+                  “
+                </span>
                 {testimonial.quote}
               </div>
-              <div className="border-t border-gray-100 pt-8 mt-auto flex items-center gap-5">
-                <div className="w-14 h-14 rounded-2xl bg-green-900 text-white flex items-center justify-center font-black text-xl shadow-lg">
-                  {testimonial.name[0]}
-                </div>
-                <div>
-                  <h5 className="text-lg font-bold text-gray-900">
-                    {testimonial.name}
-                  </h5>
-                  <p className="text-sm text-green-700 font-bold uppercase tracking-wider">{testimonial.role}</p>
-                </div>
+              <div className="border-t border-gray-100 pt-4 mt-auto">
+                <p className="text-sm font-bold text-gray-900">
+                  -{testimonial.name}
+                </p>
+                <p className="text-xs text-green-700">{testimonial.role}</p>
               </div>
             </div>
           ))}
