@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Link from 'next/link';
+import React, { useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 import {
   Home,
   University,
@@ -64,8 +64,12 @@ const drawerMenuItems = [
   {
     name: "অ্যাকাউন্ট",
     submenu: [
-      { name: "লগইন", href: "/login", icon: LogIn },
-      { name: "রেজিস্ট্রেশন", href: "/register", icon: UserPlus },
+      { name: "লগইন", href: "/auth-dashboard/login", icon: LogIn },
+      {
+        name: "রেজিস্ট্রেশন",
+        href: "/auth-dashboard/register",
+        icon: UserPlus,
+      },
       { name: "প্রোফাইল", href: "/profile", icon: User },
       { name: "সেটিংস", href: "/profile", icon: Settings },
     ],
@@ -102,7 +106,10 @@ const Header = () => {
 
         {/* Action Buttons */}
         <div className="flex items-center gap-4">
-          <Link href="/notice" className="text-white hover:text-yellow-400 transition">
+          <Link
+            href="/notice"
+            className="text-white hover:text-yellow-400 transition"
+          >
             <BellRing size={24} />
           </Link>
           <button
@@ -138,7 +145,10 @@ const Header = () => {
               {/* Drawer Header */}
               <div className="bg-[#14281D] p-5 flex justify-between items-center shrink-0">
                 <span className="text-white font-bold text-lg">মেনু</span>
-                <button onClick={() => setIsOpen(false)} className="p-1 hover:bg-white/10 rounded-full transition">
+                <button
+                  onClick={() => setIsOpen(false)}
+                  className="p-1 hover:bg-white/10 rounded-full transition"
+                >
                   <X className="text-white" />
                 </button>
               </div>

@@ -10,6 +10,7 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
+  ArrowLeft, // ArrowLeft ইম্পোর্ট করা হয়েছে
 } from "lucide-react";
 import Image from "next/image";
 
@@ -85,6 +86,24 @@ const LoginPage = () => {
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="w-full max-w-md bg-white rounded-[2.5rem] lg:rounded-none lg:shadow-none border border-neutral-100 lg:border-none p-8 md:p-10 lg:p-0 my-auto"
         >
+          {/* --- "পিছনে" বাটন সিস্টেম (রেসপনসিভ) --- */}
+          <div className="mb-6 lg:mb-10">
+            <Link
+              href="/"
+              className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#105D38] transition-colors group"
+            >
+              <div className="p-2.5 lg:p-0 bg-neutral-50 lg:bg-transparent rounded-full lg:rounded-none border border-neutral-100 lg:border-none shadow-sm lg:shadow-none">
+                <ArrowLeft
+                  size={20}
+                  className="group-hover:-translate-x-1 transition-transform"
+                />
+              </div>
+              <span className="hidden lg:block text-sm font-bold uppercase tracking-widest">
+                পিছনে যান
+              </span>
+            </Link>
+          </div>
+
           {/* Tabs for Mobile - Fixed Section */}
           <div className="flex bg-neutral-50 p-1.5 rounded-2xl mb-8 border border-neutral-100 lg:hidden">
             <button className="flex-1 py-2.5 rounded-xl bg-[#105D38] text-white font-bold text-sm shadow-md transition-all">
