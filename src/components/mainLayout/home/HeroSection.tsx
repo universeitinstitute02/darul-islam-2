@@ -63,7 +63,7 @@ export default function HeroSection() {
               <div className="max-w-2xl space-y-2 lg:space-y-2">
 
                 {/* Tag */}
-                <span className="inline-block bg-[#87F56] text-[#14281D] px-2 py-0.5 lg:px-4 lg:py-1 rounded-full font-bold text-[10px] lg:text-base">
+                <span className="inline-block bg-[#22c55e] text-white px-2 py-0.5 lg:px-4 lg:py-1 rounded-full font-bold text-[10px] lg:text-base">
                   {slide.tag}
                 </span>
 
@@ -123,7 +123,7 @@ export default function HeroSection() {
             onClick={() => setCurrentSlide(index)}
             className={`h-2 lg:h-3 rounded-full transition-all ${
               index === currentSlide
-                ? "bg-[#87F56] w-4 lg:w-8"
+                ? "bg-[#22c55e] w-4 lg:w-8"
                 : "bg-white/30 w-2 lg:w-3"
             }`}
           />
