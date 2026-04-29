@@ -22,6 +22,56 @@ const navItems = [
   { name: "প্রোফাইল", href: "/profile", icon: User },
 ];
 
+const drawerMenuItems = [
+  { name: "হোম", href: "/", icon: Home },
+  {
+    name: "আমাদের সম্পর্কে",
+    submenu: [
+      { name: "ইতিহাস", href: "/about/history", icon: History },
+      { name: "লক্ষ্য ও উদ্দেশ্য", href: "/about/mission", icon: Target },
+      { name: "পরিচালনা পর্ষদ", href: "/about/board", icon: UserCheck },
+    ],
+  },
+  {
+    name: "একাডেমিক বিবরণ",
+    submenu: [
+      { name: "শিক্ষক প্রোফাইল", href: "/dashboard/teacher", icon: Users },
+      { name: "একাডেমিক", href: "/education", icon: University },
+      { name: "ভর্তি ফর্ম", href: "/admission", icon: FileText },
+      { name: "নোটিশ বোর্ড", href: "/notices", icon: FileText },
+    ],
+  },
+  {
+    name: "বিভাগসমূহ",
+    submenu: [
+      { name: "কোর্স সমূহ", href: "/courses", icon: Book },
+      { name: "দাওয়াহ", href: "/dawah", icon: Users },
+    ],
+  },
+  { name: "দান", href: "/donation", icon: HandHeart },
+  { name: "যোগাযোগ", href: "/contact", icon: Info },
+  {
+    name: "গ্যালারি",
+    submenu: [
+      { name: "চিত্র গ্যালারি", href: "/gallery/photos", icon: ImageIcon },
+      { name: "ভিডিও গ্যালারি", href: "/gallery/videos", icon: Video },
+    ],
+  },
+  {
+    name: "অ্যাকাউন্ট",
+    submenu: [
+      { name: "লগইন", href: "/auth-dashboard/login", icon: LogIn },
+      {
+        name: "রেজিস্ট্রেশন",
+        href: "/auth-dashboard/register",
+        icon: UserPlus,
+      },
+      { name: "প্রোফাইল", href: "/profile", icon: User },
+      { name: "সেটিংস", href: "/profile", icon: Settings },
+    ],
+  },
+];
+
 export default function Navbar() {
   const [showNavbar, setShowNavbar] = useState(true);
   const lastScrollY = useRef(0);
