@@ -19,15 +19,6 @@ import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-const SectionHeading = ({ children }) => (
-  <div className="text-center mb-10">
-    <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
-      {children}
-      <span className="block h-1 bg-green-600 mt-2 mx-auto w-1/2 rounded-full" />
-    </h2>
-  </div>
-);
-
 const Academic = () => {
   const departments = [
     { icon: <BookOpen />, title: "নূরানী বিভাগ", sub: "প্রাথমিক শিক্ষা" },
@@ -42,7 +33,12 @@ const Academic = () => {
 
   return (
     <section className="px-5 py-16 max-w-7xl mx-auto relative group">
-      <SectionHeading>একাডেমিক বিভাগ</SectionHeading>
+      <div className="text-center mb-10">
+        <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
+          একাডেমিক বিভাগ
+          <span className="block h-1 bg-green-600 mt-2 mx-auto w-1/2 rounded-full" />
+        </h2>
+      </div>
 
       <div className="relative px-2 md:px-10">
         <Swiper
