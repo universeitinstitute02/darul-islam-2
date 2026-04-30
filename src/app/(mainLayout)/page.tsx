@@ -3,17 +3,9 @@ import HeroSection from "@/src/components/mainLayout/home/HeroSection";
 import Course from "@/src/components/LandingPageLayout/Course/Course";
 import Academic from "@/src/components/LandingPageLayout/Academic/Academic";
 import AmaderTeacher from "@/src/components/LandingPageLayout/AmaderTeacher/AmaderTeacher";
+import SectionHeading from "@/src/components/shared/SectionHeading";
 
 /* ── COMPONENTS ── */
-
-const SectionHeading = ({ children }: { children: React.ReactNode }) => (
-  <div className="text-center">
-    <h2 className="text-xl md:text-2xl font-bold text-green-800 inline-block relative">
-      {children}
-      <span className="block h-0.5 bg-green-700 mt-1 mx-auto w-3/4 rounded-full" />
-    </h2>
-  </div>
-);
 
 /* ── ICONS ── */
 
