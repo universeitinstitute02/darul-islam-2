@@ -5,6 +5,9 @@ import Academic from "@/src/components/LandingPageLayout/Academic/Academic";
 import AmaderTeacher from "@/src/components/LandingPageLayout/AmaderTeacher/AmaderTeacher";
 import AboutHome from "@/src/components/mainLayout/home/AboutHome";
 import SectionHeading from "@/src/components/shared/SectionHeading";
+import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestStudents";
+import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
+import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
 
 /* ── ICONS ── */
 const CheckIcon = () => (
@@ -131,6 +134,9 @@ export default function Home() {
 
       {/* ── TEACHERS ── */}
       <AmaderTeacher />
+
+      {/* ── STUDENTS ── */}
+      <StudentSlider />
 
       {/* ── 1. ADMISSION INFO ── */}
       <section className="px-5 py-10 max-w-xl mx-auto text-center">
@@ -288,6 +294,11 @@ export default function Home() {
           ))}
         </div>
       </section>
+      {/* Donation section */}
+      <DonationSection />
+
+      {/* Contact and Map section */}
+      <ContactSection />
     </main>
   );
 }
