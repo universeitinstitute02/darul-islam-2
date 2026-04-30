@@ -3,12 +3,10 @@ import HeroSection from "@/src/components/mainLayout/home/HeroSection";
 import Course from "@/src/components/LandingPageLayout/Course/Course";
 import Academic from "@/src/components/LandingPageLayout/Academic/Academic";
 import AmaderTeacher from "@/src/components/LandingPageLayout/AmaderTeacher/AmaderTeacher";
+import AboutHome from "@/src/components/mainLayout/home/AboutHome";
 import SectionHeading from "@/src/components/shared/SectionHeading";
 
-/* ── COMPONENTS ── */
-
 /* ── ICONS ── */
-
 const CheckIcon = () => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
@@ -111,95 +109,7 @@ const QuoteIcon = () => (
   </svg>
 );
 
-const ChevronRight = () => (
-  <svg
-    xmlns="http://www.w3.org/2000/svg"
-    className="h-5 w-5 text-gray-400"
-    fill="none"
-    viewBox="0 0 24 24"
-    stroke="currentColor"
-    strokeWidth={2}
-  >
-    <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
-  </svg>
-);
-
-const Icons = {
-  BookOpen: () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-10 w-10 text-green-700"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"
-      />
-    </svg>
-  ),
-  Quran: () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-10 w-10 text-green-700"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 6v6m0 0v6m0-6h6m-6 0H6"
-      />
-      <rect x="3" y="3" width="18" height="18" rx="2" strokeWidth={1.5} />
-    </svg>
-  ),
-  Pen: () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-10 w-10 text-green-700"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M15.232 5.232l3.536 3.536M9 13l6.586-6.586a2 2 0 112.828 2.828L11.828 15.828a2 2 0 01-1.414.586H9v-2.414a2 2 0 01.586-1.414z"
-      />
-    </svg>
-  ),
-  GradCap: () => (
-    <svg
-      xmlns="http://www.w3.org/2000/svg"
-      className="h-10 w-10 text-green-700"
-      fill="none"
-      viewBox="0 0 24 24"
-      stroke="currentColor"
-      strokeWidth={1.5}
-    >
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 14l9-5-9-5-9 5 9 5z"
-      />
-      <path
-        strokeLinecap="round"
-        strokeLinejoin="round"
-        d="M12 14l6.16-3.422A12.083 12.083 0 0112 21a12.083 12.083 0 01-6.16-3.422L12 14z"
-      />
-      <path strokeLinecap="round" strokeLinejoin="round" d="M20 9v5" />
-    </svg>
-  ),
-};
-
 /* ── MAIN PAGE ── */
-
 export default function Home() {
   return (
     <main
@@ -210,28 +120,7 @@ export default function Home() {
       <HeroSection />
 
       {/* ── ABOUT SECTION ── */}
-      <section className="bg-[#f0f7f0] px-5 py-8 text-center">
-        <div className="max-w-4xl mx-auto">
-          <div className="flex justify-center gap-1 mb-3">
-            {[...Array(7)].map((_, i) => (
-              <span
-                key={i}
-                className="w-1.5 h-1.5 rounded-full bg-green-700 inline-block"
-              />
-            ))}
-          </div>
-          <h2 className="text-2xl font-bold text-green-800 mb-3">
-            আমাদের সম্পর্কে
-          </h2>
-          <p className="text-sm text-gray-600 leading-6 mb-5 max-w-xs md:max-w-xl mx-auto">
-            দারুল ইসলাম ইনস্টিটিউট ইসলামী শিক্ষা ও আধুনিক শিক্ষার সমন্বয় ঘটিয়ে
-            নৈতিক, একাডেমিক ও মানবিক গুণাবলি বিকাশে প্রতিজ্ঞাবদ্ধ।
-          </p>
-          <button className="bg-green-700 hover:bg-green-800 transition-colors text-white text-sm font-semibold px-6 py-2.5 rounded-full">
-            আরো পড়ুন
-          </button>
-        </div>
-      </section>
+      <AboutHome />
 
       {/* ── COURSES ── */}
       <Course />
