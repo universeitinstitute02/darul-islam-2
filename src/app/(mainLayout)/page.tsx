@@ -1,5 +1,8 @@
 import React from "react";
 import HeroSection from "@/src/components/mainLayout/home/HeroSection";
+import Course from "@/src/components/LandingPageLayout/Course/Course";
+import Academic from "@/src/components/LandingPageLayout/Academic/Academic";
+import AmaderTeacher from "@/src/components/LandingPageLayout/AmaderTeacher/AmaderTeacher";
 
 /* ── COMPONENTS ── */
 
@@ -239,122 +242,14 @@ export default function Home() {
       </section>
 
       {/* ── COURSES ── */}
-      <section className="px-5 py-8 max-w-6xl mx-auto">
-        <SectionHeading>কোর্সসমূহ</SectionHeading>
-        {/* Mobile: 4 cols (original) | PC: 4 cols */}
-        <div className="grid grid-cols-4 gap-3 mt-6">
-          {[
-            {
-              icon: <Icons.BookOpen />,
-              title: "নূরানী বিভাগ",
-              sub: "নূরানী শিক্ষা",
-            },
-            {
-              icon: <Icons.Quran />,
-              title: "হিফজ বিভাগ",
-              sub: "বিভাগীয় কুরআন",
-            },
-            { icon: <Icons.Pen />, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
-            {
-              icon: <Icons.GradCap />,
-              title: "সাধারণ শিক্ষা",
-              sub: "আধুনিক শিক্ষা",
-            },
-          ].map((d, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center text-center gap-2"
-            >
-              <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-xl border border-green-200 bg-white shadow-sm">
-                {d.icon}
-              </div>
-              <p className="text-xs font-semibold text-gray-800 leading-tight">
-                {d.title}
-              </p>
-              <p className="text-[10px] text-gray-500 leading-tight">{d.sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <Course />
+
       {/* ── ACADEMIC DEPARTMENTS ── */}
 
-      <section className="px-5 py-8 max-w-6xl mx-auto">
-        <SectionHeading>একাডেমিক বিভাগ</SectionHeading>
-        {/* Mobile: 4 cols (original) | PC: 4 cols */}
-        <div className="grid grid-cols-4 gap-3 mt-6">
-          {[
-            {
-              icon: <Icons.BookOpen />,
-              title: "নূরানী বিভাগ",
-              sub: "নূরানী শিক্ষা",
-            },
-            {
-              icon: <Icons.Quran />,
-              title: "হিফজ বিভাগ",
-              sub: "বিভাগীয় কুরআন",
-            },
-            { icon: <Icons.Pen />, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
-            {
-              icon: <Icons.GradCap />,
-              title: "সাধারণ শিক্ষা",
-              sub: "আধুনিক শিক্ষা",
-            },
-          ].map((d, i) => (
-            <div
-              key={i}
-              className="flex flex-col items-center text-center gap-2"
-            >
-              <div className="flex items-center justify-center w-16 h-16 md:w-20 md:h-20 rounded-xl border border-green-200 bg-white shadow-sm">
-                {d.icon}
-              </div>
-              <p className="text-xs font-semibold text-gray-800 leading-tight">
-                {d.title}
-              </p>
-              <p className="text-[10px] text-gray-500 leading-tight">{d.sub}</p>
-            </div>
-          ))}
-        </div>
-      </section>
+      <Academic />
 
       {/* ── TEACHERS ── */}
-      <section className="bg-[#f0f7f0] px-5 py-8">
-        <div className="max-w-6xl mx-auto">
-          <SectionHeading>আমাদের শিক্ষকবৃন্দ</SectionHeading>
-          {/* Mobile: 3 cols (original) | PC: 3 cols */}
-          <div className="grid grid-cols-3 gap-4 mt-6">
-            {[
-              { name: "মুফতি আব্দুল্লাহ", role: "হাদিস বিশেষজ্ঞ" },
-              { name: "মাওলানা ইমরান", role: "কুরআন বিশেষজ্ঞ" },
-              { name: "মুফতি সাইফুল ইসলাম", role: "আরবি ভাষা বিশেষজ্ঞ" },
-            ].map((t, i) => (
-              <div
-                key={i}
-                className="flex flex-col items-center text-center gap-2"
-              >
-                <div className="w-20 h-20 md:w-32 md:h-32 rounded-full bg-gray-300 border-2 border-green-200 overflow-hidden flex items-end justify-center">
-                  <svg
-                    viewBox="0 0 80 80"
-                    className="w-full h-full"
-                    fill="none"
-                  >
-                    <circle cx="40" cy="28" r="14" fill="#9ca3af" />
-                    <ellipse cx="40" cy="70" rx="22" ry="16" fill="#9ca3af" />
-                  </svg>
-                </div>
-                <p className="text-xs md:text-base font-bold text-gray-800 leading-tight">
-                  {t.name}
-                </p>
-                <p className="text-[10px] md:text-xs text-gray-500">{t.role}</p>
-              </div>
-            ))}
-          </div>
-          <div className="flex justify-center mt-6">
-            <button className="bg-green-700 hover:bg-green-800 transition-colors text-white text-sm font-semibold px-6 py-2.5 rounded-full">
-              সব শিক্ষক দেখুন
-            </button>
-          </div>
-        </div>
-      </section>
+      <AmaderTeacher />
 
       {/* ── 1. ADMISSION INFO ── */}
       <section className="px-5 py-10 max-w-xl mx-auto text-center">
