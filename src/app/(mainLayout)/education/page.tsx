@@ -2,8 +2,8 @@
 import React, { useEffect, useState } from "react";
 import CourseSection from "@/src/components/shared/EducationSectionShare";
 import Image from "next/image";
+import { motion } from "framer-motion";
 
-// ১. Data structure define korlam bhaiya
 interface EducationData {
   educationData: any[];
   educationData2: any[];
@@ -32,12 +32,21 @@ const EducationPage = () => {
 
   const { educationData, educationData2, freeCoursesData } = data;
 
+  // halka kore animation korlam bro's
+  const fadeInVariant = {
+    initial: { opacity: 0, y: 20 },
+    whileInView: { opacity: 1, y: 0 },
+    viewport: { once: true },
+    transition: { duration: 0.5 },
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc]">
       <div className="max-w-6xl mx-auto px-4 pt-24 lg:pt-32 space-y-20">
         {educationData.map((section, idx) => (
-          <div
+          <motion.div
             key={idx}
+            {...fadeInVariant} // ২. স্ক্রল অ্যানিমেশন
             className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm"
           >
             <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
@@ -48,9 +57,11 @@ const EducationPage = () => {
 
             <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
               {section.courses.map((course: any, cIdx: number) => (
-                <div
+                <motion.div
                   key={cIdx}
-                  className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+                  whileHover={{ scale: 1.05 }} // ৩. হালকা হোভার ইফেক্ট
+                  whileTap={{ scale: 0.95 }}
+                  className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
                 >
                   <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
                   <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
@@ -60,21 +71,26 @@ const EducationPage = () => {
                     </p>
                   </div>
                   <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                </div>
+                </motion.div>
               ))}
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
 
       <div className="max-w-6xl mx-auto px-4 pt-24 pb-12 lg:pt-32 space-y-20">
         {educationData2.map((section, idx) => (
-          <CourseSection key={idx} section={section} />
+          <motion.div key={idx} {...fadeInVariant}>
+            <CourseSection section={section} />
+          </motion.div>
         ))}
       </div>
 
       <section className="max-w-6xl mx-auto px-4 py-12">
-        <div className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-4 md:p-8 shadow-sm">
+        <motion.div
+          {...fadeInVariant}
+          className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-4 md:p-8 shadow-sm"
+        >
           <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 border-2 border-neutral-100 rounded-xl shadow-sm z-10">
             <h2 className="text-[#105D38] font-black text-sm md:text-lg whitespace-nowrap">
               {freeCoursesData.category}
@@ -83,8 +99,9 @@ const EducationPage = () => {
 
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6">
             {freeCoursesData.courses.map((course: any) => (
-              <div
+              <motion.div
                 key={course.id}
+                whileHover={{ y: -5 }} // ৪. হালকা লিফটিং ইফেক্ট
                 className="bg-[#F8F9FA] border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
               >
                 <div className="relative aspect-video w-full bg-neutral-200">
@@ -111,10 +128,10 @@ const EducationPage = () => {
                     {course.label}
                   </p>
                 </div>
-              </div>
+              </motion.div>
             ))}
           </div>
-        </div>
+        </motion.div>
       </section>
     </div>
   );
