@@ -1,0 +1,277 @@
+{
+  "freeCoursesData": {
+    "category": "ফ্রি কোর্স সমূহ",
+    "courses": [
+      {
+        "id": 1,
+        "title": "অনলাইন মাদানী নেসাব...",
+        "label": "ফ্রি কোর্স",
+        "image": "https://i.ibb.co.com/qYzJ8whc/1861375910861012.webp"
+      },
+      {
+        "id": 2,
+        "title": "অত্যাধুনিক পদ্ধতিতে...",
+        "label": "ফ্রি কোর্স",
+        "image": "https://i.ibb.co.com/PvnpsNN1/1788594905420385.jpg"
+      },
+      {
+        "id": 3,
+        "title": "দলিলসহ পূর্ণাঙ্গ নামাজ...",
+        "label": "ফ্রি কোর্স",
+        "image": "https://i.ibb.co.com/TDWCzN5q/1788538679884008.jpg"
+      },
+      {
+        "id": 4,
+        "title": "তাফসীরুল কুরআন",
+        "label": "ফ্রি কোর্স",
+        "image": "https://i.ibb.co.com/KjvBFW9T/1788611935180350.jpg"
+      }
+    ]
+  },
+  "educationData": [
+    {
+      "category": "একাডেমিক কোর্স",
+      "courses": [
+        { "title": "দাখিল ৯ ম শ্রেণি" },
+        { "title": "দাখিল ১০ম শ্রেণি" },
+        { "title": "আলিম ১ম বর্ষ" },
+        { "title": "আলিম ২য় বর্ষ" },
+        { "title": "এডমিশন" },
+        { "title": "জেনারেল শিক্ষা" }
+      ]
+    },
+    {
+      "category": "প্রিমিয়াম কোর্স",
+      "courses": [
+        { "title": "নাহু সরফ" },
+        { "title": "ভাষা শিক্ষা" },
+        { "title": "ইবারত শিক্ষা" },
+        { "title": "হাতের লেখা" },
+        { "title": "ইসলামিক কোর্স" },
+        { "title": "বালাগাত মানতিক" }
+      ]
+    },
+    {
+      "category": "দরসি কিতাব কোর্স",
+      "courses": [
+        { "title": "হাদিস" },
+        { "title": "ইলমুল বালাগাত" },
+        { "title": "ইলমুল ফিকহ" },
+        { "title": "ইলমুল নাহু" },
+        { "title": "তাফসির" },
+        { "title": "উসুলে ফিকহ" }
+      ]
+    }
+  ],
+  "educationData2": [
+    {
+      "category": "একাডেমিক কোর্স সমূহ",
+      "type": "card",
+      "courses": [
+        {
+          "title": "আলিম ২৭ অল ইন ওয়ান...",
+          "price": 1990,
+          "image": "https://i.ibb.co.com/wNrdRft8/1849936428157148.jpg"
+        },
+        {
+          "title": "দাখিল ২৬ শেষ মুহূর্তের...",
+          "price": 1500,
+          "oldPrice": 3000,
+          "image": "https://i.ibb.co.com/dwvyHYHK/1849934401805442.jpg"
+        },
+        {
+          "title": "আলিম ২৬ শেষ মুহূর্তের...",
+          "price": 1990,
+          "oldPrice": 3980,
+          "image": "https://i.ibb.co.com/996xzHZF/1854217674717324.jpg"
+        },
+        {
+          "title": "দাখিল ২৭ অল ইন ওয়ান...",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/DH3PpW9R/1854845300398648.jpg"
+        },
+        {
+          "title": "৩ দিনের গণিত চ্যালেঞ্জ...",
+          "price": 250,
+          "oldPrice": 500,
+          "image": "https://i.ibb.co.com/JRsQFYvs/1858996012230411.png"
+        },
+        {
+          "title": "আলিম ২৭ ইয়ার ফাইনাল...",
+          "price": 1200,
+          "oldPrice": 2400,
+          "image": "https://i.ibb.co.com/kskNyNcQ/1861375503943539.png"
+        },
+        {
+          "title": "দাখিল ২৮ অল ইন ওয়ান...",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/gbTgD5pW/1854845417354119.jpg"
+        },
+        {
+          "title": "১৯তম শিক্ষক নিবন্ধন...",
+          "price": 3000,
+          "oldPrice": 6000,
+          "image": "https://i.ibb.co.com/VcSxhJ5x/1856476460006146.jpg"
+        }
+      ]
+    },
+    {
+      "category": "প্রিমিয়াম কোর্স সমূহ",
+      "type": "card",
+      "courses": [
+        {
+          "title": "মীয়ানুসসরফ বা মীয়ান...",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/zLcs5g5/1777281931814528.jpg"
+        },
+        {
+          "title": "ইলমুন নাহু (বেসিক টু...)",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/Q7YNfhFk/1849865667063702.jpg"
+        },
+        {
+          "title": "প্র্যাকটিক্যাল ইবারত শিক্ষা",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/23zhnFjX/1782508115552716.jpg"
+        },
+        {
+          "title": "এসো আরবি শিখি - ১ম...",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/m5dnH7Gp/1811823906445679.jpg"
+        },
+        {
+          "title": "মীয়ানুসসরফ বা মীয়ান...",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/0jrSmJz1/1857383901611163.jpg"
+        },
+        {
+          "title": "ইলমুন নাহু (বেসিক টু...)",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/bMb1h4yP/1849865743144511.jpg"
+        },
+        {
+          "title": "প্র্যাকটিক্যাল ইবারত শিক্ষা",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/4w9gTnX1/1773220918386876.jpg"
+        },
+        {
+          "title": "এসো আরবি শিখি - ১ম...",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/zLcs5g5/1777281931814528.jpg"
+        }
+      ]
+    },
+    {
+      "category": "দরসি কিতাব কোর্স সমূহ",
+      "type": "card",
+      "courses": [
+        {
+          "title": "শরহে মিআতে আমেল",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/V0H6j8fN/1773219825008433.jpg"
+        },
+        {
+          "title": "তাফসিরে জালালাইন (১ম পারা)",
+          "price": 450,
+          "oldPrice": 900,
+          "image": "https://i.ibb.co.com/sdLf94L0/1823047886158294.jpg"
+        },
+        {
+          "title": "হেদায়াতুন নাহু সম্পূর্ণ মূল কিতাব",
+          "price": 1200,
+          "oldPrice": 2400,
+          "image": "https://i.ibb.co.com/MDTKnhv2/1786967740070987.jpg"
+        },
+        {
+          "title": "কাফিয়া (পূর্ণাঙ্গ কিতাব)",
+          "price": 1200,
+          "oldPrice": 2400,
+          "image": "https://i.ibb.co.com/TxMgffNP/1824215878220236.jpg"
+        },
+        {
+          "title": "তাইসিরুল ফিকহিল মুয়াসসার",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/twFHJNW0/1826741629014513.jpg"
+        },
+        {
+          "title": "শরহে বেকায়া ১ম খন্ড - কিতাবুত তাহারাত",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/jZJpR97C/1819325609821187.jpg"
+        },
+        {
+          "title": "শরহে বেকায়া ১ম খন্ড - কিতাবুস সালাত",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/d4zWFT1b/1821317628681199.jpg"
+        },
+        {
+          "title": "শরহে বেকায়া ১ম খন্ড (জাকাত, সাওম, হজ)",
+          "price": 650,
+          "oldPrice": 1300,
+          "image": "https://i.ibb.co.com/RTJG6L9F/1824308251067355.jpg"
+        }
+      ]
+    },
+    {
+      "category": "বান্ডেল কোর্স সমূহ",
+      "type": "card",
+      "courses": [
+        {
+          "title": "আরবি ব্যাকরণ ফুল প্যাকেজ",
+          "price": 5000,
+          "oldPrice": 10000,
+          "image": "https://i.ibb.co.com/nsRwPy1n/1853307342034164.jpg"
+        },
+        {
+          "title": "মুখতাসারুল কুদুরী বান্ডেল কোর্স",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/V0tQj122/1861986249437421.webp"
+        },
+        {
+          "title": "নাহু সরফ বান্ডেল কোর্স",
+          "price": 990,
+          "oldPrice": 1980,
+          "image": "https://i.ibb.co.com/b5YxKRtN/1813176125606630.webp"
+        },
+        {
+          "title": "নাহু-সরফ-প্র্যাকটিক্যাল বান্ডেল",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/1tYDgk66/1815416595202232.jpg"
+        },
+        {
+          "title": "তাহকিক বান্ডেল কোর্স",
+          "price": 990,
+          "oldPrice": 1980,
+          "image": "https://i.ibb.co.com/21dqYgFt/1817156088652288.jpg"
+        },
+        {
+          "title": "কাসাসুন নাবিয়্যীন ১ম, ২য় ও ৩য় খন্ড",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/0jkMFMDq/1819698769874463.jpg"
+        },
+        {
+          "title": "শরহে বেকায়া ১ম খন্ড বান্ডেল",
+          "price": 1490,
+          "oldPrice": 2980,
+          "image": "https://i.ibb.co.com/S4zCB4mS/1825743210729957.jpg"
+        }
+      ]
+    }
+  ]
+}

@@ -2,7 +2,18 @@
 
 import { useState, useEffect, useRef } from "react";
 
-const notices = [
+/* -------------------- TYPES -------------------- */
+type Notice = {
+  slug: string;
+  title: string;
+  date: string;
+  category: "academic" | "holiday" | "course" | "system";
+  isNew: boolean;
+  content: string;
+};
+
+/* -------------------- DATA -------------------- */
+const notices: Notice[] = [
   {
     slug: "exam-schedule-2026",
     title: "Final Exam Schedule প্রকাশ",
@@ -10,7 +21,7 @@ const notices = [
     category: "academic",
     isNew: true,
     content:
-      "Final exam schedule প্রকাশ করা হয়েছে। সকল শিক্ষার্থীকে নির্ধারিত সময় অনুযায়ী পরীক্ষায় অংশগ্রহণ করতে হবে। বিস্তারিত রুটিন ওয়েবসাইটে দেওয়া আছে। নির্ধারিত কক্ষে নির্ধারিত সময়ের ১৫ মিনিট আগে উপস্থিত থাকতে হবে।",
+      "Final exam schedule প্রকাশ করা হয়েছে...",
   },
   {
     slug: "eid-holiday",
@@ -19,7 +30,7 @@ const notices = [
     category: "holiday",
     isNew: true,
     content:
-      "Eid-ul-Fitr উপলক্ষে আগামী ৫ দিন সকল কার্যক্রম বন্ধ থাকবে। ক্লাস পুনরায় শুরু হবে নির্ধারিত সময় অনুযায়ী। সকলকে শুভ ঈদ মোবারক।",
+      "Eid-ul-Fitr উপলক্ষে আগামী ৫ দিন...",
   },
   {
     slug: "new-course-launch",
@@ -28,7 +39,7 @@ const notices = [
     category: "course",
     isNew: false,
     content:
-      "আমাদের নতুন MERN Stack কোর্স চালু হয়েছে। আগ্রহী শিক্ষার্থীরা দ্রুত রেজিস্ট্রেশন সম্পন্ন করুন। সীমিত সিট রয়েছে এবং আসন পূর্ণ হলে নিবন্ধন বন্ধ করা হবে।",
+      "আমাদের নতুন MERN Stack কোর্স চালু হয়েছে...",
   },
   {
     slug: "maintenance",
@@ -37,179 +48,96 @@ const notices = [
     category: "system",
     isNew: false,
     content:
-      "ওয়েবসাইট আপডেটের জন্য আগামী রাত ১২টা থেকে ৩টা পর্যন্ত সার্ভিস বন্ধ থাকবে। এই সময়ে কোনো লগইন বা ফর্ম সাবমিশন সম্ভব হবে না। অসুবিধার জন্য দুঃখিত।",
+      "ওয়েবসাইট আপডেটের জন্য...",
   },
 ];
 
 const categoryMeta = {
   academic: {
     label: "Academic",
-    accent: "#1d4ed8",
-    light: "#eff6ff",
-    text: "#1e3a8a",
-    icon: "🎓",
+    accent: "bg-blue-600",
+    light: "bg-blue-50",
+    text: "text-blue-900",
   },
   holiday: {
     label: "Holiday",
-    accent: "#15803d",
-    light: "#f0fdf4",
-    text: "#14532d",
-    icon: "🌙",
+    accent: "bg-green-600",
+    light: "bg-green-50",
+    text: "text-green-900",
   },
   course: {
     label: "Course",
-    accent: "#b45309",
-    light: "#fffbeb",
-    text: "#78350f",
-    icon: "🚀",
+    accent: "bg-amber-600",
+    light: "bg-amber-50",
+    text: "text-amber-900",
   },
   system: {
     label: "System",
-    accent: "#475569",
-    light: "#f8fafc",
-    text: "#1e293b",
-    icon: "⚙️",
+    accent: "bg-slate-600",
+    light: "bg-slate-50",
+    text: "text-slate-900",
   },
 };
 
 const FILTERS = ["All", "Academic", "Holiday", "Course", "System"];
 
-function NoticeCard({ notice, onClick, index }) {
+/* -------------------- CARD -------------------- */
+function NoticeCard({
+  notice,
+  onClick,
+  index,
+}: {
+  notice: Notice;
+  onClick: (n: Notice) => void;
+  index: number;
+}) {
   const meta = categoryMeta[notice.category];
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const timer = setTimeout(() => setVisible(true), index * 80);
-    return () => clearTimeout(timer);
+    const t = setTimeout(() => setVisible(true), index * 80);
+    return () => clearTimeout(t);
   }, [index]);
 
   return (
     <div
       onClick={() => onClick(notice)}
-      style={{
-        opacity: visible ? 1 : 0,
-        transform: visible ? "translateY(0)" : "translateY(16px)",
-        transition:
-          "opacity 0.35s ease, transform 0.35s ease, box-shadow 0.2s ease, border-color 0.2s ease",
-        cursor: "pointer",
-        background: "#ffffff",
-        borderRadius: "14px",
-        border: "1px solid #e2e8f0",
-        overflow: "hidden",
-        display: "flex",
-        flexDirection: "column",
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.boxShadow = "0 8px 30px rgba(0,0,0,0.10)";
-        e.currentTarget.style.borderColor = meta.accent + "55";
-        e.currentTarget.style.transform = "translateY(-3px)";
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.boxShadow = "none";
-        e.currentTarget.style.borderColor = "#e2e8f0";
-        e.currentTarget.style.transform = "translateY(0)";
-      }}
+      className={`cursor-pointer bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden transition-all duration-300
+      ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
+      hover:-translate-y-1 hover:shadow-lg`}
     >
-      {/* Accent bar */}
-      <div style={{ height: "4px", background: meta.accent }} />
+      <div className={`h-1 ${meta.accent}`} />
 
-      <div
-        style={{
-          padding: "18px 20px",
-          display: "flex",
-          flexDirection: "column",
-          gap: "10px",
-          flex: 1,
-        }}
-      >
-        {/* Top row */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-          }}
-        >
+      <div className="p-5 flex flex-col gap-3 flex-1">
+        {/* Top */}
+        <div className="flex justify-between items-center">
           <span
-            style={{
-              fontSize: "10px",
-              fontWeight: 600,
-              letterSpacing: "0.07em",
-              textTransform: "uppercase",
-              background: meta.light,
-              color: meta.text,
-              padding: "3px 10px",
-              borderRadius: "999px",
-              border: `1px solid ${meta.accent}22`,
-            }}
+            className={`text-[10px] font-semibold uppercase px-3 py-1 rounded-full border ${meta.light} ${meta.text}`}
           >
             {meta.label}
           </span>
+
           {notice.isNew && (
-            <span
-              style={{
-                fontSize: "10px",
-                fontWeight: 600,
-                letterSpacing: "0.05em",
-                background: "#fef9c3",
-                color: "#854d0e",
-                padding: "2px 8px",
-                borderRadius: "999px",
-                border: "1px solid #fde047",
-              }}
-            >
+            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 border border-yellow-300">
               NEW
             </span>
           )}
         </div>
 
         {/* Title */}
-        <h2
-          style={{
-            fontSize: "14px",
-            fontWeight: 600,
-            color: "#0f172a",
-            lineHeight: 1.45,
-            margin: 0,
-          }}
-        >
+        <h2 className="text-sm font-semibold text-slate-900 leading-snug">
           {notice.title}
         </h2>
 
-        {/* Excerpt */}
-        <p
-          style={{
-            fontSize: "13px",
-            color: "#64748b",
-            lineHeight: 1.65,
-            margin: 0,
-            display: "-webkit-box",
-            WebkitLineClamp: 3,
-            WebkitBoxOrient: "vertical",
-            overflow: "hidden",
-            flex: 1,
-          }}
-        >
+        {/* Content */}
+        <p className="text-sm text-slate-500 line-clamp-3 flex-1">
           {notice.content}
         </p>
 
         {/* Footer */}
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            paddingTop: "10px",
-            borderTop: "1px solid #f1f5f9",
-            marginTop: "auto",
-          }}
-        >
-          <span style={{ fontSize: "11px", color: "#94a3b8" }}>
-            {notice.date}
-          </span>
-          <span
-            style={{ fontSize: "12px", fontWeight: 600, color: meta.accent }}
-          >
+        <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
+          <span className="text-xs text-slate-400">{notice.date}</span>
+          <span className="text-xs font-semibold text-slate-700">
             Read more →
           </span>
         </div>
@@ -218,16 +146,23 @@ function NoticeCard({ notice, onClick, index }) {
   );
 }
 
-function Modal({ notice, onClose }) {
-  const overlayRef = useRef(null);
+/* -------------------- MODAL -------------------- */
+function Modal({
+  notice,
+  onClose,
+}: {
+  notice: Notice;
+  onClose: () => void;
+}) {
+  const overlayRef = useRef<HTMLDivElement | null>(null);
   const meta = categoryMeta[notice.category];
 
   useEffect(() => {
-    const handleKey = (e) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", handleKey);
+    const key = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", key);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", handleKey);
+      document.removeEventListener("keydown", key);
       document.body.style.overflow = "";
     };
   }, [onClose]);
@@ -236,167 +171,57 @@ function Modal({ notice, onClose }) {
     <div
       ref={overlayRef}
       onClick={(e) => e.target === overlayRef.current && onClose()}
-      style={{
-        position: "fixed",
-        inset: 0,
-        background: "rgba(15, 23, 42, 0.55)",
-        backdropFilter: "blur(4px)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        zIndex: 999,
-        padding: "1rem",
-        animation: "fadeIn 0.2s ease",
-      }}
+      className="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center z-50 p-4"
     >
-      <div
-        style={{
-          background: "#ffffff",
-          borderRadius: "18px",
-          width: "100%",
-          maxWidth: "500px",
-          boxShadow: "0 24px 64px rgba(0,0,0,0.18)",
-          overflow: "hidden",
-          animation: "slideUp 0.25s ease",
-        }}
-      >
-        {/* Accent */}
-        <div style={{ height: "5px", background: meta.accent }} />
+      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-[fadeIn_.2s]">
+        <div className={`h-1.5 ${meta.accent}`} />
 
         {/* Header */}
-        <div
-          style={{
-            padding: "24px 28px 16px",
-            borderBottom: "1px solid #f1f5f9",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "space-between",
-              marginBottom: "14px",
-            }}
-          >
-            <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+        <div className="p-6 border-b">
+          <div className="flex justify-between mb-3">
+            <div className="flex gap-2 items-center">
               <span
-                style={{
-                  fontSize: "10px",
-                  fontWeight: 600,
-                  letterSpacing: "0.07em",
-                  textTransform: "uppercase",
-                  background: meta.light,
-                  color: meta.text,
-                  padding: "3px 10px",
-                  borderRadius: "999px",
-                  border: `1px solid ${meta.accent}22`,
-                }}
+                className={`text-[10px] font-semibold px-3 py-1 rounded-full border ${meta.light} ${meta.text}`}
               >
                 {meta.label}
               </span>
+
               {notice.isNew && (
-                <span
-                  style={{
-                    fontSize: "10px",
-                    fontWeight: 600,
-                    background: "#fef9c3",
-                    color: "#854d0e",
-                    padding: "3px 8px",
-                    borderRadius: "999px",
-                    border: "1px solid #fde047",
-                  }}
-                >
+                <span className="text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full border">
                   NEW
                 </span>
               )}
             </div>
+
             <button
               onClick={onClose}
-              style={{
-                width: "30px",
-                height: "30px",
-                borderRadius: "50%",
-                border: "1px solid #e2e8f0",
-                background: "#f8fafc",
-                color: "#64748b",
-                cursor: "pointer",
-                fontSize: "16px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                lineHeight: 1,
-              }}
+              className="w-7 h-7 rounded-full border text-slate-500"
             >
               ×
             </button>
           </div>
 
-          <h2
-            style={{
-              fontSize: "18px",
-              fontWeight: 700,
-              color: "#0f172a",
-              margin: "0 0 6px",
-              lineHeight: 1.35,
-            }}
-          >
+          <h2 className="text-lg font-bold text-slate-900">
             {notice.title}
           </h2>
-          <p style={{ fontSize: "12px", color: "#94a3b8", margin: 0 }}>
-            {notice.date}
-          </p>
+          <p className="text-xs text-slate-400">{notice.date}</p>
         </div>
 
         {/* Body */}
-        <div style={{ padding: "20px 28px 24px" }}>
-          <p
-            style={{
-              fontSize: "14px",
-              color: "#475569",
-              lineHeight: 1.8,
-              margin: 0,
-            }}
-          >
-            {notice.content}
-          </p>
+        <div className="p-6 text-sm text-slate-600 leading-relaxed">
+          {notice.content}
         </div>
 
         {/* Footer */}
-        <div
-          style={{
-            padding: "14px 28px",
-            borderTop: "1px solid #f1f5f9",
-            display: "flex",
-            justifyContent: "flex-end",
-            gap: "10px",
-          }}
-        >
+        <div className="p-4 border-t flex justify-end gap-2">
           <button
             onClick={onClose}
-            style={{
-              fontSize: "13px",
-              fontWeight: 600,
-              padding: "8px 20px",
-              borderRadius: "8px",
-              border: "1px solid #e2e8f0",
-              background: "#f8fafc",
-              color: "#475569",
-              cursor: "pointer",
-            }}
+            className="px-4 py-2 text-sm border rounded-md"
           >
             Dismiss
           </button>
           <button
-            style={{
-              fontSize: "13px",
-              fontWeight: 600,
-              padding: "8px 20px",
-              borderRadius: "8px",
-              border: "none",
-              background: meta.accent,
-              color: "#ffffff",
-              cursor: "pointer",
-            }}
+            className={`px-4 py-2 text-sm text-white rounded-md ${meta.accent}`}
           >
             Share notice
           </button>
@@ -406,141 +231,68 @@ function Modal({ notice, onClose }) {
   );
 }
 
+/* -------------------- PAGE -------------------- */
 export default function NoticePage() {
-  const [selected, setSelected] = useState(null);
+  const [selected, setSelected] = useState<Notice | null>(null);
   const [activeFilter, setActiveFilter] = useState("All");
 
   const filtered =
     activeFilter === "All"
       ? notices
-      : notices.filter((n) => n.category === activeFilter.toLowerCase());
+      : notices.filter(
+          (n) => n.category === activeFilter.toLowerCase()
+        );
 
   return (
-    <>
-      <style>{`
-        @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
-        @keyframes slideUp { from { opacity: 0; transform: translateY(20px) } to { opacity: 1; transform: translateY(0) } }
-        * { box-sizing: border-box; }
-      `}</style>
+    <div className="min-h-screen bg-slate-50 font-sans">
+      <div className="max-w-5xl mx-auto px-5 py-12">
+        {/* Header */}
+        <div className="mb-8">
+          <p className="text-xs uppercase tracking-widest text-slate-400">
+            Official announcements
+          </p>
+          <h1 className="text-3xl font-bold text-slate-900">
+            Notice Board
+          </h1>
+          <p className="text-sm text-slate-500">
+            {filtered.length} notice
+          </p>
+        </div>
 
-      <div
-        style={{
-          minHeight: "100vh",
-          background: "#f8fafc",
-          fontFamily: "'Segoe UI', system-ui, sans-serif",
-        }}
-      >
-        <div
-          style={{
-            maxWidth: "960px",
-            margin: "0 auto",
-            padding: "48px 20px 80px",
-          }}
-        >
-          {/* Header */}
-          <div style={{ marginBottom: "36px" }}>
-            <p
-              style={{
-                fontSize: "11px",
-                fontWeight: 600,
-                letterSpacing: "0.1em",
-                textTransform: "uppercase",
-                color: "#94a3b8",
-                marginBottom: "6px",
-              }}
+        {/* Filters */}
+        <div className="flex flex-wrap gap-2 mb-6">
+          {FILTERS.map((f) => (
+            <button
+              key={f}
+              onClick={() => setActiveFilter(f)}
+              className={`px-4 py-1.5 text-sm rounded-full font-semibold border
+              ${
+                activeFilter === f
+                  ? "bg-slate-900 text-white"
+                  : "bg-white text-slate-600"
+              }`}
             >
-              Official announcements
-            </p>
-            <h1
-              style={{
-                fontSize: "32px",
-                fontWeight: 700,
-                color: "#0f172a",
-                margin: "0 0 8px",
-              }}
-            >
-              Notice Board
-            </h1>
-            <p style={{ fontSize: "14px", color: "#64748b", margin: 0 }}>
-              {filtered.length} notice{filtered.length !== 1 ? "s" : ""} · Last
-              updated April 20, 2026
-            </p>
-          </div>
+              {f}
+            </button>
+          ))}
+        </div>
 
-          {/* Filters */}
-          <div
-            style={{
-              display: "flex",
-              gap: "8px",
-              flexWrap: "wrap",
-              marginBottom: "28px",
-            }}
-          >
-            {FILTERS.map((f) => {
-              const isActive = activeFilter === f;
-              return (
-                <button
-                  key={f}
-                  onClick={() => setActiveFilter(f)}
-                  style={{
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    padding: "7px 18px",
-                    borderRadius: "999px",
-                    border: isActive ? "none" : "1px solid #e2e8f0",
-                    background: isActive ? "#0f172a" : "#ffffff",
-                    color: isActive ? "#ffffff" : "#475569",
-                    cursor: "pointer",
-                    transition: "all 0.15s ease",
-                  }}
-                >
-                  {f}
-                </button>
-              );
-            })}
-          </div>
-
-          {/* Divider */}
-          <div
-            style={{ borderTop: "1px solid #e2e8f0", marginBottom: "24px" }}
-          />
-
-          {/* Grid */}
-          {filtered.length === 0 ? (
-            <div
-              style={{
-                textAlign: "center",
-                padding: "60px 20px",
-                color: "#94a3b8",
-                fontSize: "14px",
-              }}
-            >
-              No notices found in this category.
-            </div>
-          ) : (
-            <div
-              style={{
-                display: "grid",
-                gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-                gap: "16px",
-              }}
-            >
-              {filtered.map((notice, i) => (
-                <NoticeCard
-                  key={notice.slug}
-                  notice={notice}
-                  index={i}
-                  onClick={setSelected}
-                />
-              ))}
-            </div>
-          )}
+        {/* Grid */}
+        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
+          {filtered.map((notice, i) => (
+            <NoticeCard
+              key={notice.slug}
+              notice={notice}
+              index={i}
+              onClick={setSelected}
+            />
+          ))}
         </div>
       </div>
 
       {selected && (
         <Modal notice={selected} onClose={() => setSelected(null)} />
       )}
-    </>
+    </div>
   );
 }

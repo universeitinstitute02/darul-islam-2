@@ -136,30 +136,7 @@ export default function IslamicDashboard() {
   const timings = data.timings;
 
   return (
-    <div className="bg-[#f8f4e8] min-h-screen font-sans pb-24" style={{ fontFamily: "'Noto Serif Bengali', 'Georgia', serif" }}>
-
-      {/* ── HEADER ── */}
-      <header className="sticky top-0 z-50 bg-[#f8f4e8]/90 backdrop-blur-md px-5 py-3 flex justify-between items-center border-b border-[#1a4731]/10">
-        <div className="flex items-center gap-2">
-          <div className="w-8 h-8 bg-[#1a4731] rounded-full flex items-center justify-center">
-            <Star size={14} className="text-amber-300 fill-amber-300" />
-          </div>
-          <span className="font-bold text-[#1a4731] text-lg tracking-tight">নূর</span>
-        </div>
-
-        <div className="flex items-center gap-2 bg-white/80 border border-[#1a4731]/15 px-3 py-1.5 rounded-full shadow-sm text-sm text-[#1a4731]">
-          <MapPin size={12} className="text-[#1a4731]" />
-          <span>ঢাকা, বাংলাদেশ</span>
-        </div>
-
-        <button
-          onClick={() => setNotifOn((p) => !p)}
-          className={`w-9 h-9 rounded-full flex items-center justify-center transition-colors ${notifOn ? "bg-[#1a4731] text-white" : "bg-white text-[#1a4731] border border-[#1a4731]/15"}`}
-        >
-          <Bell size={16} />
-        </button>
-      </header>
-
+    <div className="bg-[#f8f4e8] min-h-screen font-sans pb-24 mt-16 lg:mt-18">
       <div className="max-w-7xl mx-auto px-4 pt-4 space-y-5">
 
         {/* ── MAIN PRAYER CARD ── */}

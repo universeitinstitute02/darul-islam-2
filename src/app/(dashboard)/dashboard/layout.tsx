@@ -18,7 +18,15 @@ export default function DashboardLayout({
 }) {
 
   return (
-    <div className="flex h-screen bg-neutral-100 mt-1">
+    <div className="flex h-screen bg-neutral-100">
+      {/* Mobile Sidebar Overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 bg-black/50 z-40 md:hidden"
+          onClick={() => setSidebarOpen(false)}
+        />
+      )}
+
       {/* Sidebar */}
       <aside className="w-64 bg-islamic-green text-white flex flex-col hidden md:flex rounded-tr-2xl shadow-xl overflow-hidden z-20">
         <div className="p-6 border-b border-green-800 flex items-center gap-3">
