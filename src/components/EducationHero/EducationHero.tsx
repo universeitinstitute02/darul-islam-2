@@ -11,7 +11,6 @@ interface HeroProps {
 const EducationHero = ({ searchTerm, onSearchChange }: HeroProps) => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
 
-  // আপনার ক্যাটাগরি লিস্ট (এগুলো আপনার JSON এর ক্যাটাগরির সাথে মিল রেখে দিন)
   const categories = [
     "হিফজুল কুরআন বিভাগ",
     "নূরানী ও নাজেরা বিভাগ",
