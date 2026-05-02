@@ -8,6 +8,9 @@ import SectionHeading from "@/src/components/shared/SectionHeading";
 import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestStudents";
 import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
 import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
+import AdmissionInfo from "@/src/components/LandingPageLayout/AddmissionDoc/AddmissionInfo";
+import NoticeBoard from "@/src/components/LandingPageLayout/Notice/Notice";
+import GallerySection from "@/src/components/LandingPageLayout/GallerySection/GallerySection";
 
 /* ── ICONS ── */
 const CheckIcon = () => (
@@ -139,81 +142,12 @@ export default function Home() {
       <StudentSlider />
 
       {/* ── 1. ADMISSION INFO ── */}
-      <section className="px-5 py-10 max-w-xl mx-auto text-center">
-        <SectionHeading>ভর্তি তথ্য</SectionHeading>
-        <div className="space-y-3.5 text-left inline-block mb-8">
-          {[
-            "ভর্তি হতে অনলাইন ফরম পূরণ করুন",
-            "প্রয়োজনীয় কাগজপত্র জমা দিন",
-            "ভর্তি পরীক্ষা (প্রয়োজ্য ক্ষেত্রে)",
-          ].map((text, i) => (
-            <div key={i} className="flex items-center gap-3">
-              <CheckIcon />
-              <span className="text-sm md:text-base text-gray-700">{text}</span>
-            </div>
-          ))}
-        </div>
-        <div>
-          <PrimaryButton>এখনই আবেদন করুন</PrimaryButton>
-        </div>
-      </section>
-
+      <AdmissionInfo />
       {/* ── 2. NOTICE BOARD ── */}
-      <section className="bg-white px-5 py-10 max-w-4xl mx-auto rounded-2xl shadow-sm border border-gray-100 mb-10">
-        <SectionHeading>নোটিশ বোর্ড</SectionHeading>
-        <div className="space-y-1.5 mb-8">
-          {[
-            {
-              title: "বার্ষিক পরীক্ষা ২০২৪ এর সময়সূচি প্রকাশ",
-              date: "20 May 2024",
-            },
-            { title: "নতুন সেশনের ভর্তি শুরু", date: "18 May 2024" },
-            { title: "ঈদুল ফিতরের ছুটি সংক্রান্ত নোটিশ", date: "15 May 2024" },
-          ].map((notice, i) => (
-            <div
-              key={i}
-              className="flex items-center justify-between gap-4 border-b border-gray-100 py-3 last:border-b-0 px-1"
-            >
-              <p className="text-sm md:text-base text-gray-800 flex-1">
-                {notice.title}
-              </p>
-              <p className="text-xs md:text-sm text-gray-500 whitespace-nowrap">
-                {notice.date}
-              </p>
-            </div>
-          ))}
-        </div>
-        <div className="text-center">
-          <PrimaryButton>সব নোটিশ দেখুন</PrimaryButton>
-        </div>
-      </section>
+      <NoticeBoard />
 
       {/* ── 3. GALLERY ── */}
-      <section className="px-5 py-10 max-w-6xl mx-auto text-center">
-        <SectionHeading>গ্যালারি</SectionHeading>
-        {/* Mobile: 1 col, md+: 3 cols */}
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-5 mb-8">
-          {[
-            "https://i.ibb.co/FVTN0wM/group.jpg",
-            "https://i.ibb.co/ZJp5fC5/classroom.jpg",
-            "https://i.ibb.co/0yH0H4s/building.jpg",
-          ].map((src, i) => (
-            <div
-              key={i}
-              className="aspect-[4/3] rounded-xl overflow-hidden shadow-md border-4 border-white ring-1 ring-gray-100"
-            >
-              <img
-                src={src}
-                alt={`Gallery Image ${i + 1}`}
-                className="w-full h-full object-cover"
-              />
-            </div>
-          ))}
-        </div>
-        <div>
-          <PrimaryButton>সব ছবি দেখুন</PrimaryButton>
-        </div>
-      </section>
+      <GallerySection />
 
       {/* ── 4. WHY CHOOSE US ── */}
       <section className="bg-white px-5 py-12 max-w-6xl mx-auto mb-10">
