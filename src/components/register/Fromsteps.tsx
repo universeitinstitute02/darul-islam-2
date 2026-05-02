@@ -1,4 +1,11 @@
-import { User, Phone, Lock, UploadCloud, ShieldCheck } from "lucide-react";
+import {
+  User,
+  Phone,
+  Lock,
+  UploadCloud,
+  ShieldCheck,
+  Mail,
+} from "lucide-react";
 import { InputField, SelectField } from "./SharedInputs";
 
 export const Step1 = ({
@@ -23,7 +30,7 @@ export const Step1 = ({
     <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
       <InputField
         label="শিক্ষার্থীর নাম (বাংলা)"
-        placeholder="বাংলায় নাম লিখুন"
+        placeholder="বাংলায় নাম লিখুন"
         register={register("studentNameBn")}
         icon={<User size={18} />}
       />
@@ -73,7 +80,6 @@ export const Step1 = ({
       />
     </div>
 
-    {/* Student Image Upload Field - নিচে যুক্ত করা হলো */}
     <div className="space-y-2">
       <label className="text-[11px] font-black text-neutral-400 uppercase">
         শিক্ষার্থীর প্রোফাইল ছবি
@@ -159,7 +165,7 @@ export const Step4 = ({ register, divisions }: any) => (
     <h3 className="text-xl font-black text-neutral-800 mb-4">
       ঠিকানা ও যোগাযোগ
     </h3>
-    <div className="grid grid-cols-2 gap-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
       <SelectField
         label="বিভাগ"
         options={divisions}
@@ -176,12 +182,23 @@ export const Step4 = ({ register, divisions }: any) => (
       placeholder="গ্রাম, ডাকঘর, উপজেলা"
       register={register("permanentAddress")}
     />
-    <InputField
-      label="শিক্ষার্থীর মোবাইল"
-      placeholder="01XXXXXXXXX"
-      register={register("studentMobile")}
-      icon={<Phone size={18} />}
-    />
+
+    {/* Contact Info Grouped Together */}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <InputField
+        label="শিক্ষার্থীর মোবাইল"
+        placeholder="01XXXXXXXXX"
+        register={register("studentMobile")}
+        icon={<Phone size={18} />}
+      />
+      <InputField
+        label="ইমেইল অ্যাড্রেস"
+        type="email"
+        placeholder="example@gmail.com"
+        register={register("email")}
+        icon={<Mail size={18} />}
+      />
+    </div>
   </div>
 );
 

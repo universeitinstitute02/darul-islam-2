@@ -1,5 +1,7 @@
 "use client";
+
 import React, { useState } from "react";
+import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import {
   Mail,
@@ -10,15 +12,45 @@ import {
   Eye,
   EyeOff,
   ArrowRight,
-  ArrowLeft, // ArrowLeft ইম্পোর্ট করা হয়েছে
+  ArrowLeft,
+  Loader2,
 } from "lucide-react";
 import Image from "next/image";
+import Link from "next/link";
+import { useRouter } from "next/navigation";
+import { signIn } from "next-auth/react";
 
 import login1 from "../../../../../public/images/login1.png";
-import Link from "next/link";
 
 const LoginPage = () => {
+  const {
+    register,
+    handleSubmit,
+    formState: { isSubmitting },
+  } = useForm<any>();
   const [showPassword, setShowPassword] = useState(false);
+  const [globalError, setGlobalError] = useState("");
+  const router = useRouter();
+
+  const onSubmit: SubmitHandler<any> = async (data) => {
+    setGlobalError("");
+
+    const res = await signIn("credentials", {
+      redirect: false,
+      identifier: data.identifier,
+      password: data.password,
+    });
+
+    if (res?.error) {
+      setGlobalError("লগইন ব্যর্থ হয়েছে। আপনার তথ্য সঠিক কিনা যাচাই করুন।");
+    } else {
+      window.location.href = "/dashboard";
+    }
+  };
+
+  const handleGoogleSignIn = () => {
+    signIn("google", { callbackUrl: "/dashboard" });
+  };
 
   return (
     <div className="min-h-screen lg:h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden font-sans">
@@ -32,13 +64,9 @@ const LoginPage = () => {
           className="object-cover opacity-50 lg:opacity-60 scale-105"
         />
 
-        {/* Mobile Gradient Overlay */}
         <div className="absolute inset-0 bg-gradient-to-t from-[#105D38] via-transparent to-transparent lg:hidden" />
-
-        {/* Desktop Aesthetic Overlay */}
         <div className="absolute inset-0 bg-black/10 hidden lg:block" />
 
-        {/* Logo and Welcome Text */}
         <div className="absolute inset-0 flex flex-col items-center lg:items-start justify-center text-center lg:text-left p-8 lg:p-20 space-y-6">
           <motion.div
             initial={{ x: -20, opacity: 0 }}
@@ -68,14 +96,6 @@ const LoginPage = () => {
             করতে পারেন সহজ এবং সাবলীলভাবে।
           </p>
         </div>
-
-        {/* Bottom Decorative Element (Desktop) */}
-        <div className="absolute bottom-10 left-20 hidden lg:block">
-          <div className="flex gap-4 items-center text-white/40 text-sm font-bold tracking-widest uppercase">
-            <span className="w-12 h-[2px] bg-white/20"></span>
-            Darul Islam Institute
-          </div>
-        </div>
       </div>
 
       {/* 2. Login Card Section */}
@@ -86,7 +106,6 @@ const LoginPage = () => {
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="w-full max-w-md bg-white rounded-[2.5rem] lg:rounded-none lg:shadow-none border border-neutral-100 lg:border-none p-8 md:p-10 lg:p-0 my-auto"
         >
-          {/* --- "পিছনে" বাটন সিস্টেম (রেসপনসিভ) --- */}
           <div className="mb-6 lg:mb-10">
             <Link
               href="/"
@@ -104,21 +123,15 @@ const LoginPage = () => {
             </Link>
           </div>
 
-          {/* Tabs for Mobile - Fixed Section */}
-          <div className="flex bg-neutral-50 p-1.5 rounded-2xl mb-8 border border-neutral-100 lg:hidden">
-            <button className="flex-1 py-2.5 rounded-xl bg-[#105D38] text-white font-bold text-sm shadow-md transition-all">
-              লগইন করুন
-            </button>
-            <Link
-              href={"/auth-dashboard/register"}
-              className="flex-1 py-2.5 rounded-xl text-neutral-500 font-bold text-sm hover:bg-neutral-100 transition-all text-center flex items-center justify-center"
-            >
-              নতুন অ্যাকাউন্ট
-            </Link>
-          </div>
+          {/* Error Message */}
+          {globalError && (
+            <div className="mb-6 bg-red-50 text-red-600 p-4 rounded-2xl text-sm font-bold border border-red-100 text-center">
+              {globalError}
+            </div>
+          )}
 
           <div className="mb-10 hidden lg:block">
-            <div className="flex items-center justify-between items-end">
+            <div className="flex items-center justify-between">
               <div>
                 <h2 className="text-4xl font-black text-neutral-900 tracking-tight">
                   লগইন করুন
@@ -145,10 +158,11 @@ const LoginPage = () => {
             </div>
           </div>
 
-          <form className="space-y-5" onSubmit={(e) => e.preventDefault()}>
+          <form className="space-y-5" onSubmit={handleSubmit(onSubmit)}>
             <div className="relative group">
               <input
                 type="text"
+                {...register("identifier", { required: true })}
                 placeholder="আপনার মোবাইল নম্বর / ইমেইল"
                 className="w-full pl-6 pr-12 py-4.5 bg-neutral-50 lg:bg-neutral-50/50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all font-bold text-sm"
               />
@@ -160,6 +174,7 @@ const LoginPage = () => {
             <div className="relative group">
               <input
                 type={showPassword ? "text" : "password"}
+                {...register("password", { required: true })}
                 placeholder="পাসওয়ার্ড"
                 className="w-full pl-6 pr-14 py-4.5 bg-neutral-50 lg:bg-neutral-50/50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all font-bold text-sm"
               />
@@ -176,25 +191,21 @@ const LoginPage = () => {
               </div>
             </div>
 
-            <div className="flex items-center justify-between text-sm px-1 font-bold">
-              <label className="flex items-center gap-2.5 text-neutral-500 cursor-pointer group">
-                <input
-                  type="checkbox"
-                  className="w-4.5 h-4.5 rounded border-neutral-300 accent-[#105D38] transition-all"
-                />
-                <span className="group-hover:text-[#105D38]">মনে রাখুন</span>
-              </label>
-              <button className="text-neutral-500 hover:text-red-500 transition-colors font-extrabold underline underline-offset-4 decoration-neutral-200 hover:decoration-red-200">
-                পাসওয়ার্ড ভুলে গেছেন?
-              </button>
-            </div>
-
-            <button className="w-full bg-[#105D38] hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest">
-              লগইন করুন
+            <button
+              type="submit"
+              disabled={isSubmitting}
+              className="w-full bg-[#105D38] hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest disabled:opacity-70 flex justify-center items-center gap-2"
+            >
+              {isSubmitting ? (
+                <>
+                  <Loader2 size={24} className="animate-spin" /> অপেক্ষা করুন...
+                </>
+              ) : (
+                "লগইন করুন"
+              )}
             </button>
           </form>
 
-          {/* Social Logins */}
           <div className="relative my-12">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-neutral-100"></span>
@@ -207,7 +218,11 @@ const LoginPage = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <button className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm">
+            <button
+              onClick={handleGoogleSignIn}
+              type="button"
+              className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm"
+            >
               <Chrome size={20} className="text-red-500" /> Google
             </button>
             <button className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm">
@@ -215,8 +230,7 @@ const LoginPage = () => {
             </button>
           </div>
 
-          {/* Secure Info Badge */}
-          <div className="mt-10 flex items-center gap-4 p-5 bg-[#105D38]/5 rounded-[2rem] border border-[#105D38]/10 lg:max-w-full">
+          <div className="mt-10 flex items-center gap-4 p-5 bg-[#105D38]/5 rounded-[2rem] border border-[#105D38]/10">
             <div className="p-3 bg-white rounded-2xl text-[#105D38] shadow-sm">
               <ShieldCheck size={24} />
             </div>
@@ -226,12 +240,6 @@ const LoginPage = () => {
               এনক্রিপশনের মাধ্যমে সর্বোচ্চ নিরাপত্তায় রয়েছে।
             </p>
           </div>
-
-          <p className="mt-10 text-center lg:text-left text-[13px] text-neutral-400 font-bold tracking-tight pb-6">
-            © 2026 Darul Islam Institute.{" "}
-            <span className="hidden lg:inline">|</span>{" "}
-            <br className="lg:hidden" /> সর্বস্বত্ব সংরক্ষিত।
-          </p>
         </motion.div>
       </div>
     </div>
