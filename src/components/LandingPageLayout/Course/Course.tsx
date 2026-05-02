@@ -16,24 +16,23 @@ import {
 import SectionHeading from "../../shared/SectionHeading";
 
 const Course = () => {
+  // Store the Icon components directly (without < />)
   const courses = [
-    { icon: <BookOpen />, title: "নূরানী বিভাগ", sub: "সহজ কুরআন শিক্ষা" },
-    { icon: <BookText />, title: "হিফজ বিভাগ", sub: "হিফজুল কুরআন" },
-    { icon: <PenTool />, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
-    { icon: <GraduationCap />, title: "সাধারণ শিক্ষা", sub: "আধুনিক সমন্বয়" },
-    { icon: <School />, title: "নাজেরা বিভাগ", sub: "শুদ্ধ তিলাওয়াত" },
-    { icon: <Languages />, title: "আরবি ভাষা", sub: "কথোপকথন" },
-    { icon: <Users />, title: "বয়স্ক শিক্ষা", sub: "বুনিয়াদী কোর্স" },
-    { icon: <Heart />, title: "মহিলা শাখা", sub: "দীনি তালীম" },
+    { icon: BookOpen, title: "নূরানী বিভাগ", sub: "সহজ কুরআন শিক্ষা" },
+    { icon: BookText, title: "হিফজ বিভাগ", sub: "হিফজুল কুরআন" },
+    { icon: PenTool, title: "কিতাব বিভাগ", sub: "দীনি শিক্ষা" },
+    { icon: GraduationCap, title: "সাধারণ শিক্ষা", sub: "আধুনিক সমন্বয়" },
+    { icon: School, title: "নাজেরা বিভাগ", sub: "শুদ্ধ তিলাওয়াত" },
+    { icon: Languages, title: "আরবি ভাষা", sub: "কথোপকথন" },
+    { icon: Users, title: "বয়স্ক শিক্ষা", sub: "বুনিয়াদী কোর্স" },
+    { icon: Heart, title: "মহিলা শাখা", sub: "দীনি তালীম" },
   ];
 
   return (
-    // মোবাইলে py-6 এবং বড় স্ক্রিনে py-12 করা হয়েছে
     <div className="bg-[#f8fafc] py-6 md:py-12">
       <section className="px-4 max-w-7xl mx-auto">
         <SectionHeading>কোর্সসমূহ</SectionHeading>
 
-        {/* মোবাইলে pb-6 এবং ডেস্কটপে pb-12 */}
         <div className="relative pb-6 md:pb-12">
           <Swiper
             modules={[Autoplay, Pagination]}
@@ -58,29 +57,31 @@ const Course = () => {
             }}
             className="rounded-xl"
           >
-            {courses.map((d, i) => (
-              <SwiperSlide key={i} className="h-auto">
-                <div className="group flex flex-col items-center text-center gap-3 p-4 bg-white rounded-2xl border border-gray-50 hover:border-green-300 transition-all duration-300 h-full">
-                  <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
-                    {React.cloneElement(d.icon as React.ReactElement, {
-                      className: "w-6 h-6 md:w-7 md:h-7",
-                    })}
-                  </div>
+            {courses.map((d, i) => {
+              // Extract the component and capitalize it for React usage
+              const Icon = d.icon;
+              return (
+                <SwiperSlide key={i} className="h-auto">
+                  <div className="group flex flex-col items-center text-center gap-3 p-4 bg-white rounded-2xl border border-gray-50 hover:border-green-300 transition-all duration-300 h-full">
+                    <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
+                      {/* Render the icon directly with props */}
+                      <Icon className="w-6 h-6 md:w-7 md:h-7" />
+                    </div>
 
-                  <div className="space-y-1">
-                    <h3 className="text-sm md:text-base font-bold text-gray-800 leading-tight">
-                      {d.title}
-                    </h3>
-                    <p className="text-[10px] md:text-xs text-gray-500 font-medium line-clamp-1">
-                      {d.sub}
-                    </p>
+                    <div className="space-y-1">
+                      <h3 className="text-sm md:text-base font-bold text-gray-800 leading-tight">
+                        {d.title}
+                      </h3>
+                      <p className="text-[10px] md:text-xs text-gray-500 font-medium line-clamp-1">
+                        {d.sub}
+                      </p>
+                    </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
+                </SwiperSlide>
+              );
+            })}
           </Swiper>
 
-          {/* মোবাইলে mt-4 এবং ডেস্কটপে mt-8 */}
           <div className="custom-pagination flex justify-center mt-4 md:mt-8"></div>
         </div>
       </section>
