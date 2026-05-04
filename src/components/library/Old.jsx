@@ -285,54 +285,7 @@ export default function IslamicDashboard() {
           </div>
         </div>
 
-        {/* ── ইলম ── */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-[#1a4731] text-base">ইলম</h3>
-            <button className="text-xs text-[#1a4731]/60 flex items-center gap-0.5">সব দেখুন <ChevronRight size={12} /></button>
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            {ilmCategories.map((c, i) => (
-              <motion.button
-                key={i}
-                whileTap={{ scale: 0.96 }}
-                whileHover={{ y: -2 }}
-                className="bg-white border border-[#1a4731]/10 rounded-2xl p-4 flex items-center gap-3 text-left shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div className="w-11 h-11 rounded-xl flex items-center justify-center text-2xl" style={{ background: c.light }}>
-                  {c.emoji}
-                </div>
-                <div>
-                  <p className="font-bold text-sm" style={{ color: c.color }}>{c.name}</p>
-                  <p className="text-xs text-gray-400 mt-0.5">পড়ুন →</p>
-                </div>
-              </motion.button>
-            ))}
-          </div>
-        </div>
-
-        {/* ── আমল ── */}
-        <div>
-          <div className="flex justify-between items-center mb-3">
-            <h3 className="font-bold text-[#1a4731] text-base">আমল</h3>
-            <button className="text-xs text-[#1a4731]/60 flex items-center gap-0.5">সব দেখুন <ChevronRight size={12} /></button>
-          </div>
-          <div className="grid grid-cols-3 gap-3">
-            {amalCategories.map((c, i) => (
-              <motion.button
-                key={i}
-                whileTap={{ scale: 0.95 }}
-                whileHover={{ y: -2 }}
-                className="bg-white border border-[#1a4731]/10 rounded-2xl p-4 flex flex-col items-center gap-2 shadow-sm transition-shadow hover:shadow-md"
-              >
-                <div className="w-12 h-12 rounded-xl flex items-center justify-center text-2xl" style={{ background: c.light }}>
-                  {c.emoji}
-                </div>
-                <p className="font-bold text-xs text-center" style={{ color: c.color }}>{c.name}</p>
-              </motion.button>
-            ))}
-          </div>
-        </div>
+       
 
         {/* ── Daily Ayah Card ── */}
         <motion.div
