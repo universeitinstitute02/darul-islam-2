@@ -3,7 +3,7 @@ import React, { useEffect, useState } from "react";
 import CourseSection from "@/src/components/shared/EducationSectionShare";
 import Image from "next/image";
 import { motion } from "framer-motion";
-import EducationHero from "@/src/components/EducationHero/EducationHero";
+import EducationHero from "@/src/components/LandingPageLayout/EducationHero/EducationHero";
 
 interface EducationData {
   educationData: any[];
