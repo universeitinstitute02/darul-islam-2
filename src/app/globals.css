@@ -11,7 +11,7 @@
   --color-islamic-green: #0a593a;
   --color-islamic-green-light: #168055;
   --color-islamic-gold: #d4af37;
-  --font-noto-bengali: var(--font-noto-bengali);
+  --font-hind-siliguri: var(--font-hind-siliguri);
   --font-poppins: var(--font-poppins);
 }
 
@@ -23,7 +23,7 @@
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: var(--font-noto-bengali), var(--font-poppins), sans-serif;
+  font-family: var(--font-hind-siliguri), var(--font-poppins), sans-serif;
 }
 
 @layer base {

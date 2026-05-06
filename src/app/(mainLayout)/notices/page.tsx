@@ -3,11 +3,13 @@
 import { useState, useEffect, useRef } from "react";
 
 /* -------------------- TYPES -------------------- */
+type Category = "academic" | "holiday" | "course" | "system";
+
 type Notice = {
   slug: string;
   title: string;
   date: string;
-  category: "academic" | "holiday" | "course" | "system";
+  category: Category;
   isNew: boolean;
   content: string;
 };
@@ -21,7 +23,7 @@ const notices: Notice[] = [
     category: "academic",
     isNew: true,
     content:
-      "Final exam schedule প্রকাশ করা হয়েছে...",
+      "Final exam schedule প্রকাশ করা হয়েছে। সকল শিক্ষার্থীকে যথাসময়ে পরীক্ষায় অংশগ্রহণের অনুরোধ করা যাচ্ছে। বিস্তারিত সময়সূচি নোটিশ বোর্ড ও ওয়েবসাইটে পাওয়া যাবে।",
   },
   {
     slug: "eid-holiday",
@@ -30,7 +32,7 @@ const notices: Notice[] = [
     category: "holiday",
     isNew: true,
     content:
-      "Eid-ul-Fitr উপলক্ষে আগামী ৫ দিন...",
+      "Eid-ul-Fitr উপলক্ষে আগামী ৫ দিন সকল ক্লাস ও পরীক্ষা বন্ধ থাকবে। ছুটির পরে যথারীতি কার্যক্রম শুরু হবে। সকলকে ঈদের শুভেচ্ছা।",
   },
   {
     slug: "new-course-launch",
@@ -39,7 +41,7 @@ const notices: Notice[] = [
     category: "course",
     isNew: false,
     content:
-      "আমাদের নতুন MERN Stack কোর্স চালু হয়েছে...",
+      "আমাদের নতুন MERN Stack কোর্স চালু হয়েছে। MongoDB, Express, React এবং Node.js সম্পর্কে গভীর জ্ঞান অর্জনের সুযোগ নিন। ভর্তির জন্য ওয়েবসাইট ভিজিট করুন।",
   },
   {
     slug: "maintenance",
@@ -48,40 +50,72 @@ const notices: Notice[] = [
     category: "system",
     isNew: false,
     content:
-      "ওয়েবসাইট আপডেটের জন্য...",
+      "ওয়েবসাইট আপডেটের জন্য রাত ১২টা থেকে ভোর ৪টা পর্যন্ত সিস্টেম সাময়িকভাবে বন্ধ থাকবে। অসুবিধার জন্য আন্তরিকভাবে দুঃখিত।",
   },
 ];
 
-const categoryMeta = {
+/* -------------------- CATEGORY META -------------------- */
+const categoryMeta: Record<
+  Category,
+  {
+    label: string;
+    stripe: string;
+    badgeBg: string;
+    badgeText: string;
+    badgeBorder: string;
+    btnBg: string;
+  }
+> = {
   academic: {
     label: "Academic",
-    accent: "bg-blue-600",
-    light: "bg-blue-50",
-    text: "text-blue-900",
+    stripe: "bg-[#185FA5]",
+    badgeBg: "bg-[#E6F1FB]",
+    badgeText: "text-[#0C447C]",
+    badgeBorder: "border-[#B5D4F4]",
+    btnBg: "bg-[#185FA5]",
   },
   holiday: {
     label: "Holiday",
-    accent: "bg-green-600",
-    light: "bg-green-50",
-    text: "text-green-900",
+    stripe: "bg-[#3B6D11]",
+    badgeBg: "bg-[#EAF3DE]",
+    badgeText: "text-[#27500A]",
+    badgeBorder: "border-[#C0DD97]",
+    btnBg: "bg-[#3B6D11]",
   },
   course: {
     label: "Course",
-    accent: "bg-amber-600",
-    light: "bg-amber-50",
-    text: "text-amber-900",
+    stripe: "bg-[#854F0B]",
+    badgeBg: "bg-[#FAEEDA]",
+    badgeText: "text-[#633806]",
+    badgeBorder: "border-[#FAC775]",
+    btnBg: "bg-[#854F0B]",
   },
   system: {
     label: "System",
-    accent: "bg-slate-600",
-    light: "bg-slate-50",
-    text: "text-slate-900",
+    stripe: "bg-[#5F5E5A]",
+    badgeBg: "bg-[#F1EFE8]",
+    badgeText: "text-[#444441]",
+    badgeBorder: "border-[#D3D1C7]",
+    btnBg: "bg-[#5F5E5A]",
   },
 };
 
 const FILTERS = ["All", "Academic", "Holiday", "Course", "System"];
 
-/* -------------------- CARD -------------------- */
+/* -------------------- BADGE -------------------- */
+function CategoryBadge({ category }: { category: Category }) {
+  const m = categoryMeta[category];
+  return (
+    <span
+      className={`text-[10px] font-semibold uppercase tracking-wide px-2.5 py-0.5 rounded-full border
+        ${m.badgeBg} ${m.badgeText} ${m.badgeBorder}`}
+    >
+      {m.label}
+    </span>
+  );
+}
+
+/* -------------------- NOTICE CARD (single-column row) -------------------- */
 function NoticeCard({
   notice,
   onClick,
@@ -91,55 +125,56 @@ function NoticeCard({
   onClick: (n: Notice) => void;
   index: number;
 }) {
-  const meta = categoryMeta[notice.category];
+  const m = categoryMeta[notice.category];
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
-    const t = setTimeout(() => setVisible(true), index * 80);
+    const t = setTimeout(() => setVisible(true), index * 60);
     return () => clearTimeout(t);
   }, [index]);
 
   return (
     <div
       onClick={() => onClick(notice)}
-      className={`cursor-pointer bg-white rounded-xl border border-slate-200 flex flex-col overflow-hidden transition-all duration-300
-      ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-4"}
-      hover:-translate-y-1 hover:shadow-lg`}
+      className={`
+        cursor-pointer bg-white rounded-xl border border-slate-200
+        flex flex-row items-stretch overflow-hidden
+        transition-all duration-300
+        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-3"}
+        hover:-translate-y-0.5 hover:shadow-md hover:border-slate-300
+      `}
     >
-      <div className={`h-1 ${meta.accent}`} />
+      {/* Left color stripe */}
+      <div className={`w-1 flex-shrink-0 ${m.stripe}`} />
 
-      <div className="p-5 flex flex-col gap-3 flex-1">
-        {/* Top */}
-        <div className="flex justify-between items-center">
-          <span
-            className={`text-[10px] font-semibold uppercase px-3 py-1 rounded-full border ${meta.light} ${meta.text}`}
-          >
-            {meta.label}
-          </span>
+      {/* Card body */}
+      <div className="flex flex-1 items-center gap-4 px-4 py-3.5 min-w-0">
+        {/* Left: meta + title + preview */}
+        <div className="flex flex-col gap-1.5 flex-1 min-w-0">
+          <div className="flex items-center gap-2 flex-wrap">
+            <CategoryBadge category={notice.category} />
+            {notice.isNew && (
+              <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                New
+              </span>
+            )}
+          </div>
 
-          {notice.isNew && (
-            <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-yellow-100 text-yellow-800 border border-yellow-300">
-              NEW
-            </span>
-          )}
+          <h2 className="text-sm font-bold text-slate-900 leading-snug truncate font-serif">
+            {notice.title}
+          </h2>
+
+          <p className="text-xs text-slate-500 leading-relaxed line-clamp-1">
+            {notice.content}
+          </p>
         </div>
 
-        {/* Title */}
-        <h2 className="text-sm font-semibold text-slate-900 leading-snug">
-          {notice.title}
-        </h2>
-
-        {/* Content */}
-        <p className="text-sm text-slate-500 line-clamp-3 flex-1">
-          {notice.content}
-        </p>
-
-        {/* Footer */}
-        <div className="flex justify-between items-center pt-3 border-t border-slate-100 mt-auto">
-          <span className="text-xs text-slate-400">{notice.date}</span>
-          <span className="text-xs font-semibold text-slate-700">
-            Read more →
+        {/* Right: date + cta */}
+        <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
+          <span className="text-[11px] text-slate-400 whitespace-nowrap">
+            {notice.date}
           </span>
+          <span className="text-xs font-semibold text-slate-700">Read →</span>
         </div>
       </div>
     </div>
@@ -154,15 +189,15 @@ function Modal({
   notice: Notice;
   onClose: () => void;
 }) {
-  const overlayRef = useRef<HTMLDivElement | null>(null);
-  const meta = categoryMeta[notice.category];
+  const overlayRef = useRef<HTMLDivElement>(null);
+  const m = categoryMeta[notice.category];
 
   useEffect(() => {
-    const key = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    document.addEventListener("keydown", key);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", key);
+      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
   }, [onClose]);
@@ -171,57 +206,53 @@ function Modal({
     <div
       ref={overlayRef}
       onClick={(e) => e.target === overlayRef.current && onClose()}
-      className="fixed inset-0 bg-black/50 backdrop-blur flex items-center justify-center z-50 p-4"
+      className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-end sm:items-center justify-center z-50 p-0 sm:p-4"
     >
-      <div className="bg-white w-full max-w-lg rounded-2xl shadow-2xl overflow-hidden animate-[fadeIn_.2s]">
-        <div className={`h-1.5 ${meta.accent}`} />
+      <div className="bg-white w-full max-w-lg rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden animate-[fadeIn_.2s_ease]">
+        {/* Top stripe */}
+        <div className={`h-1.5 ${m.stripe}`} />
 
         {/* Header */}
-        <div className="p-6 border-b">
-          <div className="flex justify-between mb-3">
+        <div className="p-5 border-b border-slate-100">
+          <div className="flex justify-between items-center mb-3">
             <div className="flex gap-2 items-center">
-              <span
-                className={`text-[10px] font-semibold px-3 py-1 rounded-full border ${meta.light} ${meta.text}`}
-              >
-                {meta.label}
-              </span>
-
+              <CategoryBadge category={notice.category} />
               {notice.isNew && (
-                <span className="text-[10px] px-2 py-0.5 bg-yellow-100 text-yellow-800 rounded-full border">
-                  NEW
+                <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-amber-50 text-amber-700 border border-amber-200">
+                  New
                 </span>
               )}
             </div>
-
             <button
               onClick={onClose}
-              className="w-7 h-7 rounded-full border text-slate-500"
+              aria-label="Close"
+              className="w-7 h-7 rounded-full border border-slate-200 text-slate-500 flex items-center justify-center hover:bg-slate-100 transition"
             >
               ×
             </button>
           </div>
 
-          <h2 className="text-lg font-bold text-slate-900">
+          <h2 className="text-lg font-bold text-slate-900 leading-snug font-serif">
             {notice.title}
           </h2>
-          <p className="text-xs text-slate-400">{notice.date}</p>
+          <p className="text-xs text-slate-400 mt-1">{notice.date}</p>
         </div>
 
         {/* Body */}
-        <div className="p-6 text-sm text-slate-600 leading-relaxed">
+        <div className="p-5 text-sm text-slate-600 leading-relaxed max-h-60 overflow-y-auto">
           {notice.content}
         </div>
 
         {/* Footer */}
-        <div className="p-4 border-t flex justify-end gap-2">
+        <div className="p-4 border-t border-slate-100 flex justify-end gap-2">
           <button
             onClick={onClose}
-            className="px-4 py-2 text-sm border rounded-md"
+            className="px-4 py-2 text-sm border border-slate-200 rounded-lg text-slate-700 hover:bg-slate-50 transition"
           >
             Dismiss
           </button>
           <button
-            className={`px-4 py-2 text-sm text-white rounded-md ${meta.accent}`}
+            className={`px-4 py-2 text-sm text-white rounded-lg font-medium ${m.btnBg} hover:opacity-90 transition`}
           >
             Share notice
           </button>
@@ -244,49 +275,55 @@ export default function NoticePage() {
         );
 
   return (
-    <div className="min-h-screen bg-slate-50 font-sans">
-      <div className="max-w-5xl mx-auto px-5 py-12">
+    <div className="min-h-screen bg-slate-50 font-sans mt-12">
+      <div className="max-w-2xl mx-auto px-4 sm:px-6 py-10">
+
         {/* Header */}
-        <div className="mb-8">
-          <p className="text-xs uppercase tracking-widest text-slate-400">
-            Official announcements
-          </p>
-          <h1 className="text-3xl font-bold text-slate-900">
+        <div className="mb-7">
+          <h1 className="text-3xl sm:text-4xl font-black text-slate-900 font-serif leading-tight">
             Notice Board
           </h1>
-          <p className="text-sm text-slate-500">
-            {filtered.length} notice
-          </p>
         </div>
 
         {/* Filters */}
-        <div className="flex flex-wrap gap-2 mb-6">
+        <div className="flex flex-wrap gap-2 mb-5">
           {FILTERS.map((f) => (
             <button
               key={f}
               onClick={() => setActiveFilter(f)}
-              className={`px-4 py-1.5 text-sm rounded-full font-semibold border
-              ${
-                activeFilter === f
-                  ? "bg-slate-900 text-white"
-                  : "bg-white text-slate-600"
-              }`}
+              className={`px-4 py-1.5 text-xs rounded-full font-semibold border transition
+                ${
+                  activeFilter === f
+                    ? "bg-slate-900 text-white border-slate-900"
+                    : "bg-white text-slate-600 border-slate-200 hover:border-slate-400"
+                }`}
             >
               {f}
             </button>
           ))}
         </div>
 
-        {/* Grid */}
-        <div className="grid sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {filtered.map((notice, i) => (
-            <NoticeCard
-              key={notice.slug}
-              notice={notice}
-              index={i}
-              onClick={setSelected}
-            />
-          ))}
+        {/* Count */}
+        <p className="text-xs text-slate-400 mb-4">
+          {filtered.length} notice{filtered.length !== 1 ? "s" : ""}
+        </p>
+
+        {/* Single-column list */}
+        <div className="flex flex-col gap-2.5">
+          {filtered.length > 0 ? (
+            filtered.map((notice, i) => (
+              <NoticeCard
+                key={notice.slug}
+                notice={notice}
+                index={i}
+                onClick={setSelected}
+              />
+            ))
+          ) : (
+            <p className="text-center py-12 text-slate-400 text-sm">
+              No notices found for this category.
+            </p>
+          )}
         </div>
       </div>
 
