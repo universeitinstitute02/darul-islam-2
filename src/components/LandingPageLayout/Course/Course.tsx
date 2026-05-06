@@ -39,16 +39,16 @@ const Course = () => {
   ];
 
   return (
-    <div className="bg-[#f8fafc] py-12">
-      <section className="px-4 max-w-7xl mx-auto">
+    <div className="pt-7 px-4">
+      <div className="px-4 max-w-7xl mx-auto bg-gray-300 rounded-2xl p-4">
         <SectionHeading>কোর্সসমূহ</SectionHeading>
 
         {/* Wrapper to control pagination spacing */}
-        <div className="relative pb-12">
+        <div className="relative">
           <Swiper
             modules={[Autoplay, Pagination]}
-            spaceBetween={15}
-            slidesPerView={2.2} // মোবাইলে কার্ড ছোট দেখাবে এবং স্লাইডার ফিল দিবে
+            spaceBetween={20}
+            slidesPerView={2}
             loop={true}
             centeredSlides={false}
             autoplay={{
@@ -95,7 +95,7 @@ const Course = () => {
           {/* Pagination Container (Fixed outside the cards) */}
           <div className="custom-pagination flex justify-center mt-8"></div>
         </div>
-      </section>
+      </div>
 
       <style jsx global>{`
         .custom-pagination .swiper-pagination-bullet {

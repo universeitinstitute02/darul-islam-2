@@ -37,7 +37,7 @@ export default function HeroSection() {
   }, [])
 
   return (
-    <section className="relative h-[150px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden">
+    <section className="relative h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden">
       
       {/* Slides */}
       {slides.map((slide, index) => (
@@ -68,7 +68,7 @@ export default function HeroSection() {
                 </span>
 
                 {/* Title */}
-                <h1 className="text-sm sm:text-base lg:text-7xl font-black text-white leading-tight">
+                <h1 className="text-2xl sm:text-base lg:text-7xl font-black text-white leading-tight">
                   {slide.title}
                 </h1>
 
