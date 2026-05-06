@@ -112,12 +112,12 @@ export default function DashboardLayout({
             );
           })}
 
-          {/* <Link
+          <Link
             href="/dashboard/teacher"
             className="flex items-center gap-3 p-3 hover:bg-[#C5A059] hover:text-white rounded-xl text-[#C5A059] font-bold transition mt-8 border border-[#C5A059]"
           >
             শিক্ষক প্যানেল দেখুন
-          </Link> */}
+          </Link>
         </nav>
 
         <div className="p-4 border-t border-green-800">

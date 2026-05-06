@@ -6,21 +6,9 @@ import { Autoplay, Navigation, Pagination } from "swiper/modules";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import hujur1 from "../../../../public/images/hujur1.png";
 
-// Swiper styles
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
+import SectionHeading from "../../shared/SectionHeading";
 
-const SectionHeading = ({ children }) => (
-  <div className="text-center mb-10">
-    <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
-      {children}
-      <span className="block h-1 bg-green-600 mt-2 mx-auto w-1/2 rounded-full" />
-    </h2>
-  </div>
-);
-
-const TeacherCard = ({ teacher }) => (
+const TeacherCard = ({ teacher }: { teacher: any }) => (
   // h-full নিশ্চিত করে যে সব কার্ড একই উচ্চতার হবে
   <div className="group flex flex-col items-center text-center gap-4 p-5 bg-white rounded-[2rem] border border-white shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(22,163,74,0.1)] hover:border-green-100 transition-all duration-500 h-full w-full">
     <div className="relative">

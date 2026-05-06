@@ -1,0 +1,107 @@
+"use client";
+import React from "react";
+import Image from "next/image";
+
+// ১. Type define korte korte jibon sesh
+interface Course {
+  title: string;
+  image?: string;
+  price?: number;
+  oldPrice?: number;
+}
+
+interface SectionProps {
+  section: {
+    category: string;
+    type?: string;
+    courses: Course[];
+  };
+}
+
+// ২. কম্পোনেন্টে টাইপটি অ্যাসাইন করা হলো
+const EducationSectionShare = ({ section }: SectionProps) => {
+  const { category, courses, type } = section;
+
+  return (
+    <div className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm">
+      {/* সেকশন টাইটেল */}
+      <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
+        <h2 className="text-[#105D38] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
+          {category}
+        </h2>
+      </div>
+
+      {/* কন্ডিশনাল রেন্ডারিং: যদি টাইপ 'card' হয় তবে কোর্স কার্ড দেখাবে */}
+      {type === "card" ? (
+        <>
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-4">
+            {courses.map((course, index) => (
+              <div
+                key={index}
+                className="group bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
+              >
+                {/* ইমেজ সেকশন */}
+                <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
+                  {course.image ? (
+                    <Image
+                      src={course.image}
+                      alt={course.title}
+                      fill
+                      className="object-cover group-hover:scale-110 transition-transform duration-500"
+                    />
+                  ) : (
+                    <div className="absolute inset-0 bg-[#105D38]/10 flex items-center justify-center text-[10px] text-neutral-400 font-medium">
+                      {course.title} (No Image)
+                    </div>
+                  )}
+                </div>
+
+                <div className="p-3 md:p-4 flex flex-col flex-grow">
+                  <h3 className="text-[11px] md:text-sm font-bold text-neutral-700 line-clamp-1 mb-2">
+                    {course.title}
+                  </h3>
+                  <div className="mt-auto flex items-center gap-2">
+                    <span className="text-[#105D38] font-black text-sm md:text-lg">
+                      ৳ {course.price}
+                    </span>
+                    {course.oldPrice && (
+                      <span className="text-neutral-400 text-[10px] md:text-xs line-through font-medium">
+                        ৳ {course.oldPrice}
+                      </span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <div className="mt-10 flex justify-center">
+            <button className="px-10 py-2 border-2 border-[#105D38] text-[#105D38] font-black rounded-xl hover:bg-[#105D38] hover:text-white transition-all duration-300 text-sm md:text-base">
+              আরো দেখুন
+            </button>
+          </div>
+        </>
+      ) : (
+        /* আইকন গ্রিড লেআউট (টাইপ 'card' না হলে) */
+        <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
+          {courses.map((course, cIdx) => (
+            <div
+              key={cIdx}
+              className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+            >
+              <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
+              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+              <div className="relative h-full flex items-center justify-center p-3">
+                <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
+                  {course.title}
+                </p>
+              </div>
+              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+export default EducationSectionShare;
