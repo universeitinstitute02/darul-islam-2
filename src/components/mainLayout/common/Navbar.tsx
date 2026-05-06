@@ -9,6 +9,7 @@ import {
   HandHeart,
   User,
   BellRing,
+  Store,
 } from "lucide-react";
 import { motion } from "framer-motion";
 
@@ -17,7 +18,8 @@ const navItems = [
   { name: "হোম", href: "/", icon: Home },
   { name: "শিক্ষা", href: "/education", icon: University },
   { name: "লাইব্রেরি", href: "/library", icon: BookOpen },
-  { name: "নোটিশ", href: "/notices", icon: BellRing },
+  // { name: "নোটিশ", href: "/notices", icon: BellRing },
+  { name: "ইসলামিক শপ", href: "/islamic-shop", icon: Store },
   { name: "দান", href: "/donation", icon: HandHeart },
   { name: "প্রোফাইল", href: "/student-profile", icon: User },
 ];
