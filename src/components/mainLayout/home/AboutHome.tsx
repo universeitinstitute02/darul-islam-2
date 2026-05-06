@@ -3,7 +3,7 @@ import React from "react";
 
 const AboutHome = () => {
   return (
-    <section className="relative overflow-hidden bg-[#f0f7f0] px-5 py-12 md:py-16">
+    <section className="relative overflow-hidden bg-[#f0f7f0] px-5 py-6 md:py-16">
       {/* Decorative circles */}
       <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-green-700/5" />
       <div className="pointer-events-none absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-green-700/5" />
@@ -12,18 +12,18 @@ const AboutHome = () => {
         {/* Text Content */}
         <div className="flex-1">
           {/* Label */}
-          <div className="mb-4 flex items-center gap-2.5">
+          <div className="mb-2 flex items-center gap-2.5">
             <div className="h-7 w-0.5 rounded-full bg-green-700" />
             <span className="text-[11px] font-semibold uppercase tracking-widest text-green-700">
               আমাদের পরিচয়
             </span>
           </div>
 
-          <h2 className="mb-5 font-serif text-3xl font-bold leading-snug text-green-950 md:text-4xl">
+          <h2 className="mb-2 font-serif text-3xl font-bold leading-snug text-green-950 md:text-4xl">
             আমাদের সম্পর্কে
           </h2>
 
-          <p className="mb-7 max-w-lg text-sm leading-relaxed text-gray-600 md:text-base md:leading-[1.85]">
+          <p className="mb-5 max-w-lg text-sm leading-relaxed text-gray-600 md:text-base md:leading-[1.85]">
             দারুল ইসলাম ইনস্টিটিউট ইসলামী শিক্ষা ও আধুনিক শিক্ষার সমন্বয় ঘটিয়ে
             নৈতিক, একাডেমিক ও মানবিক গুণাবলি বিকাশে প্রতিজ্ঞাবদ্ধ।
           </p>
@@ -44,7 +44,7 @@ const AboutHome = () => {
           </div>
 
           {/* Stats Row */}
-          <div className="mt-8 flex items-center gap-6 border-t border-green-700/10 pt-6 md:gap-8">
+          <div className="mt-4 flex items-center gap-6 border-t border-green-700/10 pt-6 md:gap-8">
             {[
               { value: "১৫+", label: "বছরের অভিজ্ঞতা" },
               { value: "৫০০+", label: "শিক্ষার্থী" },
