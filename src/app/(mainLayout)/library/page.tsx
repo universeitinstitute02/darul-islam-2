@@ -1,13 +1,13 @@
 import ContentSections from "@/src/components/library/ContentSections";
-import ForbiddenPrayerTimes from "@/src/components/library/ForbiddenPrayerTimes";
+// import ForbiddenPrayerTimes from "@/src/components/library/ForbiddenPrayerTimes";
 import PrayerTimesResponsive from "@/src/components/library/Library";
-import NaflAndIftarTimes from "@/src/components/library/NaflAndIftarTimes";
+// import NaflAndIftarTimes from "@/src/components/library/NaflAndIftarTimes";
 const page = () => {
   return (
     <div>
       <PrayerTimesResponsive />
-      <ForbiddenPrayerTimes />
-      <NaflAndIftarTimes />
+      {/* <ForbiddenPrayerTimes /> */}
+      {/* <NaflAndIftarTimes /> */}
       <ContentSections />
     </div>
   );

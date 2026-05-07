@@ -15,8 +15,8 @@ import { motion } from "framer-motion";
 // সময়গুলো ২৪ ঘণ্টা ফরম্যাটেই রাখা ভালো ক্যালকুলেশনের সুবিধার জন্য
 const PRAYER_CONFIG = [
   { id: "fajr", name: "ফজর", icon: Sunrise, time: "04:01" },
-  { id: "dhuhr", name: "যুহর", icon: Sun, time: "11:57" },
-  { id: "asr", name: "আসর", icon: CloudSun, time: "16:33" },
+  { id: "dhuhr", name: "যুহর", icon: Sun, time: "13:00" },
+  { id: "asr", name: "আসর", icon: CloudSun, time: "17:00" },
   { id: "maghrib", name: "মাগরিব", icon: Moon, time: "18:29" },
   { id: "isha", name: "ইশা", icon: CloudMoon, time: "19:50" },
 ];
@@ -84,7 +84,7 @@ export default function PrayerTimesResponsive() {
   }, [now]);
 
   return (
-    <div className="min-h-screen bg-[#F4F7F5] px-4 md:px-8 lg:px-12 pt-20 md:pt-28 pb-10 font-sans overflow-x-hidden">
+    <div className=" bg-[#F4F7F5] px-4 md:px-8 lg:px-12 pt-20 pb-5 md:pt-25 font-sans overflow-x-hidden">
       <div className="max-w-7xl mx-auto">
         <header className="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
           <motion.div
@@ -167,37 +167,47 @@ export default function PrayerTimesResponsive() {
             </div>
           </motion.div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 items-start">
-            <div className="lg:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* প্রধান কন্টেইনার পরিবর্তন করুন */}
+          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 items-start">
+            {/* ইনার গ্রিড পরিবর্তন করুন */}
+            <div className="col-span-2 lg:col-span-5 grid grid-cols-2 lg:grid-cols-5 gap-4">
               {PRAYER_CONFIG.map((prayer) => {
                 const isActive = data.currentId === prayer.id;
                 return (
                   <motion.div
                     key={prayer.id}
                     whileHover={{ y: -4 }}
-                    className={`p-6 rounded-[2.2rem] flex items-center justify-between transition-all duration-300 ${isActive ? "bg-white ring-4 ring-emerald-500/10 border-2 border-emerald-500 shadow-xl" : "bg-white border border-emerald-100 shadow-sm hover:shadow-md"}`}
+                    // মোবাইল রেসপনসিভ করার জন্য padding ও টেক্সট সাইজ কিছুটা অ্যাডজাস্ট করা হয়েছে
+                    className={`p-4 md:p-3 rounded-[1.5rem] md:rounded-[2.2rem] flex flex-col sm:flex-row items-center justify-between transition-all duration-300 ${
+                      isActive
+                        ? "bg-white ring-4 ring-emerald-500/10 border-2 border-emerald-500 shadow-xl"
+                        : "bg-white border border-emerald-100 shadow-sm hover:shadow-md"
+                    }`}
                   >
-                    <div className="flex items-center gap-4">
+                    <div className="flex flex-col sm:flex-row items-center gap-2 md:gap-2 text-center sm:text-left">
                       <div
-                        className={`p-4 rounded-2xl ${isActive ? "bg-emerald-600 text-white" : "bg-emerald-50 text-emerald-600"}`}
+                        className={`p-3 md:p-1 rounded-2xl ${
+                          isActive
+                            ? "bg-emerald-600 text-white"
+                            : "bg-emerald-50 text-emerald-600"
+                        }`}
                       >
-                        <prayer.icon size={24} />
+                        <prayer.icon size={20} className="md:w-6 md:h-6" />
                       </div>
                       <div>
                         <p
-                          className={`font-bold text-xl ${isActive ? "text-emerald-900" : "text-gray-700"}`}
+                          className={`font-bold text-base md:text-xl ${isActive ? "text-emerald-900" : "text-gray-700"}`}
                         >
                           {prayer.name}
                         </p>
-                        <p className="text-[10px] font-bold uppercase tracking-tighter text-gray-400">
+                        <p className="text-[9px] md:text-[10px] font-bold uppercase tracking-tighter text-gray-400">
                           {isActive ? "চলমান ওয়াক্ত" : "শুরু"}
                         </p>
                       </div>
                     </div>
                     <p
-                      className={`text-2xl font-black ${isActive ? "text-emerald-600" : "text-gray-900"}`}
+                      className={`text-xl md:text-2xl font-black mt-2 sm:mt-0 ${isActive ? "text-emerald-600" : "text-gray-900"}`}
                     >
-                      {/* এখানে formatTo12Hr ব্যবহার করা হয়েছে */}
                       {toBn(formatTo12Hr(prayer.time))}
                     </p>
                   </motion.div>

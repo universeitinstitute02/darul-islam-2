@@ -28,7 +28,7 @@ const ForbiddenPrayerTimes = () => {
 
   return (
     // বাইরের ব্যাকগ্রাউন্ড এখন gray-50
-    <div className="w-full bg-gray-50 px-4 py-12">
+    <div className="w-full bg-gray-50 px-4 pt-6">
       <div className="max-w-7xl mx-auto">
         {/* Main Card: bg-emerald-950 দিয়ে আগের সেকশনের সাথে মিল রাখা হয়েছে */}
         <div className="relative bg-emerald-950 rounded-[2.5rem] p-6 lg:p-10 shadow-2xl border border-white/5 overflow-hidden">
