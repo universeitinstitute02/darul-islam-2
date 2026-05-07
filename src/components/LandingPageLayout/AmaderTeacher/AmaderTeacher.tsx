@@ -75,8 +75,8 @@ const AmaderTeacher = () => {
   };
 
   return (
-    <section className="bg-[#f0f7f0] px-5 py-16 overflow-hidden">
-      <div className="max-w-7xl mx-auto relative">
+    <section className="overflow-hidden px-5 my-6">
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl relative ">
         <SectionHeading>আমাদের শিক্ষকবৃন্দ</SectionHeading>
 
         <div className="relative px-2 md:px-10">

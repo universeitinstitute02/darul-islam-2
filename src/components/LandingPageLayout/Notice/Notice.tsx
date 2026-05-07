@@ -20,8 +20,8 @@ const NoticeBoard: React.FC = () => {
   ];
 
   return (
-    <section className="max-w-6xl mx-auto px-5 py-16">
-      <div className="bg-white rounded-[2rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 overflow-hidden">
+    <div className="max-w-6xl mx-auto px-5">
+      <div className="bg-gray-200 rounded-[2rem] shadow-xl shadow-emerald-900/5 border border-emerald-50 overflow-hidden">
         {/* হেডার সেকশন */}
         <div className="bg-[#105D38] p-6 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -43,7 +43,7 @@ const NoticeBoard: React.FC = () => {
             {notices.map((notice, i) => (
               <div
                 key={i}
-                className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-emerald-50/50 border border-transparent hover:border-emerald-100 transition-all duration-300 cursor-pointer"
+                className="group flex items-center gap-4 p-4 rounded-2xl hover:bg-emerald-50/50 border border-gray-300 hover:border-emerald-100 transition-all duration-300 cursor-pointer"
               >
                 {/* ডেট আইকন/ব্যাজ */}
                 <div className="hidden sm:flex flex-col items-center justify-center min-w-[70px] h-[70px] bg-white border border-emerald-100 rounded-xl shadow-sm group-hover:bg-[#105D38] group-hover:text-white transition-colors">
@@ -90,7 +90,7 @@ const NoticeBoard: React.FC = () => {
           </div>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

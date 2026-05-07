@@ -59,7 +59,7 @@ export default function DonationPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8] pb-20">
+    <div className="min-h-screen bg-[#F5F0E8] py-16">
       <div className="bg-[#14281D] text-[#E2D4B9] px-6 py-12 text-center">
         <h1 className="text-3xl font-black mb-2">{campaign.title}</h1>
         <p className="text-xs opacity-60 uppercase font-bold tracking-widest">মানবতার সেবায় আপনার অংশগ্রহণ</p>

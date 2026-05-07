@@ -8,7 +8,7 @@ const AboutHome = () => {
       <div className="pointer-events-none absolute -right-10 -top-10 h-48 w-48 rounded-full bg-green-700/5" />
       <div className="pointer-events-none absolute -bottom-8 -left-8 h-36 w-36 rounded-full bg-green-700/5" />
 
-      <div className="relative mx-auto flex max-w-5xl flex-col items-center gap-10 md:flex-row md:items-center md:gap-14">
+      <div className="relative mx-auto flex max-w-6xl flex-col items-center gap-10 md:flex-row md:items-center md:gap-14">
         {/* Text Content */}
         <div className="flex-1">
           {/* Label */}

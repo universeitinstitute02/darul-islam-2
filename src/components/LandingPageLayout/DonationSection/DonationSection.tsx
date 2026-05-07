@@ -22,7 +22,7 @@ const DonationSection = () => {
   ];
 
   return (
-    <section className="py-12 px-2 bg-white">
+    <div className="py-12 px-2 bg-white">
       <div className="max-w-6xl mx-auto text-center">
         {/* Header Section */}
         <div className="mb-8">
@@ -40,7 +40,7 @@ const DonationSection = () => {
           {donationCards.map((card, index) => (
             <div
               key={index}
-              className="group relative p-4 md:p-8 rounded-2xl border border-gray-100 bg-white shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center overflow-hidden"
+              className="group relative p-4 md:p-8 rounded-2xl border border-gray-100 bg-gray-200 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col items-center text-center overflow-hidden"
             >
               {/* Background Accent */}
               <div
@@ -74,7 +74,7 @@ const DonationSection = () => {
           ))}
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

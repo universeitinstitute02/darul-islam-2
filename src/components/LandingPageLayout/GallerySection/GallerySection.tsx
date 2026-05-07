@@ -34,7 +34,9 @@ const GallerySection: React.FC = () => {
   ];
 
   return (
-    <section className="px-4 py-16 lg:py-24 max-w-7xl mx-auto">
+    <div className="px-4 my-8 ">
+
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
       {/* হেডার অংশ */}
       <div className="flex flex-col items-center mb-12 text-center">
         <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-[#105D38] rounded-full text-xs font-bold mb-4">
@@ -96,7 +98,8 @@ const GallerySection: React.FC = () => {
           <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
         </button>
       </div>
-    </section>
+      </div>
+    </div>
   );
 };
 

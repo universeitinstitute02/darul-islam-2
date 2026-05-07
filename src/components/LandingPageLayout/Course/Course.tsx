@@ -29,15 +29,15 @@ const Course = () => {
   ];
 
   return (
-    <div className="bg-[#f8fafc] py-6 md:py-12">
-      <section className="px-4 max-w-7xl mx-auto">
+    <div className=" px-5 py-6">
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         <SectionHeading>কোর্সসমূহ</SectionHeading>
 
         <div className="relative pb-6 md:pb-12">
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={15}
-            slidesPerView={2.2}
+            slidesPerView={2}
             loop={true}
             centeredSlides={false}
             autoplay={{
@@ -84,7 +84,7 @@ const Course = () => {
 
           <div className="custom-pagination flex justify-center mt-4 md:mt-8"></div>
         </div>
-      </section>
+      </div>
 
       <style jsx global>{`
         .custom-pagination .swiper-pagination-bullet {
