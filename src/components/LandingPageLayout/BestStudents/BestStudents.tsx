@@ -60,8 +60,8 @@ const StudentSlider = () => {
   ];
 
   return (
-    <section className="bg-gray-50 py-12 md:py-20 px-4">
-      <div className="max-w-7xl mx-auto">
+    <section className="px-5">
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         {/* Section Header */}
         <div className="text-center mb-12">
           <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3">

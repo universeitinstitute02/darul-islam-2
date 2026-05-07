@@ -30,11 +30,11 @@ const AdmissionInfo: React.FC = () => {
   ];
 
   return (
-    <section className="py-16 px-5 bg-white relative overflow-hidden">
+    <div className="my-8 px-5 relative overflow-hidden">
       {/* Background Glow */}
       <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-50 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
 
-      <div className="max-w-6xl mx-auto text-center relative z-10">
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl text-center relative z-10">
         <h2 className="text-3xl md:text-4xl font-black text-[#105D38] mb-4">
           ভর্তি তথ্য ও প্রক্রিয়া
         </h2>
@@ -81,7 +81,7 @@ const AdmissionInfo: React.FC = () => {
           </button>
         </div>
       </div>
-    </section>
+    </div>
   );
 };
 

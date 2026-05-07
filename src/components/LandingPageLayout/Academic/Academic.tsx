@@ -15,12 +15,9 @@ import {
   HeartHandshake,
 } from "lucide-react";
 
-<<<<<<< HEAD
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 
-=======
->>>>>>> a047d036378b791765388dc468366e09e6fcd6b5
 const Academic = () => {
   const departments = [
     { icon: <BookOpen />, title: "নূরানী বিভাগ", sub: "প্রাথমিক শিক্ষা" },
@@ -34,7 +31,9 @@ const Academic = () => {
   ];
 
   return (
-    <section className="px-5 py-16 max-w-7xl mx-auto relative group">
+    <div className="px-5">
+    <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl relative group">
+
       <div className="text-center mb-10">
         <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
           একাডেমিক বিভাগ
@@ -45,8 +44,8 @@ const Academic = () => {
       <div className="relative px-2 md:px-10">
         <Swiper
           modules={[Navigation, Pagination]}
-          spaceBetween={20}
-          slidesPerView={2.2}
+          spaceBetween={21}
+          slidesPerView={2}
           loop={false}
           navigation={{
             nextEl: ".next-btn-academic",
@@ -97,7 +96,6 @@ const Academic = () => {
 
       {/* Pagination Dot Container - Center aligned */}
       <div className="academic-pagination !flex justify-center items-center gap-1 mt-8 !static"></div>
-
       <style jsx global>{`
         .academic-pagination {
           width: 100% !important;
@@ -116,7 +114,8 @@ const Academic = () => {
           transition: all 0.3s ease;
         }
       `}</style>
-    </section>
+    </div>
+    </div>
   );
 };
 
