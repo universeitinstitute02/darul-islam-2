@@ -15,12 +15,6 @@ import {
   HeartHandshake,
 } from "lucide-react";
 
-<<<<<<< HEAD
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-
-=======
->>>>>>> a047d036378b791765388dc468366e09e6fcd6b5
 const Academic = () => {
   const departments = [
     { icon: <BookOpen />, title: "নূরানী বিভাগ", sub: "প্রাথমিক শিক্ষা" },

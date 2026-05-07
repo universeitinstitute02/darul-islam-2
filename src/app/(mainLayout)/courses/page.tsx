@@ -1,20 +1,28 @@
-"use client"
-import { useState } from "react"
-import { 
-  Search, 
-  Users, 
-  Clock, 
-  Play, 
-  Star, 
+"use client";
+import { useState } from "react";
+import {
+  Search,
+  Users,
+  Clock,
+  Play,
+  Star,
   ArrowRight,
   University,
-  BookMarked
-} from "lucide-react"
+  BookMarked,
+} from "lucide-react";
 
-import { motion } from "framer-motion"
-import Image from "next/image"
+import { motion } from "framer-motion";
+import Image from "next/image";
 
-const categories = ["All", "Qur’an", "Hadith", "Arabic", "Tajweed", "Tafsir", "Aqeedah"]
+const categories = [
+  "All",
+  "Qur’an",
+  "Hadith",
+  "Arabic",
+  "Tajweed",
+  "Tafsir",
+  "Aqeedah",
+];
 
 const courses = [
   {
@@ -24,9 +32,10 @@ const courses = [
     duration: "2 years",
     price: "Free",
     type: "Hifz",
-    image: "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
+    image:
+      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
     desc: "with Tajweed & Tafseer basics · full-time or part-time",
-    seats: 32
+    seats: 32,
   },
   {
     id: 2,
@@ -35,9 +44,10 @@ const courses = [
     duration: "1 year",
     price: "$120",
     type: "Arabic",
-    image: "https://images.unsplash.com/photo-1582213713303-9257ac978839?q=80&w=2070&auto=format&fit=crop",
+    image:
+      "https://i.ibb.co.com/ccSX0XB2/web-madrasa-students-mahmud-hossain-opu-1.webp",
     desc: "Grammar, Balagha, and conversation with native curriculum",
-    seats: 18
+    seats: 18,
   },
   {
     id: 3,
@@ -46,22 +56,23 @@ const courses = [
     duration: "6 months",
     price: "$75",
     type: "Fiqh",
-    image: "https://images.unsplash.com/photo-1596720426673-e47744396391?q=80&w=1972&auto=format&fit=crop",
+    image:
+      "https://i.ibb.co.com/vxMZtV5L/Madrasa-Madarsa-Boy-student-Muslim.avif",
     desc: "Tahara, Salah, Zakat, fasting – based on Nur al-Idah",
-    seats: 25
+    seats: 25,
   },
-]
+];
 
 const lectures = [
   { title: "Tafsir Surat Yaseen", episodes: "6 episodes" },
   { title: "40 Hadith Nawawi", episodes: "10 lessons" },
   { title: "Seerah of Prophet", episodes: "15 parts" },
   { title: "Arabaic for Beginners", episodes: "12 lessons" },
-]
+];
 
 export default function CoursesPage() {
-  const [activeCategory, setActiveCategory] = useState("All")
-  const [searchQuery, setSearchQuery] = useState("")
+  const [activeCategory, setActiveCategory] = useState("All");
+  const [searchQuery, setSearchQuery] = useState("");
 
   return (
     <div className="flex flex-col min-h-screen">
@@ -73,9 +84,9 @@ export default function CoursesPage() {
             <University size={14} /> Islamic Institute
           </div>
 
-
           <h1 className="text-3xl lg:text-5xl font-black text-white drop-shadow-lg">
-            Seek knowledge <br className="hidden lg:block" /> from cradle to grave
+            Seek knowledge <br className="hidden lg:block" /> from cradle to
+            grave
           </h1>
           <div className="flex gap-4">
             <div className="bg-[#E2D4B9] text-[#14281D] px-4 py-1.5 rounded-full text-xs font-bold shadow-md">
@@ -93,9 +104,9 @@ export default function CoursesPage() {
         <div className="bg-white p-3 rounded-2xl shadow-xl border border-[#14281D]/5 flex flex-col md:flex-row items-center gap-4">
           <div className="flex-1 flex items-center gap-3 px-4 py-2 bg-gray-50 rounded-xl w-full border border-gray-100 focus-within:border-[#14281D]/20 transition-all">
             <Search size={20} className="text-[#14281D]/40" />
-            <input 
-              type="text" 
-              placeholder="Search courses..." 
+            <input
+              type="text"
+              placeholder="Search courses..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="bg-transparent outline-none w-full text-sm font-medium text-[#14281D]"
@@ -113,8 +124,8 @@ export default function CoursesPage() {
               key={cat}
               onClick={() => setActiveCategory(cat)}
               className={`px-6 py-2 rounded-full text-xs font-bold whitespace-nowrap transition-all border ${
-                activeCategory === cat 
-                  ? "bg-[#14281D] text-[#E2D4B9] border-[#14281D]" 
+                activeCategory === cat
+                  ? "bg-[#14281D] text-[#E2D4B9] border-[#14281D]"
                   : "bg-white text-[#14281D] border-[#14281D]/10 hover:border-[#14281D]/30"
               }`}
             >
@@ -129,9 +140,12 @@ export default function CoursesPage() {
         <div className="flex justify-between items-end mb-8">
           <div>
             <h2 className="text-2xl font-black text-[#14281D] flex items-center gap-2">
-              <Star size={20} className="text-yellow-500 fill-yellow-500" /> Featured Courses
+              <Star size={20} className="text-yellow-500 fill-yellow-500" />{" "}
+              Featured Courses
             </h2>
-            <p className="text-sm text-[#14281D]/60 font-medium">Explore our top-rated islamic programs</p>
+            <p className="text-sm text-[#14281D]/60 font-medium">
+              Explore our top-rated islamic programs
+            </p>
           </div>
           <button className="text-xs font-black text-[#14281D] flex items-center gap-1.5 hover:translate-x-1 transition-transform">
             See All <ArrowRight size={14} />
@@ -140,7 +154,7 @@ export default function CoursesPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {courses.map((course, i) => (
-            <motion.div 
+            <motion.div
               key={course.id}
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
@@ -149,8 +163,8 @@ export default function CoursesPage() {
             >
               {/* Image */}
               <div className="relative h-48 overflow-hidden">
-                <Image 
-                  src={course.image} 
+                <Image
+                  src={course.image}
                   alt={course.title}
                   fill
                   className="object-cover group-hover:scale-105 transition-transform duration-500"
@@ -201,11 +215,12 @@ export default function CoursesPage() {
       {/* Lecture Series Scroll */}
       <section className="px-4 py-12 lg:px-8 max-w-screen-xl mx-auto w-full bg-[#14281D]/5 rounded-[3rem] my-8">
         <h3 className="text-xl font-black text-[#14281D] mb-8 flex items-center gap-2">
-          <Play size={20} fill="currentColor" stroke="none" /> Free Lecture Series
+          <Play size={20} fill="currentColor" stroke="none" /> Free Lecture
+          Series
         </h3>
         <div className="flex gap-4 overflow-x-auto no-scrollbar pb-4 -mx-4 lg:-mx-0 px-4 lg:px-0">
           {lectures.map((lec, i) => (
-            <div 
+            <div
               key={i}
               className="shrink-0 w-[240px] bg-white p-4 rounded-3xl border border-[#14281D]/5 hover:shadow-xl transition-all cursor-pointer group"
             >
@@ -213,7 +228,9 @@ export default function CoursesPage() {
                 <Play size={24} fill="currentColor" stroke="none" />
               </div>
               <h4 className="font-bold text-[#14281D]">{lec.title}</h4>
-              <p className="text-xs font-bold text-[#14281D]/40 uppercase tracking-widest mt-1">{lec.episodes}</p>
+              <p className="text-xs font-bold text-[#14281D]/40 uppercase tracking-widest mt-1">
+                {lec.episodes}
+              </p>
             </div>
           ))}
         </div>
@@ -221,7 +238,9 @@ export default function CoursesPage() {
 
       {/* Scholars Section */}
       <section className="px-4 py-12 lg:px-8 max-w-screen-xl mx-auto w-full text-center">
-        <h3 className="text-xl font-black text-[#14281D] mb-8">Guided by Knowledgeable Scholars</h3>
+        <h3 className="text-xl font-black text-[#14281D] mb-8">
+          Guided by Knowledgeable Scholars
+        </h3>
         <div className="flex flex-wrap justify-center gap-8">
           {[
             { name: "Sh. Ahmad", role: "Quran Expert", emoji: "👳🏽" },
@@ -234,7 +253,9 @@ export default function CoursesPage() {
               </div>
               <div>
                 <h4 className="font-bold text-[#14281D]">{sch.name}</h4>
-                <p className="text-xs font-medium text-[#14281D]/60">{sch.role}</p>
+                <p className="text-xs font-medium text-[#14281D]/60">
+                  {sch.role}
+                </p>
               </div>
             </div>
           ))}
@@ -243,7 +264,9 @@ export default function CoursesPage() {
 
       {/* Enrollment Steps */}
       <section className="px-4 py-16 lg:px-8 max-w-screen-xl mx-auto w-full">
-        <h3 className="text-2xl font-black text-[#14281D] text-center mb-12">How to Enroll</h3>
+        <h3 className="text-2xl font-black text-[#14281D] text-center mb-12">
+          How to Enroll
+        </h3>
         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
           {[
             { step: 1, title: "Choose Course", desc: "Select your program" },
@@ -251,13 +274,18 @@ export default function CoursesPage() {
             { step: 3, title: "Interview", desc: "Short skill assessment" },
             { step: 4, title: "Start Class", desc: "Begin your journey" },
           ].map((s) => (
-            <div key={s.step} className="flex flex-col items-center text-center gap-4 relative group">
+            <div
+              key={s.step}
+              className="flex flex-col items-center text-center gap-4 relative group"
+            >
               <div className="w-12 h-12 bg-[#14281D] text-[#E2D4B9] rounded-full flex items-center justify-center font-black text-xl shadow-lg group-hover:scale-110 transition-transform z-10">
                 {s.step}
               </div>
               <div>
                 <h4 className="font-bold text-[#14281D]">{s.title}</h4>
-                <p className="text-xs text-[#14281D]/40 font-bold uppercase tracking-widest">{s.desc}</p>
+                <p className="text-xs text-[#14281D]/40 font-bold uppercase tracking-widest">
+                  {s.desc}
+                </p>
               </div>
               {s.step < 4 && (
                 <div className="hidden md:block absolute top-6 left-1/2 w-full h-0.5 bg-dashed bg-[#14281D]/10 -z-0" />
@@ -267,5 +295,5 @@ export default function CoursesPage() {
         </div>
       </section>
     </div>
-  )
+  );
 }

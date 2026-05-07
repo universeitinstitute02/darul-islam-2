@@ -1,106 +1,204 @@
 "use client";
-import React from "react";
+import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { ChevronRight, MoreHorizontal } from "lucide-react";
-import Kuran from "../../../public/images/kuran.png";
-import tasbih from "../../../public/images/tasbih.png";
-
-interface Category {
-  id: number;
-  name: string;
-  image: string;
-}
+import { Loader2 } from "lucide-react";
+import ProductCard from "./ProductCard";
 
 const CategorySection = () => {
-  const categories: Category[] = [
+  const [allProducts, setAllProducts] = useState<any[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<any[]>([]);
+  const [activeCategory, setActiveCategory] = useState<string>("All");
+  const [loading, setLoading] = useState(false);
+
+  const productsSectionRef = useRef<HTMLDivElement>(null);
+
+  const categories = [
     {
       id: 1,
       name: "কুরআন শরীফ",
+      slug: "Religious Book",
       image:
         "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
     },
     {
       id: 2,
       name: "তাসবিহ",
+      slug: "Accessories",
       image:
-        "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
+        "https://i.ibb.co.com/0jJJ8yMh/463087068-500611622945397-6536297165675071357-n-420x420.jpg",
     },
     {
       id: 3,
       name: "ইসলামিক বই",
+      slug: "Islamic Books",
       image:
         "https://i.ibb.co.com/KzXKdMKt/png-row-islamic-books-transparent-background-378502811.webp",
     },
     {
       id: 4,
       name: "আতর",
+      slug: "Fragrance",
       image: "https://i.ibb.co.com/rRR1Bstz/ramy-vicky-ator-3-ml-2.png",
     },
     {
       id: 5,
-      name: "হাদিসের কিতাব",
-      image:
-        "https://i.ibb.co.com/KzXKdMKt/png-row-islamic-books-transparent-background-378502811.webp",
-    },
-    {
-      id: 6,
       name: "পোশাক",
+      slug: "Clothing",
       image:
         "https://i.ibb.co.com/8g0CcrK3/pngtree-women-muslim-with-black-dress-png-image-5294699.png",
     },
     {
+      id: 6,
+      name: "জায়নামাজ",
+      slug: "Prayer Mat",
+      image:
+        "https://i.ibb.co.com/0jJJ8yMh/463087068-500611622945397-6536297165675071357-n-420x420.jpg",
+    },
+    {
       id: 7,
       name: "উপহার সামগ্রী",
+      slug: "Combo",
+      image:
+        "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
+    },
+    {
+      id: 8,
+      name: "হোম ডেকোর",
+      slug: "Home Decor",
       image:
         "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
     },
   ];
 
+  useEffect(() => {
+    fetch("/shop.json")
+      .then((res) => res.json())
+      .then((data) => setAllProducts(data.products || []))
+      .catch((err) => console.error(err));
+  }, []);
+
+  const handleCategoryClick = (slug: string) => {
+    if (activeCategory === slug) return; // পুনরায় ক্লিক করলে স্ক্রল হবে না
+
+    setLoading(true);
+    setActiveCategory(slug);
+
+    setTimeout(() => {
+      const filtered = allProducts.filter((p) => p.category === slug);
+      setFilteredProducts(filtered);
+      setLoading(false);
+
+      // স্ক্রল ফিক্স: block "start" এর বদলে "nearest" বা কাস্টম অফসেট ভালো কাজ করে
+      if (productsSectionRef.current) {
+        window.scrollTo({
+          top: productsSectionRef.current.offsetTop - 100, // ১০০ পিক্সেল উপরে থাকবে যাতে হেডিং দেখা যায়
+          behavior: "smooth",
+        });
+      }
+    }, 300);
+  };
+
   return (
     <section className="px-4 py-8 max-w-7xl mx-auto bg-white">
-      {/* হেডার অংশ */}
-      <div className="flex justify-between items-center mb-6">
+      {/* ১. ক্যাটেগরি লিস্ট */}
+      <div className="mb-6">
         <h2 className="text-lg md:text-xl font-black text-[#105D38]">
           ক্যাটেগরি সমূহ
         </h2>
-        <button className="flex items-center gap-1 text-xs md:text-sm font-bold text-gray-500 hover:text-[#105D38] transition-colors">
-          সব দেখুন
-          <ChevronRight className="w-4 h-4" />
-        </button>
       </div>
 
-      {/* ক্যাটেগরি গ্রিড */}
-      <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-6">
+      <div className="grid grid-cols-4 md:grid-cols-4 lg:grid-cols-8 gap-3 md:gap-6 mb-12">
         {categories.map((cat) => (
-          <div key={cat.id} className="group cursor-pointer">
+          <div
+            key={cat.id}
+            onClick={() => handleCategoryClick(cat.slug)}
+            className="group cursor-pointer"
+          >
             <div className="flex flex-col items-center gap-2">
-              {/* ইমেজ কন্টেইনার */}
-              <div className="relative w-full aspect-square bg-[#F3F4F6] rounded-2xl md:rounded-[2rem] overflow-hidden border border-gray-100 group-hover:border-emerald-200 transition-all group-hover:shadow-lg group-hover:shadow-emerald-900/5">
+              <div
+                className={`relative w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden border transition-all ${activeCategory === cat.slug ? "border-[#105D38] bg-green-50" : "border-gray-100 bg-[#F3F4F6]"}`}
+              >
                 <Image
                   src={cat.image}
                   alt={cat.name}
                   fill
-                  className="object-cover p-2 md:p-4 group-hover:scale-110 transition-transform duration-500"
+                  className="object-cover p-2 md:p-4 transition-all duration-500 group-hover:scale-105"
                 />
               </div>
-              {/* নাম */}
-              <span className="text-[10px] md:text-sm font-bold text-gray-700 text-center line-clamp-1 group-hover:text-[#105D38]">
+              <span
+                className={`text-[10px] md:text-xs font-bold text-center line-clamp-1 ${activeCategory === cat.slug ? "text-[#105D38]" : "text-gray-600"}`}
+              >
                 {cat.name}
               </span>
             </div>
           </div>
         ))}
+      </div>
 
-        {/* 'অন্যান্য' বা More বাটন */}
-        <div className="group cursor-pointer">
-          <div className="flex flex-col items-center gap-2">
-            <div className="relative w-full aspect-square bg-[#F3F4F6] rounded-2xl md:rounded-[2rem] flex items-center justify-center border border-gray-100 group-hover:bg-emerald-50 transition-all">
-              <MoreHorizontal className="w-6 h-6 text-gray-400 group-hover:text-[#105D38]" />
+      {/* ২. ফিল্টার রেজাল্ট */}
+      <div ref={productsSectionRef} className="scroll-mt-20">
+        {activeCategory !== "All" && (
+          <div className="bg-gray-50 rounded-[2rem] p-4 md:p-8 mb-16 border border-gray-100">
+            <div className="flex items-center justify-between mb-6">
+              <h3 className="font-bold text-gray-800">
+                {categories.find((c) => c.slug === activeCategory)?.name}{" "}
+                কালেকশন
+              </h3>
+              <button
+                onClick={() => {
+                  setActiveCategory("All");
+                  setFilteredProducts([]);
+                }}
+                className="text-[10px] font-bold text-red-500 bg-white px-4 py-1.5 rounded-full border border-red-50 shadow-sm hover:bg-red-50 transition-colors"
+              >
+                বন্ধ করুন
+              </button>
             </div>
-            <span className="text-[10px] md:text-sm font-bold text-gray-700">
-              অন্যান্য
-            </span>
+
+            {loading ? (
+              <div className="flex justify-center py-10">
+                <Loader2 className="w-8 h-8 animate-spin text-[#105D38]" />
+              </div>
+            ) : (
+              <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+                {filteredProducts.map((p) => (
+                  <ProductCard key={p.id} product={p} />
+                ))}
+              </div>
+            )}
           </div>
+        )}
+      </div>
+
+      {/* ৩. New Arrival */}
+      <div className="mb-16">
+        <h2 className="text-xl md:text-2xl font-black text-gray-800 mb-6">
+          নতুন আসা পণ্যসমূহ
+        </h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {allProducts.slice(0, 6).map((product) => (
+            <ProductCard key={product.id} product={product} />
+          ))}
+        </div>
+      </div>
+
+      {/* ৪. Just For You */}
+      <div className="bg-gray-50 rounded-[2.5rem] p-6 md:p-10 border border-gray-100 mb-10 text-center md:text-left">
+        <h2 className="text-xl md:text-2xl font-black text-gray-800 mb-1">
+          আপনার জন্য বিশেষ কিছু
+        </h2>
+        <p className="text-xs text-gray-400 font-medium mb-8">
+          আপনার পছন্দের ওপর ভিত্তি করে বাছাইকৃত
+        </p>
+
+        <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          {allProducts
+            .slice()
+            .reverse()
+            .slice(0, 6)
+            .map((product) => (
+              <ProductCard key={product.id} product={product} />
+            ))}
         </div>
       </div>
     </section>

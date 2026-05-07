@@ -5,6 +5,11 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
+// Swiper styles (যদি আপনার আলাদা ফাইলে ইমপোর্ট করা না থাকে)
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/effect-fade";
+
 const ShopHeroSlider = () => {
   const slides = [
     {
@@ -13,7 +18,7 @@ const ShopHeroSlider = () => {
       subtitle: "বিশ্বস্ত পণ্য, ইসলামের জন্য",
       cta: "শপে যান",
       image:
-        "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
+        "https://i.ibb.co.com/nMFsh8Kv/Gemini-Generated-Image-ndo8vxndo8vxndo8.png",
     },
     {
       id: 2,
@@ -21,9 +26,17 @@ const ShopHeroSlider = () => {
       subtitle: "ইবাদতে প্রশান্তি নিশ্চিত করুন",
       cta: "এখনই দেখুন",
       image:
-        "https://i.ibb.co.com/1f4vFQh9/360-F-263148731-URq-K7-TVJz0a1ja-V3-Iu-Ad-TBu-Xmoi4lc-A6.jpg",
+        "https://i.ibb.co.com/1GP1rZWn/Gemini-Generated-Image-b2onlgb2onlgb2on.png",
     },
   ];
+
+  // স্ক্রল লজিক
+  const scrollToProducts = () => {
+    const element = document.getElementById("all-products");
+    if (element) {
+      element.scrollIntoView({ behavior: "smooth" });
+    }
+  };
 
   return (
     <section className="relative w-full overflow-hidden bg-gray-100">
@@ -43,21 +56,20 @@ const ShopHeroSlider = () => {
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
             <div className="relative w-full h-full flex items-center justify-center">
-              {/* ব্যাকগ্রাউন্ড ইমেজ - যা পুরো স্লাইডার জুড়ে থাকবে */}
+              {/* ব্যাকগ্রাউন্ড ইমেজ */}
               <div className="absolute inset-0 z-0">
                 <Image
                   src={slide.image}
                   alt={slide.title}
                   fill
-                  style={{ objectFit: "cover" }} // পুরো এরিয়া কভার করার জন্য cover ব্যবহার করা হয়েছে
+                  style={{ objectFit: "cover" }}
                   priority
-                  className="transition-transform duration-[5000ms] scale-110 group-hover:scale-100"
+                  className="transition-transform duration-[5000ms] scale-110"
                 />
-                {/* টেক্সট পরিষ্কার বোঝার জন্য হালকা ডার্ক ওভারলে */}
                 <div className="absolute inset-0 bg-black/30 md:bg-black/20"></div>
               </div>
 
-              {/* টেক্সট কন্টেন্ট - যা ইমেজের উপরে থাকবে */}
+              {/* টেক্সট কন্টেন্ট */}
               <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center md:text-left">
                 <div className="max-w-2xl">
                   <h1 className="text-4xl md:text-7xl font-black text-white mb-4 md:mb-6 leading-tight drop-shadow-lg">
@@ -66,7 +78,12 @@ const ShopHeroSlider = () => {
                   <p className="text-base md:text-2xl text-gray-100 mb-8 md:mb-10 font-medium drop-shadow-md">
                     {slide.subtitle}
                   </p>
-                  <button className="inline-flex items-center gap-3 px-8 py-4 bg-[#105D38] text-white font-bold rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group">
+
+                  {/* CTA বাটন - এখানে স্ক্রল লজিক অ্যাড করা হয়েছে */}
+                  <button
+                    onClick={scrollToProducts}
+                    className="inline-flex items-center gap-3 px-8 py-4 bg-[#105D38] text-white font-bold rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group"
+                  >
                     <ShoppingBag className="w-5 h-5" />
                     <span>{slide.cta}</span>
                     <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
