@@ -220,15 +220,22 @@ const amalCategories = [
 /* ───────────────── PAGE ───────────────── */
 
 type Props = {
-  params: {
+  params: Promise<{
     slug: string;
-  };
+  }>;
 };
 
-const page = ({ params }: Props) => {
+const Page = async ({ params }: Props) => {
+  const { slug } = await params;
+
   const allCategories = [...ilmCategories, ...amalCategories];
 
-  const data = allCategories.find((item) => item.slug === params.slug);
+  const data = allCategories.find(
+    (item) => item?.slug?.trim() === slug?.trim(),
+  );
+
+  console.log("slug:", slug);
+  console.log("data:", data);
 
   if (!data) {
     return (
@@ -268,7 +275,7 @@ const page = ({ params }: Props) => {
           {/* Header */}
           <div className="flex items-center justify-between flex-wrap gap-4 mb-6">
             <div className="flex items-center gap-3">
-              {data.icon && (
+              {"icon" in data && data.icon && (
                 <div className="text-[#1a4731] text-2xl">{data.icon}</div>
               )}
 
@@ -296,7 +303,7 @@ const page = ({ params }: Props) => {
                   className="bg-[#f8fbf8] border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all"
                 >
                   <div className="flex items-center gap-3">
-                    {book.icon && (
+                    {typeof book !== "string" && (
                       <div className="text-[#1a4731]">{book.icon}</div>
                     )}
 
@@ -318,4 +325,4 @@ const page = ({ params }: Props) => {
   );
 };
 
-export default page;
+export default Page;

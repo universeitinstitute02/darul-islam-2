@@ -377,7 +377,7 @@ export default function ContentSections() {
                     <p className="font-bold text-lg text-gray-800">{c.name}</p>
 
                     <p className="text-xs text-[#1a4731] mt-1 font-bold tracking-widest uppercase opacity-70">
-                      পড়ুন →
+                      পড়ুন 
                     </p>
                   </div>
                 </motion.button>
