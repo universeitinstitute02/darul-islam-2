@@ -79,10 +79,10 @@ const drawerMenuItems: MenuItem[] = [
   {
     name: "অ্যাকাউন্ট",
     submenu: [
-      { name: "লগইন", href: "/auth-dashboard/login", icon: LogIn },
+      { name: "লগইন", href: "/auth/login", icon: LogIn },
       {
         name: "রেজিস্ট্রেশন",
-        href: "/auth-dashboard/register",
+        href: "/auth/register",
         icon: UserPlus,
       },
       { name: "প্রোফাইল", href: "/profile", icon: User },

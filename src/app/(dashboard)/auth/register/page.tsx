@@ -127,7 +127,7 @@ const RegisterPage: React.FC = () => {
       );
 
       alert("রেজিস্ট্রেশন সফল হয়েছে!");
-      router.push("/auth-dashboard/login");
+      router.push("/auth/login");
     } catch (error: any) {
       alert(
         error.response?.data?.message ||
@@ -150,7 +150,7 @@ const RegisterPage: React.FC = () => {
         <div className="flex-1 p-6 lg:p-12 relative">
           <div className="mb-6 lg:mb-8">
             <Link
-              href="/auth-dashboard/login"
+              href="/auth/login"
               className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#105D38] transition-colors group"
             >
               <div className="p-2 lg:p-0 bg-neutral-50 lg:bg-transparent rounded-full lg:rounded-none">
@@ -271,7 +271,7 @@ const RegisterPage: React.FC = () => {
               <p className="text-center text-sm font-bold text-neutral-500 mt-2">
                 ইতোমধ্যে অ্যাকাউন্ট আছে?{" "}
                 <Link
-                  href="/auth-dashboard/login"
+                  href="/auth/login"
                   className="text-[#105D38] hover:underline font-black"
                 >
                   লগইন করুন

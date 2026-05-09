@@ -1,13 +1,15 @@
 "use client";
 import React from "react";
 import Image from "next/image";
+import Link from "next/link";
 
-// ১. Type define korte korte jibon sesh
 interface Course {
+  id: number | string; // ID এখন রিকোয়ার্ড করা হলো ভালো রেজাল্টের জন্য
   title: string;
   image?: string;
   price?: number;
   oldPrice?: number;
+  details?: any;
 }
 
 interface SectionProps {
@@ -18,29 +20,28 @@ interface SectionProps {
   };
 }
 
-// ২. কম্পোনেন্টে টাইপটি অ্যাসাইন করা হলো
 const EducationSectionShare = ({ section }: SectionProps) => {
   const { category, courses, type } = section;
 
   return (
     <div className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm">
-      {/* সেকশন টাইটেল */}
+      {/* ক্যাটাগরি লেবেল */}
       <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
         <h2 className="text-[#105D38] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
           {category}
         </h2>
       </div>
 
-      {/* কন্ডিশনাল রেন্ডারিং: যদি টাইপ 'card' হয় তবে কোর্স কার্ড দেখাবে */}
       {type === "card" ? (
         <>
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-4">
             {courses.map((course, index) => (
-              <div
-                key={index}
-                className="group bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col"
+              <Link
+                /* আপডেট: পাথ /course/ থেকে /education/ এ পরিবর্তন করা হলো */
+                href={`/education/${course.id}`}
+                key={course.id || index}
+                className="group bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
               >
-                {/* ইমেজ সেকশন */}
                 <div className="relative aspect-video w-full overflow-hidden bg-neutral-100">
                   {course.image ? (
                     <Image
@@ -71,9 +72,10 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                     )}
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
+
           <div className="mt-10 flex justify-center">
             <button className="px-10 py-2 border-2 border-[#105D38] text-[#105D38] font-black rounded-xl hover:bg-[#105D38] hover:text-white transition-all duration-300 text-sm md:text-base">
               আরো দেখুন
@@ -81,11 +83,12 @@ const EducationSectionShare = ({ section }: SectionProps) => {
           </div>
         </>
       ) : (
-        /* আইকন গ্রিড লেআউট (টাইপ 'card' না হলে) */
+        /* গ্রিড স্টাইল সেকশন */
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
           {courses.map((course, cIdx) => (
-            <div
-              key={cIdx}
+            <Link
+              href={`/education/${course.id}`}
+              key={course.id || cIdx}
               className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
             >
               <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
@@ -96,7 +99,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                 </p>
               </div>
               <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-            </div>
+            </Link>
           ))}
         </div>
       )}

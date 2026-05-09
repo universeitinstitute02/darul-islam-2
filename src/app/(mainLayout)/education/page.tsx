@@ -2,8 +2,9 @@
 import React, { useEffect, useState } from "react";
 import CourseSection from "@/src/components/shared/EducationSectionShare";
 import Image from "next/image";
+import Link from "next/link"; // ১. Link ইমপোর্ট করা হলো
 import { motion } from "framer-motion";
-import EducationHero from "@/src/components/LandingPageLayout/EducationHero/EducationHero";
+import EducationHero from "@/src/components/EducationHero/EducationHero";
 
 interface EducationData {
   educationData: any[];
@@ -16,7 +17,7 @@ interface EducationData {
 
 const EducationPage = () => {
   const [data, setData] = useState<EducationData | null>(null);
-  const [searchTerm, setSearchTerm] = useState(""); // সার্চ স্টেট যুক্ত করা হলো
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     fetch("/education.json")
@@ -27,14 +28,13 @@ const EducationPage = () => {
 
   if (!data)
     return (
-      <div className="min-h-screen flex items-center justify-center">
+      <div className="min-h-screen flex items-center justify-center font-bold">
         লোড হচ্ছে...
       </div>
     );
 
   const { educationData, educationData2, freeCoursesData } = data;
 
-  // সার্চ অনুযায়ী ডাটা ফিল্টার করার ফাংশন
   const filterBySearch = (sections: any[]) => {
     return sections
       .map((section) => ({
@@ -46,7 +46,6 @@ const EducationPage = () => {
       .filter((section) => section.courses.length > 0);
   };
 
-  // ফিল্টারড ডাটা ভেরিয়েবল
   const filteredEducationData = filterBySearch(educationData);
   const filteredEducationData2 = filterBySearch(educationData2);
 
@@ -59,11 +58,9 @@ const EducationPage = () => {
 
   return (
     <div className="min-h-screen bg-[#f8fafc]">
-      {/* ১. হিরো সেকশনে স্টেট এবং হ্যান্ডলার পাস করা হলো */}
       <EducationHero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <div className="max-w-6xl mx-auto px-4 pt-4 lg:pt-7 space-y-20">
-        {/* ২. ফিল্টারড ডাটা ব্যবহার করা হলো */}
         {filteredEducationData.length > 0 ? (
           filteredEducationData.map((section, idx) => (
             <motion.div
@@ -79,21 +76,27 @@ const EducationPage = () => {
 
               <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
                 {section.courses.map((course: any, cIdx: number) => (
-                  <motion.div
+                  /* ২. মেইন গ্রিড কার্ডে লিঙ্ক যোগ করা হলো */
+                  <Link
+                    href={`/education/${course.id}`}
                     key={cIdx}
-                    whileHover={{ scale: 1.05 }}
-                    whileTap={{ scale: 0.95 }}
-                    className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
+                    className="w-full"
                   >
-                    <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
-                    <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-                    <div className="relative h-full flex items-center justify-center p-3">
-                      <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
-                        {course.title}
-                      </p>
-                    </div>
-                    <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                  </motion.div>
+                    <motion.div
+                      whileHover={{ scale: 1.05 }}
+                      whileTap={{ scale: 0.95 }}
+                      className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
+                    >
+                      <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
+                      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                      <div className="relative h-full flex items-center justify-center p-3">
+                        <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
+                          {course.title}
+                        </p>
+                      </div>
+                      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+                    </motion.div>
+                  </Link>
                 ))}
               </div>
             </motion.div>
@@ -101,7 +104,7 @@ const EducationPage = () => {
         ) : (
           <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-neutral-200">
             <p className="text-neutral-400 font-bold">
-              "{searchTerm}" নামে কোনো কোর্স পাওয়া যায়নি!
+              "{searchTerm}" নামে কোনো কোর্স পাওয়া যায়নি!
             </p>
           </div>
         )}
@@ -132,36 +135,38 @@ const EducationPage = () => {
                 c.title.toLowerCase().includes(searchTerm.toLowerCase()),
               )
               .map((course: any) => (
-                <motion.div
-                  key={course.id}
-                  whileHover={{ y: -5 }}
-                  className="bg-[#F8F9FA] border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300"
-                >
-                  <div className="relative aspect-video w-full bg-neutral-200">
-                    {course.image ? (
-                      <Image
-                        src={course.image}
-                        alt={course.title}
-                        fill
-                        className="object-cover"
-                        sizes="(max-width: 768px) 50vw, 25vw"
-                      />
-                    ) : (
-                      <div className="absolute inset-0 flex items-center justify-center text-[10px] text-neutral-500 italic px-2 text-center">
-                        {course.title} (No Image)
-                      </div>
-                    )}
-                  </div>
+                /* ৩. ফ্রি কোর্স কার্ডে লিঙ্ক যোগ করা হলো */
+                <Link href={`/education/${course.id}`} key={course.id}>
+                  <motion.div
+                    whileHover={{ y: -5 }}
+                    className="bg-[#F8F9FA] border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full"
+                  >
+                    <div className="relative aspect-video w-full bg-neutral-200">
+                      {course.image ? (
+                        <Image
+                          src={course.image}
+                          alt={course.title}
+                          fill
+                          className="object-cover"
+                          sizes="(max-width: 768px) 50vw, 25vw"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 flex items-center justify-center text-[10px] text-neutral-500 italic px-2 text-center">
+                          {course.title} (No Image)
+                        </div>
+                      )}
+                    </div>
 
-                  <div className="p-3 md:p-4 text-center">
-                    <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-600 line-clamp-1 mb-2">
-                      {course.title}
-                    </h3>
-                    <p className="text-[#105D38] font-black text-sm md:text-lg">
-                      {course.label}
-                    </p>
-                  </div>
-                </motion.div>
+                    <div className="p-3 md:p-4 text-center">
+                      <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-600 line-clamp-1 mb-2">
+                        {course.title}
+                      </h3>
+                      <p className="text-[#105D38] font-black text-sm md:text-lg">
+                        {course.label || "ফ্রি"}
+                      </p>
+                    </div>
+                  </motion.div>
+                </Link>
               ))}
           </div>
         </motion.div>

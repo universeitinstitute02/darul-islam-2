@@ -145,7 +145,7 @@ const LoginPage = () => {
                   নতুন ইউজার?
                 </p>
                 <Link
-                  href={"/auth-dashboard/register"}
+                  href={"/auth/register"}
                   className="text-[#105D38] font-black text-sm flex items-center gap-1 hover:underline group transition-all"
                 >
                   রেজিস্টার{" "}
