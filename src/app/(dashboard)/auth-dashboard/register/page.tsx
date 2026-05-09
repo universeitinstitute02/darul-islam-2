@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, ArrowLeft, Loader2 } from "lucide-react";
@@ -18,14 +18,42 @@ import {
 } from "@/src/components/register/Fromsteps";
 
 const RegisterPage: React.FC = () => {
-  const { register, handleSubmit } = useForm<any>();
+  const {
+    register,
+    handleSubmit,
+    watch,
+    trigger,
+    formState: { errors },
+  } = useForm<any>({
+    defaultValues: { role: "student" },
+  });
+
   const [step, setStep] = useState<number>(1);
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
-  const [isLoading, setIsLoading] = useState<boolean>(false); // Loading state
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [departments, setDepartments] = useState<any[]>([]);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const router = useRouter();
   const totalSteps = 5;
+
+  const userRole = watch("role");
+  const isTeacher = userRole === "teacher";
+
+  // Fetch Departments from your Category/Bivag API
+  useEffect(() => {
+    const fetchDepartments = async () => {
+      try {
+        const res = await axios.get(
+          `${process.env.NEXT_PUBLIC_API_URL}/categories`,
+        );
+        setDepartments(res.data); // Assuming res.data is an array of { _id, name }
+      } catch (error) {
+        console.error("Failed to fetch departments", error);
+      }
+    };
+    fetchDepartments();
+  }, []);
 
   const staticDivisions = [
     "ঢাকা",
@@ -38,13 +66,41 @@ const RegisterPage: React.FC = () => {
     "ময়মনসিংহ",
   ];
 
-  // ==========================================
-  // 1. Submit Handler for Normal Registration
-  // ==========================================
+  const nextStep = async () => {
+    // সঠিক ধাপ অনুযায়ী ভ্যালিডেশন ম্যাপ
+    const validationMap: any = {
+      1: ["studentNameEn", "birthDate", "gender", "division"],
+      2: isTeacher
+        ? ["designation", "department"]
+        : ["fatherName", "fatherMobile"],
+      3: ["motherName"],
+      4: ["presentDivision", "district", "studentMobile", "email"],
+      5: ["password", "confirmPassword"],
+    };
+
+    // বর্তমান ধাপের ফিল্ডগুলো চেক করবে
+    const isStepValid = await trigger(validationMap[step] || []);
+
+    if (isStepValid) {
+      if (isTeacher && step === 2) {
+        setStep(4);
+      } else if (step < totalSteps) {
+        setStep(step + 1);
+      }
+    }
+  };
+
+  const prevStep = () => {
+    if (isTeacher && step === 4) {
+      setStep(2);
+    } else if (step > 1) {
+      setStep(step - 1);
+    }
+  };
+
   const onSubmit: SubmitHandler<any> = async (data) => {
-    // Basic password validation
     if (data.password !== data.confirmPassword) {
-      alert("পাসওয়ার্ড মিলছে না! (Passwords do not match)");
+      alert("পাসওয়ার্ড মিলছে না!");
       return;
     }
 
@@ -52,8 +108,6 @@ const RegisterPage: React.FC = () => {
 
     try {
       const formData = new FormData();
-
-      // Append all text inputs
       Object.keys(data).forEach((key) => {
         if (key !== "confirmPassword") {
           formData.append(key, data[key]);
@@ -64,8 +118,7 @@ const RegisterPage: React.FC = () => {
         formData.append("profileImage", imageFile);
       }
 
-      // Post to backend
-      const res = await axios.post(
+      await axios.post(
         `${process.env.NEXT_PUBLIC_API_URL}/auth/register`,
         formData,
         {
@@ -74,9 +127,8 @@ const RegisterPage: React.FC = () => {
       );
 
       alert("রেজিস্ট্রেশন সফল হয়েছে!");
-      router.push("/auth-dashboard/login"); // Redirect to login
+      router.push("/auth-dashboard/login");
     } catch (error: any) {
-      console.error("Registration Error:", error);
       alert(
         error.response?.data?.message ||
           "রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
@@ -86,20 +138,14 @@ const RegisterPage: React.FC = () => {
     }
   };
 
-  // ==========================================
-  // 2. Google Sign-In Handler
-  // ==========================================
   const handleGoogleSignIn = () => {
     signIn("google", { callbackUrl: "/dashboard" });
   };
 
-  const nextStep = () => step < totalSteps && setStep(step + 1);
-  const prevStep = () => step > 1 && setStep(step - 1);
-
   return (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 lg:p-8 font-sans">
       <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl flex flex-col lg:flex-row overflow-hidden border border-neutral-100">
-        <Sidebar step={step} />
+        <Sidebar step={step} isTeacher={isTeacher} />
 
         <div className="flex-1 p-6 lg:p-12 relative">
           <div className="mb-6 lg:mb-8">
@@ -124,9 +170,7 @@ const RegisterPage: React.FC = () => {
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 e.preventDefault();
-                if (step < totalSteps) {
-                  nextStep();
-                }
+                nextStep();
               }
             }}
             className="min-h-[400px] flex flex-col"
@@ -143,6 +187,8 @@ const RegisterPage: React.FC = () => {
                 {step === 1 && (
                   <Step1
                     register={register}
+                    errors={errors}
+                    watch={watch}
                     divisions={staticDivisions}
                     handleImageClick={() => fileInputRef.current?.click()}
                     handleImageChange={(e: any) => {
@@ -156,18 +202,32 @@ const RegisterPage: React.FC = () => {
                     selectedImage={selectedImage}
                   />
                 )}
-                {step === 2 && <Step2 register={register} />}
-                {step === 3 && <Step3 register={register} />}
-                {step === 4 && (
-                  <Step4 register={register} divisions={staticDivisions} />
+                {step === 2 && (
+                  <Step2
+                    register={register}
+                    errors={errors}
+                    isTeacher={isTeacher}
+                    departments={departments}
+                  />
                 )}
-                {step === 5 && <Step5 register={register} />}
+                {step === 3 && !isTeacher && (
+                  <Step3 register={register} errors={errors} />
+                )}
+                {step === 4 && (
+                  <Step4
+                    register={register}
+                    errors={errors}
+                    divisions={staticDivisions}
+                  />
+                )}
+                {step === 5 && (
+                  <Step5 register={register} errors={errors} watch={watch} />
+                )}
               </motion.div>
             </AnimatePresence>
 
             <div className="mt-8 flex flex-col gap-4">
               <div className="flex gap-3">
-                {/* Back Button */}
                 {step > 1 && (
                   <button
                     type="button"
@@ -208,9 +268,16 @@ const RegisterPage: React.FC = () => {
                 )}
               </div>
 
-              {/* ========================================== */}
-              {/* Google Sign In Section */}
-              {/* ========================================== */}
+              <p className="text-center text-sm font-bold text-neutral-500 mt-2">
+                ইতোমধ্যে অ্যাকাউন্ট আছে?{" "}
+                <Link
+                  href="/auth-dashboard/login"
+                  className="text-[#105D38] hover:underline font-black"
+                >
+                  লগইন করুন
+                </Link>
+              </p>
+
               {step === 1 && (
                 <div className="mt-4">
                   <div className="relative flex items-center py-4">
@@ -247,16 +314,6 @@ const RegisterPage: React.FC = () => {
                   </button>
                 </div>
               )}
-
-              <p className="text-center text-sm font-bold text-neutral-500 mt-2">
-                ইতোমধ্যে অ্যাকাউন্ট আছে?{" "}
-                <Link
-                  href="/auth-dashboard/login"
-                  className="text-[#105D38] hover:underline"
-                >
-                  লগইন করুন
-                </Link>
-              </p>
             </div>
           </form>
         </div>

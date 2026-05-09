@@ -1,11 +1,24 @@
-export const Sidebar = ({ step }: { step: number }) => {
-  const stepsLabel = [
-    { id: 1, label: "ব্যক্তিগত তথ্য" },
-    { id: 2, label: "পিতার তথ্য" },
-    { id: 3, label: "মাতার তথ্য" },
-    { id: 4, label: "যোগাযোগ" },
-    { id: 5, label: "নিরাপত্তা" },
-  ];
+export const Sidebar = ({
+  step,
+  isTeacher,
+}: {
+  step: number;
+  isTeacher?: boolean;
+}) => {
+  const stepsLabel = isTeacher
+    ? [
+        { id: 1, label: "ব্যক্তিগত তথ্য" },
+        { id: 2, label: "পেশাগত তথ্য" },
+        { id: 4, label: "যোগাযোগ" },
+        { id: 5, label: "নিরাপত্তা" },
+      ]
+    : [
+        { id: 1, label: "ব্যক্তিগত তথ্য" },
+        { id: 2, label: "পিতার তথ্য" },
+        { id: 3, label: "মাতার তথ্য" },
+        { id: 4, label: "যোগাযোগ" },
+        { id: 5, label: "নিরাপত্তা" },
+      ];
 
   return (
     <div className="hidden lg:flex lg:w-1/3 bg-[#105D38] p-10 flex-col justify-between">
@@ -19,12 +32,18 @@ export const Sidebar = ({ step }: { step: number }) => {
         {stepsLabel.map((s) => (
           <div key={s.id} className="flex items-center gap-4">
             <div
-              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all ${step >= s.id ? "bg-[#C5A059] border-[#C5A059] text-white" : "border-white/20 text-white/40"}`}
+              className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all ${
+                step >= s.id
+                  ? "bg-[#C5A059] border-[#C5A059] text-white"
+                  : "border-white/20 text-white/40"
+              }`}
             >
               {s.id}
             </div>
             <span
-              className={`text-sm font-bold ${step >= s.id ? "text-white" : "text-white/30"}`}
+              className={`text-sm font-bold ${
+                step >= s.id ? "text-white" : "text-white/30"
+              }`}
             >
               {s.label}
             </span>
