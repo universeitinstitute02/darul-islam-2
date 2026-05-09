@@ -409,7 +409,7 @@ export default function ContentSections() {
                 >
                   <div
                     className="w-20 h-20 rounded-[1.5rem] flex items-center justify-center text-5xl shadow-inner"
-                    style={{ background: c.light }}
+                    // style={{ background: c.light }}
                   >
                     {c.icon}
                   </div>
