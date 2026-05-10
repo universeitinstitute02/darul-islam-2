@@ -2,14 +2,15 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
+import { motion } from "framer-motion"; // অ্যানিমেশনের জন্য যোগ করা হয়েছে
 
 interface Course {
-  id: number | string; // ID এখন রিকোয়ার্ড করা হলো ভালো রেজাল্টের জন্য
+  id: number | string;
   title: string;
   image?: string;
   price?: number;
   oldPrice?: number;
-  details?: any;
+  label?: string;
 }
 
 interface SectionProps {
@@ -21,6 +22,8 @@ interface SectionProps {
 }
 
 const EducationSectionShare = ({ section }: SectionProps) => {
+  if (!section || !section.courses || section.courses.length === 0) return null;
+
   const { category, courses, type } = section;
 
   return (
@@ -37,7 +40,6 @@ const EducationSectionShare = ({ section }: SectionProps) => {
           <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mt-4">
             {courses.map((course, index) => (
               <Link
-                /* আপডেট: পাথ /course/ থেকে /education/ এ পরিবর্তন করা হলো */
                 href={`/education/${course.id}`}
                 key={course.id || index}
                 className="group bg-white border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-xl transition-all duration-300 flex flex-col cursor-pointer"
@@ -49,10 +51,11 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                       alt={course.title}
                       fill
                       className="object-cover group-hover:scale-110 transition-transform duration-500"
+                      sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-[#105D38]/10 flex items-center justify-center text-[10px] text-neutral-400 font-medium">
-                      {course.title} (No Image)
+                    <div className="absolute inset-0 bg-[#105D38]/10 flex items-center justify-center text-[10px] text-neutral-400 font-medium px-2 text-center">
+                      {course.title}
                     </div>
                   )}
                 </div>
@@ -63,7 +66,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                   </h3>
                   <div className="mt-auto flex items-center gap-2">
                     <span className="text-[#105D38] font-black text-sm md:text-lg">
-                      ৳ {course.price}
+                      ৳ {course.price || 0}
                     </span>
                     {course.oldPrice && (
                       <span className="text-neutral-400 text-[10px] md:text-xs line-through font-medium">
@@ -83,22 +86,28 @@ const EducationSectionShare = ({ section }: SectionProps) => {
           </div>
         </>
       ) : (
-        /* গ্রিড স্টাইল সেকশন */
+        /* গ্রিড স্টাইল সেকশন (Iconic Grid) */
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
           {courses.map((course, cIdx) => (
             <Link
               href={`/education/${course.id}`}
               key={course.id || cIdx}
-              className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300 hover:-translate-y-1 hover:shadow-xl"
+              className="w-full"
             >
-              <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
-              <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-              <div className="relative h-full flex items-center justify-center p-3">
-                <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
-                  {course.title}
-                </p>
-              </div>
-              <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              <motion.div
+                whileHover={{ scale: 1.05, y: -5 }}
+                whileTap={{ scale: 0.95 }}
+                className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
+              >
+                <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
+                <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
+                <div className="relative h-full flex items-center justify-center p-3">
+                  <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
+                    {course.title}
+                  </p>
+                </div>
+                <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
+              </motion.div>
             </Link>
           ))}
         </div>

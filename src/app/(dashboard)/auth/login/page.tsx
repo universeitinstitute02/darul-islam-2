@@ -106,7 +106,8 @@ const LoginPage = () => {
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="w-full max-w-md bg-white rounded-[2.5rem] lg:rounded-none lg:shadow-none border border-neutral-100 lg:border-none p-8 md:p-10 lg:p-0 my-auto"
         >
-          <div className="mb-6 lg:mb-10">
+          {/* Header Action Bar: Back and Register buttons on same level for mobile */}
+          <div className="flex items-center justify-between mb-8 lg:mb-10">
             <Link
               href="/"
               className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#105D38] transition-colors group"
@@ -121,6 +122,15 @@ const LoginPage = () => {
                 পিছনে যান
               </span>
             </Link>
+
+            <div className="lg:hidden text-right">
+              <Link
+                href={"/auth/register"}
+                className="text-[#105D38] font-black text-sm flex items-center gap-1 hover:underline transition-all"
+              >
+                রেজিস্টার <ArrowRight size={16} />
+              </Link>
+            </div>
           </div>
 
           {/* Error Message */}
@@ -130,18 +140,21 @@ const LoginPage = () => {
             </div>
           )}
 
-          <div className="mb-10 hidden lg:block">
+          {/* Desktop Title Section */}
+          <div className="mb-10">
             <div className="flex items-center justify-between">
               <div>
-                <h2 className="text-4xl font-black text-neutral-900 tracking-tight">
+                <h2 className="text-2xl lg:text-4xl font-black text-neutral-900 tracking-tight">
                   লগইন করুন
                 </h2>
-                <p className="text-neutral-500 font-semibold mt-2 text-[15px]">
+                <p className="text-neutral-500 font-semibold mt-1 text-sm lg:text-[15px]">
                   আপনার অ্যাকাউন্টে প্রবেশ করুন
                 </p>
               </div>
-              <div className="text-right">
-                <p className="text-xs text-neutral-400 font-bold mb-1 uppercase tracking-tighter">
+
+              {/* Desktop Register Link (Visible only on Desktop) */}
+              <div className="hidden lg:block text-right">
+                <p className="text-[10px] text-neutral-400 font-bold mb-1 uppercase tracking-tighter">
                   নতুন ইউজার?
                 </p>
                 <Link

@@ -2,69 +2,79 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { useParams } from "next/navigation";
-import { ArrowLeft, Star, Tag, Copy, Check } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import {
+  ArrowLeft,
+  Star,
+  CheckCircle2,
+  ShieldCheck,
+  Clock,
+} from "lucide-react";
+import { getAllCourses } from "@/src/lib/data";
+import { motion } from "framer-motion";
 
 export default function CourseDetailPage() {
   const { id } = useParams();
+  const router = useRouter();
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    // সরাসরি আপনার লোকাল JSON ফাইল থেকে ডাটা ফেচ করা হচ্ছে
-    fetch("/education.json")
-      .then((res) => res.json())
-      .then((data) => {
+    const fetchCourseData = async () => {
+      try {
+        setLoading(true);
+        const data = await getAllCourses();
+        if (!data || !Array.isArray(data)) return;
+
         let foundCourse = null;
-
-        // ১. freeCoursesData এর ভেতরে খোঁজা
-        foundCourse = data.freeCoursesData.courses.find(
-          (c: any) => String(c.id) === id,
-        );
-        if (foundCourse) foundCourse.category = data.freeCoursesData.category;
-
-        // ২. educationData এর ভেতরে খোঁজা
-        if (!foundCourse) {
-          data.educationData.forEach((section: any) => {
-            const match = section.courses.find((c: any) => String(c.id) === id);
-            if (match) foundCourse = { ...match, category: section.category };
-          });
+        for (const section of data) {
+          const match = section.courses.find((c: any) => String(c.id) === id);
+          if (match) {
+            foundCourse = { ...match, category: section.category };
+            break;
+          }
         }
-
-        // ৩. educationData2 এর ভেতরে খোঁজা
-        if (!foundCourse) {
-          data.educationData2.forEach((section: any) => {
-            const match = section.courses.find((c: any) => String(c.id) === id);
-            if (match) foundCourse = { ...match, category: section.category };
-          });
-        }
-
         setCourse(foundCourse);
+      } catch (err) {
+        console.error("Error fetching course details:", err);
+      } finally {
         setLoading(false);
-      })
-      .catch((err) => {
-        console.error("Error:", err);
-        setLoading(false);
-      });
+      }
+    };
+    fetchCourseData();
   }, [id]);
+
+  const handleEnroll = () => {
+    router.push(`/education/enroll/${course.id}`);
+  };
 
   if (loading)
     return (
-      <div className="min-h-screen flex items-center justify-center font-bold">
-        লোড হচ্ছে...
+      <div className="min-h-screen flex items-center justify-center bg-white">
+        <div className="flex flex-col items-center gap-4">
+          <div className="w-12 h-12 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin"></div>
+          <p className="font-bold text-[#105D38] animate-pulse">লোড হচ্ছে...</p>
+        </div>
       </div>
     );
 
   if (!course) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center gap-4">
-        <h2 className="text-xl font-bold text-red-500">কোর্সটি পাওয়া যায়নি!</h2>
-        <Link
-          href="/education"
-          className="text-[#105D38] border-b border-[#105D38] flex items-center gap-2"
+      <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-[#f8fafc]">
+        <div className="text-center space-y-2">
+          <h2 className="text-2xl font-black text-neutral-800">
+            কোর্সটি পাওয়া যায়নি!
+          </h2>
+          <p className="text-neutral-500">
+            সম্ভবত লিংকটি ভুল অথবা কোর্সটি বর্তমানে উপলব্ধ নেই।
+          </p>
+        </div>
+        <button
+          onClick={() => router.back()}
+          className="bg-[#105D38] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-[#0d4d2e] transition-all"
         >
-          <ArrowLeft size={18} /> কোর্সে ফিরে যান
-        </Link>
+          <ArrowLeft size={20} /> পেছনে ফিরে যান
+        </button>
       </div>
     );
   }
@@ -72,42 +82,70 @@ export default function CourseDetailPage() {
   const { details, image, category, title, price } = course;
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] pb-20">
-      {/* টপ নেভিগেশন */}
-      <div className="bg-white border-b sticky top-0 z-30 px-4 py-3">
-        <div className="max-w-6xl mx-auto flex items-center gap-2 text-xs font-bold">
-          <Link
-            href="/education"
-            className="text-neutral-500 hover:text-[#105D38]"
+    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20">
+      {/* স্টিকি সাব-হেডার (Breadcrumb) */}
+      <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3">
+        <div className="max-w-6xl mx-auto flex items-center justify-between">
+          <button
+            onClick={() => router.back()}
+            className="flex items-center gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
           >
-            এডুকেশন
-          </Link>
-          <span className="text-neutral-300">/</span>
-          <span className="text-[#105D38] line-clamp-1">
-            {details?.fullTitle || title}
-          </span>
+            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors">
+              <ArrowLeft size={20} />
+            </div>
+            <span className="font-bold text-sm hidden md:block">ফিরে যান</span>
+          </button>
+
+          <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold">
+            <Link
+              href="/education"
+              className="text-neutral-400 hover:text-[#105D38]"
+            >
+              এডুকেশন
+            </Link>
+            <span className="text-neutral-300">/</span>
+            <span className="text-[#105D38] line-clamp-1 max-w-[150px] md:max-w-none uppercase">
+              {title}
+            </span>
+          </div>
         </div>
       </div>
 
-      <div className="max-w-6xl mx-auto px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-[1fr_380px] gap-8">
-          {/* কন্টেন্ট এরিয়া */}
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <span className="bg-[#105D38]/10 text-[#105D38] px-4 py-1.5 rounded-full text-xs font-black uppercase tracking-wider">
-                {category}
-              </span>
-              <h1 className="text-3xl md:text-5xl font-black text-neutral-800 leading-tight">
+      <div className="max-w-6xl mx-auto px-4 py-6 md:py-10">
+        <div className="grid grid-cols-1 lg:grid-cols-[1fr_400px] gap-8 md:gap-12">
+          <div className="order-1 lg:order-1 space-y-8">
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="space-y-4"
+            >
+              <div className="flex items-center gap-3">
+                <span className="inline-block bg-[#105D38] text-white px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                  {category}
+                </span>
+                <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
+                  <Star size={16} fill="currentColor" /> 4.9 (রিয়েটিং)
+                </div>
+              </div>
+
+              <h1 className="text-3xl md:text-5xl font-black text-neutral-900 leading-[1.15]">
                 {details?.fullTitle || title}
               </h1>
-              <p className="text-neutral-600 text-lg leading-relaxed">
-                {details?.description ||
-                  "কোর্সটি সম্পর্কে বিস্তারিত শীঘ্রই আসছে..."}
-              </p>
-            </div>
 
-            {image && (
-              <div className="relative aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border-8 border-white">
+              <p className="text-neutral-600 text-base md:text-xl leading-relaxed">
+                {details?.description ||
+                  "এই কোর্সটি আপনাকে সম্পূর্ণ জিরো থেকে অ্যাডভান্স লেভেল পর্যন্ত গাইড করবে। বিস্তারিত কন্টেন্ট শীঘ্রই আপলোড করা হবে।"}
+              </p>
+            </motion.div>
+
+            {/* কোর্স ইমেজ */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ delay: 0.2 }}
+              className="relative aspect-video rounded-[2rem] overflow-hidden shadow-2xl border-4 md:border-[12px] border-white bg-neutral-200"
+            >
+              {image ? (
                 <Image
                   src={image}
                   alt={title}
@@ -115,53 +153,94 @@ export default function CourseDetailPage() {
                   className="object-cover"
                   priority
                 />
+              ) : (
+                <div className="absolute inset-0 flex items-center justify-center bg-neutral-100 text-neutral-400">
+                  Image Placeholder
+                </div>
+              )}
+            </motion.div>
+
+            {/* অতিরিক্ত তথ্য */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="p-6 bg-white rounded-2xl border border-neutral-100 flex items-start gap-4">
+                <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
+                  <Clock size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-neutral-800">কোর্সের মেয়াদ</h4>
+                  <p className="text-sm text-neutral-500">
+                    লাইফটাইম এক্সেস পাবেন
+                  </p>
+                </div>
               </div>
-            )}
+              <div className="p-6 bg-white rounded-2xl border border-neutral-100 flex items-start gap-4">
+                <div className="p-3 bg-green-50 text-green-600 rounded-xl">
+                  <ShieldCheck size={24} />
+                </div>
+                <div>
+                  <h4 className="font-bold text-neutral-800">সার্টিফিকেট</h4>
+                  <p className="text-sm text-neutral-500">
+                    কোর্স শেষে ভেরিফাইড সার্টিফিকেট
+                  </p>
+                </div>
+              </div>
+            </div>
           </div>
 
-          {/* সাইডবার (পেমেন্ট কার্ড) */}
-          <div className="lg:sticky lg:top-24 h-fit">
-            <div className="bg-white p-8 rounded-[2rem] border border-neutral-100 shadow-xl space-y-6">
-              <div>
-                <p className="text-sm font-bold text-neutral-400 mb-1">
-                  কোর্স ফি
+          <div className="order-2 lg:order-2 lg:sticky lg:top-28 h-fit">
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: 1, x: 0 }}
+              className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-neutral-100 shadow-2xl shadow-neutral-200/50 space-y-6"
+            >
+              <div className="space-y-1">
+                <p className="text-[10px] font-black text-neutral-400 uppercase tracking-[0.2em]">
+                  ভর্তি ফি
                 </p>
-                <div className="flex items-center gap-3">
-                  <span className="text-4xl font-black text-[#105D38]">
-                    {details?.admissionFee === 0 || !price
+                <div className="flex items-baseline gap-3">
+                  <span className="text-4xl md:text-5xl font-black text-[#105D38]">
+                    {details?.admissionFee === 0 ||
+                    (!price && !details?.admissionFee)
                       ? "ফ্রি!"
                       : `৳${details?.admissionFee || price}`}
                   </span>
                   {details?.oldAdmissionFee > 0 && (
-                    <span className="text-neutral-300 line-through text-lg">
+                    <span className="text-neutral-300 line-through text-xl font-bold">
                       ৳{details.oldAdmissionFee}
                     </span>
                   )}
                 </div>
               </div>
 
-              <button className="w-full bg-[#105D38] text-white font-black py-5 rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-lg shadow-[#105D38]/20 text-lg">
-                এখনই ভর্তি হবো
-              </button>
+              <div className="space-y-3">
+                <button
+                  onClick={handleEnroll}
+                  className="w-full bg-[#105D38] text-white font-black py-5 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#105D38]/30 transition-all text-lg active:scale-95 flex items-center justify-center gap-3"
+                >
+                  এখনই ভর্তি হবো
+                  <CheckCircle2 size={22} />
+                </button>
+                <p className="text-[11px] text-center text-neutral-400 font-medium">
+                  নিরাপদ পেমেন্ট গেটওয়ের মাধ্যমে পেমেন্ট সম্পন্ন করুন
+                </p>
+              </div>
 
-              {details?.highlights && (
-                <div className="pt-6 border-t border-dashed">
-                  <p className="text-sm font-black text-neutral-800 mb-4 uppercase tracking-widest">
-                    কি কি থাকছে
-                  </p>
+              {details?.highlights && details.highlights.length > 0 && (
+                <div className="pt-6 border-t border-neutral-100">
+                  <h4 className="text-xs font-black text-neutral-800 mb-5 uppercase tracking-widest flex items-center gap-2">
+                    <Star size={14} className="text-amber-500 fill-amber-500" />
+                    কোর্স মডিউল হাইলাইটস
+                  </h4>
                   <ul className="space-y-4">
                     {details.highlights.map((h: any, i: number) => (
-                      <li key={i} className="flex gap-3 text-sm items-start">
-                        <div className="bg-amber-100 p-1 rounded-md">
-                          <Star
-                            size={14}
-                            className="text-amber-600 fill-amber-600"
-                          />
+                      <li key={i} className="flex gap-4 text-sm items-start">
+                        <div className="mt-1">
+                          <div className="w-1.5 h-1.5 rounded-full bg-[#105D38]" />
                         </div>
-                        <span className="font-medium text-neutral-600 leading-snug">
-                          <strong className="text-neutral-900">
-                            {h.label}:
-                          </strong>{" "}
+                        <span className="text-neutral-600 leading-tight">
+                          <strong className="text-neutral-900 block mb-0.5">
+                            {h.label}
+                          </strong>
                           {h.value}
                         </span>
                       </li>
@@ -169,7 +248,7 @@ export default function CourseDetailPage() {
                   </ul>
                 </div>
               )}
-            </div>
+            </motion.div>
           </div>
         </div>
       </div>
