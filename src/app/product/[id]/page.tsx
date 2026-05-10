@@ -23,17 +23,16 @@ const ProductDetails = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("/shop.json")
+    fetch("https://darulislam-server-v2.vercel.app/api/products/shop")
       .then((res) => res.json())
       .then((data) => {
-        const found = data.products.find((p: any) => p.id === Number(id));
+        const found = data.products.find((p: any) => p.id === id);
         setProduct(found);
 
-        // বর্তমান প্রোডাক্ট বাদে অন্য প্রোডাক্টগুলো থেকে ৪টি ফিল্টার করে নেয়া
         const related = data.products
-          .filter((p: any) => p.id !== Number(id))
-          .sort(() => 0.5 - Math.random()) // র‍্যান্ডমলি সাজানো
-          .slice(0, 4); // ৪টি শো করা
+          .filter((p: any) => p.id !== id) // এখানেও Number() বাদ দিন
+          .sort(() => 0.5 - Math.random())
+          .slice(0, 4);
 
         setRelatedProducts(related);
         setLoading(false);

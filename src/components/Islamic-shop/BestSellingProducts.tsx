@@ -9,7 +9,7 @@ const BestSellingProducts = () => {
   const [visibleCount, setVisibleCount] = useState(8); // শুরুতে ৮টি প্রোডাক্ট দেখাবে
 
   useEffect(() => {
-    fetch("/shop.json")
+    fetch("https://darulislam-server-v2.vercel.app/api/products/shop")
       .then((res) => res.json())
       .then((data) => {
         // এখানে শুধু 'Best Seller' পণ্যগুলো ফিল্টার করে দেখানো যেতে পারে অথবা সব পণ্যই
