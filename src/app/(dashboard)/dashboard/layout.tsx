@@ -11,6 +11,13 @@ import {
   FileCheck,
   Menu,
   X,
+  Library,
+  PlusSquare,
+  Video,
+  Users,
+  GraduationCap,
+  Bell,
+  UserCog,
 } from "lucide-react";
 
 export default function DashboardLayout({
@@ -26,37 +33,42 @@ export default function DashboardLayout({
     {
       name: "টিচার ড্যাশবোর্ড",
       href: "/dashboard/teacher/teacher-dashboard",
-      icon: BookOpen,
+      icon: LayoutDashboard,
     },
     {
       name: "আমার কোর্সসমূহ",
       href: "/dashboard/teacher/my-course",
-      icon: BookOpen,
+      icon: Library,
+    },
+    {
+      name: "কোর্স যুক্ত করুন",
+      href: "/dashboard/teacher/add-course",
+      icon: PlusSquare,
     },
     {
       name: "ক্লাস লিঙ্ক",
       href: "/dashboard/teacher/class-link",
-      icon: BookOpen,
+      icon: Video,
     },
     {
       name: "সদস্যবৃন্দ",
       href: "/dashboard/teacher/teacher-list",
-      icon: BookOpen,
+      icon: Users,
     },
     {
       name: "অ্যাসাইনমেন্ট ও মূল্যায়ন",
       href: "/dashboard/teacher/assignment",
-      icon: FileCheck,
+      icon: GraduationCap,
     },
     {
       name: "নোটিশ বোর্ড",
       href: "/dashboard/teacher/notice-board",
-      icon: FileCheck,
+      icon: Bell,
     },
     {
       name: "প্রোফাইল সেটিংস",
       href: "/dashboard/teacher/profile",
-      icon: Settings,
+      icon: UserCog,
     },
   ];
 
