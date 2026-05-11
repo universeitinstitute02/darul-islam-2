@@ -67,9 +67,19 @@ export const Step1 = ({
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField
-          label="নাম (বাংলা)"
+          label="নাম (বাংলা) *"
           placeholder="বাংলায় নাম লিখুন"
-          register={register("studentNameBn")}
+          register={register(
+            currentRole === "teacher" ? "teacherNameBn" : "studentNameBn",
+            {
+              required: "বাংলা নাম প্রদান করা আবশ্যক",
+            },
+          )}
+          error={
+            currentRole === "teacher"
+              ? errors.teacherNameBn
+              : errors.studentNameBn
+          }
           icon={<User size={18} />}
         />
         <InputField
@@ -115,12 +125,12 @@ export const Step1 = ({
           )}
         </div>
 
-        <SelectField
+        {/* <SelectField
           label="বিভাগ *"
           options={divisions}
           register={register("division", { required: "বিভাগ নির্বাচন করুন" })}
           error={errors.division}
-        />
+        /> */}
         {!currentRole || currentRole === "student" ? (
           <SelectField
             label="ক্লাস / লেভেল"

@@ -69,12 +69,19 @@ const RegisterPage: React.FC = () => {
   const nextStep = async () => {
     // সঠিক ধাপ অনুযায়ী ভ্যালিডেশন ম্যাপ
     const validationMap: any = {
-      1: ["studentNameEn", "birthDate", "gender", "division"],
+      1: [
+        "studentNameEn",
+        "studentNameBn",
+        "teacherNameBn",
+        "birthDate",
+        "gender",
+        "division",
+      ],
       2: isTeacher
         ? ["designation", "department"]
         : ["fatherName", "fatherMobile"],
       3: ["motherName"],
-      4: ["presentDivision", "district", "studentMobile", "email"],
+      4: ["district", "studentMobile", "email"],
       5: ["password", "confirmPassword"],
     };
 
