@@ -51,8 +51,13 @@ export default function DashboardLayout({
       icon: Video,
     },
     {
-      name: "সদস্যবৃন্দ",
+      name: "শিক্ষকবৃন্দ",
       href: "/dashboard/teacher/teacher-list",
+      icon: Users,
+    },
+    {
+      name: "সকল সদস্যবৃন্দ",
+      href: "/dashboard/teacher/all-users",
       icon: Users,
     },
     {

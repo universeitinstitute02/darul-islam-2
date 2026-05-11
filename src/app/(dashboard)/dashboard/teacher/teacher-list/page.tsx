@@ -1,89 +1,86 @@
 "use client";
-import React, { useState, useMemo } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import {
   Search,
   Filter,
   Mail,
   MessageCircle,
-  MoreVertical,
-  Star,
   UserCheck,
   ChevronLeft,
   ChevronRight,
-  MailQuestion,
+  Loader2,
+  CheckCircle2,
+  XCircle,
+  Briefcase,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useSession } from "next-auth/react";
 
 const TeacherList = () => {
-  const allTeachers = [
-    {
-      id: 1,
-      name: "মাওলানা আব্দুল্লাহ আল মামুন",
-      subject: "সহীহ তিলাওয়াত ও তাজবিদ",
-      email: "abdullah@example.com",
-      rating: 4.9,
-      status: "Active",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=1",
-    },
-    {
-      id: 2,
-      name: "মুফতি ওসমান গনি",
-      subject: "হাদিস পরিচিতি ও ফিকহ",
-      email: "osman@example.com",
-      rating: 4.8,
-      status: "Active",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=2",
-    },
-    {
-      id: 3,
-      name: "শায়খ আবু বকর",
-      subject: "আরবি ভাষা ও ব্যাকরণ",
-      email: "bakari@example.com",
-      rating: 5.0,
-      status: "Inactive",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=3",
-    },
-    {
-      id: 4,
-      name: "মাওলানা জায়েদ",
-      subject: "ফিকহ",
-      email: "zayed@test.com",
-      rating: 4.7,
-      status: "Active",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=4",
-    },
-    {
-      id: 5,
-      name: "হাফেজ ইব্রাহিম",
-      subject: "হিফজ",
-      email: "ibrahim@test.com",
-      rating: 4.9,
-      status: "Active",
-      image: "https://api.dicebear.com/7.x/avataaars/svg?seed=5",
-    },
-  ];
+  const { data: session } = useSession();
+  const token = session?.accessToken;
 
+  // States
+  const [teachers, setTeachers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 4;
+  const itemsPerPage = 6;
 
-  const filteredTeachers = useMemo(() => {
-    return allTeachers.filter(
-      (t) =>
-        t.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.subject.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        t.email.toLowerCase().includes(searchTerm.toLowerCase()),
+  const fetchTeachers = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const res = await fetch(
+        "https://darulislam-server-v2.vercel.app/api/users/admin/all-users?role=teacher",
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const result = await res.json();
+      if (result.success) {
+        setTeachers(result.data);
+      }
+    } catch (error) {
+      console.error("Teacher fetch failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchTeachers();
+  }, [fetchTeachers]);
+
+  const filteredTeachers = teachers.filter((t) => {
+    const searchStr = searchTerm.toLowerCase();
+    return (
+      t.name?.toLowerCase().includes(searchStr) ||
+      t.email?.toLowerCase().includes(searchStr) ||
+      t.profileData?.department?.name?.toLowerCase().includes(searchStr)
     );
-  }, [searchTerm, allTeachers]);
+  });
 
+  // Pagination Logic
   const totalPages = Math.ceil(filteredTeachers.length / itemsPerPage);
   const currentItems = filteredTeachers.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage,
   );
 
+  if (loading) {
+    return (
+      <div className="h-96 flex flex-col items-center justify-center gap-4">
+        <Loader2 className="animate-spin text-[#105D38] w-10 h-10" />
+        <p className="text-sm font-bold text-neutral-500">
+          শিক্ষক তালিকা লোড হচ্ছে...
+        </p>
+      </div>
+    );
+  }
+
   return (
-    <div className="mt-4 md:mt-8 space-y-6 pb-12 px-2 md:px-0">
+    <div className="mt-4 md:mt-8 space-y-6 pb-12 px-2 md:px-0 font-sans">
       {/* Header Section */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
         <div className="space-y-1">
@@ -91,10 +88,10 @@ const TeacherList = () => {
             <span className="p-2 bg-emerald-50 rounded-lg text-[#105D38]">
               <UserCheck size={20} />
             </span>
-            সদস্যবৃন্দ <span className="hidden md:inline">(শিক্ষক তালিকা)</span>
+            সম্মানিত শিক্ষকবৃন্দ
           </h2>
-          <p className="text-xs md:text-sm text-neutral-500 font-medium italic">
-            ইনস্টিটিউটের সকল শিক্ষকদের তথ্য ও রেটিং
+          <p className="text-xs md:text-sm text-neutral-500 font-medium">
+            মোট {teachers.length} জন নিবন্ধিত শিক্ষক পাওয়া গেছে
           </p>
         </div>
 
@@ -111,214 +108,131 @@ const TeacherList = () => {
                 setSearchTerm(e.target.value);
                 setCurrentPage(1);
               }}
-              placeholder="নাম বা বিষয় খুঁজুন..."
+              placeholder="নাম বা বিভাগ খুঁজুন..."
               className="w-full pl-10 pr-4 py-2.5 bg-white border border-neutral-200 rounded-2xl text-sm focus:ring-2 focus:ring-[#105D38] outline-none transition-all shadow-sm"
             />
           </div>
-          <button className="flex items-center justify-center gap-2 w-full sm:w-auto px-4 py-2.5 bg-white border border-neutral-200 rounded-2xl text-neutral-600 hover:bg-neutral-50 shadow-sm transition-all text-sm font-bold">
-            <Filter size={18} /> ফিল্টার
-          </button>
         </div>
       </div>
 
-      {/* Main View: Desktop Table & Mobile Cards */}
-      <div className="w-full">
-        {/* Desktop Table View (Hidden on mobile) */}
-        <div className="hidden md:block bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm overflow-hidden">
-          <table className="w-full text-left border-collapse">
-            <thead className="bg-neutral-50/80 border-b border-neutral-100">
-              <tr>
-                <th className="p-5 text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em]">
-                  শিক্ষকের তথ্য
-                </th>
-                <th className="p-5 text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em]">
-                  বিষয়
-                </th>
-                <th className="p-5 text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em]">
-                  রেটিং
-                </th>
-                <th className="p-5 text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em]">
-                  স্ট্যাটাস
-                </th>
-                <th className="p-5 text-[10px] font-black uppercase text-neutral-400 tracking-[0.2em] text-center">
-                  অ্যাকশন
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-neutral-50">
-              <AnimatePresence mode="popLayout">
-                {currentItems.map((teacher, idx) => (
-                  <motion.tr
-                    key={teacher.id}
-                    initial={{ opacity: 0 }}
-                    animate={{ opacity: 1 }}
-                    exit={{ opacity: 0 }}
-                    className="group hover:bg-neutral-50/50 transition-colors"
-                  >
-                    <td className="p-5">
-                      <div className="flex items-center gap-4">
-                        <img
-                          src={teacher.image}
-                          className="w-12 h-12 rounded-2xl bg-emerald-50 border border-emerald-100 object-cover"
-                          alt=""
-                        />
-                        <div>
-                          <p className="text-sm font-bold text-neutral-800">
-                            {teacher.name}
-                          </p>
-                          <p className="text-[11px] text-neutral-400 font-medium">
-                            {teacher.email}
-                          </p>
-                        </div>
-                      </div>
-                    </td>
-                    <td className="p-5 text-sm font-bold text-neutral-600 italic">
-                      "{teacher.subject}"
-                    </td>
-                    <td className="p-5">
-                      <div className="flex items-center gap-1.5 px-2 py-1 bg-yellow-50 text-yellow-700 w-fit rounded-lg border border-yellow-100">
-                        <Star size={12} className="fill-yellow-600" />
-                        <span className="text-xs font-black">
-                          {teacher.rating}
-                        </span>
-                      </div>
-                    </td>
-                    <td className="p-5 text-center">
-                      <span
-                        className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${teacher.status === "Active" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
-                      >
-                        {teacher.status === "Active" ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                      </span>
-                    </td>
-                    <td className="p-5">
-                      <div className="flex items-center justify-center gap-2">
-                        <button className="p-2 text-neutral-400 hover:text-[#105D38] hover:bg-white rounded-xl shadow-sm transition-all">
-                          <Mail size={16} />
-                        </button>
-                        <button className="p-2 text-neutral-400 hover:text-blue-600 hover:bg-white rounded-xl shadow-sm transition-all">
-                          <MessageCircle size={16} />
-                        </button>
-                      </div>
-                    </td>
-                  </motion.tr>
-                ))}
-              </AnimatePresence>
-            </tbody>
-          </table>
-        </div>
-
-        {/* Mobile Card View (Hidden on desktop) */}
-        <div className="md:hidden grid grid-cols-1 gap-4">
-          <AnimatePresence mode="popLayout">
-            {currentItems.map((teacher) => (
-              <motion.div
-                key={teacher.id}
-                initial={{ opacity: 0, scale: 0.9 }}
-                animate={{ opacity: 1, scale: 1 }}
-                className="bg-white p-5 rounded-[2rem] border border-neutral-100 shadow-sm space-y-4"
-              >
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
+      {/* Teacher Grid View */}
+      <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+        <AnimatePresence mode="popLayout">
+          {currentItems.map((teacher) => (
+            <motion.div
+              key={teacher._id}
+              layout
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9 }}
+              className="bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
+            >
+              {/* Top Profile Area */}
+              <div className="p-6 pb-4 flex items-start justify-between">
+                <div className="flex items-center gap-4">
+                  <div className="relative">
                     <img
-                      src={teacher.image}
-                      className="w-14 h-14 rounded-2xl bg-emerald-50"
-                      alt=""
+                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${teacher.name}`}
+                      className="w-16 h-16 rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover"
+                      alt={teacher.name}
                     />
-                    <div>
-                      <h4 className="text-sm font-black text-neutral-800">
-                        {teacher.name}
-                      </h4>
-                      <p className="text-[11px] text-neutral-400">
-                        {teacher.email}
-                      </p>
+                    <div
+                      className={`absolute -bottom-1 -right-1 p-1 rounded-full border-2 border-white ${teacher.profileData?.isApproved ? "bg-green-500" : "bg-amber-500"}`}
+                    >
+                      {teacher.profileData?.isApproved ? (
+                        <CheckCircle2 size={10} className="text-white" />
+                      ) : (
+                        <XCircle size={10} className="text-white" />
+                      )}
                     </div>
                   </div>
-                  <span
-                    className={`text-[9px] font-black uppercase px-2 py-1 rounded-lg ${teacher.status === "Active" ? "bg-emerald-50 text-emerald-600" : "bg-red-50 text-red-600"}`}
-                  >
-                    {teacher.status === "Active" ? "সক্রিয়" : "নিষ্ক্রিয়"}
-                  </span>
-                </div>
-
-                <div className="grid grid-cols-2 gap-2 border-y border-neutral-50 py-3">
                   <div>
-                    <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-tighter">
-                      বিষয়
-                    </p>
-                    <p className="text-[11px] font-bold text-neutral-700 leading-tight mt-1">
-                      {teacher.subject}
+                    <h4 className="text-base font-black text-neutral-800 leading-tight">
+                      {teacher.profileData?.teacherNameBn || teacher.name}
+                    </h4>
+                    <p className="text-xs text-neutral-400 font-medium mt-1 lowercase">
+                      {teacher.email}
                     </p>
                   </div>
-                  <div className="text-right">
-                    <p className="text-[9px] font-bold text-neutral-400 uppercase tracking-tighter">
-                      রেটিং
+                </div>
+              </div>
+
+              {/* Detailed Info */}
+              <div className="px-6 py-4 bg-neutral-50/50 space-y-3">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-white rounded-xl shadow-sm text-emerald-600">
+                    <Briefcase size={14} />
+                  </div>
+                  <div>
+                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                      পদবী ও বিভাগ
                     </p>
-                    <div className="flex items-center justify-end gap-1 mt-1">
-                      <Star
-                        size={12}
-                        className="fill-yellow-500 text-yellow-500"
-                      />
-                      <span className="text-xs font-black text-neutral-800">
-                        {teacher.rating}
-                      </span>
-                    </div>
+                    <p className="text-xs font-bold text-neutral-700">
+                      {teacher.profileData?.designation || "শিক্ষক"} •{" "}
+                      {teacher.profileData?.department?.name || "সাধারণ"}
+                    </p>
                   </div>
                 </div>
 
-                <div className="flex items-center gap-2">
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-50 hover:bg-[#105D38] hover:text-white rounded-xl text-neutral-500 transition-all text-xs font-bold">
-                    <Mail size={14} /> ইমেইল
-                  </button>
-                  <button className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-50 hover:bg-blue-600 hover:text-white rounded-xl text-neutral-500 transition-all text-xs font-bold">
-                    <MessageCircle size={14} /> মেসেজ
-                  </button>
+                <div className="flex items-center justify-between">
+                  <span
+                    className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${teacher.profileData?.isApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+                  >
+                    {teacher.profileData?.isApproved
+                      ? "Approved"
+                      : "Pending Approval"}
+                  </span>
+                  <p className="text-[10px] font-bold text-neutral-400 italic">
+                    ID: ...{teacher._id.slice(-6)}
+                  </p>
                 </div>
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </div>
+              </div>
+
+              {/* Footer Actions */}
+              <div className="p-4 flex gap-2">
+                <button className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#105D38] hover:bg-[#105D38] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2">
+                  <Mail size={14} /> ইমেইল
+                </button>
+                <button className="flex-1 py-3 bg-neutral-900 text-white rounded-2xl hover:bg-neutral-800 transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 shadow-lg">
+                  <MessageCircle size={14} /> যোগাযোগ
+                </button>
+              </div>
+            </motion.div>
+          ))}
+        </AnimatePresence>
       </div>
+
+      {/* No Data State */}
+      {!loading && filteredTeachers.length === 0 && (
+        <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
+          <p className="text-neutral-400 font-bold">কোন শিক্ষক পাওয়া যায়নি!</p>
+        </div>
+      )}
 
       {/* Pagination Footer */}
-      <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
-        <p className="text-[11px] font-black text-neutral-400 uppercase tracking-widest">
-          পেজ {currentPage} / {totalPages || 1}
-        </p>
-
-        <div className="flex items-center gap-2 bg-white p-1 rounded-2xl border border-neutral-100 shadow-sm">
-          <button
-            onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
-            disabled={currentPage === 1}
-            className="p-2 hover:bg-neutral-50 rounded-xl disabled:opacity-20 transition-all"
-          >
-            <ChevronLeft size={20} />
-          </button>
-
-          <div className="flex gap-1">
-            {[...Array(totalPages)].map((_, i) => (
-              <button
-                key={i}
-                onClick={() => setCurrentPage(i + 1)}
-                className={`w-8 h-8 rounded-xl text-xs font-black transition-all ${
-                  currentPage === i + 1
-                    ? "bg-[#105D38] text-white shadow-lg"
-                    : "text-neutral-400 hover:bg-neutral-50"
-                }`}
-              >
-                {i + 1}
-              </button>
-            ))}
+      {totalPages > 1 && (
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-6 border-t border-neutral-100">
+          <p className="text-[11px] font-black text-neutral-400 uppercase tracking-widest">
+            পেজ {currentPage} / {totalPages}
+          </p>
+          <div className="flex items-center gap-2 bg-white p-1 rounded-2xl border border-neutral-100 shadow-sm">
+            <button
+              onClick={() => setCurrentPage((p) => Math.max(p - 1, 1))}
+              disabled={currentPage === 1}
+              className="p-2 hover:bg-neutral-50 rounded-xl disabled:opacity-20 transition-all"
+            >
+              <ChevronLeft size={20} />
+            </button>
+            <button
+              onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
+              disabled={currentPage === totalPages}
+              className="p-2 hover:bg-neutral-50 rounded-xl disabled:opacity-20 transition-all"
+            >
+              <ChevronRight size={20} />
+            </button>
           </div>
-
-          <button
-            onClick={() => setCurrentPage((p) => Math.min(p + 1, totalPages))}
-            disabled={currentPage === totalPages || totalPages === 0}
-            className="p-2 hover:bg-neutral-50 rounded-xl disabled:opacity-20 transition-all"
-          >
-            <ChevronRight size={20} />
-          </button>
         </div>
-      </div>
+      )}
     </div>
   );
 };
