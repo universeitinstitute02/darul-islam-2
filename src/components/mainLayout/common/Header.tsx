@@ -3,6 +3,8 @@
 import React, { useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { signOut } from "next-auth/react";
+import { useQueryClient } from "@tanstack/react-query";
 import {
   Home,
   University,
@@ -24,10 +26,13 @@ import {
   LogIn,
   UserPlus,
   BellRing,
-  LucideIcon, // LucideIcon টাইপটি ইমপোর্ট করুন
+  LogOut,
+  LayoutDashboard,
+  LucideIcon,
 } from "lucide-react";
+import Swal from "sweetalert2";
+import useUserRole from "@/src/app/hooks/useUserRole";
 
-// মেনু আইটেমের জন্য টাইপ ডিফাইন করা (TypeScript এরর এড়াতে)
 interface SubmenuItem {
   name: string;
   href: string;
@@ -41,63 +46,103 @@ interface MenuItem {
   submenu?: SubmenuItem[];
 }
 
-const drawerMenuItems: MenuItem[] = [
-  { name: "হোম", href: "/", icon: Home },
-  {
-    name: "আমাদের সম্পর্কে",
-    submenu: [
-      { name: "ইতিহাস", href: "/about/history", icon: History },
-      { name: "লক্ষ্য ও উদ্দেশ্য", href: "/about/mission", icon: Target },
-      { name: "পরিচালনা পর্ষদ", href: "/about/board", icon: UserCheck },
-    ],
-  },
-  {
-    name: "একাডেমিক বিবরণ",
-    submenu: [
-      { name: "শিক্ষক প্রোফাইল", href: "/dashboard/teacher", icon: Users },
-      { name: "একাডেমিক", href: "/education", icon: University },
-      { name: "ভর্তি ফর্ম", href: "/admission", icon: FileText },
-      { name: "নোটিশ বোর্ড", href: "/notices", icon: FileText },
-    ],
-  },
-  {
-    name: "বিভাগসমূহ",
-    submenu: [
-      { name: "কোর্স সমূহ", href: "/courses", icon: Book },
-      { name: "দাওয়াহ", href: "/dawah", icon: Users },
-    ],
-  },
-  { name: "দান", href: "/donation", icon: HandHeart },
-  { name: "যোগাযোগ", href: "/contact", icon: Info },
-  {
-    name: "গ্যালারি",
-    submenu: [
-      { name: "চিত্র গ্যালারি", href: "/gallery/photos", icon: ImageIcon },
-      { name: "ভিডিও গ্যালারি", href: "/gallery/videos", icon: Video },
-    ],
-  },
-  {
-    name: "অ্যাকাউন্ট",
-    submenu: [
-      { name: "লগইন", href: "/auth/login", icon: LogIn },
-      {
-        name: "রেজিস্ট্রেশন",
-        href: "/auth/register",
-        icon: UserPlus,
-      },
-      { name: "প্রোফাইল", href: "/profile", icon: User },
-      { name: "সেটিংস", href: "/profile", icon: Settings },
-    ],
-  },
-];
-
 const Header = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [openSubmenu, setOpenSubmenu] = useState<string | null>(null);
+  const { user, role, isLoading } = useUserRole();
+  const queryClient = useQueryClient();
+
+  const handleLogout = async () => {
+    Swal.fire({
+      title: "আপনি কি নিশ্চিত?",
+      text: "আপনি আপনার অ্যাকাউন্ট থেকে লগআউট করতে যাচ্ছেন!",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#14281D",
+      cancelButtonColor: "#d33",
+      confirmButtonText: "হ্যাঁ, লগআউট করুন",
+      cancelButtonText: "বাতিল",
+      background: "#E2D4B9",
+      color: "#14281D",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        queryClient.clear();
+        await signOut({ callbackUrl: "/auth/login" });
+
+        Swal.fire({
+          title: "লগআউট সফল!",
+          text: "আপনার সেশনটি সফলভাবে শেষ হয়েছে।",
+          icon: "success",
+          timer: 2000,
+          showConfirmButton: false,
+          background: "#E2D4B9",
+          color: "#14281D",
+        });
+      }
+    });
+  };
 
   const toggleSubmenu = (name: string) => {
     setOpenSubmenu(openSubmenu === name ? null : name);
   };
+
+  const drawerMenuItems: MenuItem[] = [
+    { name: "হোম", href: "/", icon: Home },
+    {
+      name: "আমাদের সম্পর্কে",
+      submenu: [
+        { name: "ইতিহাস", href: "/about/history", icon: History },
+        { name: "লক্ষ্য ও উদ্দেশ্য", href: "/about/mission", icon: Target },
+        { name: "পরিচালনা পর্ষদ", href: "/about/board", icon: UserCheck },
+      ],
+    },
+    {
+      name: "একাডেমিক বিবরণ",
+      submenu: [
+        { name: "শিক্ষক প্রোফাইল", href: "/dashboard/teacher", icon: Users },
+        { name: "একাডেমিক", href: "/education", icon: University },
+        { name: "ভর্তি ফর্ম", href: "/admission", icon: FileText },
+        { name: "নোটিশ বোর্ড", href: "/notices", icon: FileText },
+      ],
+    },
+    {
+      name: "বিভাগসমূহ",
+      submenu: [
+        { name: "কোর্স সমূহ", href: "/courses", icon: Book },
+        { name: "দাওয়াহ", href: "/dawah", icon: Users },
+      ],
+    },
+    { name: "দান", href: "/donation", icon: HandHeart },
+    { name: "যোগাযোগ", href: "/contact", icon: Info },
+    {
+      name: "গ্যালারি",
+      submenu: [
+        { name: "চিত্র গ্যালারি", href: "/gallery/photos", icon: ImageIcon },
+        { name: "ভিডিও গ্যালারি", href: "/gallery/videos", icon: Video },
+      ],
+    },
+    {
+      name: "অ্যাকাউন্ট",
+      submenu: user
+        ? [
+            ...(role !== "student"
+              ? [
+                  {
+                    name: "ড্যাশবোর্ড",
+                    href: "/dashboard",
+                    icon: LayoutDashboard,
+                  },
+                ]
+              : []),
+            { name: "প্রোফাইল", href: "/profile", icon: User },
+            { name: "সেটিংস", href: "/settings", icon: Settings },
+          ]
+        : [
+            { name: "লগইন", href: "/auth/login", icon: LogIn },
+            { name: "রেজিস্ট্রেশন", href: "/auth/register", icon: UserPlus },
+          ],
+    },
+  ];
 
   return (
     <nav className="fixed top-0 left-0 w-full z-50 bg-[#14281D] shadow-md border-b border-white/10">
@@ -163,7 +208,7 @@ const Header = () => {
               <div className="p-4 overflow-y-auto flex-1">
                 <ul className="space-y-3">
                   {drawerMenuItems.map((item) => {
-                    const Icon = item.icon; // বড় হাতের অক্ষরে ডিক্লেয়ার করা জরুরি
+                    const Icon = item.icon;
                     return (
                       <li key={item.name}>
                         {item.submenu ? (
@@ -175,7 +220,9 @@ const Header = () => {
                               <span>{item.name}</span>
                               <ChevronRight
                                 size={18}
-                                className={`transition-transform duration-300 ${openSubmenu === item.name ? "rotate-90" : ""}`}
+                                className={`transition-transform duration-300 ${
+                                  openSubmenu === item.name ? "rotate-90" : ""
+                                }`}
                               />
                             </button>
                             <AnimatePresence>
@@ -219,6 +266,16 @@ const Header = () => {
                     );
                   })}
                 </ul>
+
+                {user && (
+                  <button
+                    onClick={handleLogout}
+                    className="w-full mt-6 flex items-center gap-3 p-3 bg-red-600/10 hover:bg-red-600/20 rounded-lg font-bold text-red-600 transition"
+                  >
+                    <LogOut size={18} />
+                    লগআউট
+                  </button>
+                )}
               </div>
             </motion.aside>
           </>

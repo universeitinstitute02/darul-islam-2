@@ -6,15 +6,16 @@ import { useSession } from "next-auth/react";
 
 export default function useUser() {
   const axiosSecure = useAxiosSecure();
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
 
   return useQuery({
-    queryKey: ["userProfile"],
+    queryKey: ["userProfile", session?.user?.email],
     queryFn: async () => {
       const res = await axiosSecure.get("/auth/me");
       return res.data;
     },
-    enabled: !!session?.accessToken, // Only run if logged in
-    staleTime: 5 * 60 * 1000, // Cache the data globally for 5 minutes
+    enabled: status === "authenticated" && !!session?.accessToken,
+    staleTime: 5 * 60 * 1000,
+    retry: 1,
   });
 }
