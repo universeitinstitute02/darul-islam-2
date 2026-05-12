@@ -5,6 +5,8 @@ import useUser from "./useUser";
 export default function useUserRole() {
   const { data: user, isLoading } = useUser();
 
+  console.log(user);
+
   const isAdmin = user?.role === "admin";
   const isTeacher = user?.role === "teacher";
   const isStudent = user?.role === "student";

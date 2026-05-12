@@ -5,13 +5,10 @@ import axios from "axios";
 
 export const authOptions: AuthOptions = {
   providers: [
-    // 1. GOOGLE LOGIN
     GoogleProvider({
       clientId: process.env.GOOGLE_CLIENT_ID as string,
       clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
     }),
-
-    // 2. EMAIL/PHONE & PASSWORD LOGIN
     CredentialsProvider({
       name: "Credentials",
       credentials: {
@@ -20,7 +17,6 @@ export const authOptions: AuthOptions = {
       },
       async authorize(credentials) {
         try {
-          // Send credentials to your Node.js backend
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/login`,
             {
@@ -30,7 +26,10 @@ export const authOptions: AuthOptions = {
           );
 
           if (res.data && res.data.token) {
-            return res.data; // Returns user data + backend JWT
+            return {
+              ...res.data,
+              id: res.data._id,
+            };
           }
           return null;
         } catch (error: any) {
@@ -40,11 +39,9 @@ export const authOptions: AuthOptions = {
     }),
   ],
   callbacks: {
-    // This runs immediately after a successful login
-    async signIn({ user, account }) {
+    async signIn({ user, account }: any) {
       if (account?.provider === "google") {
         try {
-          // Send Google user data to your Node.js backend to sync the DB
           const res = await axios.post(
             `${process.env.NEXT_PUBLIC_API_URL}/auth/google`,
             {
@@ -53,28 +50,26 @@ export const authOptions: AuthOptions = {
             },
           );
 
-          // Attach the backend data to the NextAuth session
           user.token = res.data.token;
           user.role = res.data.role;
-          user._id = res.data._id;
+          user.id = res.data._id;
           return true;
         } catch (error) {
+          console.error("Google Sync Error:", error);
           return false;
         }
       }
-      return true; // Email/Password already has the data
+      return true;
     },
-    // Move data into the secure token
-    async jwt({ token, user }) {
+    async jwt({ token, user }: any) {
       if (user) {
         token.accessToken = user.token;
         token.role = user.role;
-        token.id = user._id;
+        token.id = user.id || user._id;
       }
       return token;
     },
-    // Expose data to your React frontend
-    async session({ session, token }) {
+    async session({ session, token }: any) {
       if (session.user) {
         session.user.role = token.role;
         session.user.id = token.id;
@@ -84,7 +79,7 @@ export const authOptions: AuthOptions = {
     },
   },
   pages: {
-    signIn: "/login", // Redirects unauthenticated users here
+    signIn: "/auth/login",
   },
   session: { strategy: "jwt" },
   secret: process.env.NEXTAUTH_SECRET,
