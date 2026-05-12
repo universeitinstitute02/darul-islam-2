@@ -84,7 +84,7 @@ export default function DashboardLayout({
       name: "শিক্ষকবৃন্দ",
       href: "/dashboard/teacher/teacher-list",
       icon: Users,
-      roles: ["admin"],
+      roles: ["admin", "teacher"],
     },
     {
       name: "সকল সদস্যবৃন্দ",
@@ -102,7 +102,7 @@ export default function DashboardLayout({
       name: "নোটিশ বোর্ড",
       href: "/dashboard/teacher/notice-board",
       icon: Bell,
-      roles: ["teacher"],
+      roles: ["teacher", "admin"],
     },
     {
       name: "প্রোফাইল সেটিংস",
@@ -165,7 +165,7 @@ export default function DashboardLayout({
             );
           })}
 
-          {role === "teacher" && (
+          {role === "admin" && (
             <Link
               href="/dashboard/teacher"
               className="flex items-center gap-3 p-3 hover:bg-[#C5A059] hover:text-white rounded-xl text-[#C5A059] font-bold transition mt-8 border border-[#C5A059]"
