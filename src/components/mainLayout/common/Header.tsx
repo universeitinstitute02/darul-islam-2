@@ -134,7 +134,7 @@ const Header = () => {
                   },
                 ]
               : []),
-            { name: "প্রোফাইল", href: "/profile", icon: User },
+            { name: "প্রোফাইল", href: "/student-profile", icon: User },
             { name: "সেটিংস", href: "/settings", icon: Settings },
           ]
         : [
