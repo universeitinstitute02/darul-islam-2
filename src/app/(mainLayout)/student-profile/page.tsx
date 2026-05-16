@@ -12,16 +12,47 @@ import {
   Wallet,
   MessageCircle,
   Phone,
-  Info,
-  ChevronRight as ArrowRight,
   Trophy,
   CheckCircle2,
   Bell,
+  Loader2,
 } from "lucide-react";
-import student from "../../../../public/images/student.png";
 import Image from "next/image";
+import Link from "next/link"; // Link ইম্পোর্ট করা হলো
+import useUser from "../../hooks/useUser";
 
 const StudentDashboard = () => {
+  const { data: user, isLoading, isError, error } = useUser();
+  console.log("Current Dynamic User Data:", user);
+
+  if (isLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center gap-2 text-gray-500 bg-[#F4F7F5]">
+        <Loader2 className="animate-spin text-[#105D38]" size={24} />
+        <span className="font-bold text-sm">ইউজার ডাটা লোড হচ্ছে...</span>
+      </div>
+    );
+  }
+
+  if (isError) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center text-red-500 text-sm font-bold bg-[#F4F7F5]">
+        ডাটা লোড করতে সমস্যা হয়েছে: {error?.message || "সার্ভার এরর"}
+      </div>
+    );
+  }
+
+  const userName = user?.name || "ইউজার নাম পাওয়া যায়নি";
+
+  const userAvatar =
+    user?.profileImage ||
+    `https://avatars.githubusercontent.com/u/198446517?v=4`;
+
+  const userSubtitle =
+    user?.role === "teacher"
+      ? `${user?.profile?.designation || "Senior Lecturer"} - ${user?.profile?.department?.name || "ইসলামিক স্টাডিজ"}`
+      : "হিফজ বিভাগ - লেভেল ৩";
+
   const stats = [
     { title: "ক্লাসসমূহ", icon: <BookOpen size={24} /> },
     { title: "আমার হিফজ", icon: <Book size={24} /> },
@@ -69,11 +100,10 @@ const StudentDashboard = () => {
   ];
 
   return (
-    // এখানে pt-16 (Desktop) এবং pt-20 (Mobile) যোগ করা হয়েছে যাতে Navbar এর নিচে না ঢুকে যায়।
-    <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-20">
+    <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-20 font-sans">
       {/* Header Section */}
       <div className="bg-[#105D38] text-white p-6 pt-12 pb-24 rounded-b-[2.5rem] lg:rounded-b-[4.5rem] shadow-lg relative z-0">
-        <div className="max-w-7xl mx-auto flex justify-between items-start">
+        <div className="max-w-7xl mx-auto flex justify-between items-start gap-4">
           <div className="flex gap-4 items-center">
             <Menu className="lg:hidden cursor-pointer" />
 
@@ -81,30 +111,37 @@ const StudentDashboard = () => {
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
               </p>
-              <h1 className="text-xl lg:text-3xl font-black tracking-tight">
-                মাহিন আহমাদ
-              </h1>
+
+              <Link href="/dashboard/profile" className="hover:underline block">
+                <h1 className="text-xl lg:text-3xl font-black tracking-tight mt-0.5">
+                  {userName}
+                </h1>
+              </Link>
+
               <p className="text-white/60 text-[10px] lg:text-xs mt-1 italic">
-                হিফজ বিভাগ - লেভেল ৩
+                {userSubtitle}
               </p>
             </div>
           </div>
 
           {/* Profile Picture with Notification Bell */}
           <div className="relative">
-            <div className="w-18 h-18 lg:w-25 lg:h-25 overflow-hidden shadow-inner">
-              <Image
-                src={student}
-                alt="Student Profile"
-                fill
-                priority
-                className="object-cover opacity-100 scale-105"
-              />
-            </div>
+            <Link href="/update-profile" className="block group">
+              <div className="relative w-16 h-16 lg:w-20 lg:h-20 rounded-2xl overflow-hidden shadow-md border-2 border-white/20 group-hover:border-white/60 transition-all duration-300">
+                <Image
+                  src={userAvatar}
+                  alt="User Profile"
+                  fill
+                  priority
+                  unoptimized
+                  className="object-cover opacity-100 scale-105"
+                />
+              </div>
+            </Link>
 
-            <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center">
-              <Bell size={20} className="text-white" strokeWidth={1.5} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-500 rounded-full flex items-center justify-center text-[9px] font-bold text-white">
+            <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center bg-red-500 rounded-full w-5 h-5 shadow-sm">
+              <Bell size={12} className="text-white" strokeWidth={2.5} />
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center text-[9px] font-bold text-white border border-[#105D38]">
                 ৩
               </span>
             </div>
@@ -207,7 +244,7 @@ const StudentDashboard = () => {
               </h3>
               <div className="flex items-center gap-4 mb-5">
                 <img
-                  src="https://avatar.iran.liara.run/public/44"
+                  src="https://avatars.githubusercontent.com/u/198446517?v=4"
                   className="w-14 h-14 rounded-2xl bg-neutral-100 shadow-sm"
                   alt="Teacher"
                 />
@@ -236,7 +273,7 @@ const StudentDashboard = () => {
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-neutral-800 text-sm lg:text-base italic">
-                  আজকের রুটিন
+                  今日のルーティン (আজকের রুটিন)
                 </h3>
                 <span className="text-[9px] font-bold text-neutral-400">
                   ২০ মে, ২০২৪

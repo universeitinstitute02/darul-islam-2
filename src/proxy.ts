@@ -20,13 +20,12 @@ export default withAuth(
       return NextResponse.redirect(new URL("/", req.url));
     }
 
-    // Admin Route Protection: Block non-admins from specific admin-only paths
+    // Admin Route Protection
     const isAdminPath =
       pathname.includes("/dashboard/teacher/teacher-list") ||
       pathname.includes("/dashboard/teacher/all-users");
 
     if (isAdminPath && role !== "admin") {
-      // Redirect teachers to their own dashboard if they try to access admin lists
       return NextResponse.redirect(
         new URL("/dashboard/teacher/teacher-dashboard", req.url),
       );
@@ -38,9 +37,18 @@ export default withAuth(
     callbacks: {
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl;
+
+        // Bypass check completely for internal next-auth APIs
+        if (pathname.startsWith("/api/auth")) {
+          return true;
+        }
+
+        // Allow public access to login and register pages
         if (pathname === "/auth/login" || pathname === "/auth/register") {
           return true;
         }
+
+        // Require token for everything else in matcher
         return !!token;
       },
     },
@@ -52,6 +60,9 @@ export default withAuth(
 
 export const config = {
   matcher: [
+    /*
+     * Match all protected routes except internal Next.js/Next-Auth paths
+     */
     "/dashboard/:path*",
     "/profile/:path*",
     "/student-profile/:path*",
