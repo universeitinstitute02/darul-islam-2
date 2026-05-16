@@ -273,7 +273,7 @@ const StudentDashboard = () => {
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="font-black text-neutral-800 text-sm lg:text-base italic">
-                  今日のルーティン (আজকের রুটিন)
+                  আজকের রুটিন
                 </h3>
                 <span className="text-[9px] font-bold text-neutral-400">
                   ২০ মে, ২০২৪
