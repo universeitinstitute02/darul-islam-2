@@ -9,12 +9,16 @@ export default function useUser() {
   const { data: session, status } = useSession();
 
   return useQuery({
-    queryKey: ["userProfile", session?.user?.email],
+    queryKey: ["userProfile", session?.user?.email || "guest"],
     queryFn: async () => {
       const res = await axiosSecure.get("/auth/me");
       return res.data;
     },
-    enabled: status === "authenticated" && !!session?.accessToken,
+
+    enabled:
+      status === "authenticated" &&
+      !!session?.accessToken &&
+      !!session?.user?.email,
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });

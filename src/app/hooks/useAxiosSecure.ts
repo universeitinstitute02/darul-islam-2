@@ -15,12 +15,12 @@ export default function useAxiosSecure() {
   useEffect(() => {
     const requestIntercept = axiosSecure.interceptors.request.use(
       (config) => {
-        if (!config.headers["Authorization"] && session?.accessToken) {
+        if (session?.accessToken) {
           config.headers["Authorization"] = `Bearer ${session.accessToken}`;
         }
         return config;
       },
-      (error) => Promise.reject(error)
+      (error) => Promise.reject(error),
     );
 
     return () => {
