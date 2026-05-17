@@ -8,7 +8,7 @@ export default function useUser() {
   const axiosSecure = useAxiosSecure();
   const { data: session, status } = useSession();
 
-  return useQuery({
+  const queryState = useQuery({
     queryKey: ["userProfile", session?.user?.email],
     queryFn: async () => {
       const res = await axiosSecure.get("/auth/me");
@@ -18,4 +18,9 @@ export default function useUser() {
     staleTime: 5 * 60 * 1000,
     retry: 1,
   });
+
+  return {
+    ...queryState,
+    isLoading: status === "loading" || queryState.isLoading,
+  };
 }
