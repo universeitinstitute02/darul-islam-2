@@ -34,8 +34,6 @@ export default function DashboardLayout({
   const { role, user } = useUserRole();
   const queryClient = useQueryClient();
 
-  console.log("User Role in Layout:", role);
-
   const handleLogout = async () => {
     Swal.fire({
       title: "আপনি কি নিশ্চিত?",
