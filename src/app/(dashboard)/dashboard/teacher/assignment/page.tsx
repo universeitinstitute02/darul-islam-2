@@ -1,154 +1,279 @@
 "use client";
-import React from "react";
-import {
-  FileCheck,
-  Clock,
-  User,
-  Send,
-  CheckCircle,
-  AlertCircle,
-  ArrowRight,
-} from "lucide-react";
-import { motion } from "framer-motion";
+
+import React, { useState } from "react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import { ClipboardList, RefreshCw } from "lucide-react";
+import Swal from "sweetalert2";
+import AssignmentCard from "@/src/components/Assignment/AssignmentCard";
+
+interface AssignmentDetails {
+  _id: string;
+  title: string;
+  totalMarks: number;
+}
+
+interface StudentDetails {
+  _id: string;
+  name: string;
+  profilePicture: string;
+}
+
+interface CourseDetails {
+  _id: string;
+  name: string;
+  category: string;
+}
+
+export interface SubmissionType {
+  _id: string;
+  status: "pending" | "reviewed";
+  studentNotes?: string;
+  submittedImages: string[];
+  assignment: AssignmentDetails;
+  student: StudentDetails;
+  course: CourseDetails;
+  marksObtained?: number;
+  instructorFeedback?: string;
+}
 
 const AssignmentManagement = () => {
-  const assignments = [
-    {
-      id: 1,
-      studentName: "আরিফ বিল্লাহ",
-      assignmentTitle: "তাজবিদের নিয়মাবলী - পার্ট ১",
-      submittedDate: "আজ দুপুর ২:৩০",
-      status: "Pending",
-      course: "সহীহ তিলাওয়াত",
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
+
+  const [activeTab, setActiveTab] = useState<"all" | "pending" | "reviewed">(
+    "pending",
+  );
+
+  const {
+    data: submissions = [],
+    isLoading,
+    isError,
+    refetch,
+  } = useQuery<SubmissionType[]>({
+    queryKey: ["teacher-submissions", activeTab],
+    queryFn: async () => {
+      const url =
+        activeTab === "all"
+          ? "assignments/teacher/submissions"
+          : `assignments/teacher/submissions?status=${activeTab}`;
+      const res = await axiosSecure.get(url);
+      return res.data;
     },
-    {
-      id: 2,
-      studentName: "সালমান ফারসি",
-      assignmentTitle: "হাদিসের প্রকারভেদ নোট",
-      submittedDate: "গতকাল",
-      status: "Graded",
-      course: "হাদিস পরিচিতি",
+    refetchOnWindowFocus: false,
+  });
+
+  const evaluateMutation = useMutation({
+    mutationFn: async ({
+      id,
+      marks,
+      feedback,
+    }: {
+      id: string;
+      marks: number;
+      feedback: string;
+    }) => {
+      const res = await axiosSecure.patch(
+        `assignments/teacher/evaluate/${id}`,
+        {
+          marksObtained: marks,
+          instructorFeedback: feedback,
+        },
+      );
+      return res.data;
     },
-    {
-      id: 3,
-      studentName: "রাকিবা আক্তার",
-      assignmentTitle: "মাখরাজ পরিচিতি ভিডিও",
-      submittedDate: "৩ দিন আগে",
-      status: "Pending",
-      course: "সহীহ তিলাওয়াত",
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({ queryKey: ["teacher-submissions"] });
+      Swal.fire({
+        icon: "success",
+        title: "সম্পন্ন হয়েছে!",
+        text: data?.message || "শিক্ষার্থীর অ্যাসাইনমেন্ট গ্রেড করা হয়েছে।",
+        timer: 2000,
+        showConfirmButton: false,
+        customClass: { popup: "rounded-[1.5rem]" },
+      });
     },
-  ];
+    onError: (err: any) => {
+      Swal.fire({
+        icon: "error",
+        title: "অ্যাকশন ব্যর্থ হয়েছে",
+        text:
+          err?.response?.data?.message ||
+          "সেভ করা যায়নি। ব্যাকএন্ড রাউট চেক করুন।",
+        customClass: { popup: "rounded-[1.5rem]" },
+      });
+    },
+  });
+
+  const handleEvaluate = (submission: SubmissionType) => {
+    const totalMarks = submission.assignment?.totalMarks || 100;
+
+    Swal.fire({
+      title: `<span class="text-base font-bold text-slate-800">অ্যাসাইনমেন্ট মূল্যায়ন</span>`,
+      html: `
+        <div class="text-left font-sans space-y-3">
+          <p class="text-xs text-slate-500 mb-2">সর্বমোট নম্বর: <b>${totalMarks}</b></p>
+          <div>
+            <label class="block text-xs font-semibold text-slate-600 mb-1">প্রাপ্ত নম্বর *</label>
+            <input id="swal-marks" type="number" min="0" max="${totalMarks}" class="w-full px-3 py-2 border rounded-xl text-sm" value="${submission.marksObtained ?? ""}" placeholder="নম্বর লিখুন">
+          </div>
+          <div class="mt-3">
+            <label class="block text-xs font-semibold text-slate-600 mb-1">শিক্ষকের মন্তব্য / ফিডব্যাক</label>
+            <textarea id="swal-feedback" rows="3" class="w-full px-3 py-2 border rounded-xl text-sm" placeholder="মন্তব্য লিখুন...">${submission.instructorFeedback || ""}</textarea>
+          </div>
+        </div>
+      `,
+      showCancelButton: true,
+      confirmButtonText: "সাবমিট করুন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#105D38",
+      cancelButtonColor: "#64748B",
+      customClass: { popup: "rounded-[2rem] p-6" },
+      preConfirm: () => {
+        const marksInput = (
+          document.getElementById("swal-marks") as HTMLInputElement
+        ).value;
+        const feedbackInput = (
+          document.getElementById("swal-feedback") as HTMLTextAreaElement
+        ).value;
+
+        if (!marksInput) {
+          Swal.showValidationMessage("প্রাপ্ত নম্বর দেওয়া বাধ্যতামূলক!");
+          return false;
+        }
+
+        const marks = parseFloat(marksInput);
+        if (marks > totalMarks || marks < 0) {
+          Swal.showValidationMessage(
+            `নম্বর ০ থেকে ${totalMarks} এর মধ্যে হতে হবে!`,
+          );
+          return false;
+        }
+
+        return { marks, feedback: feedbackInput };
+      },
+    }).then((result) => {
+      if (result.isConfirmed && result.value) {
+        evaluateMutation.mutate({
+          id: submission._id,
+          marks: result.value.marks,
+          feedback: result.value.feedback,
+        });
+      }
+    });
+  };
 
   return (
-    <div className="mt-8 space-y-6 pb-10">
+    <div className="mt-8 space-y-6 pb-10 max-w-4xl mx-auto px-2 sm:px-4">
       {/* Header */}
-      <div className="flex items-center justify-between px-1">
+      <div className="flex items-center justify-between bg-white p-4 sm:p-6 rounded-2xl border border-neutral-100 shadow-sm">
         <div>
-          <h2 className="text-xl md:text-2xl font-bold text-neutral-800">
-            অ্যাসাইনমেন্ট ও মূল্যায়ন
+          <h2 className="text-xl md:text-2xl font-black text-neutral-800 tracking-tight">
+            অ্যাসাইনমেন্ট ও মূল্যায়ন
           </h2>
-          <p className="text-xs md:text-sm text-neutral-500">
-            শিক্ষার্থীদের জমা দেওয়া কাজগুলো রিভিউ করুন
+          <p className="text-xs md:text-sm font-medium text-neutral-500">
+            শিক্ষার্থীদের জমা দেওয়া কাজগুলো চেক করুন এবং গ্রেড দিন
           </p>
         </div>
-        <div className="bg-[#C5A059]/10 text-[#C5A059] p-2 rounded-xl">
-          <FileCheck size={22} />
-        </div>
+        <button
+          onClick={() => refetch()}
+          className="bg-neutral-50 hover:bg-neutral-100 p-2.5 rounded-xl transition-all border border-neutral-200 text-neutral-600 active:scale-95"
+          title="রিফ্রেশ করুন"
+        >
+          <RefreshCw
+            size={18}
+            className={`${isLoading ? "animate-spin" : ""}`}
+          />
+        </button>
       </div>
+
+      {/* ট্যাব ফিল্টার বার */}
+      <div className="flex bg-neutral-100 p-1 rounded-xl gap-1 w-full max-w-md">
+        <button
+          onClick={() => setActiveTab("pending")}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+            activeTab === "pending"
+              ? "bg-white text-orange-600 shadow-sm"
+              : "text-neutral-500 hover:text-neutral-800"
+          }`}
+        >
+          ⏱️ রিভিউ বাকি
+        </button>
+        <button
+          onClick={() => setActiveTab("reviewed")}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+            activeTab === "reviewed"
+              ? "bg-white text-emerald-600 shadow-sm"
+              : "text-neutral-500 hover:text-neutral-800"
+          }`}
+        >
+          ✅ মূল্যায়িত
+        </button>
+        <button
+          onClick={() => setActiveTab("all")}
+          className={`flex-1 py-2 rounded-lg text-xs font-bold transition-all ${
+            activeTab === "all"
+              ? "bg-white text-blue-600 shadow-sm"
+              : "text-neutral-500 hover:text-neutral-800"
+          }`}
+        >
+          📁 সব একসাথে
+        </button>
+      </div>
+
+      {/* Loading & Error States */}
+      {isLoading && (
+        <div className="text-center py-12 bg-white rounded-2xl border border-neutral-100">
+          <div className="w-8 h-8 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <p className="text-xs text-neutral-400 font-medium">
+            অ্যাসাইনমেন্টগুলো লোড হচ্ছে...
+          </p>
+        </div>
+      )}
+
+      {isError && (
+        <div className="text-center py-8 bg-red-50 text-red-600 rounded-2xl border border-red-100 text-xs font-semibold">
+          ⚠️ ডাটা লোড করতে সমস্যা হয়েছে! দয়া করে ব্যাকএন্ড রাউট বা টোকেন চেক
+          করুন।
+        </div>
+      )}
 
       {/* Assignment List */}
-      <div className="space-y-4">
-        {assignments.map((task, idx) => (
-          <motion.div
-            key={task.id}
-            initial={{ opacity: 0, y: 15 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            transition={{ delay: idx * 0.1 }}
-            viewport={{ once: true }}
-            className="bg-white border border-neutral-100 p-4 rounded-2xl shadow-sm relative overflow-hidden"
-          >
-            {/* Status Ribbon (Mobile Friendly) */}
-            <div
-              className={`absolute top-0 right-0 px-3 py-1 rounded-bl-xl text-[10px] font-bold uppercase ${
-                task.status === "Pending"
-                  ? "bg-orange-100 text-orange-600"
-                  : "bg-green-100 text-green-700"
-              }`}
-            >
-              {task.status === "Pending" ? "রিভিউ বাকি" : "মূল্যায়িত"}
-            </div>
+      {!isLoading && !isError && submissions.length === 0 ? (
+        <div className="text-center py-16 bg-white rounded-2xl border border-neutral-100 shadow-sm px-4">
+          <div className="text-3xl mb-2">📭</div>
+          <p className="text-neutral-400 font-bold text-xs sm:text-sm">
+            এই ট্যাবে বর্তমানে কোনো অ্যাসাইনমেন্ট সাবমিশন নেই।
+          </p>
+        </div>
+      ) : (
+        <div className="space-y-4">
+          {submissions.map((submission, idx) => (
+            <AssignmentCard
+              key={submission._id}
+              submission={submission}
+              idx={idx}
+              onEvaluate={handleEvaluate}
+            />
+          ))}
+        </div>
+      )}
 
-            <div className="flex items-start gap-4">
-              <div className="mt-1">
-                <div className="w-10 h-10 bg-neutral-100 rounded-full flex items-center justify-center text-[#105D38]">
-                  <User size={20} />
-                </div>
-              </div>
-
-              <div className="flex-1 space-y-1">
-                <h3 className="font-bold text-neutral-800 text-sm md:text-base leading-tight">
-                  {task.assignmentTitle}
-                </h3>
-                <p className="text-xs text-neutral-500 flex items-center gap-1">
-                  <span className="font-semibold text-neutral-700">
-                    {task.studentName}
-                  </span>{" "}
-                  • {task.course}
-                </p>
-
-                <div className="flex items-center gap-3 pt-2">
-                  <div className="flex items-center gap-1 text-[10px] md:text-xs text-neutral-400">
-                    <Clock size={12} /> {task.submittedDate}
-                  </div>
-                  {task.status === "Pending" ? (
-                    <div className="flex items-center gap-1 text-[10px] md:text-xs text-orange-500 font-medium">
-                      <AlertCircle size={12} /> চেক করা হয়নি
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-1 text-[10px] md:text-xs text-green-600 font-medium">
-                      <CheckCircle size={12} /> গ্রেড দেওয়া হয়েছে
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
-
-            {/* Action Buttons for Mobile */}
-            <div className="grid grid-cols-2 gap-3 mt-4 pt-4 border-t border-neutral-50">
-              <button className="py-2.5 bg-neutral-50 text-neutral-700 text-xs font-bold rounded-xl active:scale-95 transition-all">
-                ফাইল দেখুন
-              </button>
-              <button
-                className={`py-2.5 rounded-xl text-xs font-bold flex items-center justify-center gap-2 active:scale-95 transition-all ${
-                  task.status === "Pending"
-                    ? "bg-[#105D38] text-white shadow-md shadow-green-900/10"
-                    : "bg-neutral-100 text-neutral-400 border border-neutral-200"
-                }`}
-              >
-                {task.status === "Pending" ? "মূল্যায়ন করুন" : "সম্পন্ন"}
-                {task.status === "Pending" && <ArrowRight size={14} />}
-              </button>
-            </div>
-          </motion.div>
-        ))}
-      </div>
-
-      {/* Quick Summary Bar */}
+      {/* Quick Summary Floating Bar */}
       <div className="bg-[#105D38] p-4 rounded-2xl flex items-center justify-between text-white shadow-lg">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-lg">
-            <Send size={18} />
+            <ClipboardList size={18} />
           </div>
           <div>
-            <p className="text-[10px] text-green-100 opacity-80 uppercase tracking-wider font-bold">
-              অপেক্ষমান
+            <h4 className="text-xs sm:text-sm font-black">
+              ডাটা সিঙ্ক মোড চালু আছে
+            </h4>
+            <p className="text-[10px] text-green-100/70 font-medium">
+              মূল্যায়ন করার পর তালিকা স্বয়ংক্রিয়ভাবে আপডেট হবে।
             </p>
-            <h4 className="text-sm font-bold">৫টি অ্যাসাইনমেন্ট বাকি</h4>
           </div>
         </div>
-        <button className="text-xs bg-white text-[#105D38] px-4 py-2 rounded-lg font-bold active:scale-90 transition-transform">
-          সবগুলো দেখুন
-        </button>
       </div>
     </div>
   );
