@@ -5,7 +5,7 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-// Swiper styles (যদি আপনার আলাদা ফাইলে ইমপোর্ট করা না থাকে)
+// Swiper styles আমদানি করতে হবে (যদি গ্লোবালি না করা থাকে)
 import "swiper/css";
 import "swiper/css/pagination";
 import "swiper/css/effect-fade";
@@ -39,7 +39,7 @@ const ShopHeroSlider = () => {
   };
 
   return (
-    <section className="relative w-full overflow-hidden bg-gray-100">
+    <section className="relative w-full h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden bg-gray-100">
       <Swiper
         modules={[Autoplay, Pagination, EffectFade]}
         effect="fade"
@@ -51,11 +51,11 @@ const ShopHeroSlider = () => {
           el: ".shop-pagination",
         }}
         loop={true}
-        className="h-[500px] md:h-[600px] w-full"
+        className="w-full h-full"
       >
         {slides.map((slide) => (
           <SwiperSlide key={slide.id}>
-            <div className="relative w-full h-full flex items-center justify-center">
+            <div className="relative w-full h-full flex items-center">
               {/* ব্যাকগ্রাউন্ড ইমেজ */}
               <div className="absolute inset-0 z-0">
                 <Image
@@ -66,28 +66,34 @@ const ShopHeroSlider = () => {
                   priority
                   className="transition-transform duration-[5000ms] scale-110"
                 />
-                <div className="absolute inset-0 bg-black/30 md:bg-black/20"></div>
+                {/* মোবাইলে টেক্সট ক্লিয়ার দেখানোর জন্য একটু ডার্ক ওভারলে (bg-black/50) ব্যবহার করা হয়েছে */}
+                <div className="absolute inset-0 bg-black/50 md:bg-black/30"></div>
               </div>
 
               {/* টেক্সট কন্টেন্ট */}
-              <div className="relative z-10 max-w-7xl mx-auto px-6 w-full text-center md:text-left">
-                <div className="max-w-2xl">
-                  <h1 className="text-4xl md:text-7xl font-black text-white mb-4 md:mb-6 leading-tight drop-shadow-lg">
+              <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 w-full text-left">
+                <div className="max-w-2xl space-y-1 md:space-y-3 lg:space-y-4">
+                  {/* রেসপন্সিভ টাইটেল */}
+                  <h1 className="text-xl sm:text-2xl md:text-5xl lg:text-7xl font-black text-white leading-tight drop-shadow-lg">
                     {slide.title}
                   </h1>
-                  <p className="text-base md:text-2xl text-gray-100 mb-8 md:mb-10 font-medium drop-shadow-md">
+
+                  {/* রেসপন্সিভ সাবটাইটেল */}
+                  <p className="text-[11px] sm:text-xs md:text-xl lg:text-2xl text-gray-100 font-medium drop-shadow-md">
                     {slide.subtitle}
                   </p>
 
-                  {/* CTA বাটন - এখানে স্ক্রল লজিক অ্যাড করা হয়েছে */}
-                  <button
-                    onClick={scrollToProducts}
-                    className="inline-flex items-center gap-3 px-8 py-4 bg-[#105D38] text-white font-bold rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group"
-                  >
-                    <ShoppingBag className="w-5 h-5" />
-                    <span>{slide.cta}</span>
-                    <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
-                  </button>
+                  {/* রেসপন্সিভ CTA বাটন */}
+                  <div className="pt-1 md:pt-2">
+                    <button
+                      onClick={scrollToProducts}
+                      className="inline-flex items-center gap-1.5 md:gap-3 px-3 py-1.5 md:px-6 md:py-3 lg:px-8 lg:py-4 bg-[#105D38] text-white font-bold rounded-md md:rounded-xl lg:rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group text-[10px] md:text-sm lg:text-base"
+                    >
+                      <ShoppingBag className="w-3.5 h-3.5 md:w-5 md:h-5" />
+                      <span>{slide.cta}</span>
+                      <ArrowRight className="w-3.5 h-3.5 md:w-5 md:h-5 group-hover:translate-x-2 transition-transform" />
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -95,22 +101,33 @@ const ShopHeroSlider = () => {
         ))}
       </Swiper>
 
-      {/* কাস্টম প্যাজিনেশন */}
-      <div className="shop-pagination absolute bottom-8 left-0 right-0 z-20 flex justify-center gap-2"></div>
+      {/* কাস্টম প্যাজিনেশন (মোবাইলে একটু উপরে তোলা হয়েছে যেন ইমেজের সাথে সুন্দর দেখায়) */}
+      <div className="shop-pagination absolute bottom-2 md:bottom-4 lg:bottom-6 left-0 right-0 z-20 flex justify-center gap-1 md:gap-2"></div>
 
       <style jsx global>{`
         .shop-pagination .swiper-pagination-bullet {
-          width: 10px;
-          height: 10px;
+          width: 6px;
+          height: 6px;
           background: white;
           opacity: 0.5;
           transition: all 0.3s ease;
         }
+        @media (min-width: 768px) {
+          .shop-pagination .swiper-pagination-bullet {
+            width: 10px;
+            height: 10px;
+          }
+        }
         .shop-pagination .swiper-pagination-bullet-active {
-          width: 30px;
+          width: 16px;
           opacity: 1;
           background: #105d38 !important;
           border-radius: 20px;
+        }
+        @media (min-width: 768px) {
+          .shop-pagination .swiper-pagination-bullet-active {
+            width: 30px;
+          }
         }
         .swiper-slide {
           pointer-events: none;

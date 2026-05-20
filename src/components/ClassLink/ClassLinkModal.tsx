@@ -45,9 +45,13 @@ export default function ClassLinkModal({
   const queryClient = useQueryClient();
   const axiosSecure = useAxiosSecure();
 
+  // প্রথম ডিফল্ট কোর্স অবজেক্ট বের করে রাখা
+  const defaultCourse = AVAILABLE_COURSES[0];
+
   const [formData, setFormData] = useState({
-    course: editData?.course?._id || AVAILABLE_COURSES[0].id,
-    classTitle: editData?.classTitle || "",
+    course: editData?.course?._id || defaultCourse.id,
+    classTitle:
+      editData?.classTitle || editData?.course?.name || defaultCourse.name, // 🎯 ডিফল্ট টাইটেল কোর্সের নাম হচ্ছে
     link: editData?.link || "",
     classDate: editData?.classDate ? editData.classDate.split("T")[0] : "",
     startTime: editData?.startTime || "",
@@ -57,15 +61,26 @@ export default function ClassLinkModal({
   useEffect(() => {
     if (isOpen) {
       setFormData({
-        course: editData?.course?._id || AVAILABLE_COURSES[0].id,
-        classTitle: editData?.classTitle || "",
+        course: editData?.course?._id || defaultCourse.id,
+        classTitle:
+          editData?.classTitle || editData?.course?.name || defaultCourse.name,
         link: editData?.link || "",
         classDate: editData?.classDate ? editData.classDate.split("T")[0] : "",
         startTime: editData?.startTime || "",
         endTime: editData?.endTime || "",
       });
     }
-  }, [isOpen, editData]);
+  }, [isOpen, editData, defaultCourse.id, defaultCourse.name]);
+
+  // 🎯 ড্রপডাউন চেঞ্জ হ্যান্ডলার: কোর্স আইডির সাথে সাথে নাম ট্র্যাক করে অটো টাইটেল সেট করবে
+  const handleCourseChange = (courseId: string) => {
+    const selectedCourse = AVAILABLE_COURSES.find((c) => c.id === courseId);
+    setFormData((prev) => ({
+      ...prev,
+      course: courseId,
+      classTitle: selectedCourse ? selectedCourse.name : prev.classTitle, // 🎯 অটোমেশন লাইভ
+    }));
+  };
 
   const createMutation = useMutation({
     mutationFn: async (payload: any) => {
@@ -134,7 +149,7 @@ export default function ClassLinkModal({
     e.preventDefault();
     if (editData) {
       const updatePayload = {
-        classTitle: formData.classTitle,
+        classTitle: formData.classTitle, // এডিট মোডেও সিলেক্টেড কোর্সের নাম টাইটেল হিসেবে পাস হবে
         link: formData.link,
         classDate: formData.classDate,
         startTime: formData.startTime,
@@ -179,43 +194,43 @@ export default function ClassLinkModal({
           className="px-6 py-5 sm:p-8 space-y-5 max-h-[75vh] overflow-y-auto scrollbar-thin scrollbar-thumb-slate-200"
         >
           <div className="grid grid-cols-2 gap-4">
-            {/* Choose Course */}
-            {!editData && (
-              <div className="col-span-2 group">
-                <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block transition-colors group-focus-within:text-emerald-500">
-                  Choose Course
-                </label>
-                <select
-                  value={formData.course}
-                  onChange={(e) =>
-                    setFormData({ ...formData, course: e.target.value })
-                  }
-                  className="w-full mt-1.5 px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all text-slate-700 font-semibold cursor-pointer"
-                >
-                  {AVAILABLE_COURSES.map((course) => (
-                    <option key={course.id} value={course.id}>
-                      {course.name} ({course.category})
-                    </option>
-                  ))}
-                </select>
-              </div>
-            )}
-
-            {/* Class Title */}
+            {/* Choose Course Dropdown */}
             <div className="col-span-2 group">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block transition-colors group-focus-within:text-emerald-500">
-                Class Title
+                Choose Course
               </label>
-              <input
-                type="text"
-                required
-                placeholder="e.g. Class 05: Express Routing"
-                value={formData.classTitle}
-                onChange={(e) =>
-                  setFormData({ ...formData, classTitle: e.target.value })
-                }
-                className="w-full mt-1.5 px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all font-medium text-slate-800"
-              />
+              <select
+                value={formData.course}
+                disabled={!!editData} // এডিট মোডে কোর্স পরিবর্তন লক থাকবে এপিআই সিকিউরিটির জন্য
+                onChange={(e) => handleCourseChange(e.target.value)}
+                className="w-full mt-1.5 px-4 py-3 bg-slate-50/80 border border-slate-200 rounded-xl text-xs sm:text-sm outline-none focus:border-emerald-500 focus:bg-white focus:ring-4 focus:ring-emerald-500/10 transition-all text-slate-700 font-semibold cursor-pointer disabled:bg-slate-100 disabled:cursor-not-allowed"
+              >
+                {/* যদি এডিট মোড হয় এবং ব্যাকএন্ড ডাটা লিস্টে না থাকে, তবে এক্সিস্টিং ডাটা দেখাবে */}
+                {editData &&
+                !AVAILABLE_COURSES.some(
+                  (c) => c.id === editData.course?._id,
+                ) ? (
+                  <option value={editData.course?._id}>
+                    {editData.course?.name}
+                  </option>
+                ) : null}
+
+                {AVAILABLE_COURSES.map((course) => (
+                  <option key={course.id} value={course.id}>
+                    {course.name} ({course.category})
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* 💡 ইনফো প্রিভিউ কার্ড (টাইটেল ইনপুট ফিল্ডটি সম্পূর্ণ রিমুভ করে প্রিমিয়াম কার্ড দেওয়া হয়েছে) */}
+            <div className="col-span-2 p-3.5 bg-emerald-50/40 rounded-xl border border-emerald-100/60">
+              <span className="text-[10px] font-bold uppercase tracking-wider text-emerald-600 block">
+                Broadcast Class Title (Auto Generated)
+              </span>
+              <h4 className="text-xs sm:text-sm font-black text-slate-800 mt-1">
+                {formData.classTitle}
+              </h4>
             </div>
 
             {/* Class Date */}
@@ -250,7 +265,7 @@ export default function ClassLinkModal({
               />
             </div>
 
-            {/* End Time - 💡 FIX: col-span-2 থেকে পরিবর্তন করে col-span-1 করা হয়েছে */}
+            {/* End Time */}
             <div className="col-span-1 group">
               <label className="text-[11px] font-bold uppercase tracking-wider text-slate-400 block transition-colors group-focus-within:text-emerald-500">
                 End Time

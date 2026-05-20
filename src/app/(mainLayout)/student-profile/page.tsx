@@ -1,14 +1,12 @@
 "use client";
-import React from "react";
+
+import React, { useState } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import {
   Menu,
-  BookOpen,
-  Book,
-  Calendar,
   BarChart3,
-  ClipboardCheck,
   Megaphone,
-  Library,
   Wallet,
   MessageCircle,
   Phone,
@@ -16,34 +14,80 @@ import {
   CheckCircle2,
   Bell,
   Loader2,
+  Video,
+  Calendar,
+  Clock,
+  ExternalLink,
+  RefreshCw,
+  AlertCircle,
+  HelpCircle,
 } from "lucide-react";
-import Image from "next/image";
-import Link from "next/link"; // Link ইম্পোর্ট করা হলো
+
 import useUser from "../../hooks/useUser";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import EvaluationModal from "@/src/components/shared/ResultModal";
 
 const StudentDashboard = () => {
-  const { data: user, isLoading, isError, error } = useUser();
-  console.log("Current Dynamic User Data:", user);
+  const axiosSecure = useAxiosSecure();
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
-  if (isLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center gap-2 text-gray-500 bg-[#F4F7F5]">
-        <Loader2 className="animate-spin text-[#105D38]" size={24} />
-        <span className="font-bold text-sm">ইউজার ডাটা লোড হচ্ছে...</span>
-      </div>
-    );
-  }
+  const {
+    data: user,
+    isLoading: isUserLoading,
+    isError: isUserError,
+    error: userError,
+  } = useUser();
 
-  if (isError) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center text-red-500 text-sm font-bold bg-[#F4F7F5]">
-        ডাটা লোড করতে সমস্যা হয়েছে: {error?.message || "সার্ভার এরর"}
-      </div>
-    );
-  }
+  const stats = [
+    {
+      title: "কোর্সসমূহ",
+      icon: <Wallet size={24} />,
+      link: "/my-course",
+    },
+    {
+      title: "পরীক্ষার ফলাফল",
+      icon: <BarChart3 size={24} />,
+      link: "#",
+      isModalTrigger: true,
+    },
+    {
+      title: "নোটিশ বোর্ড",
+      icon: <Megaphone size={24} />,
+      link: "/notice",
+    },
+    {
+      title: "রুটিন",
+      icon: <Calendar size={24} />,
+      link: "/",
+    },
+  ];
+
+  const {
+    data: classLinks = [],
+    isLoading: isClassLoading,
+    refetch: refetchClassLinks,
+  } = useQuery({
+    queryKey: ["studentLiveClassLinks"],
+    queryFn: async () => {
+      const res = await axiosSecure.get("/class-links/teacher/my-links");
+      return res.data;
+    },
+    enabled: !!user,
+  });
+
+  const notices = [
+    {
+      text: "আগামীকালের ক্লাসের আগে অ্যাসাইনমেন্ট-০২ সাবমিট করতে হবে।",
+      date: "২ ঘণ্টা আগে",
+    },
+    {
+      text: "MERN স্ট্যাকের নতুন ব্যাচের ওরিয়েন্টেশন ক্লাস লিংক আপডেট করা হয়েছে।",
+      date: "১ দিন আগে",
+    },
+  ];
 
   const userName = user?.name || "ইউজার নাম পাওয়া যায়নি";
-
   const userAvatar =
     user?.profileImage ||
     `https://avatars.githubusercontent.com/u/198446517?v=4`;
@@ -53,78 +97,46 @@ const StudentDashboard = () => {
       ? `${user?.profile?.designation || "Senior Lecturer"} - ${user?.profile?.department?.name || "ইসলামিক স্টাডিজ"}`
       : "হিফজ বিভাগ - লেভেল ৩";
 
-  const stats = [
-    { title: "ক্লাসসমূহ", icon: <BookOpen size={24} /> },
-    { title: "আমার হিফজ", icon: <Book size={24} /> },
-    { title: "রুটিন", icon: <Calendar size={24} /> },
-    { title: "পরীক্ষার ফলাফল", icon: <BarChart3 size={24} /> },
-    { title: "অ্যাটেন্ডেন্স", icon: <ClipboardCheck size={24} /> },
-    { title: "নোটিশ বোর্ড", icon: <Megaphone size={24} /> },
-    { title: "লাইব্রেরী", icon: <Library size={24} /> },
-    { title: "ফি প্রদান", icon: <Wallet size={24} /> },
-  ];
+  if (isUserLoading) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center gap-2 text-gray-500 bg-[#F4F7F5]">
+        <Loader2 className="animate-spin text-[#105D38]" size={24} />
+        <span className="font-bold text-sm">ইউজার ডাটা লোড হচ্ছে...</span>
+      </div>
+    );
+  }
 
-  const notices = [
-    { text: "আগামীকাল তিলাওয়াত ক্লাস সকাল ৮টা", date: "২০ মে, ২০২৪" },
-    { text: "মাসিক পরীক্ষা ২৫ মে, ২০২৪", date: "১৮ মে, ২০২৪" },
-    { text: "ফি জমার শেষ তারিখ ৩১ মে, ২০২৪", date: "১৭ মে, ২০২৪" },
-  ];
-
-  const routine = [
-    { time: "০৬:০০ - ০৭:০০", subject: "ফজর ও মুরাকাবা" },
-    { time: "০৮:০০ - ০৯:০০", subject: "হিফজ ক্লাস" },
-    { time: "০৯:১৫ - ১০:১৫", subject: "তাজবীদ ক্লাস" },
-    { time: "১১:০০ - ১২:০০", subject: "কিতাব ক্লাস" },
-    { time: "০৭:০০ - ০৮:০০", subject: "মাগরিব ও দোয়া" },
-  ];
-
-  const achievements = [
-    {
-      title: "হিফজ",
-      detail: "১৮ পারা সম্পন্ন",
-      icon: <Trophy size={20} className="text-amber-500" />,
-      bg: "bg-amber-50",
-    },
-    {
-      title: "মাসিক পরীক্ষা",
-      detail: "১ম স্থান",
-      icon: <Trophy size={20} className="text-blue-500" />,
-      bg: "bg-blue-50",
-    },
-    {
-      title: "উপস্থিতি",
-      detail: "৯৫%",
-      icon: <CheckCircle2 size={20} className="text-green-500" />,
-      bg: "bg-green-50",
-    },
-  ];
+  if (isUserError) {
+    return (
+      <div className="h-screen w-full flex items-center justify-center text-red-500 text-sm font-bold bg-[#F4F7F5]">
+        ডাটা লোড করতে সমস্যা হয়েছে: {userError?.message || "সার্ভার এরর"}
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-20 font-sans">
-      {/* Header Section */}
+    <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-18 font-sans">
+      {/* 🟢 Header Section */}
       <div className="bg-[#105D38] text-white p-6 pt-12 pb-24 rounded-b-[2.5rem] lg:rounded-b-[4.5rem] shadow-lg relative z-0">
         <div className="max-w-7xl mx-auto flex justify-between items-start gap-4">
           <div className="flex gap-4 items-center">
             <Menu className="lg:hidden cursor-pointer" />
-
             <div>
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
               </p>
-
               <Link href="/dashboard/profile" className="hover:underline block">
                 <h1 className="text-xl lg:text-3xl font-black tracking-tight mt-0.5">
                   {userName}
                 </h1>
               </Link>
-
               <p className="text-white/60 text-[10px] lg:text-xs mt-1 italic">
                 {userSubtitle}
               </p>
             </div>
           </div>
 
-          {/* Profile Picture with Notification Bell */}
+          {/* Profile Picture & Notification */}
           <div className="relative">
             <Link href="/update-profile" className="block group">
               <div className="relative w-16 h-16 lg:w-20 lg:h-20 rounded-2xl overflow-hidden shadow-md border-2 border-white/20 group-hover:border-white/60 transition-all duration-300">
@@ -138,7 +150,6 @@ const StudentDashboard = () => {
                 />
               </div>
             </Link>
-
             <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center bg-red-500 rounded-full w-5 h-5 shadow-sm">
               <Bell size={12} className="text-white" strokeWidth={2.5} />
               <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center text-[9px] font-bold text-white border border-[#105D38]">
@@ -149,189 +160,270 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto px-4 -mt-12 lg:-mt-16 relative z-10 space-y-6">
-        {/* Progress Card */}
-        <div className="bg-white p-6 lg:p-10 rounded-[2rem] shadow-xl border border-neutral-100">
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-black text-neutral-800 text-sm lg:text-xl italic">
-              আমার প্রগ্রেস
-            </h3>
-            <span className="text-[10px] lg:text-xs font-bold text-neutral-400">
-              লক্ষ্য: পুরো কোরআন হিফজ
-            </span>
-          </div>
-          <div className="grid grid-cols-3 gap-2 mb-6">
-            {[
-              { label: "মোট অগ্রগতি", val: "৬০%", color: "text-[#105D38]" },
-              { label: "মোট পারা", val: "৩০", color: "text-neutral-800" },
-              { label: "সম্পন্ন", val: "১৮", color: "text-neutral-800" },
-            ].map((item, i) => (
-              <div
-                key={i}
-                className={`text-center ${i === 1 ? "border-x border-neutral-100" : ""}`}
-              >
-                <p className="text-neutral-400 text-[9px] lg:text-[11px] font-bold uppercase mb-1">
-                  {item.label}
-                </p>
-                <p className={`text-xl lg:text-3xl font-black ${item.color}`}>
-                  {item.val}
-                </p>
+      {/* 🔵 Main Content Grid Area */}
+      <div className="max-w-7xl mx-auto px-3 sm:px-4 -mt-12 lg:-mt-16 relative z-10 space-y-5 lg:space-y-6">
+        {/* ১. ক্লাস শিডিউল ব্যানার */}
+        <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-[1.5rem] lg:rounded-[2rem] shadow-xl border border-neutral-100">
+          <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4 lg:gap-6">
+            <div className="space-y-1 lg:space-y-2">
+              <div className="flex items-center gap-2">
+                <span className="flex h-2.5 w-2.5 relative">
+                  <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
+                  <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
+                </span>
+                <h3 className="font-black text-neutral-800 text-sm lg:text-xl italic">
+                  নির্ধারিত লাইভ ক্লাসসমূহ
+                </h3>
               </div>
-            ))}
-          </div>
-          <div className="w-full bg-neutral-100 h-2.5 lg:h-4 rounded-full overflow-hidden">
-            <div className="bg-[#105D38] h-full w-[60%] rounded-full shadow-lg"></div>
-          </div>
-        </div>
+              <p className="text-[11px] lg:text-xs text-neutral-400 font-medium leading-relaxed">
+                শিক্ষকদের সেট করা লাইভ ক্লাসের লিংকগুলো এখানে দেখতে পাবেন।
+              </p>
+            </div>
 
-        {/* Bento Grid Content */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
-          <div className="lg:col-span-12">
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {stats.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="bg-white p-5 lg:p-8 rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-3 hover:bg-[#105D38] hover:text-white transition-all duration-300 cursor-pointer group"
-                >
-                  <div className="p-3 bg-[#F4F7F5] rounded-2xl group-hover:bg-white/20 transition-colors text-[#105D38]">
-                    {React.cloneElement(item.icon, {
-                      className: "group-hover:text-white",
-                    })}
-                  </div>
-                  <span className="text-xs lg:text-sm font-bold text-center leading-tight">
-                    {item.title}
-                  </span>
-                </div>
-              ))}
+            {/* Refresh and Date Buttons */}
+            <div className="flex items-center gap-2 sm:gap-3 self-start lg:self-auto w-full lg:w-auto justify-between lg:justify-end">
+              <button
+                onClick={() => refetchClassLinks()}
+                className="p-2 bg-neutral-50 hover:bg-neutral-100 rounded-xl border border-neutral-200 text-neutral-500 transition-colors"
+                title="রিলোড ক্লাস লিঙ্ক"
+              >
+                <RefreshCw
+                  size={13}
+                  className={isClassLoading ? "animate-spin" : ""}
+                />
+              </button>
+              <div className="bg-neutral-50 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl border border-neutral-100 flex items-center gap-2 sm:gap-3">
+                <Calendar size={14} className="text-[#105D38]" />
+                <span className="text-[10px] lg:text-xs font-black text-neutral-600 whitespace-nowrap">
+                  আজ:{" "}
+                  {new Date().toLocaleDateString("bn-BD", {
+                    day: "numeric",
+                    month: "long",
+                    year: "numeric",
+                  })}
+                </span>
+              </div>
             </div>
           </div>
 
-          <div className="lg:col-span-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100">
-              <div className="flex justify-between items-center mb-5">
-                <h3 className="font-black text-neutral-800 text-sm lg:text-base italic">
+          {/* Dynamic Class Links Rendering */}
+          <div className="mt-6 lg:mt-8">
+            {isClassLoading ? (
+              <div className="flex flex-col items-center justify-center py-10 bg-neutral-50/50 rounded-2xl border border-dashed border-neutral-200 gap-2">
+                <Loader2 className="animate-spin text-[#105D38]" size={20} />
+                <p className="text-xs font-bold text-neutral-400">
+                  লাইভ ক্লাস শিডিউল চেক করা হচ্ছে...
+                </p>
+              </div>
+            ) : classLinks?.length > 0 ? (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">
+                {classLinks.map((item: any) => (
+                  <div
+                    key={item._id}
+                    className="p-3 sm:p-5 bg-emerald-50/40 rounded-xl sm:rounded-2xl border border-emerald-100 flex flex-col justify-between gap-3 group hover:shadow-md transition-all duration-300"
+                  >
+                    <div className="space-y-2 sm:space-y-3">
+                      <div className="flex justify-between items-start gap-1">
+                        <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-emerald-100 text-emerald-800 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-bold truncate max-w-[75%] tracking-wider">
+                          {item.course?.name || "General Course"}
+                        </span>
+                        <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-md sm:rounded-lg flex items-center justify-center text-emerald-700 shadow-sm shrink-0">
+                          <Video size={13} className="sm:size-[16px]" />
+                        </div>
+                      </div>
+                      <div>
+                        <h4 className="text-xs sm:text-sm lg:text-base font-black text-neutral-800 group-hover:text-[#105D38] transition-colors line-clamp-2">
+                          {item.classTitle}
+                        </h4>
+                        <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-neutral-500 font-medium text-[10px] sm:text-[11px]">
+                          <span className="flex items-center gap-1">
+                            <Calendar size={10} className="sm:size-[12px]" />
+                            {item.classDate
+                              ? new Date(item.classDate).toLocaleDateString(
+                                  "bn-BD",
+                                  { day: "numeric", month: "short" },
+                                )
+                              : "নির্ধারিত নয়"}
+                          </span>
+                          <span className="flex items-center gap-1 text-neutral-700 font-bold">
+                            <Clock size={10} className="sm:size-[12px]" />
+                            {item.startTime || "00:00"}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <a
+                      href={item.link}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="w-full py-2 sm:py-2.5 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-[10px] sm:text-xs rounded-lg sm:rounded-xl shadow-sm transition-all flex items-center justify-center gap-1 sm:gap-2 mt-1"
+                    >
+                      <span className="truncate">জয়েন করুন</span>
+                      <ExternalLink
+                        size={10}
+                        className="sm:size-[12px] shrink-0"
+                      />
+                    </a>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <div className="flex flex-col items-center justify-center py-10 bg-neutral-50 rounded-2xl border border-neutral-100 gap-2 text-center px-4">
+                <AlertCircle className="text-neutral-300" size={24} />
+                <p className="text-xs font-black text-neutral-500">
+                  এই মুহূর্তে কোনো লাইভ ক্লাস শিডিউল সক্রিয় নেই।
+                </p>
+              </div>
+            )}
+          </div>
+        </div>
+
+        {/* Bento Grid Stats */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 lg:gap-6">
+          <div className="lg:col-span-12">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4">
+              {stats.map((item, idx) => {
+                if (item.isModalTrigger) {
+                  return (
+                    <div
+                      key={idx}
+                      onClick={() => setIsModalOpen(true)}
+                      className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#105D38] hover:text-white transition-all duration-300 cursor-pointer group"
+                    >
+                      <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#105D38]">
+                        {React.cloneElement(item.icon, {
+                          className:
+                            "group-hover:text-white size-[16px] sm:size-[20px]",
+                        })}
+                      </div>
+                      <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-center leading-tight">
+                        {item.title}
+                      </span>
+                    </div>
+                  );
+                }
+
+                return (
+                  <Link
+                    href={item.link}
+                    key={idx}
+                    className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#105D38] hover:text-white transition-all duration-300 cursor-pointer group"
+                  >
+                    <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#105D38]">
+                      {React.cloneElement(item.icon, {
+                        className:
+                          "group-hover:text-white size-[16px] sm:size-[20px]",
+                      })}
+                    </div>
+                    <span className="text-[11px] sm:text-xs lg:text-sm font-bold text-center leading-tight">
+                      {item.title}
+                    </span>
+                  </Link>
+                );
+              })}
+            </div>
+          </div>
+        </div>
+
+        {/* ২. Bento Grid Content: নোটিশ, শিক্ষক এবং সহায়তা প্যানেল */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6">
+          {/* সাম্প্রতিক নোটিশ বোর্ড */}
+          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4">
+            <div>
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="font-black text-neutral-800 text-xs sm:text-sm lg:text-base italic">
                   সাম্প্রতিক নোটিশ
                 </h3>
-                <button className="text-[10px] font-bold text-[#105D38]">
+                <button className="text-[10px] font-bold text-[#105D38] hover:underline">
                   সব দেখুন
                 </button>
               </div>
-              <div className="space-y-4">
+              <div className="space-y-3">
                 {notices.map((notice, idx) => (
                   <div
                     key={idx}
-                    className="flex items-center justify-between pb-3 border-b border-neutral-50 last:border-0 last:pb-0"
+                    className="flex items-start justify-between pb-2.5 border-b border-neutral-50 last:border-0 last:pb-0 gap-2"
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 bg-orange-50 text-orange-500 rounded-lg flex items-center justify-center shrink-0">
-                        <Megaphone size={14} />
+                    <div className="flex items-start gap-2">
+                      <div className="w-6 h-6 bg-orange-50 text-orange-500 rounded-md flex items-center justify-center shrink-0 mt-0.5">
+                        <Megaphone size={12} />
                       </div>
-                      <p className="text-[11px] font-bold text-neutral-700 leading-tight">
+                      <p className="text-[10px] sm:text-[11px] font-bold text-neutral-700 leading-tight line-clamp-2">
                         {notice.text}
                       </p>
                     </div>
-                    <span className="text-[9px] font-bold text-neutral-400 shrink-0 ml-2">
+                    <span className="text-[8px] sm:text-[9px] font-bold text-neutral-400 shrink-0 whitespace-nowrap">
                       {notice.date}
                     </span>
                   </div>
                 ))}
               </div>
             </div>
+          </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100">
-              <h3 className="font-black text-neutral-800 text-sm mb-4 italic uppercase tracking-wider">
-                আমার শিক্ষক
+          {/* শিক্ষক প্রোফাইল */}
+          <div className="lg:col-span-4 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
+            <div>
+              <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
+                শিক্ষক
               </h3>
-              <div className="flex items-center gap-4 mb-5">
+              <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 sm:gap-4 mb-2">
                 <img
                   src="https://avatars.githubusercontent.com/u/198446517?v=4"
-                  className="w-14 h-14 rounded-2xl bg-neutral-100 shadow-sm"
+                  className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-neutral-100 shadow-sm object-cover"
                   alt="Teacher"
                 />
-                <div>
-                  <h4 className="text-sm font-black text-neutral-800 leading-none">
+                <div className="min-w-0">
+                  <h4 className="text-[11px] sm:text-sm font-black text-neutral-800 leading-tight truncate">
                     মাওলানা রফিকুল ইসলাম
                   </h4>
-                  <p className="text-[10px] text-neutral-400 font-bold uppercase mt-1">
-                    হিফজ বিভাগ
+                  <p className="text-[8px] sm:text-[10px] text-neutral-400 font-bold uppercase mt-0.5">
+                    সিনিয়র মেন্টর
                   </p>
                 </div>
               </div>
-              <div className="flex gap-2">
-                <a
-                  href="tel:01812345678"
-                  className="flex-1 flex items-center justify-center gap-2 py-2.5 bg-neutral-50 rounded-xl text-neutral-600 text-[10px] font-bold border border-neutral-100 hover:bg-white"
-                >
-                  <Phone size={14} /> কল
-                </a>
-                <button className="flex items-center justify-center gap-2 px-4 py-2.5 bg-[#105D38] text-white rounded-xl text-[10px] font-bold shadow-md active:scale-95 transition-transform">
-                  <MessageCircle size={14} /> বার্তা
-                </button>
-              </div>
             </div>
+            <div className="flex flex-col sm:flex-row gap-1.5">
+              <a
+                href="tel:01812345678"
+                className="w-full flex items-center justify-center gap-1 py-2 bg-neutral-50 rounded-lg text-neutral-600 text-[9px] sm:text-[10px] font-bold border border-neutral-100 hover:bg-neutral-100 transition-colors"
+              >
+                <Phone size={11} />{" "}
+                <span className="hidden sm:inline">কল করুন</span>
+              </a>
+              <button className="w-full flex items-center justify-center gap-1 py-2 bg-[#105D38] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-sm active:scale-95 transition-all hover:bg-[#0c462a]">
+                <MessageCircle size={11} /> <span>মেসেজ</span>
+              </button>
+            </div>
+          </div>
 
-            <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-neutral-100">
-              <div className="flex justify-between items-center mb-6">
-                <h3 className="font-black text-neutral-800 text-sm lg:text-base italic">
-                  আজকের রুটিন
+          {/* কুইক সাপোর্ট ও সাহায্য কেন্দ্র */}
+          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2 text-neutral-800">
+                <HelpCircle size={20} className="text-[#105D38]" />
+                <h3 className="font-black text-xs sm:text-sm lg:text-base italic">
+                  সাহায্য কেন্দ্র
                 </h3>
-                <span className="text-[9px] font-bold text-neutral-400">
-                  ২০ মে, ২০২৪
-                </span>
               </div>
-              <div className="space-y-3">
-                {routine.map((item, idx) => (
-                  <div
-                    key={idx}
-                    className="flex justify-between items-center py-2 border-b border-neutral-50 last:border-0 last:pb-0"
-                  >
-                    <span className="text-[10px] font-bold text-neutral-400 font-mono italic">
-                      {item.time}
-                    </span>
-                    <span className="text-xs font-black text-neutral-800">
-                      {item.subject}
-                    </span>
-                  </div>
-                ))}
-              </div>
+              <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
+                ড্যাশবোর্ড, ফি প্রদান বা ক্লাস সংক্রান্ত যেকোনো টেকনিক্যাল
+                সমস্যার জন্য আমাদের সাপোর্ট টিমকে জানান।
+              </p>
             </div>
-
-            <div className="space-y-4">
-              <div className="bg-white p-4 rounded-[1.5rem] shadow-sm border border-neutral-100">
-                <div className="grid grid-cols-3 gap-2">
-                  {achievements.map((ach, idx) => (
-                    <div
-                      key={idx}
-                      className={`${ach.bg} p-2 rounded-xl flex flex-col items-center text-center gap-1 border border-neutral-100/50`}
-                    >
-                      <div className="p-1 bg-white rounded-lg shadow-sm">
-                        {React.cloneElement(ach.icon, { size: 14 })}
-                      </div>
-                      <p className="text-[8px] font-black text-neutral-800 leading-tight">
-                        {ach.title}
-                      </p>
-                    </div>
-                  ))}
-                </div>
-              </div>
-
-              <div className="bg-[#105D38] p-4 rounded-[1.5rem] shadow-lg text-white">
-                <h3 className="font-bold text-[10px] mb-2 italic">
-                  সহায়তা প্রয়োজন?
-                </h3>
-                <div className="flex gap-2">
-                  <button className="flex-1 p-2 bg-white/10 hover:bg-white/20 rounded-lg text-[9px] font-bold transition-all">
-                    সাপোর্ট
-                  </button>
-                  <button className="flex-1 p-2 bg-white/10 hover:bg-white/20 rounded-lg text-[9px] font-bold transition-all">
-                    জিজ্ঞাসা
-                  </button>
-                </div>
-              </div>
-            </div>
+            <button className="w-full py-2 bg-neutral-800 hover:bg-neutral-900 text-white font-bold text-xs rounded-xl transition-all shadow-sm">
+              টিকিট ওপেন করুন
+            </button>
           </div>
         </div>
       </div>
+
+      <EvaluationModal
+        isOpen={isModalOpen}
+        onClose={() => setIsModalOpen(false)}
+        submissionId="YOUR_SUBMISSION_ID_HERE"
+        token="YOUR_STUDENT_TOKEN_HERE"
+      />
     </div>
   );
 };
