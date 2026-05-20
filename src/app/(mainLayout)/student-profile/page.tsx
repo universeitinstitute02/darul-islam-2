@@ -120,7 +120,6 @@ const StudentDashboard = () => {
       <div className="bg-[#105D38] text-white p-6 pt-12 pb-24 rounded-b-[2.5rem] lg:rounded-b-[4.5rem] shadow-lg relative z-0">
         <div className="max-w-7xl mx-auto flex justify-between items-start gap-4">
           <div className="flex gap-4 items-center">
-            <Menu className="lg:hidden cursor-pointer" />
             <div>
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
