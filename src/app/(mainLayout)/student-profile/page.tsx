@@ -32,6 +32,8 @@ const StudentDashboard = () => {
   const axiosSecure = useAxiosSecure();
   const [isModalOpen, setIsModalOpen] = useState(false);
 
+  const [selectedCourseIds, setSelectedCourseIds] = useState<string>("");
+
   const {
     data: user,
     isLoading: isUserLoading,
@@ -64,17 +66,22 @@ const StudentDashboard = () => {
   ];
 
   const {
-    data: classLinks = [],
+    data: classLinksData,
     isLoading: isClassLoading,
     refetch: refetchClassLinks,
   } = useQuery({
-    queryKey: ["studentLiveClassLinks"],
+    queryKey: ["studentLiveClassLinks", selectedCourseIds],
     queryFn: async () => {
-      const res = await axiosSecure.get("/class-links/student/my-links");
+      const url = selectedCourseIds
+        ? `/class-links/student/my-links?courseIds=${selectedCourseIds}`
+        : "/class-links/student/my-links";
+      const res = await axiosSecure.get(url);
       return res.data;
     },
     enabled: !!user,
   });
+
+  const classLinks = classLinksData?.data || [];
 
   const notices = [
     {
@@ -113,6 +120,12 @@ const StudentDashboard = () => {
       </div>
     );
   }
+
+  // রেন্ডারিং এর জন্য প্রথম ক্লাসের ইনস্ট্রাক্টরকে ডিফল্ট হিসেবে দেখানো হচ্ছে (যদি থাকে)
+  const activeInstructor = classLinks[0]?.instructor || {
+    name: "মাওলানা রফিকুল ইসলাম",
+    profilePicture: "https://avatars.githubusercontent.com/u/198446517?v=4",
+  };
 
   return (
     <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-18 font-sans">
@@ -224,7 +237,9 @@ const StudentDashboard = () => {
                     <div className="space-y-2 sm:space-y-3">
                       <div className="flex justify-between items-start gap-1">
                         <span className="px-2 py-0.5 sm:px-2.5 sm:py-1 bg-emerald-100 text-emerald-800 rounded-md sm:rounded-lg text-[9px] sm:text-[10px] font-bold truncate max-w-[75%] tracking-wider">
-                          {item.course?.name || "General Course"}
+                          {item.course?.title ||
+                            item.course?.name ||
+                            "General Course"}
                         </span>
                         <div className="w-6 h-6 sm:w-8 sm:h-8 bg-white rounded-md sm:rounded-lg flex items-center justify-center text-emerald-700 shadow-sm shrink-0">
                           <Video size={13} className="sm:size-[16px]" />
@@ -360,7 +375,7 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {/* শিক্ষক প্রোফাইল */}
+          {/* শিক্ষক প্রোফাইল (ডকুমেন্টেশন অনুযায়ী লাইভ ক্লাসের শিক্ষক পপুলেট করা হয়েছে) */}
           <div className="lg:col-span-4 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
             <div>
               <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
@@ -368,13 +383,16 @@ const StudentDashboard = () => {
               </h3>
               <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 sm:gap-4 mb-2">
                 <img
-                  src="https://avatars.githubusercontent.com/u/198446517?v=4"
+                  src={
+                    activeInstructor.profilePicture ||
+                    "https://avatars.githubusercontent.com/u/198446517?v=4"
+                  }
                   className="w-10 h-10 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-neutral-100 shadow-sm object-cover"
                   alt="Teacher"
                 />
                 <div className="min-w-0">
                   <h4 className="text-[11px] sm:text-sm font-black text-neutral-800 leading-tight truncate">
-                    মাওলানা রফিকুল ইসলাম
+                    {activeInstructor.name}
                   </h4>
                   <p className="text-[8px] sm:text-[10px] text-neutral-400 font-bold uppercase mt-0.5">
                     সিনিয়র মেন্টর
@@ -406,7 +424,7 @@ const StudentDashboard = () => {
                 </h3>
               </div>
               <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
-                ড্যাশবোর্ড, ফি প্রদান বা ক্লাস সংক্রান্ত যেকোনো টেকনিক্যাল
+                ড্যাশবোর্ড, فی প্রদান বা ক্লাস সংক্রান্ত যেকোনো টেকনিক্যাল
                 সমস্যার জন্য আমাদের সাপোর্ট টিমকে জানান।
               </p>
             </div>
