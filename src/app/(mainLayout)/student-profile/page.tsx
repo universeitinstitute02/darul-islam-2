@@ -70,7 +70,7 @@ const StudentDashboard = () => {
   } = useQuery({
     queryKey: ["studentLiveClassLinks"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/class-links/teacher/my-links");
+      const res = await axiosSecure.get("/class-links/student/my-links");
       return res.data;
     },
     enabled: !!user,
@@ -171,7 +171,7 @@ const StudentDashboard = () => {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
                 <h3 className="font-black text-neutral-800 text-sm lg:text-xl italic">
-                  নির্ধারিত লাইভ ক্লাসসমূহ
+                  ক্লাসসমূহ
                 </h3>
               </div>
               <p className="text-[11px] lg:text-xs text-neutral-400 font-medium leading-relaxed">
