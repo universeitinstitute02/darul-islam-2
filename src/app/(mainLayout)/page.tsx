@@ -7,7 +7,7 @@ import AboutHome from "@/src/components/mainLayout/home/AboutHome";
 import WhyChoose from "@/src/components/mainLayout/home/WhyChoose";
 import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestStudents";
 import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
-import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
+// import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
 import AdmissionInfo from "@/src/components/LandingPageLayout/AddmissionDoc/AddmissionInfo";
 import NoticeBoard from "@/src/components/LandingPageLayout/Notice/Notice";
 import GallerySection from "@/src/components/LandingPageLayout/GallerySection/GallerySection";

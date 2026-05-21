@@ -1,132 +1,255 @@
 "use client";
-import React from "react";
+
 import Image from "next/image";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { ChevronLeft, ChevronRight, GraduationCap, Award } from "lucide-react";
+
+import {
+  ChevronLeft,
+  ChevronRight,
+  MapPin,
+  GraduationCap,
+  Calendar,
+} from "lucide-react";
 
 import studentImg from "../../../../public/images/hujur2.png";
 
-const StudentCard = ({ student }: { student: any }) => (
-  <div className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-xl transition-all duration-300 p-6 flex flex-col items-center text-center h-full mx-2 my-4">
-    {/* Top Badge */}
-    <div className="flex items-center gap-1 bg-amber-50 text-amber-600 px-3 py-1 rounded-full text-[10px] uppercase tracking-wider font-bold mb-4">
-      <Award size={14} /> Top Scorer
-    </div>
+type StudentType = {
+  image: any;
+  name: string;
+  age: string;
+  location: string;
+  department: string;
+};
 
-    {/* Profile Image */}
-    <div className="relative w-28 h-28 md:w-32 md:h-32 mb-4">
-      <div className="absolute inset-0 bg-green-100 rounded-full scale-110 group-hover:scale-125 transition-transform duration-500 opacity-50" />
-      <div className="relative w-full h-full rounded-full overflow-hidden border-4 border-white shadow-md">
+const StudentCard = ({ student }: { student: StudentType }) => (
+  <div
+    className="
+      group relative overflow-hidden rounded-3xl
+      border border-green-100 bg-white/90
+      shadow-lg backdrop-blur transition-all duration-500
+     hover:shadow-2xl
+      h-full
+    "
+  >
+    {/* Top Gradient */}
+    <div className="relative h-24 bg-gradient-to-r from-green-700 via-green-600 to-emerald-500" />
+
+    {/* Image */}
+    <div className="-mt-14 flex justify-center">
+      <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-xl">
         <Image
-          src={studentImg}
+          src={student.image}
           alt={student.name}
           fill
-          className="object-cover"
+          className="object-cover transition-transform duration-500 group-hover:scale-110"
         />
       </div>
     </div>
 
-    {/* Info */}
-    <div className="flex-grow">
-      <h3 className="text-lg md:text-xl font-bold text-gray-800 mb-2 group-hover:text-green-600 transition-colors">
-        {student.name}
-      </h3>
+    {/* Content */}
+    <div className="space-y-5 px-6 pb-6 pt-4 text-center">
+      {/* Name */}
+      <div>
+        <h3 className="text-xl font-bold text-green-800">{student.name}</h3>
+      </div>
 
-      <div className="space-y-2">
-        <span className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 text-green-700 text-xs md:text-sm rounded-md font-medium">
-          <GraduationCap size={14} /> {student.department}
-        </span>
-        <p className="text-xs text-gray-400 font-medium italic">
-          সেশন: {student.batch}
-        </p>
+      {/* Info */}
+      <div className="space-y-3 rounded-2xl bg-green-50 p-4 text-left">
+        {/* Age */}
+        <div className="flex items-start gap-3">
+          <div className="rounded-xl bg-white p-2 shadow-sm">
+            <Calendar size={16} className="text-green-700" />
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold text-green-700">বয়স</p>
+
+            <p className="text-sm text-neutral-700">{student.age}</p>
+          </div>
+        </div>
+
+        {/* Location */}
+        <div className="flex items-start gap-3">
+          <div className="rounded-xl bg-white p-2 shadow-sm">
+            <MapPin size={16} className="text-green-700" />
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold text-green-700">লোকেশন</p>
+
+            <p className="text-sm text-neutral-700">{student.location}</p>
+          </div>
+        </div>
+
+        {/* Department */}
+        <div className="flex items-start gap-3 border-t border-green-100 pt-3">
+          <div className="rounded-xl bg-white p-2 shadow-sm">
+            <GraduationCap size={16} className="text-green-700" />
+          </div>
+
+          <div>
+            <p className="text-xs font-semibold text-green-700">বিভাগ</p>
+
+            <p className="text-sm text-neutral-700">{student.department}</p>
+          </div>
+        </div>
       </div>
     </div>
   </div>
 );
 
 const StudentSlider = () => {
-  const students = [
+  const students: StudentType[] = [
     {
+      image: studentImg,
       name: "আব্দুল্লাহ আল মামুন",
-      department: "কুরআন বিভাগ",
-      batch: "২০২৪-২৫",
+      age: "১৮ বছর",
+      location: "ঢাকা",
+      department: "দারুল ইসলাম বিভাগ",
     },
-    { name: "ওমর ফারুক", department: "কিতাব বিভাগ", batch: "২০২৩-২৪" },
-    { name: "তামিম ইকবাল", department: "হিফজুল কুরআন", batch: "২০২৪-২৫" },
-    { name: "হাসান মাহমুদ", department: "আরবি সাহিত্য", batch: "২০২২-২৩" },
-    { name: "আবু রায়হান", department: "তাফসীর বিভাগ", batch: "২০২৩-২৪" },
-    { name: "মাহমুদুল হাসান", department: "নাহু-সরফ", batch: "২০২৩-২৪" },
+    {
+      image: studentImg,
+      name: "ওমর ফারুক",
+      age: "২০ বছর",
+      location: "কুমিল্লা",
+      department: "দারুল ইসলাম বিভাগ",
+    },
+    {
+      image: studentImg,
+      name: "তামিম ইকবাল",
+      age: "১৭ বছর",
+      location: "চট্টগ্রাম",
+      department: "ইসলামিক স্টাডিজ",
+    },
+    {
+      image: studentImg,
+      name: "হাসান মাহমুদ",
+      age: "১৯ বছর",
+      location: "সিলেট",
+      department: "ভাষা বিভাগ",
+    },
+    {
+      image: studentImg,
+      name: "আবু রায়হান",
+      age: "২১ বছর",
+      location: "রাজশাহী",
+      department: "কিতাব বিভাগ",
+    },
+    {
+      image: studentImg,
+      name: "মাহমুদুল হাসান",
+      age: "১৮ বছর",
+      location: "বরিশাল",
+      department: "হাদিস বিভাগ",
+    },
+    {
+      image: studentImg,
+      name: "ইয়াসিন আরাফাত",
+      age: "১৬ বছর",
+      location: "ময়মনসিংহ",
+      department: "হিফজ বিভাগ",
+    },
+    {
+      image: studentImg,
+      name: "সাইফুল ইসলাম",
+      age: "২২ বছর",
+      location: "রংপুর",
+      department: "ফিকহ বিভাগ",
+    },
   ];
 
   return (
-    <section className="px-5">
-      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
-        {/* Section Header */}
-        <div className="text-center mb-12">
-          <h2 className="text-2xl md:text-4xl font-bold text-gray-900 mb-3">
-            আমাদের <span className="text-green-600">মেধাবী শিক্ষার্থীরা</span>
+    <section className="overflow-hidden px-4 py-8 md:py-1 lg:px-8">
+      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl ">
+        {/* Header */}
+        <div className="mb-14 text-center">
+          <span className="inline-block rounded-full bg-green-100 px-4 py-1 text-xs font-bold text-green-700">
+            মেধাবী শিক্ষার্থীরা
+          </span>
+
+          <h2 className="mt-4 text-3xl font-extrabold text-green-800 md:text-5xl">
+            আমাদের কৃতি শিক্ষার্থীরা
           </h2>
-          <div className="w-16 h-1 bg-green-500 mx-auto rounded-full"></div>
+
+          <p className="mx-auto mt-4 max-w-2xl text-sm text-neutral-600 md:text-base">
+            দারুল ইসলাম ইনস্টিটিউটের মেধাবী ও কৃতি শিক্ষার্থীদের সংক্ষিপ্ত
+            পরিচিতি।
+          </p>
+
+          <div className="mx-auto mt-5 h-1 w-20 rounded-full bg-green-500"></div>
         </div>
 
+        {/* Slider */}
         <div className="relative group/slider">
           <Swiper
             modules={[Autoplay, Navigation, Pagination]}
-            spaceBetween={20}
+            spaceBetween={24}
             slidesPerView={1}
             loop={true}
+            speed={900}
             autoplay={{
-              delay: 4000,
+              delay: 2500,
               disableOnInteraction: false,
-            }}
-            pagination={{
-              clickable: true,
-              el: ".custom-pagination",
+              pauseOnMouseEnter: true,
             }}
             navigation={{
               nextEl: ".next-arrow",
               prevEl: ".prev-arrow",
             }}
-            breakpoints={{
-              640: { slidesPerView: 2 },
-              1024: { slidesPerView: 3 },
-              1280: { slidesPerView: 4 },
+            pagination={{
+              clickable: true,
+              el: ".custom-pagination",
             }}
-            className="!pb-12"
+            breakpoints={{
+              640: {
+                slidesPerView: 2,
+              },
+              1024: {
+                slidesPerView: 3,
+              },
+              1280: {
+                slidesPerView: 4,
+              },
+            }}
+            className="!pb-14"
           >
             {students.map((student, index) => (
-              <SwiperSlide key={index}>
+              <SwiperSlide key={index} className="py-4">
                 <StudentCard student={student} />
               </SwiperSlide>
             ))}
           </Swiper>
 
-          {/* Navigation Arrows - Only visible on Hover on Desktop */}
-          <button className="prev-arrow absolute top-1/2 -left-2 md:-left-6 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white text-gray-600 rounded-full shadow-lg hover:bg-green-600 hover:text-white transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex">
-            <ChevronLeft size={24} />
-          </button>
-          <button className="next-arrow absolute top-1/2 -right-2 md:-right-6 -translate-y-1/2 z-10 w-10 h-10 flex items-center justify-center bg-white text-gray-600 rounded-full shadow-lg hover:bg-green-600 hover:text-white transition-all opacity-0 group-hover/slider:opacity-100 hidden md:flex">
-            <ChevronRight size={24} />
+          {/* Prev Button */}
+          <button className="prev-arrow cursor-pointer absolute left-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-green-700 shadow-lg transition hover:bg-green-600 hover:text-white lg:flex">
+            <ChevronLeft size={22} />
           </button>
 
-          {/* Custom Pagination Style */}
-          <div className="custom-pagination flex justify-center gap-2 mt-6"></div>
+          {/* Next Button */}
+          <button className="next-arrow cursor-pointer absolute right-0 top-1/2 z-20 hidden h-12 w-12 -translate-y-1/2 items-center justify-center rounded-full bg-white text-green-700 shadow-lg transition hover:bg-green-600 hover:text-white lg:flex">
+            <ChevronRight size={22} />
+          </button>
+
+          {/* Pagination */}
+          <div className="custom-pagination mt-6 flex justify-center gap-2"></div>
         </div>
       </div>
 
+      {/* Pagination Style */}
       <style jsx global>{`
         .custom-pagination .swiper-pagination-bullet {
-          width: 8px;
-          height: 8px;
-          background: #cbd5e1;
+          width: 10px;
+          height: 10px;
+          background: #d1d5db;
           opacity: 1;
-          transition: all 0.3s ease;
+          border-radius: 999px;
+          transition: all 0.4s ease;
         }
+
         .custom-pagination .swiper-pagination-bullet-active {
-          width: 24px;
-          background: #16a34a;
-          border-radius: 4px;
+          width: 30px;
+          background: linear-gradient(to right, #16a34a, #10b981);
         }
       `}</style>
     </section>

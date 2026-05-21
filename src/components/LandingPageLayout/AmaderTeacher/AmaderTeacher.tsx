@@ -1,11 +1,6 @@
 "use client";
 
-import {
-  ArrowRight,
-  Briefcase,
-  ExternalLink,
-  GraduationCap,
-} from "lucide-react";
+import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -42,16 +37,21 @@ const teachers = [
     image: "/hujur.webp",
     profile: "/teachers/ayesha",
   },
+  {
+    name: "মাওলানা মুহাম্মদ ইউসুফ",
+    degree: "মুফতি, তাকমীল ফিকহ",
+    experience: "১২ বছরের অভিজ্ঞতা",
+    department: "ফিকহ বিভাগ",
+    darulDepartment: "দারুল ইসলাম ফিকহ অনুষদ",
+    image: "/hujur.webp",
+    profile: "/teachers/yusuf",
+  },
 ];
 
 export default function TeacherSlider() {
   return (
-    <section className="relative overflow-hidden bg-gradient-to-br from-green-50 via-white to-green-100 px-4 py-8 md:py-12 lg:px-8">
-      {/* Background blur */}
-      <div className="absolute right-0 top-0 h-80 w-80 translate-x-1/2 -translate-y-1/2 rounded-full bg-green-200/30 blur-3xl" />
-      <div className="absolute bottom-0 left-0 h-96 w-96 -translate-x-1/2 translate-y-1/2 rounded-full bg-green-300/30 blur-3xl" />
-
-      <div className="relative z-10 mx-auto max-w-screen-xl">
+    <section className="relative overflow-hidden  px-4 py-8 md:py-12 lg:px-8">
+      <div className="relative z-10 bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         {/* Header */}
         <div className="mx-auto mb-12 max-w-2xl space-y-3 text-center">
           <motion.div
@@ -105,7 +105,7 @@ export default function TeacherSlider() {
                     group w-full max-w-sm overflow-hidden rounded-3xl
                     border border-green-100 bg-white/90
                     shadow-lg backdrop-blur transition-all duration-300
-                    hover:-translate-y-2 hover:shadow-2xl
+                     hover:shadow-2xl
                   "
                 >
                   {/* top bg */}
@@ -188,7 +188,7 @@ export default function TeacherSlider() {
             </SwiperSlide>
           ))}
         </Swiper>
-
+ 
         {/* CTA */}
         <div className="mt-10 flex justify-center">
           <Link

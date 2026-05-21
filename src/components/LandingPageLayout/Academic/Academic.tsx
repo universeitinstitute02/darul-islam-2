@@ -40,8 +40,6 @@ const Academic = () => {
         <div className="relative px-2 md:px-10">
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={23}
-            slidesPerView={1}
             loop={false}
             navigation={{
               nextEl: ".next-btn-academic",
@@ -52,12 +50,12 @@ const Academic = () => {
               el: ".academic-pagination",
             }}
             breakpoints={{
-              320: { slidesPerView: 1, spaceBetween: 19 },
-              640: { slidesPerView: 1, spaceBetween: 19 },
+              320: { slidesPerView: 2, spaceBetween: 12 },
+              480: { slidesPerView: 2, spaceBetween: 14 },
+              640: { slidesPerView: 2, spaceBetween: 18 },
               1024: { slidesPerView: 5, spaceBetween: 20 },
               1280: { slidesPerView: 6, spaceBetween: 20 },
             }}
-            // শ্যাডো কাটার সমস্যা সমাধানের জন্য এই ক্লাসগুলো গুরুত্বপূর্ণ
             className="!p-4 !-m-4"
           >
             {departments.map((d, i) => (

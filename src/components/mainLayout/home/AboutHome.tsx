@@ -10,7 +10,7 @@ const AboutHome = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowBanner(true);
-    }, 30000); // 30 seconds
+    }, 5000); // 30 seconds
 
     return () => clearTimeout(timer);
   }, []);
@@ -107,6 +107,7 @@ const AboutHome = () => {
         </div>
 
         {/* ── Animated Ads Banner (appears after 30s) ── */}
+        {/* ── Animated Ads Banner (appears after 30s) ── */}
         <AnimatePresence>
           {showBanner && (
             <motion.div
@@ -123,7 +124,7 @@ const AboutHome = () => {
                   width={1200}
                   height={220}
                   alt="Ads Banner"
-                  className="h-auto w-full object-cover"
+                  className="h-40 w-full object-cover"
                 />
               </div>
             </motion.div>

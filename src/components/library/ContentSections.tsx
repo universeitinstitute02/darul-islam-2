@@ -1,9 +1,7 @@
 "use client";
 import Link from "next/link";
-import { useState, useEffect } from "react";
 import {
   ChevronRight,
-  Star,
   Search,
   NotebookText,
   NotebookPen,
@@ -16,31 +14,9 @@ import {
   FaMosque,
   FaPrayingHands,
 } from "react-icons/fa";
-import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
+import { motion } from "framer-motion";
 
 /* ─────────────── DATA ─────────────── */
-
-const bannerSlides = [
-  {
-    image: "https://images.unsplash.com/photo-1507842217343-583f20270319?w=900",
-    tag: "জ্ঞান",
-    title: "যাকাত ও ফিতরা",
-    subtitle: "ইসলামের অন্যতম স্তম্ভ সম্পর্কে জানুন",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1564769610726-59cead6a6f8f?w=900",
-    tag: "আমল",
-    title: "ঈদের সুন্নাহ",
-    subtitle: "ঈদের দিনের সঠিক আমলসমূহ",
-  },
-  {
-    image: "https://images.unsplash.com/photo-1519817914152-22d216bb9170?w=900",
-    tag: "দু'আ",
-    title: "রমাদানের বিশেষ দু'আ",
-    subtitle: "প্রতিটি মুহূর্তের জন্য নির্বাচিত দু'আ",
-  },
-];
 
 const ilmCategories = [
   {
@@ -266,84 +242,10 @@ const amalCategories = [
 /* ─────────────── COMPONENT ─────────────── */
 
 export default function ContentSections() {
-  const [currentSlide, setCurrentSlide] = useState(0);
-
-  /* Slider auto-advance */
-  useEffect(() => {
-    const t = setInterval(
-      () => setCurrentSlide((p) => (p + 1) % bannerSlides.length),
-      5000,
-    );
-    return () => clearInterval(t);
-  }, []);
-
   return (
     <div className="bg-gray-50 min-h-screen">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-10">
         {/* ── BANNER SLIDER ── */}
-        <section>
-          <div className="relative h-60 md:h-80 lg:h-[400px] rounded-[2rem] overflow-hidden shadow-xl">
-            <AnimatePresence mode="wait">
-              <motion.div
-                key={currentSlide}
-                initial={{ opacity: 0, scale: 1.05 }}
-                animate={{ opacity: 1, scale: 1 }}
-                exit={{ opacity: 0, scale: 0.95 }}
-                transition={{ duration: 0.7, ease: "easeInOut" }}
-                className="absolute inset-0"
-              >
-                <Image
-                  src={bannerSlides[currentSlide].image}
-                  alt="banner"
-                  fill
-                  className="object-cover"
-                  priority
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                <div className="absolute bottom-0 left-0 p-6 md:p-12 w-full">
-                  <motion.span
-                    initial={{ y: 15, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    className="text-xs md:text-sm bg-amber-400 text-amber-950 font-bold px-4 py-1.5 rounded-full mb-4 inline-block shadow-lg"
-                  >
-                    {bannerSlides[currentSlide].tag}
-                  </motion.span>
-                  <motion.h3
-                    initial={{ y: 15, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.1 }}
-                    className="text-white font-bold text-3xl md:text-5xl leading-tight"
-                  >
-                    {bannerSlides[currentSlide].title}
-                  </motion.h3>
-                  <motion.p
-                    initial={{ y: 15, opacity: 0 }}
-                    animate={{ y: 0, opacity: 1 }}
-                    transition={{ delay: 0.2 }}
-                    className="text-white/80 text-base md:text-xl mt-3 max-w-2xl"
-                  >
-                    {bannerSlides[currentSlide].subtitle}
-                  </motion.p>
-                </div>
-              </motion.div>
-            </AnimatePresence>
-
-            {/* Dot indicators */}
-            <div className="absolute bottom-8 right-8 flex gap-2.5">
-              {bannerSlides.map((_, i) => (
-                <button
-                  key={i}
-                  onClick={() => setCurrentSlide(i)}
-                  className={`transition-all duration-500 rounded-full ${
-                    i === currentSlide
-                      ? "w-10 h-2 bg-white shadow-md"
-                      : "w-2 h-2 bg-white/40 hover:bg-white/70"
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </section>
 
         {/* ── ইলম ── */}
         <section>
@@ -355,7 +257,7 @@ export default function ContentSections() {
               সব দেখুন <ChevronRight size={16} />
             </button>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5">
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-5">
             {ilmCategories.map((c, i) => (
               <Link key={i} href={`/library/${c.slug}`}>
                 <motion.button
@@ -377,7 +279,7 @@ export default function ContentSections() {
                     <p className="font-bold text-lg text-gray-800">{c.name}</p>
 
                     <p className="text-xs text-[#1a4731] mt-1 font-bold tracking-widest uppercase opacity-70">
-                      পড়ুন 
+                      পড়ুন
                     </p>
                   </div>
                 </motion.button>
@@ -422,39 +324,6 @@ export default function ContentSections() {
             ))}
           </div>
         </section>
-
-        {/* ── Daily Ayah Card ── */}
-        <motion.section
-          initial={{ opacity: 0, y: 20 }}
-          whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
-          className="bg-[#1a4731] rounded-[2.5rem] p-10 md:p-16 text-white relative overflow-hidden shadow-2xl"
-        >
-          <div className="absolute -top-10 -right-10 text-white/5 text-[15rem] font-bold select-none leading-none">
-            "
-          </div>
-          <div className="relative z-10 max-w-4xl mx-auto text-center">
-            <p className="text-xs md:text-sm text-amber-300 font-black mb-6 flex items-center justify-center gap-3 uppercase tracking-[0.3em]">
-              <span className="h-px w-8 bg-amber-300/30"></span>
-              <Star size={16} className="fill-amber-300" /> আজকের আয়াত
-              <span className="h-px w-8 bg-amber-300/30"></span>
-            </p>
-            <p
-              className="text-3xl md:text-5xl leading-relaxed text-white mb-8 font-serif italic"
-              dir="rtl"
-            >
-              إِنَّ مَعَ الْعُسْرِ يُسْرًا
-            </p>
-            <div className="space-y-2">
-              <p className="text-xl md:text-2xl text-white/90 font-medium tracking-wide">
-                "নিশ্চয়ই কষ্টের সাথে স্বস্তি আছে।"
-              </p>
-              <p className="text-sm md:text-base text-white/40 font-semibold tracking-widest uppercase">
-                — সূরা ইনশিরাহ: ৬
-              </p>
-            </div>
-          </div>
-        </motion.section>
 
         {/* ── FLOAT SEARCH ── */}
         <motion.button
