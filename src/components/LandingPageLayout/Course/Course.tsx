@@ -37,7 +37,7 @@ const Course = () => {
           <Swiper
             modules={[Autoplay, Pagination]}
             spaceBetween={15}
-            slidesPerView={2}
+            slidesPerView={1}
             loop={true}
             centeredSlides={false}
             autoplay={{
@@ -50,8 +50,8 @@ const Course = () => {
               el: ".custom-pagination",
             }}
             breakpoints={{
-              320: { slidesPerView: 2.2, spaceBetween: 12 },
-              640: { slidesPerView: 3.2, spaceBetween: 15 },
+              320: { slidesPerView: 1, spaceBetween: 12 },
+              640: { slidesPerView: 1, spaceBetween: 15 },
               1024: { slidesPerView: 5, spaceBetween: 20 },
               1280: { slidesPerView: 6, spaceBetween: 20 },
             }}
@@ -62,7 +62,7 @@ const Course = () => {
               const Icon = d.icon;
               return (
                 <SwiperSlide key={i} className="h-auto">
-                  <div className="group flex flex-col items-center text-center gap-3 p-4 bg-white rounded-2xl border border-gray-50 hover:border-green-300 transition-all duration-300 h-full">
+                  <div className="group flex flex-col items-center text-center gap-3 p-14 md:p-4 bg-white rounded-2xl border border-gray-50 hover:border-green-300 transition-all duration-300 h-full">
                     <div className="flex items-center justify-center w-12 h-12 md:w-14 md:h-14 rounded-xl bg-green-50 text-green-600 group-hover:bg-green-600 group-hover:text-white transition-all duration-300">
                       {/* Render the icon directly with props */}
                       <Icon className="w-6 h-6 md:w-7 md:h-7" />

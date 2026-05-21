@@ -56,7 +56,7 @@ export default function Home() {
       <DonationSection />
 
       {/* Contact and Map section */}
-      <ContactSection />
+      {/* <ContactSection /> */}
     </main>
   );
 }
