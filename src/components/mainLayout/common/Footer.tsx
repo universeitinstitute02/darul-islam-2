@@ -14,7 +14,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-green-50 pt-24 pb-12 px-6 lg:px-8 border-t border-green-700/30 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-green-50 pt-24 pb-4 px-6 lg:px-8 border-t border-green-700/30 relative overflow-hidden">
       {/* background */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
 
@@ -147,7 +147,7 @@ export default function Footer() {
         </div>
 
         {/* bottom */}
-        <div className="mt-20 pt-8 border-t border-green-700/30 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="mt-8 pt-4 border-t border-green-700/30 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-green-200/40">
             © ২০২৬ দারুল ইসলাম — সকল স্বত্ব সংরক্ষিত
           </p>
