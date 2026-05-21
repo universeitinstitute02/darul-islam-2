@@ -99,7 +99,7 @@ const ProductDetails = () => {
           <div className="w-full lg:w-1/2 bg-white flex items-center justify-center relative group">
             <button
               onClick={handleGoBack}
-              className="hidden md:flex absolute top-6 left-6 z-10 items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm border border-gray-100 hover:bg-[#105D38] hover:text-white transition-all"
+              className="hidden md:flex absolute cursor-pointer top-6 left-6 z-10 items-center gap-2 bg-white/90 backdrop-blur-md px-4 py-2 rounded-xl text-sm font-bold text-gray-700 shadow-sm border border-gray-100 hover:bg-[#105D38] hover:text-white transition-all"
             >
               <ChevronLeft className="w-4 h-4" /> ফিরে যান
             </button>

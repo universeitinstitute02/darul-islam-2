@@ -5,11 +5,6 @@ import { Autoplay, Pagination, EffectFade } from "swiper/modules";
 import { ShoppingBag, ArrowRight } from "lucide-react";
 import Image from "next/image";
 
-// Swiper styles আমদানি করতে হবে (যদি গ্লোবালি না করা থাকে)
-import "swiper/css";
-import "swiper/css/pagination";
-import "swiper/css/effect-fade";
-
 const ShopHeroSlider = () => {
   const slides = [
     {
@@ -30,7 +25,6 @@ const ShopHeroSlider = () => {
     },
   ];
 
-  // স্ক্রল লজিক
   const scrollToProducts = () => {
     const element = document.getElementById("all-products");
     if (element) {

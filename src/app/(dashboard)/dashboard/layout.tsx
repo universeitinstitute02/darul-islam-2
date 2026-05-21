@@ -21,6 +21,7 @@ import {
   GraduationCap,
   Bell,
   UserCog,
+  ListOrdered,
 } from "lucide-react";
 import useUserRole from "../../hooks/useUserRole";
 
@@ -77,6 +78,12 @@ export default function DashboardLayout({
       href: "/dashboard/teacher/class-link",
       icon: Video,
       roles: ["teacher"],
+    },
+    {
+      name: "শপ অর্ডার ",
+      href: "/dashboard/admin/admin-order",
+      icon: ListOrdered,
+      roles: ["admin"],
     },
     {
       name: "শিক্ষকবৃন্দ",

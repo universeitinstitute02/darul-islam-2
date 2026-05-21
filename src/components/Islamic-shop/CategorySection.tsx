@@ -1,8 +1,105 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
-import { Loader2 } from "lucide-react";
+import { Loader2, ArrowUpRight, BookOpen, Sparkles, Heart } from "lucide-react";
 import ProductCard from "./ProductCard";
+
+const ShopPromoGrid = ({
+  onSelectCategory,
+}: {
+  onSelectCategory: (slug: string) => void;
+}) => {
+  const promos = [
+    {
+      id: 1,
+      tag: "নতুন কালেকশন",
+      title: "প্রিমিয়াম জায়নামাজ ও আতর",
+      desc: "ইবাদতে প্রশান্তি নিশ্চিত করতে আমাদের বাছাইকৃত সেরা কালেকশন",
+      icon: <Sparkles className="w-4 h-4 md:w-5 md:h-5 text-emerald-600" />,
+      bgGradient: "from-emerald-50/80 via-white to-emerald-50/30",
+      borderColor: "border-emerald-100/70",
+      tagBg: "bg-emerald-100 text-emerald-800",
+      targetSlug: "Prayer Mat", // জায়নামাজ ক্যাটাগরির স্লাগ
+    },
+    {
+      id: 2,
+      tag: "বিশেষ উপহার",
+      title: "ইসলামিক বই ও কিতাব কম্বো",
+      desc: "প্রিয়জনকে দ্বীনি জ্ঞান উপহার দিতে আমাদের বিশেষ প্যাকেজসমূহ",
+      icon: <BookOpen className="w-4 h-4 md:w-5 md:h-5 text-amber-600" />,
+      bgGradient: "from-amber-50/60 via-white to-amber-50/20",
+      borderColor: "border-amber-100/70",
+      tagBg: "bg-amber-100 text-amber-800",
+      targetSlug: "Islamic Books", // ইসলামিক বই ক্যাটাগরির স্লাগ
+    },
+  ];
+
+  return (
+    <div className="space-y-4 md:space-y-6 mb-8">
+      <div className="relative bg-gradient-to-r from-[#105D38] to-[#0c462a] text-white p-4 md:p-6 rounded-[1.8rem] md:rounded-[2rem] shadow-sm overflow-hidden flex flex-col md:flex-row items-center justify-between gap-3 text-center md:text-left">
+        <div className="absolute right-0 bottom-0 translate-x-10 translate-y-10 opacity-5 pointer-events-none">
+          <Heart className="w-48 h-48 md:w-64 md:h-64" />
+        </div>
+
+        <div className="space-y-0.5">
+          <p className="text-[9px] md:text-[11px] font-black text-emerald-300 uppercase tracking-widest">
+            আল-হাদিস / বাণী
+          </p>
+          <h3 className="text-xs md:text-base font-bold text-neutral-100 leading-relaxed max-w-3xl">
+            "সত ও আমানতদার ব্যবসায়ী কিয়ামতের দিন নবী সিদ্দিক ও শহীদগণের সাথে
+            থাকবেন।"
+            <span className="text-[10px] md:text-xs text-emerald-200/80 font-medium block md:inline md:ml-2">
+              — (তিরমিযী: ১২০৯)
+            </span>
+          </h3>
+        </div>
+
+        <div className="flex-shrink-0 bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-lg md:rounded-xl border border-white/10 text-[10px] md:text-xs font-black tracking-wider text-emerald-100">
+          ১০০% হালাল ও বিশ্বস্ত
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 gap-3 md:gap-6">
+        {promos.map((promo) => (
+          <div
+            key={promo.id}
+            onClick={() => onSelectCategory(promo.targetSlug)}
+            className={`relative bg-gradient-to-br ${promo.bgGradient} border ${promo.borderColor} p-4 md:p-8 rounded-[1.8rem] md:rounded-[2.2rem] shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between group overflow-hidden cursor-pointer`}
+          >
+            <div className="absolute -right-6 -top-6 w-16 h-16 md:w-24 md:h-24 bg-white/60 rounded-full blur-xl group-hover:scale-150 transition-transform duration-500"></div>
+
+            <div>
+              <div className="flex items-center justify-between mb-3 md:mb-5">
+                <span
+                  className={`text-[8px] md:text-[10px] font-black px-2 py-0.5 md:px-3 md:py-1 rounded-full uppercase tracking-wider ${promo.tagBg}`}
+                >
+                  {promo.tag}
+                </span>
+                <div className="w-7 h-7 md:w-9 md:h-9 bg-white border border-neutral-100 rounded-lg md:rounded-xl flex items-center justify-center shadow-sm">
+                  {promo.icon}
+                </div>
+              </div>
+
+              <h2 className="text-xs md:text-xl font-black text-neutral-800 leading-tight md:leading-snug line-clamp-2 md:line-clamp-none">
+                {promo.title}
+              </h2>
+              <p className="hidden md:block text-xs font-medium text-neutral-500 mt-2 leading-relaxed max-w-sm">
+                {promo.desc}
+              </p>
+            </div>
+
+            <div className="mt-4 md:mt-6 pt-2 md:pt-4 border-t border-neutral-100/50 flex items-center justify-between text-[10px] md:text-xs font-black text-neutral-700 group-hover:text-[#105D38] transition-colors">
+              <span>কালেকশন</span>
+              <div className="w-5 h-5 md:w-7 md:h-7 bg-white group-hover:bg-[#105D38] border border-neutral-100 group-hover:border-[#105D38] text-neutral-400 group-hover:text-white rounded-md md:rounded-lg flex items-center justify-center transition-all group-hover:rotate-45">
+                <ArrowUpRight className="w-3 md:w-4 h-3 md:h-4" />
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+};
 
 const CategorySection = () => {
   const [allProducts, setAllProducts] = useState<any[]>([]);
@@ -49,7 +146,7 @@ const CategorySection = () => {
     },
     {
       id: 6,
-      name: "জায়নামাজ",
+      name: "জায়নামাজ",
       slug: "Prayer Mat",
       image:
         "https://i.ibb.co.com/0jJJ8yMh/463087068-500611622945397-6536297165675071357-n-420x420.jpg",
@@ -78,7 +175,7 @@ const CategorySection = () => {
   }, []);
 
   const handleCategoryClick = (slug: string) => {
-    if (activeCategory === slug) return; // পুনরায় ক্লিক করলে স্ক্রল হবে না
+    if (activeCategory === slug) return;
 
     setLoading(true);
     setActiveCategory(slug);
@@ -88,10 +185,9 @@ const CategorySection = () => {
       setFilteredProducts(filtered);
       setLoading(false);
 
-      // স্ক্রল ফিক্স: block "start" এর বদলে "nearest" বা কাস্টম অফসেট ভালো কাজ করে
       if (productsSectionRef.current) {
         window.scrollTo({
-          top: productsSectionRef.current.offsetTop - 100, // ১০০ পিক্সেল উপরে থাকবে যাতে হেডিং দেখা যায়
+          top: productsSectionRef.current.offsetTop - 100,
           behavior: "smooth",
         });
       }
@@ -100,8 +196,9 @@ const CategorySection = () => {
 
   return (
     <section className="px-4 py-8 max-w-7xl mx-auto bg-white">
-      {/* ১. ক্যাটেগরি লিস্ট */}
-      <div className="mb-6">
+      <ShopPromoGrid onSelectCategory={handleCategoryClick} />
+
+      <div className="mb-6 mt-10">
         <h2 className="text-lg md:text-xl font-black text-[#105D38]">
           ক্যাটেগরি সমূহ
         </h2>
@@ -135,12 +232,11 @@ const CategorySection = () => {
         ))}
       </div>
 
-      {/* ২. ফিল্টার রেজাল্ট */}
       <div ref={productsSectionRef} className="scroll-mt-20">
         {activeCategory !== "All" && (
           <div className="bg-gray-50 rounded-[2rem] p-4 md:p-8 mb-16 border border-gray-100">
             <div className="flex items-center justify-between mb-6">
-              <h3 className="font-bold text-gray-800">
+              <h3 className="font-bold text-gray-800 text-sm md:text-base">
                 {categories.find((c) => c.slug === activeCategory)?.name}{" "}
                 কালেকশন
               </h3>
@@ -188,7 +284,7 @@ const CategorySection = () => {
           আপনার জন্য বিশেষ কিছু
         </h2>
         <p className="text-xs text-gray-400 font-medium mb-8">
-          আপনার পছন্দের ওপর ভিত্তি করে বাছাইকৃত
+          Your personalized recommendations
         </p>
 
         <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">

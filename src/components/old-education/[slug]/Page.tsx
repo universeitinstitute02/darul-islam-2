@@ -68,7 +68,6 @@ export const courses = [
 export default function CourseDetails() {
   const params = useParams();
 
-  // ⚠️ important fix
   const slug = Array.isArray(params.slug) ? params.slug[0] : params.slug;
   const course = courses.find((c) => c.slug === slug);
 
@@ -77,7 +76,7 @@ export default function CourseDetails() {
       <div className="p-10 text-center">
         <p>কোর্স পাওয়া যায়নি</p>
         <Link href="/">
-          <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded">
+          <button className="mt-4 px-4 py-2 bg-green-600 text-white rounded cursor-pointer">
             ফিরে যান
           </button>
         </Link>
