@@ -40,8 +40,6 @@ const Academic = () => {
         <div className="relative px-2 md:px-10">
           <Swiper
             modules={[Navigation, Pagination]}
-            spaceBetween={21}
-            slidesPerView={2}
             loop={false}
             navigation={{
               nextEl: ".next-btn-academic",
@@ -52,19 +50,19 @@ const Academic = () => {
               el: ".academic-pagination",
             }}
             breakpoints={{
-              320: { slidesPerView: 2.2, spaceBetween: 15 },
-              640: { slidesPerView: 3.2, spaceBetween: 18 },
+              320: { slidesPerView: 2, spaceBetween: 12 },
+              480: { slidesPerView: 2, spaceBetween: 14 },
+              640: { slidesPerView: 2, spaceBetween: 18 },
               1024: { slidesPerView: 5, spaceBetween: 20 },
               1280: { slidesPerView: 6, spaceBetween: 20 },
             }}
-            // শ্যাডো কাটার সমস্যা সমাধানের জন্য এই ক্লাসগুলো গুরুত্বপূর্ণ
             className="!p-4 !-m-4"
           >
             {departments.map((d, i) => (
               <SwiperSlide key={i} className="h-auto !py-4">
                 {" "}
                 {/* কার্ডের চারপাশের স্পেস যাতে শ্যাডো দেখা যায় */}
-                <div className="flex flex-col items-center text-center gap-3 p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(22,163,74,0.12)] hover:border-green-200 transition-all duration-500 h-full">
+                <div className="flex flex-col items-center text-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(22,163,74,0.12)] hover:border-green-200 transition-all duration-500 h-full">
                   <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl bg-green-50 text-green-700 transition-colors duration-500 group-hover:bg-green-600 group-hover:text-white">
                     {React.cloneElement(d.icon, { size: 28 })}
                   </div>

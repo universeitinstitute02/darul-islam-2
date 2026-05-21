@@ -168,9 +168,9 @@ export default function PrayerTimesResponsive() {
           </motion.div>
 
           {/* প্রধান কন্টেইনার পরিবর্তন করুন */}
-          <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 lg:gap-6 items-start">
+          <div className="grid grid-cols-5 gap-4 lg:gap-6 items-start">
             {/* ইনার গ্রিড পরিবর্তন করুন */}
-            <div className="col-span-2 lg:col-span-5 grid grid-cols-2 lg:grid-cols-5 gap-4">
+            <div className="col-span-5 grid grid-cols-5 gap-4">
               {PRAYER_CONFIG.map((prayer) => {
                 const isActive = data.currentId === prayer.id;
                 return (
@@ -178,7 +178,7 @@ export default function PrayerTimesResponsive() {
                     key={prayer.id}
                     whileHover={{ y: -4 }}
                     // মোবাইল রেসপনসিভ করার জন্য padding ও টেক্সট সাইজ কিছুটা অ্যাডজাস্ট করা হয়েছে
-                    className={`p-4 md:p-3 rounded-[1.5rem] md:rounded-[2.2rem] flex flex-col sm:flex-row items-center justify-between transition-all duration-300 ${
+                    className={`p-3 rounded-[1.5rem] md:rounded-[2.2rem] flex flex-col sm:flex-row items-center justify-between transition-all duration-300 ${
                       isActive
                         ? "bg-white ring-4 ring-emerald-500/10 border-2 border-emerald-500 shadow-xl"
                         : "bg-white border border-emerald-100 shadow-sm hover:shadow-md"
@@ -196,7 +196,7 @@ export default function PrayerTimesResponsive() {
                       </div>
                       <div>
                         <p
-                          className={`font-bold text-base md:text-xl ${isActive ? "text-emerald-900" : "text-gray-700"}`}
+                          className={`font-bold text-sm md:text-xl ${isActive ? "text-emerald-900" : "text-gray-700"}`}
                         >
                           {prayer.name}
                         </p>
@@ -206,7 +206,7 @@ export default function PrayerTimesResponsive() {
                       </div>
                     </div>
                     <p
-                      className={`text-xl md:text-2xl font-black mt-2 sm:mt-0 ${isActive ? "text-emerald-600" : "text-gray-900"}`}
+                      className={`text-base md:text-2xl font-black mt-2 sm:mt-0 ${isActive ? "text-emerald-600" : "text-gray-900"}`}
                     >
                       {toBn(formatTo12Hr(prayer.time))}
                     </p>

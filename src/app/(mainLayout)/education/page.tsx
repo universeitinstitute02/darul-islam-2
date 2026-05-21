@@ -5,6 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
 import EducationHero from "@/src/components/EducationHero/EducationHero";
+import EduCategories from "@/src/components/mainLayout/Educations/EduCategories";
 import { getAllCourses } from "@/src/lib/data";
 
 const EducationPage = () => {
@@ -30,17 +31,15 @@ const EducationPage = () => {
       </div>
     );
 
-  const educationData = data.slice(0, 1);
-
   const educationData2 = data.slice(1, 3);
 
   const freeCoursesData = data.find((item) =>
     item.category.includes("ফ্রি কোর্স"),
   );
 
-  const bundleCoursesData = data.find((item) =>
-    item.category.includes("বান্ডেল কোর্স"),
-  );
+  // const bundleCoursesData = data.find((item) =>
+  //   item.category.includes("বান্ডেল কোর্স"),
+  // );
 
   const filterBySearch = (sections: any[]) => {
     if (!sections) return [];
@@ -54,7 +53,6 @@ const EducationPage = () => {
       .filter((section) => section.courses.length > 0);
   };
 
-  const filteredEducationData = filterBySearch(educationData);
   const filteredEducationData2 = filterBySearch(educationData2);
 
   const fadeInVariant = {
@@ -68,58 +66,9 @@ const EducationPage = () => {
     <div className="min-h-screen bg-[#f8fafc]">
       <EducationHero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
-      {/* Section 1: Academic/Featured Sections */}
-      <div className="max-w-6xl mx-auto px-4 pt-4 lg:pt-7 space-y-20">
-        {filteredEducationData.length > 0 ? (
-          filteredEducationData.map((section, idx) => (
-            <motion.div
-              key={idx}
-              {...fadeInVariant}
-              className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm"
-            >
-              <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
-                <h2 className="text-[#105D38] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
-                  {section.category}
-                </h2>
-              </div>
-
-              <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
-                {section.courses.map((course: any, cIdx: number) => (
-                  <Link
-                    href={`/education/${course.id}`}
-                    key={cIdx}
-                    className="w-full"
-                  >
-                    <motion.div
-                      whileHover={{ scale: 1.05 }}
-                      whileTap={{ scale: 0.95 }}
-                      className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
-                    >
-                      <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
-                      <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
-                      <div className="relative h-full flex items-center justify-center p-3">
-                        <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">
-                          {course.title}
-                        </p>
-                      </div>
-                      <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-                    </motion.div>
-                  </Link>
-                ))}
-              </div>
-            </motion.div>
-          ))
-        ) : (
-          <div className="text-center py-20 bg-white rounded-[2rem] border-2 border-dashed border-neutral-200">
-            <p className="text-neutral-400 font-bold">
-              "{searchTerm}" নামে কোনো কোর্স পাওয়া যায়নি!
-            </p>
-          </div>
-        )}
-      </div>
-
+      <EduCategories></EduCategories>
       {/* Section: Bundle Courses (প্রিমিয়াম কোর্সের ঠিক উপরে) */}
-      {bundleCoursesData && (
+      {/* {bundleCoursesData && (
         <div className="max-w-6xl mx-auto px-4 pt-20">
           <motion.div {...fadeInVariant}>
             <CourseSection
@@ -132,7 +81,7 @@ const EducationPage = () => {
             />
           </motion.div>
         </div>
-      )}
+      )} */}
 
       {/* Section 2: Other Course Sections (Includes Premium) */}
       <div className="max-w-6xl mx-auto px-4 pt-10 pb-12 lg:pt-16 space-y-20">

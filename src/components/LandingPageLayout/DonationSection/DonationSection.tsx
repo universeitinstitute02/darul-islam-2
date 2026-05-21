@@ -4,20 +4,20 @@ import { Heart, Droplets, ArrowRight } from "lucide-react";
 const DonationSection = () => {
   const donationCards = [
     {
-      title: "সাধারণ ডোনেশন",
-      description: "মাদরাসা ও এতিমখানায় সহায়তা করুন।",
-      icon: <Heart className="text-green-600" size={28} />, // ছোট স্ক্রিনের জন্য আইকন সাইজ কমানো হয়েছে
-      btnText: "ডোনেট",
-      btnColor: "bg-green-600 hover:bg-green-700",
-      bgColor: "bg-emerald-50",
-    },
-    {
       title: "ব্লাড ডোনেশন",
       description: "মানবতার সেবায় রক্ত দান করুন।",
       icon: <Droplets className="text-red-500" size={28} />,
       btnText: "ব্লাড দিন",
       btnColor: "bg-red-500 hover:bg-red-600",
       bgColor: "bg-red-50",
+    },
+    {
+      title: "সাধারণ ডোনেশন",
+      description: "মাদরাসা ও এতিমখানায় সহায়তা করুন।",
+      icon: <Heart className="text-green-600" size={28} />, // ছোট স্ক্রিনের জন্য আইকন সাইজ কমানো হয়েছে
+      btnText: "ডোনেট",
+      btnColor: "bg-green-600 hover:bg-green-700",
+      bgColor: "bg-emerald-50",
     },
   ];
 

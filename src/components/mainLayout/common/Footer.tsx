@@ -14,7 +14,7 @@ import {
 
 export default function Footer() {
   return (
-    <footer className="bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-green-50 pt-24 pb-12 px-6 lg:px-8 border-t border-green-700/30 relative overflow-hidden">
+    <footer className="bg-gradient-to-br from-green-900 via-green-800 to-green-900 text-green-50 pt-24 pb-4 px-6 lg:px-8 border-t border-green-700/30 relative overflow-hidden">
       {/* background */}
       <div className="absolute inset-0 opacity-[0.03] pointer-events-none bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
 
@@ -57,16 +57,14 @@ export default function Footer() {
           {/* Links */}
           <div className="space-y-8 lg:pl-8">
             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
-              <div className="w-6 h-0.5 bg-green-400" /> দ্রুত লিঙ্ক
+              <div className="w-6 h-0.5 bg-green-400" /> গুরুত্বপূর্ণ লিংক
             </h3>
 
             <ul className="space-y-4">
               {[
                 { name: "আমাদের সম্পর্কে", href: "/about/history" },
-                { name: "কোর্সসমূহ", href: "/courses" },
-                { name: "লাইব্রেরি", href: "/library" },
-                { name: "দান", href: "/donation" },
-                { name: "যোগাযোগ", href: "/contact" },
+                { name: "শর্ত বলি ও নিয়মাবলী", href: "/courses" },
+                { name: "গোপনীয়তা নীতি", href: "/library" },
               ].map((link) => (
                 <li key={link.href}>
                   <Link
@@ -85,24 +83,28 @@ export default function Footer() {
           </div>
 
           {/* Info */}
-          <div className="space-y-8">
+          <div className="space-y-8 lg:pl-8">
             <h3 className="text-sm font-black text-white uppercase tracking-widest flex items-center gap-3">
               <div className="w-6 h-0.5 bg-green-400" /> তথ্য ও সাহায্য
             </h3>
 
             <ul className="space-y-4">
               {[
-                "নোটিশ বোর্ড",
-                "ভর্তির নির্দেশিকা",
-                "FAQ",
-                "শিক্ষার্থী পোর্টাল",
-                "ক্যারিয়ার",
-              ].map((item) => (
-                <li key={item}>
-                  <button className="flex items-center gap-3 text-sm font-bold text-green-100/60 hover:text-green-300 transition-all group">
-                    <div className="w-1.5 h-1.5 bg-green-400 rounded-full scale-50 group-hover:scale-100 transition-transform" />
-                    {item}
-                  </button>
+                { name: "সচরাচর জিজ্ঞাসা ", href: "/about/history" },
+                { name: "অভিযোগ বাক্স", href: "/courses" },
+                { name: "ভর্তি নির্দেশিকা ", href: "/library" },
+              ].map((link) => (
+                <li key={link.href}>
+                  <Link
+                    href={link.href}
+                    className="flex items-center gap-3 text-sm font-bold text-green-100/60 hover:text-green-300 transition-all group"
+                  >
+                    <ArrowRight
+                      size={14}
+                      className="group-hover:translate-x-1 transition-transform"
+                    />
+                    {link.name}
+                  </Link>
                 </li>
               ))}
             </ul>
@@ -115,24 +117,37 @@ export default function Footer() {
             </h3>
 
             <ul className="space-y-6 text-green-100/80">
+              <li className="flex gap-4 items-center">
+                <Phone className="text-green-400" size={18} />
+
+                <a
+                  href="tel:+8801792297764"
+                  className="hover:text-green-400 transition"
+                >
+                  +880 1792297764
+                </a>
+              </li>
+
+              <li className="flex gap-4 items-center">
+                <Mail className="text-green-400" size={18} />
+
+                <a
+                  href="mailto:darulislaminstituteofficial@gmail.com"
+                  className="hover:text-green-400 transition break-all"
+                >
+                  darulislaminstituteofficial@gmail.com
+                </a>
+              </li>
               <li className="flex gap-4">
                 <MapPin className="text-green-400" size={18} />
-                <span>ঢাকা ১২২১, বাংলাদেশ</span>
-              </li>
-              <li className="flex gap-4">
-                <Phone className="text-green-400" size={18} />
-                <span>+৮৮০ ১৭০০-০০০০০০</span>
-              </li>
-              <li className="flex gap-4">
-                <Mail className="text-green-400" size={18} />
-                <span>info@darulislam.com</span>
+                <span>মোহাম্মদপুর, ঢাকা 1207, বাংলাদেশ</span>
               </li>
             </ul>
           </div>
         </div>
 
         {/* bottom */}
-        <div className="mt-20 pt-8 border-t border-green-700/30 flex flex-col md:flex-row justify-between items-center gap-6">
+        <div className="mt-8 pt-4 border-t border-green-700/30 flex flex-col md:flex-row justify-between items-center gap-6">
           <p className="text-xs text-green-200/40">
             © ২০২৬ দারুল ইসলাম — সকল স্বত্ব সংরক্ষিত
           </p>

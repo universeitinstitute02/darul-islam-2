@@ -116,3 +116,11 @@ body {
 .teacher-swiper .swiper-button-prev:hover {
   color: #16a34a;
 }
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}

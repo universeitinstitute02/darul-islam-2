@@ -1,137 +1,212 @@
 "use client";
-import React from "react";
+
+import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { motion } from "framer-motion";
+import Link from "next/link";
 import Image from "next/image";
+
+// ✅ swiper
 import { Swiper, SwiperSlide } from "swiper/react";
-import { Autoplay, Navigation, Pagination } from "swiper/modules";
-import { ChevronLeft, ChevronRight } from "lucide-react";
-import hujur1 from "../../../../public/images/hujur1.png";
+import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
-import SectionHeading from "../../shared/SectionHeading";
+const teachers = [
+  {
+    name: "প্রফেসর ড. আব্দুর রহমান",
+    degree: "দাওরায়ে হাদীস, পিএইচডি",
+    experience: "১৫ বছরের অভিজ্ঞতা",
+    department: "হাদীস বিভাগ",
+    darulDepartment: "দারুল ইসলাম হাদীস অনুষদ",
+    image: "/hujur.webp",
+    profile: "/teachers/rahman",
+  },
+  {
+    name: "মাওলানা মুহাম্মদ ইউসুফ",
+    degree: "মুফতি, তাকমীল ফিকহ",
+    experience: "১২ বছরের অভিজ্ঞতা",
+    department: "ফিকহ বিভাগ",
+    darulDepartment: "দারুল ইসলাম ফিকহ অনুষদ",
+    image: "/hujur.webp",
+    profile: "/teachers/yusuf",
+  },
+  {
+    name: "ড. আয়েশা সিদ্দিকা",
+    degree: "তাফসীর, ইসলামিক স্টাডিজ",
+    experience: "১০ বছরের অভিজ্ঞতা",
+    department: "কুরআন বিভাগ",
+    darulDepartment: "দারুল ইসলাম কুরআন অনুষদ",
+    image: "/hujur.webp",
+    profile: "/teachers/ayesha",
+  },
+  {
+    name: "মাওলানা মুহাম্মদ ইউসুফ",
+    degree: "মুফতি, তাকমীল ফিকহ",
+    experience: "১২ বছরের অভিজ্ঞতা",
+    department: "ফিকহ বিভাগ",
+    darulDepartment: "দারুল ইসলাম ফিকহ অনুষদ",
+    image: "/hujur.webp",
+    profile: "/teachers/yusuf",
+  },
+];
 
-const TeacherCard = ({ teacher }: { teacher: any }) => (
-  // h-full নিশ্চিত করে যে সব কার্ড একই উচ্চতার হবে
-  <div className="group flex flex-col items-center text-center gap-4 p-5 bg-white rounded-[2rem] border border-white shadow-[0_10px_30px_rgba(0,0,0,0.04)] hover:shadow-[0_15px_35px_rgba(22,163,74,0.1)] hover:border-green-100 transition-all duration-500 h-full w-full">
-    <div className="relative">
-      <div className="w-24 h-24 md:w-32 md:h-32 rounded-full border-4 border-green-50 overflow-hidden group-hover:scale-105 transition-transform duration-500 relative">
-        <Image
-          src={hujur1}
-          alt={teacher.name}
-          fill
-          className="object-cover"
-          sizes="(max-width: 768px) 100px, 150px"
-        />
-      </div>
-      <div className="absolute inset-[-4px] rounded-full border-2 border-transparent group-hover:border-green-500/20 group-hover:scale-110 transition-all duration-500" />
-    </div>
-
-    <div>
-      <h3 className="text-base md:text-lg font-bold text-gray-800 leading-tight group-hover:text-green-700 transition-colors">
-        {teacher.name}
-      </h3>
-      <p className="text-xs md:text-sm text-green-600 font-semibold mt-1">
-        {teacher.role}
-      </p>
-    </div>
-  </div>
-);
-
-const AmaderTeacher = () => {
-  const teachers = [
-    { name: "মুফতি আব্দুল্লাহ", role: "হাদিস বিশেষজ্ঞ" },
-    { name: "মাওলানা ইমরান", role: "কুরআন বিশেষজ্ঞ" },
-    { name: "মুফতি সাইফুল ইসলাম", role: "আরবি ভাষা বিশেষজ্ঞ" },
-    { name: "মাওলানা আবু বকর", role: "ফিকহ বিশেষজ্ঞ" },
-    { name: "মুফতি মাহমুদুল হাসান", role: "তাফসীর বিশেষজ্ঞ" },
-    { name: "মাওলানা ইউসুফ", role: "আদব বিশেষজ্ঞ" },
-  ];
-
-  const swiperConfig = {
-    modules: [Autoplay, Navigation, Pagination],
-    spaceBetween: 20,
-    loop: true,
-    // slidesPerView কে রাউন্ড সংখ্যায় রাখা ভালো (যেমন: ১, ২, ৩)
-    slidesPerView: 1,
-    autoplay: {
-      delay: 3500,
-      disableOnInteraction: false,
-      pauseOnMouseEnter: true,
-    },
-    navigation: {
-      nextEl: ".teacher-next",
-      prevEl: ".teacher-prev",
-    },
-    pagination: {
-      clickable: true,
-      el: ".teacher-pagination",
-    },
-    breakpoints: {
-      // মোবাইলে ১টি বা ২টি ফুল কার্ড দেখালে সুন্দর লাগে
-      320: { slidesPerView: 1, spaceBetween: 15 },
-      480: { slidesPerView: 2, spaceBetween: 15 },
-      768: { slidesPerView: 3, spaceBetween: 20 },
-      1024: { slidesPerView: 4, spaceBetween: 25 },
-      1280: { slidesPerView: 5, spaceBetween: 30 },
-    },
-  };
-
+export default function TeacherSlider() {
   return (
-    <section className="overflow-hidden px-5 my-6">
-      <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl relative ">
-        <SectionHeading>আমাদের শিক্ষকবৃন্দ</SectionHeading>
+    <section className="relative overflow-hidden  px-4 py-8 md:py-12 lg:px-8">
+      <div className="relative z-10 bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
+        {/* Header */}
+        <div className="mx-auto mb-12 max-w-2xl space-y-3 text-center">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.9 }}
+            whileInView={{ opacity: 1, scale: 1 }}
+            className="inline-block rounded-full bg-green-100 px-4 py-1 text-xs font-bold text-green-700"
+          >
+            দক্ষ শিক্ষকমণ্ডলী
+          </motion.div>
 
-        <div className="relative px-2 md:px-10">
-          {/* Swiper এর height ফিক্স করার জন্য কিছু CSS ক্লাস */}
-          <Swiper {...swiperConfig} className="!pb-12 teacher-swiper">
-            {teachers.map((teacher, index) => (
-              <SwiperSlide key={index} className="!h-auto flex">
-                <TeacherCard teacher={teacher} />
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <h2 className="text-2xl font-extrabold text-green-800 lg:text-4xl">
+            আমাদের অভিজ্ঞ উস্তাদগণ
+          </h2>
 
-          {/* Navigation Arrows */}
-          <button className="teacher-prev absolute top-1/2 -left-2 md:-left-4 -translate-y-12 z-10 w-11 h-11 flex items-center justify-center bg-white text-green-600 rounded-full shadow-xl hover:bg-green-600 hover:text-white transition-all duration-300">
-            <ChevronLeft size={24} />
-          </button>
-          <button className="teacher-next absolute top-1/2 -right-2 md:-right-4 -translate-y-12 z-10 w-11 h-11 flex items-center justify-center bg-white text-green-600 rounded-full shadow-xl hover:bg-green-600 hover:text-white transition-all duration-300">
-            <ChevronRight size={24} />
-          </button>
+          <p className="text-sm text-neutral-600 lg:text-base">
+            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত ইসলামি শিক্ষা।
+          </p>
+
+          <div className="mx-auto h-1 w-16 rounded-full bg-green-500"></div>
         </div>
 
-        {/* Pagination Container */}
-        <div className="teacher-pagination !flex justify-center items-center gap-1 mt-5" />
+        {/* Swiper */}
+        <Swiper
+          modules={[Autoplay, Pagination, Navigation]}
+          slidesPerView={1}
+          loop={true}
+          speed={1000}
+          autoplay={{
+            delay: 2500,
+            disableOnInteraction: false,
+            pauseOnMouseEnter: true,
+          }}
+          pagination={{ clickable: true }}
+          navigation={true}
+          breakpoints={{
+            768: {
+              slidesPerView: 2,
+            },
+            1024: {
+              slidesPerView: 3,
+            },
+          }}
+          className="teacher-swiper"
+        >
+          {teachers.map((teacher, i) => (
+            <SwiperSlide key={i} className="py-4">
+              <div className="flex justify-center px-3">
+                {/* Card */}
+                <div
+                  className="
+                    group w-full max-w-sm overflow-hidden rounded-3xl
+                    border border-green-100 bg-white/90
+                    shadow-lg backdrop-blur transition-all duration-300
+                     hover:shadow-2xl
+                  "
+                >
+                  {/* top bg */}
+                  <div className="relative h-24 bg-gradient-to-r from-green-700 to-green-500" />
 
-        <div className="flex justify-center mt-10">
-          <button className="bg-green-700 hover:bg-green-800 transform hover:-translate-y-1 transition-all text-white text-sm md:text-base font-bold px-10 py-3.5 rounded-full shadow-lg">
-            সব শিক্ষক দেখুন
-          </button>
+                  {/* image */}
+                  <div className="-mt-14 flex justify-center">
+                    <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-lg">
+                      <Image
+                        src={teacher.image}
+                        alt={teacher.name}
+                        fill
+                        className="object-cover"
+                      />
+                    </div>
+                  </div>
+
+                  {/* content */}
+                  <div className="space-y-4 px-6 pb-6 pt-4 text-center">
+                    {/* name */}
+                    <div>
+                      <h3 className="text-lg font-bold text-green-800">
+                        {teacher.name}
+                      </h3>
+
+                      <p className="mt-1 text-sm text-neutral-500">
+                        {teacher.degree}
+                      </p>
+                    </div>
+
+                    {/* info */}
+                    <div className="space-y-3 rounded-2xl bg-green-50 p-4 text-left">
+                      <div className="flex items-start gap-3">
+                        <Briefcase
+                          size={18}
+                          className="mt-0.5 text-green-700"
+                        />
+
+                        <div>
+                          <p className="text-xs font-semibold text-green-700">
+                            অভিজ্ঞতা
+                          </p>
+
+                          <p className="text-sm text-neutral-700">
+                            {teacher.experience}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="flex items-start gap-3">
+                        <GraduationCap
+                          size={18}
+                          className="mt-0.5 text-green-700"
+                        />
+
+                        <div>
+                          <p className="text-xs font-semibold text-green-700">
+                            বিভাগ
+                          </p>
+
+                          <p className="text-sm text-neutral-700">
+                            {teacher.department}
+                          </p>
+                        </div>
+                      </div>
+
+                      <div className="border-t border-green-100 pt-3">
+                        <p className="text-xs font-semibold text-green-700">
+                          Department of Darul Islam
+                        </p>
+
+                        <p className="text-sm text-neutral-700">
+                          {teacher.darulDepartment}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </SwiperSlide>
+          ))}
+        </Swiper>
+ 
+        {/* CTA */}
+        <div className="mt-10 flex justify-center">
+          <Link
+            href="/teachers"
+            className="
+              group flex items-center gap-2 rounded-full
+              bg-green-700 px-6 py-3 text-sm font-semibold
+              text-white shadow-lg transition hover:bg-green-800
+            "
+          >
+            সকল উস্তাদজীর তালিকা
+            <ArrowRight
+              size={18}
+              className="transition group-hover:translate-x-1"
+            />
+          </Link>
         </div>
       </div>
-
-      <style jsx global>{`
-        /* কার্ডগুলোর উচ্চতা সমান করার ম্যাজিক */
-        .teacher-swiper .swiper-wrapper {
-          display: flex;
-        }
-        .teacher-swiper .swiper-slide {
-          height: auto !important;
-          display: flex;
-        }
-
-        .teacher-pagination .swiper-pagination-bullet {
-          margin: 0 5px !important;
-          background: #cbd5e1;
-          opacity: 1;
-          transition: all 0.3s ease;
-        }
-        .teacher-pagination .swiper-pagination-bullet-active {
-          background: #16a34a !important;
-          width: 28px !important;
-          border-radius: 12px !important;
-        }
-      `}</style>
     </section>
   );
-};
-
-export default AmaderTeacher;
+}
