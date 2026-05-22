@@ -290,7 +290,7 @@ export default function PostNoticeModal({
               disabled={loading}
               className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 disabled:opacity-70 transition-all flex items-center justify-center gap-2 shadow-sm"
             >
-              {loading && <LoadingSpinner />}
+              {loading && <Loader2 className="animate-spin" />}
               {editingNotice ? "আপডেট করুন" : "প্রকাশ করুন"}
             </button>
           </div>

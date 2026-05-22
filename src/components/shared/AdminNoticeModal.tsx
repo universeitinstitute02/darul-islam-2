@@ -174,7 +174,7 @@ export default function GeneralNoticeModal({
                   disabled={isPending}
                   className="px-5 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  {isPending && <LoadingSpinner />}
+                  {isPending && <Loader2 className="animate-spin" />}
                   <span>{editingNotice ? "সংশোধন করুন" : "প্রকাশ করুন"}</span>
                 </button>
               </div>

@@ -212,7 +212,7 @@ const LoginPage = () => {
             >
               {isSubmitting ? (
                 <>
-                  <LoadingSpinner />
+                  <Loader2 className="animate-spin" />
                 </>
               ) : (
                 "লগইন করুন"

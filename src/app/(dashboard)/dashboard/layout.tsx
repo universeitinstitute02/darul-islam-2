@@ -22,6 +22,8 @@ import {
   Bell,
   UserCog,
   ListOrdered,
+  FolderKanban,
+  House,
 } from "lucide-react";
 import useUserRole from "../../hooks/useUserRole";
 
@@ -55,6 +57,12 @@ export default function DashboardLayout({
   };
 
   const allLinks = [
+    {
+      name: "হোম",
+      href: "/",
+      icon: House,
+      roles: ["teacher", "admin"],
+    },
     {
       name: "টিচার ড্যাশবোর্ড",
       href: "/dashboard/teacher/teacher-dashboard",
@@ -122,6 +130,19 @@ export default function DashboardLayout({
       roles: ["admin"],
     },
     {
+      name: "গ্যালারি ম্যনেজমেন্ট",
+      href: "/dashboard/admin/gallery",
+      icon: FolderKanban,
+      roles: ["admin"],
+    },
+    {
+      name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
+      href: "/dashboard/admin/testimonial",
+      icon: FolderKanban,
+      roles: ["admin"],
+    },
+
+    {
       name: "প্রোফাইল সেটিংস",
       href: "/dashboard/teacher/profile",
       icon: UserCog,
@@ -181,15 +202,6 @@ export default function DashboardLayout({
               </Link>
             );
           })}
-
-          {role === "admin" && (
-            <Link
-              href="/dashboard/teacher"
-              className="flex items-center gap-3 p-3 hover:bg-[#C5A059] hover:text-white rounded-xl text-[#C5A059] font-bold transition mt-8 border border-[#C5A059]"
-            >
-              শিক্ষক প্যানেল দেখুন
-            </Link>
-          )}
         </nav>
 
         <div className="p-4 border-t border-green-800">

@@ -165,7 +165,11 @@ const EditCourseModal = ({ course, isOpen, onClose, onUpdate, token }: any) => {
                 disabled={loading}
                 className="flex-1 py-3 bg-[#105D38] text-white font-bold rounded-2xl shadow-lg hover:bg-[#0c4a2d] transition-all flex items-center justify-center gap-2"
               >
-                {loading ? <LoadingSpinner /> : <Save size={18} />}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  <Save size={18} />
+                )}
                 আপডেট করুন
               </button>
             </div>

@@ -157,7 +157,7 @@ export default function AdminGeneralNotices() {
       <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-2">
-            <LoadingSpinner />
+            <Loader2 className="animate-spin" />
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center py-20 text-red-500 gap-2">

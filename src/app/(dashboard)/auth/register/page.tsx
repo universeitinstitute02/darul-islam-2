@@ -266,7 +266,7 @@ const RegisterPage: React.FC = () => {
                   >
                     {isLoading ? (
                       <>
-                        <LoadingSpinner />
+                        <Loader2 className="animate-spin" />
                       </>
                     ) : (
                       "রেজিস্ট্রেশন সম্পন্ন করুন"

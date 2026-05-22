@@ -16,6 +16,7 @@ import {
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+import Swal from "sweetalert2";
 
 const TeacherList = () => {
   const { data: session } = useSession();
@@ -45,7 +46,7 @@ const TeacherList = () => {
     } catch (error) {
       console.error("Teacher fetch failed:", error);
     } finally {
-      setLoading(false);
+      loading && setLoading(false);
     }
   }, [token]);
 
@@ -69,6 +70,62 @@ const TeacherList = () => {
     currentPage * itemsPerPage,
   );
 
+  // 📧 ইমেইল হ্যান্ডলার (পারমিশন সহ)
+  const handleEmailClick = (email: string, name: string) => {
+    if (!email) {
+      Swal.fire({
+        icon: "error",
+        title: "ইমেইল পাওয়া যায়নি",
+        text: "দুঃখিত, এই শিক্ষকের ইমেইল এড্রেস পাওয়া যায়নি।",
+        confirmButtonColor: "#105D38",
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: "question",
+      title: "ইমেইল করবেন?",
+      text: `আপনি কি শিক্ষক ${name}-কে মেইল করতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, মেইল করুন",
+      cancelButtonText: "না",
+      confirmButtonColor: "#105D38",
+      cancelButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `mailto:${email}`;
+      }
+    });
+  };
+
+  // 📞 কল হ্যান্ডলার (পারমিশন সহ)
+  const handleCallClick = (phone: string, name: string) => {
+    if (!phone) {
+      Swal.fire({
+        icon: "error",
+        title: "নাম্বার পাওয়া যায়নি",
+        text: "দুঃখিত, এই শিক্ষকের মোবাইল নাম্বার পাওয়া যায়নি।",
+        confirmButtonColor: "#105D38",
+      });
+      return;
+    }
+
+    Swal.fire({
+      icon: "question",
+      title: "কল করবেন?",
+      text: `আপনি কি শিক্ষক ${name}-এর নাম্বারে কল করতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, কল করুন",
+      cancelButtonText: "না",
+      confirmButtonColor: "#105D38",
+      cancelButtonColor: "#d33",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        window.location.href = `tel:${phone}`;
+      }
+    });
+  };
+
   if (loading) {
     return (
       <div className="h-96 flex flex-col items-center justify-center gap-4">
@@ -89,7 +146,7 @@ const TeacherList = () => {
             সম্মানিত শিক্ষকবৃন্দ
           </h2>
           <p className="text-xs md:text-sm text-neutral-500 font-medium">
-            মোট {teachers.length} জন নিবন্ধিত শিক্ষক পাওয়া গেছে
+            মোট {teachers.length} জন নিবন্ধিত শিক্ষক পাওয়া গেছে
           </p>
         </div>
 
@@ -116,94 +173,108 @@ const TeacherList = () => {
       {/* Teacher Grid View */}
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
         <AnimatePresence mode="popLayout">
-          {currentItems.map((teacher) => (
-            <motion.div
-              key={teacher._id}
-              layout
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, scale: 0.9 }}
-              className="bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
-            >
-              {/* Top Profile Area */}
-              <div className="p-6 pb-4 flex items-start justify-between">
-                <div className="flex items-center gap-4">
-                  <div className="relative">
-                    <img
-                      src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${teacher.name}`}
-                      className="w-16 h-16 rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover"
-                      alt={teacher.name}
-                    />
-                    <div
-                      className={`absolute -bottom-1 -right-1 p-1 rounded-full border-2 border-white ${teacher.profileData?.isApproved ? "bg-green-500" : "bg-amber-500"}`}
-                    >
-                      {teacher.profileData?.isApproved ? (
-                        <CheckCircle2 size={10} className="text-white" />
-                      ) : (
-                        <XCircle size={10} className="text-white" />
-                      )}
+          {currentItems.map((teacher) => {
+            const teacherName =
+              teacher.profileData?.teacherNameBn || teacher.name;
+            const teacherPhone = teacher.profileData?.phone || teacher.phone;
+
+            return (
+              <motion.div
+                key={teacher._id}
+                layout
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, scale: 0.9 }}
+                className="bg-white rounded-[2.5rem] border border-neutral-100 shadow-sm hover:shadow-xl transition-all duration-300 overflow-hidden group"
+              >
+                {/* Top Profile Area */}
+                <div className="p-6 pb-4 flex items-start justify-between">
+                  <div className="flex items-center gap-4">
+                    <div className="relative">
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${teacher.name}`}
+                        className="w-16 h-16 rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover"
+                        alt={teacher.name}
+                      />
+                      <div
+                        className={`absolute -bottom-1 -right-1 p-1 rounded-full border-2 border-white ${teacher.profileData?.isApproved ? "bg-green-500" : "bg-amber-500"}`}
+                      >
+                        {teacher.profileData?.isApproved ? (
+                          <CheckCircle2 size={10} className="text-white" />
+                        ) : (
+                          <XCircle size={10} className="text-white" />
+                        )}
+                      </div>
+                    </div>
+                    <div>
+                      <h4 className="text-base font-black text-neutral-800 leading-tight">
+                        {teacherName}
+                      </h4>
+                      <p className="text-xs text-neutral-400 font-medium mt-1 lowercase">
+                        {teacher.email}
+                      </p>
                     </div>
                   </div>
-                  <div>
-                    <h4 className="text-base font-black text-neutral-800 leading-tight">
-                      {teacher.profileData?.teacherNameBn || teacher.name}
-                    </h4>
-                    <p className="text-xs text-neutral-400 font-medium mt-1 lowercase">
-                      {teacher.email}
+                </div>
+
+                {/* Detailed Info */}
+                <div className="px-6 py-4 bg-neutral-50/50 space-y-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 bg-white rounded-xl shadow-sm text-emerald-600">
+                      <Briefcase size={14} />
+                    </div>
+                    <div>
+                      <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
+                        পদবী ও বিভাগ
+                      </p>
+                      <p className="text-xs font-bold text-neutral-700">
+                        {teacher.profileData?.designation || "শিক্ষক"} •{" "}
+                        {teacher.profileData?.department?.name || "সাধারণ"}
+                      </p>
+                    </div>
+                  </div>
+
+                  <div className="flex items-center justify-between">
+                    <span
+                      className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${teacher.profileData?.isApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+                    >
+                      {teacher.profileData?.isApproved
+                        ? "Approved"
+                        : "Pending Approval"}
+                    </span>
+                    <p className="text-[10px] font-bold text-neutral-400 italic">
+                      ID: ...{teacher._id.slice(-6)}
                     </p>
                   </div>
                 </div>
-              </div>
 
-              {/* Detailed Info */}
-              <div className="px-6 py-4 bg-neutral-50/50 space-y-3">
-                <div className="flex items-center gap-3">
-                  <div className="p-2 bg-white rounded-xl shadow-sm text-emerald-600">
-                    <Briefcase size={14} />
-                  </div>
-                  <div>
-                    <p className="text-[10px] font-bold text-neutral-400 uppercase tracking-wider">
-                      পদবী ও বিভাগ
-                    </p>
-                    <p className="text-xs font-bold text-neutral-700">
-                      {teacher.profileData?.designation || "শিক্ষক"} •{" "}
-                      {teacher.profileData?.department?.name || "সাধারণ"}
-                    </p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between">
-                  <span
-                    className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${teacher.profileData?.isApproved ? "bg-emerald-100 text-emerald-700" : "bg-amber-100 text-amber-700"}`}
+                {/* Footer Actions */}
+                <div className="p-4 flex gap-2">
+                  <button
+                    onClick={() => handleEmailClick(teacher.email, teacherName)}
+                    className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#105D38] hover:bg-[#105D38] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
                   >
-                    {teacher.profileData?.isApproved
-                      ? "Approved"
-                      : "Pending Approval"}
-                  </span>
-                  <p className="text-[10px] font-bold text-neutral-400 italic">
-                    ID: ...{teacher._id.slice(-6)}
-                  </p>
+                    <Mail size={14} /> ইমেইল
+                  </button>
+                  <button
+                    onClick={() => handleCallClick(teacherPhone, teacherName)}
+                    className="flex-1 py-3 bg-neutral-900 text-white rounded-2xl hover:bg-neutral-800 transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 shadow-lg cursor-pointer"
+                  >
+                    <MessageCircle size={14} /> যোগাযোগ
+                  </button>
                 </div>
-              </div>
-
-              {/* Footer Actions */}
-              <div className="p-4 flex gap-2">
-                <button className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#105D38] hover:bg-[#105D38] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2">
-                  <Mail size={14} /> ইমেইল
-                </button>
-                <button className="flex-1 py-3 bg-neutral-900 text-white rounded-2xl hover:bg-neutral-800 transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 shadow-lg">
-                  <MessageCircle size={14} /> যোগাযোগ
-                </button>
-              </div>
-            </motion.div>
-          ))}
+              </motion.div>
+            );
+          })}
         </AnimatePresence>
       </div>
 
       {/* No Data State */}
       {!loading && filteredTeachers.length === 0 && (
         <div className="text-center py-20 bg-gray-50 rounded-[3rem] border-2 border-dashed border-gray-200">
-          <p className="text-neutral-400 font-bold">কোন শিক্ষক পাওয়া যায়নি!</p>
+          <p className="text-neutral-400 font-bold">
+            কোন শিক্ষক পাওয়া যায়নি!
+          </p>
         </div>
       )}
 

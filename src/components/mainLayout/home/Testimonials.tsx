@@ -1,106 +1,168 @@
-import React from "react";
-import SectionHeading from "@/src/components/shared/SectionHeading";
+"use client";
+import React, { useEffect, useState, useRef } from "react";
+import { ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
+import axios from "axios";
 
-const StarIcon = () => (
-  <svg className="w-3.5 h-3.5 fill-amber-400" viewBox="0 0 20 20">
+interface TestimonialData {
+  _id: string;
+  user: {
+    _id: string;
+    name: string;
+  };
+  text: string;
+  rating: number;
+  isApproved: boolean;
+  createdAt: string;
+}
+
+const StarIcon = ({ active }: { active: boolean }) => (
+  <svg
+    className={`w-3.5 h-3.5 ${active ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`}
+    viewBox="0 0 20 20"
+  >
     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
   </svg>
 );
 
-const testimonials = [
-  {
-    quote:
-      "দারুল ইসলাম ইনস্টিটিউট আমার সন্তানের জন্য সেরা প্রতিষ্ঠান। এখানকার পরিবেশ ও শিক্ষার মান আমাকে সত্যিই মুগ্ধ করেছে।",
-    name: "মোঃ রফিকুল ইসলাম",
-    role: "অভিভাবক",
-    initials: "র",
-  },
-  {
-    quote:
-      "এখানে পড়ে আমার দ্বীন ও সাধারণ জ্ঞান অনেক উন্নত হয়েছে। শিক্ষকদের আন্তরিক প্রচেষ্টা আমাকে প্রতিদিন অনুপ্রাণিত করে।",
-    name: "আরিফ বিন সাদ",
-    role: "শিক্ষার্থী",
-    initials: "আ",
-  },
-  {
-    quote:
-      "শিক্ষকরা খুব যত্নশীল এবং সহযোগী। প্রতিটি শিক্ষার্থীর প্রতি তাদের মনোযোগ ও ভালোবাসা এই প্রতিষ্ঠানকে আলাদা করে তোলে।",
-    name: "সাদিয়া আক্তার",
-    role: "অভিভাবক",
-    initials: "সা",
-  },
-];
-
-const TestimonialCard = ({
-  quote,
-  name,
-  role,
-  initials,
-  delay,
-}: (typeof testimonials)[0] & { delay: string }) => (
-  <div
-    className="group relative bg-gray-200 rounded-2xl p-7 flex flex-col gap-4 overflow-hidden
-                shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300
-                border border-gray-100 hover:border-green-100"
-    style={{ animationDelay: delay }}
-  >
-    {/* Top shimmer bar on hover */}
-    <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-green-600 via-green-300 to-green-600 rounded-t-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
-
-    {/* Background watermark quote */}
-    <span className="absolute -top-2 right-4 text-[7rem] font-serif leading-none text-green-100 group-hover:text-green-200 transition-colors duration-300 select-none pointer-events-none">
-      "
-    </span>
-
-    {/* Role badge */}
-    <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-200 text-green-700 text-[0.7rem] font-semibold px-3 py-1 rounded-full uppercase tracking-wide relative z-10">
-      <span className="w-1.5 h-1.5 rounded-full bg-green-500 inline-block" />
-      {role}
-    </span>
-
-    {/* Stars */}
-    <div className="flex gap-0.5 relative z-10">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <StarIcon key={i} />
-      ))}
-    </div>
-
-    {/* Quote text */}
-    <p className="text-gray-600 leading-relaxed text-[0.95rem] flex-1 relative z-10 font-['Noto_Serif_Bengali',serif]">
-      {quote}
-    </p>
-
-    {/* Author */}
-    <div className="flex items-center gap-3 border-t border-gray-100 pt-4 mt-auto relative z-10">
-      <div className="w-11 h-11 rounded-full bg-gradient-to-br from-green-600 to-green-400 flex items-center justify-center text-white font-bold text-sm ring-2 ring-green-100 flex-shrink-0">
-        {initials}
-      </div>
-      <div>
-        <p className="text-sm font-semibold text-gray-900">{name}</p>
-        <p className="text-[0.72rem] text-green-700 font-medium uppercase tracking-wider mt-0.5">
-          {role}
-        </p>
-      </div>
-    </div>
-  </div>
-);
-
 const Testimonials = () => {
-  return (
-    <section className="px-5 py-16 max-w-6xl mx-auto">
-      {/* Heading with accent bar */}
-      <div className="text-center mb-10">
-        <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
-          অভিভাবক ও শিক্ষার্থীদের মতামত
-          <span className="block h-1 bg-green-600 mt-2 mx-auto w-1/2 rounded-full" />
-        </h2>
-      </div>
+  const [testimonials, setTestimonials] = useState<TestimonialData[]>([]);
+  const [loading, setLoading] = useState<boolean>(true);
+  const sliderRef = useRef<HTMLDivElement>(null);
 
-      {/* Grid: 1 col → 2 col (sm) → 3 col (md+) */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-5">
-        {testimonials.map((t, i) => (
-          <TestimonialCard key={i} {...t} delay={`${0.1 + i * 0.12}s`} />
-        ))}
+  useEffect(() => {
+    const getApprovedFeedback = async () => {
+      try {
+        const res = await axios.get(
+          "https://darulislam-server-v2.vercel.app/api/testimonials",
+        );
+        if (res.data) {
+          setTestimonials(res.data);
+        }
+      } catch (err) {
+        console.error("Error loading approved landing testimonials:", err);
+      } finally {
+        setLoading(false);
+      }
+    };
+    getApprovedFeedback();
+  }, []);
+
+  const scrollSlider = (direction: "left" | "right") => {
+    if (sliderRef.current) {
+      const { scrollLeft, clientWidth } = sliderRef.current;
+      const scrollAmount =
+        direction === "left"
+          ? scrollLeft - clientWidth * 0.8
+          : scrollLeft + clientWidth * 0.8;
+
+      sliderRef.current.scrollTo({
+        left: scrollAmount,
+        behavior: "smooth",
+      });
+    }
+  };
+
+  if (loading) {
+    return (
+      <div className="py-20 flex justify-center items-center">
+        <div className="w-8 h-8 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
+
+  if (testimonials.length === 0) return null;
+
+  return (
+    <section className="px-4 py-20 bg-gradient-to-b from-white to-gray-50/50 overflow-hidden relative">
+      <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-green-50 rounded-full blur-3xl pointer-events-none -z-10" />
+
+      <div className="max-w-7xl mx-auto">
+        <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
+          <div className="text-center sm:text-left">
+            <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-[11px] font-black text-green-800 mb-3">
+              <MessageSquare className="w-3.5 h-3.5 text-[#105D38]" />{" "}
+              Testimonials Feedback
+            </div>
+            <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
+              অভিভাবক ও শিক্ষার্থীদের{" "}
+              <span className="text-[#105D38]">মতামত</span>
+            </h2>
+          </div>
+
+          <div className="flex items-center justify-center gap-2.5">
+            <button
+              onClick={() => scrollSlider("left")}
+              className="w-11 h-11 bg-white border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
+            >
+              <ChevronLeft className="w-5 h-5" />
+            </button>
+            <button
+              onClick={() => scrollSlider("right")}
+              className="w-11 h-11 bg-white border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
+            >
+              <ChevronRight className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+
+        {/* started bhai ekhan theke */}
+        <div
+          ref={sliderRef}
+          className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 px-2 scroll-smooth"
+          style={{
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none", // Firefox-এর জন্য স্ক্রলবার হাইড
+            msOverflowStyle: "none", // IE-এর জন্য স্ক্রলবার হাইড
+          }}
+        >
+          {testimonials.map((t) => {
+            const initialLetter = t.user?.name ? t.user.name.charAt(0) : "শ";
+
+            return (
+              <div
+                key={t._id}
+                className="w-[85vw] sm:w-[45vw] md:w-[35vw] lg:w-[28vw] shrink-0 snap-start snap-always
+                           group relative bg-white rounded-3xl p-6 md:p-7 flex flex-col gap-5 overflow-hidden
+                           shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border border-gray-100"
+              >
+                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+
+                <span className="absolute -top-2 right-4 text-[7rem] font-serif leading-none text-green-50/70 select-none pointer-events-none">
+                  "
+                </span>
+
+                <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                  শিক্ষার্থী
+                </span>
+
+                <div className="flex gap-0.5 relative z-10">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <StarIcon key={i} active={i < t.rating} />
+                  ))}
+                </div>
+
+                <p className="text-gray-600 leading-relaxed text-xs md:text-[13px] flex-1 font-medium italic">
+                  "{t.text}"
+                </p>
+
+                <div className="flex items-center gap-3 border-t border-gray-50 pt-4 mt-auto">
+                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0">
+                    {initialLetter}
+                  </div>
+                  <div>
+                    <p className="text-xs md:text-sm font-black text-gray-900">
+                      {t.user?.name || "অজানা শিক্ষার্থী"}
+                    </p>
+                    <p className="text-[10px] text-emerald-700 font-bold tracking-wider mt-0.5 uppercase">
+                      Verified Reviewer
+                    </p>
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
       </div>
     </section>
   );

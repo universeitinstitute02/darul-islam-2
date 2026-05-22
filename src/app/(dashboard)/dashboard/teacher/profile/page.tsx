@@ -1,27 +1,149 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   User,
   Mail,
   Phone,
-  Lock,
   Camera,
   Save,
   ShieldCheck,
   Globe,
+  BookOpen,
+  Briefcase,
+  GraduationCap,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import Swal from "sweetalert2";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import useUserRole from "@/src/app/hooks/useUserRole"; // 🛠️ আপনার হুকটি এখানে ইম্পোর্ট করা হয়েছে
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const ProfileSettings = () => {
+  const axiosSecure = useAxiosSecure();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const { user, role, isLoading: isUserLoading } = useUserRole();
+
   const [activeTab, setActiveTab] = useState("profile");
+  const [loading, setLoading] = useState<boolean>(false);
+
+  const [name, setName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string>("");
+
+  const [studentNameBn, setStudentNameBn] = useState("");
+  const [classLevel, setClassLevel] = useState("");
+  const [teacherNameBn, setTeacherNameBn] = useState("");
+  const [designation, setDesignation] = useState("");
+  const [department, setDepartment] = useState("");
+
+  useEffect(() => {
+    if (user) {
+      setName(user.name || "");
+      setPhone(user.phone || "");
+      setImagePreview(user.profileImage || "");
+
+      if (role === "student") {
+        setStudentNameBn(user.profile?.studentNameBn || "");
+        setClassLevel(user.profile?.classLevel || "");
+      } else if (role === "teacher") {
+        setTeacherNameBn(user.profile?.teacherNameBn || "");
+        setDesignation(user.profile?.designation || "");
+
+        const deptData = user.profile?.department;
+        setDepartment(
+          typeof deptData === "object" ? deptData?.name : deptData || "",
+        );
+      }
+    }
+  }, [user, role]);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      if (file.size > 2 * 1024 * 1024) {
+        Swal.fire({
+          icon: "error",
+          title: "ফাইল সাইজ বেশি!",
+          text: "অনুগ্রহ করে ২ মেগাবাইটের কম সাইজের ছবি আপলোড করুন।",
+        });
+        return;
+      }
+      setSelectedFile(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
+
+  const handleProfileSubmit = async () => {
+    setLoading(true);
+    try {
+      const formData = new FormData();
+      formData.append("name", name);
+      formData.append("phone", phone);
+
+      if (selectedFile) {
+        formData.append("profileImage", selectedFile);
+      }
+
+      let profileDetails = {};
+      if (role === "student") {
+        profileDetails = { studentNameBn, classLevel };
+      } else if (role === "teacher") {
+        profileDetails = { teacherNameBn, designation, department };
+      }
+
+      formData.append("profileData", JSON.stringify(profileDetails));
+
+      const res = await axiosSecure.put("/auth/update-profile", formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+
+      if (res.status === 200 || res.status === 201) {
+        Swal.fire({
+          icon: "success",
+          title: "প্রোফাইল আপডেট সফল!",
+          text: "আপনার প্রোফাইলের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।",
+          confirmButtonColor: "#105D38",
+        });
+      }
+    } catch (err: any) {
+      console.error("Profile update error:", err);
+      Swal.fire({
+        icon: "error",
+        title: "আপডেট ব্যর্থ হয়েছে!",
+        text:
+          err.response?.data?.message ||
+          "সার্ভার বা নেটওয়ার্ক সমস্যা, আবার চেষ্টা করুন।",
+        confirmButtonColor: "#d33",
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (isUserLoading) {
+    return (
+      <div className="flex justify-center items-center py-40">
+        <LoadingSpinner />
+      </div>
+    );
+  }
 
   return (
-    <div className="mt-8 pb-12 max-w-4xl mx-auto">
+    <div className="mt-8 pb-12 max-w-4xl mx-auto font-sans">
       {/* Header */}
       <div className="mb-8 px-1">
-        <h2 className="text-2xl font-bold text-neutral-800">প্রোফাইল সেটিংস</h2>
-        <p className="text-sm text-neutral-500">
-          আপনার ব্যক্তিগত তথ্য ও নিরাপত্তা আপডেট করুন
+        <h2 className="text-2xl font-black text-neutral-800 flex items-center gap-2">
+          প্রোফাইল সেটিংস
+          {role && (
+            <span className="text-[10px] bg-emerald-50 border border-emerald-200 text-emerald-800 px-2.5 py-0.5 rounded-full uppercase font-extrabold tracking-wider">
+              {role} Panel
+            </span>
+          )}
+        </h2>
+        <p className="text-sm text-neutral-500 font-medium">
+          আপনার ব্যক্তিগত তথ্য ও রোল-ভিত্তিক প্রোফাইল ম্যানেজ করুন
         </p>
       </div>
 
@@ -31,21 +153,21 @@ const ProfileSettings = () => {
           onClick={() => setActiveTab("profile")}
           className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
             activeTab === "profile"
-              ? "bg-white text-[#105D38] shadow-sm"
+              ? "bg-white text-[#105D38] shadow-xs"
               : "text-neutral-500 hover:text-neutral-700"
           }`}
         >
-          প্রোফাইল
+          প্রোফাইল তথ্য
         </button>
         <button
           onClick={() => setActiveTab("security")}
           className={`px-6 py-2.5 rounded-xl text-sm font-bold transition-all ${
             activeTab === "security"
-              ? "bg-white text-[#105D38] shadow-sm"
+              ? "bg-white text-[#105D38] shadow-xs"
               : "text-neutral-500 hover:text-neutral-700"
           }`}
         >
-          নিরাপত্তা
+          নিরাপত্তা ও পাসওয়ার্ড
         </button>
       </div>
 
@@ -53,7 +175,7 @@ const ProfileSettings = () => {
         key={activeTab}
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
-        className="bg-white rounded-3xl border border-neutral-100 shadow-sm p-6 md:p-8"
+        className="bg-white rounded-3xl border border-neutral-100 shadow-xs p-6 md:p-8"
       >
         {activeTab === "profile" ? (
           <div className="space-y-8">
@@ -61,89 +183,214 @@ const ProfileSettings = () => {
             <div className="flex flex-col items-center sm:flex-row gap-6 border-b border-neutral-50 pb-8">
               <div className="relative group">
                 <div className="w-24 h-24 rounded-3xl bg-emerald-50 flex items-center justify-center overflow-hidden border-2 border-dashed border-[#105D38]/30">
-                  <User size={40} className="text-[#105D38]" />
+                  {imagePreview ? (
+                    <img
+                      src={imagePreview}
+                      alt="Profile"
+                      className="w-full h-full object-cover"
+                    />
+                  ) : (
+                    <User size={40} className="text-[#105D38]" />
+                  )}
                 </div>
-                <button className="absolute -bottom-2 -right-2 p-2 bg-[#105D38] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform">
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
+                <button
+                  onClick={() => fileInputRef.current?.click()}
+                  className="absolute -bottom-2 -right-2 p-2 bg-[#105D38] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                >
                   <Camera size={16} />
                 </button>
               </div>
               <div className="text-center sm:text-left">
                 <h4 className="font-bold text-neutral-800">প্রোফাইল ছবি</h4>
                 <p className="text-xs text-neutral-500 mt-1">
-                  JPG, GIF অথবা PNG। সর্বোচ্চ ২ মেগাবাইট।
+                  JPG, JPEG অথবা PNG। সর্বোচ্চ ২ মেগাবাইট।
                 </p>
               </div>
             </div>
 
-            {/* Form Fields */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  পুরো নাম
-                </label>
-                <div className="relative">
-                  <User
-                    className="absolute left-4 top-3.5 text-neutral-400"
-                    size={18}
-                  />
-                  <input
-                    type="text"
-                    defaultValue="শামস আল লাবিব"
-                    className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium"
-                  />
+            {/* 🌐 সাধারণ তথ্যসমূহ */}
+            <div>
+              <h4 className="text-xs font-black text-[#105D38] uppercase tracking-wider mb-4 flex items-center gap-1">
+                <span className="w-1.5 h-1.5 bg-[#105D38] rounded-full inline-block" />{" "}
+                সাধারণ তথ্যসমূহ
+              </h4>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                    পুরো নাম
+                  </label>
+                  <div className="relative">
+                    <User
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={18}
+                    />
+                    <input
+                      type="text"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  ইমেইল ঠিকানা
-                </label>
-                <div className="relative">
-                  <Mail
-                    className="absolute left-4 top-3.5 text-neutral-400"
-                    size={18}
-                  />
-                  <input
-                    type="email"
-                    defaultValue="shams@example.com"
-                    className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium"
-                  />
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                    ইমেইল ঠিকানা
+                  </label>
+                  <div className="relative">
+                    <Mail
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={18}
+                    />
+                    <input
+                      type="email"
+                      value={user?.email || ""}
+                      disabled
+                      className="w-full pl-12 pr-4 py-3.5 bg-neutral-100 border border-neutral-200 rounded-2xl cursor-not-allowed outline-none font-medium text-xs md:text-sm text-neutral-500"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  ফোন নম্বর
-                </label>
-                <div className="relative">
-                  <Phone
-                    className="absolute left-4 top-3.5 text-neutral-400"
-                    size={18}
-                  />
-                  <input
-                    type="text"
-                    defaultValue="017XXXXXXXX"
-                    className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium"
-                  />
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                    ফোন নম্বর
+                  </label>
+                  <div className="relative">
+                    <Phone
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={18}
+                    />
+                    <input
+                      type="text"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
+                    />
+                  </div>
                 </div>
-              </div>
 
-              <div className="space-y-2">
-                <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  সময় অঞ্চল (Timezone)
-                </label>
-                <div className="relative">
-                  <Globe
-                    className="absolute left-4 top-3.5 text-neutral-400"
-                    size={18}
-                  />
-                  <select className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none appearance-none font-medium">
-                    <option>Dhaka (GMT+6)</option>
-                    <option>Makkah (GMT+3)</option>
-                  </select>
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                    সময় অঞ্চল (Timezone)
+                  </label>
+                  <div className="relative">
+                    <Globe
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={18}
+                    />
+                    <select className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none appearance-none font-medium text-xs md:text-sm text-neutral-800">
+                      <option>Dhaka (GMT+6)</option>
+                      <option>Makkah (GMT+3)</option>
+                    </select>
+                  </div>
                 </div>
               </div>
             </div>
+
+            {/* 👨‍🎓 স্টুডেন্ট ফিল্ডস */}
+            {role === "student" && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="pt-4 border-t border-neutral-100"
+              >
+                <h4 className="text-xs font-black text-amber-700 uppercase tracking-wider mb-4 flex items-center gap-1">
+                  <GraduationCap className="w-4 h-4 text-amber-600" /> স্টুডেন্ট
+                  প্রোফাইল তথ্য
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                      শিক্ষার্থীর নাম (বাংলায়)
+                    </label>
+                    <input
+                      type="text"
+                      value={studentNameBn}
+                      onChange={(e) => setStudentNameBn(e.target.value)}
+                      placeholder="বাংলায় আপনার নাম"
+                      className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                      শ্রেণী/ক্লাস (Class Level)
+                    </label>
+                    <input
+                      type="text"
+                      value={classLevel}
+                      onChange={(e) => setClassLevel(e.target.value)}
+                      placeholder="উদাঃ Class 10"
+                      className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                    />
+                  </div>
+                </div>
+              </motion.div>
+            )}
+
+            {/* 👨‍🏫 টিচার ফিল্ডস */}
+            {role === "teacher" && (
+              <motion.div
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                className="pt-4 border-t border-neutral-100"
+              >
+                <h4 className="text-xs font-black text-blue-700 uppercase tracking-wider mb-4 flex items-center gap-1">
+                  <Briefcase className="w-4 h-4 text-blue-600" /> শিক্ষক
+                  প্রোফাইল তথ্য
+                </h4>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                      শিক্ষকের নাম (বাংলায়)
+                    </label>
+                    <input
+                      type="text"
+                      value={teacherNameBn}
+                      onChange={(e) => setTeacherNameBn(e.target.value)}
+                      placeholder="উদাঃ আরিফুল ইসলাম"
+                      className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                      পদবী (Designation)
+                    </label>
+                    <input
+                      type="text"
+                      value={designation}
+                      onChange={(e) => setDesignation(e.target.value)}
+                      placeholder="উদাঃ Lecturer"
+                      className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                    />
+                  </div>
+                  <div className="space-y-2 md:col-span-2">
+                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                      বিভাগ (Department)
+                    </label>
+                    <div className="relative">
+                      <BookOpen
+                        className="absolute left-4 top-3.5 text-neutral-400"
+                        size={18}
+                      />
+                      <input
+                        type="text"
+                        value={department}
+                        onChange={(e) => setDepartment(e.target.value)}
+                        placeholder="উদাঃ দরসি কিতাব"
+                        className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
           </div>
         ) : (
           <div className="space-y-6">
@@ -154,7 +401,7 @@ const ProfileSettings = () => {
                   টু-ফ্যাক্টর অথেনটিকেশন
                 </h5>
                 <p className="text-xs text-orange-700 mt-0.5">
-                  অ্যাকাউন্টের বাড়তি নিরাপত্তার জন্য এটি চালু করুন।
+                  অ্যাকাউন্টের বাড়তি নিরাপত্তার জন্য এটি চালু করুন।
                 </p>
               </div>
             </div>
@@ -162,7 +409,7 @@ const ProfileSettings = () => {
             <div className="space-y-4">
               <div className="space-y-2">
                 <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  বর্তমান পাসওয়ার্ড
+                  বর্তমান পাসওয়ার্ড
                 </label>
                 <input
                   type="password"
@@ -171,7 +418,7 @@ const ProfileSettings = () => {
               </div>
               <div className="space-y-2">
                 <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                  নতুন পাসওয়ার্ড
+                  নতুন পাসওয়ার্ড
                 </label>
                 <input
                   type="password"
@@ -182,10 +429,14 @@ const ProfileSettings = () => {
           </div>
         )}
 
-        {/* Action Button */}
         <div className="mt-10 pt-6 border-t border-neutral-50 flex justify-end">
-          <button className="flex items-center gap-2 bg-[#105D38] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 transition-all">
-            <Save size={18} /> তথ্য সংরক্ষণ করুন
+          <button
+            onClick={handleProfileSubmit}
+            disabled={loading}
+            className="flex items-center gap-2 bg-[#105D38] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 hover:bg-[#0d4d2e] transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed"
+          >
+            <Save size={18} />{" "}
+            {loading ? "সংরক্ষণ করা হচ্ছে..." : "সংরক্ষণ করুন"}
           </button>
         </div>
       </motion.div>

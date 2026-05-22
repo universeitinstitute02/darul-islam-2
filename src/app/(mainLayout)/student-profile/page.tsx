@@ -60,9 +60,9 @@ const StudentDashboard = () => {
       link: "/notice",
     },
     {
-      title: "রুটিন",
+      title: "কোর্স রিভিউ",
       icon: <Calendar size={24} />,
-      link: "/",
+      link: "/student-review",
     },
   ];
 

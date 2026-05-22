@@ -394,7 +394,11 @@ const AddCoursePage = () => {
                 disabled={loading}
                 className="w-full bg-[#105D38] text-white py-5 rounded-[1.5rem] font-black text-lg shadow-xl shadow-emerald-900/10 hover:bg-[#0d4d2e] transition-all disabled:bg-gray-300 flex items-center justify-center gap-2"
               >
-                {loading ? <LoadingSpinner /> : "কোর্স পাবলিশ করুন"}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "কোর্স পাবলিশ করুন"
+                )}
               </button>
             </div>
           </div>

@@ -180,7 +180,7 @@ const CheckoutContent = () => {
               >
                 {loading ? (
                   <>
-                    <LoadingSpinner />
+                    <Loader2 className="animate-spin" />
                   </>
                 ) : (
                   <>

@@ -9,7 +9,6 @@ import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestS
 import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
 // import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
 import AdmissionInfo from "@/src/components/LandingPageLayout/AddmissionDoc/AddmissionInfo";
-import NoticeBoard from "@/src/components/LandingPageLayout/Notice/Notice";
 import GallerySection from "@/src/components/LandingPageLayout/GallerySection/GallerySection";
 import Testimonials from "@/src/components/mainLayout/home/Testimonials";
 
@@ -41,8 +40,6 @@ export default function Home() {
 
       {/* ── 1. ADMISSION INFO ── */}
       <AdmissionInfo />
-      {/* ── 2. NOTICE BOARD ── */}
-      <NoticeBoard />
 
       {/* ── 3. GALLERY ── */}
       <GallerySection />

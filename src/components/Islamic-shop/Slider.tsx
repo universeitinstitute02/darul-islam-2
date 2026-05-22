@@ -81,7 +81,7 @@ const ShopHeroSlider = () => {
                   <div className="pt-1 md:pt-2">
                     <button
                       onClick={scrollToProducts}
-                      className="inline-flex items-center gap-1.5 md:gap-3 px-3 py-1.5 md:px-6 md:py-3 lg:px-8 lg:py-4 bg-[#105D38] text-white font-bold rounded-md md:rounded-xl lg:rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group text-[10px] md:text-sm lg:text-base"
+                      className="inline-flex hover:cursor-pointer items-center gap-1.5 md:gap-3 px-3 py-1.5 md:px-6 md:py-3 lg:px-8 lg:py-4 bg-[#105D38] text-white font-bold rounded-md md:rounded-xl lg:rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-2xl active:scale-95 group text-[10px] md:text-sm lg:text-base"
                     >
                       <ShoppingBag className="w-3.5 h-3.5 md:w-5 md:h-5" />
                       <span>{slide.cta}</span>
