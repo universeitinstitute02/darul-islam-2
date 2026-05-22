@@ -17,6 +17,7 @@ import {
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import ProductModal from "@/src/components/shared/AdminCourseModal";
 import Swal from "sweetalert2";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 export default function AdminProducts() {
   const axiosSecure = useAxiosSecure();
@@ -157,10 +158,7 @@ export default function AdminProducts() {
       <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-20 gap-2">
-            <Loader2 className="animate-spin text-[#105D38]" size={32} />
-            <p className="text-xs font-bold text-neutral-400">
-              প্রোডাক্ট লিস্ট লোড হচ্ছে...
-            </p>
+            <LoadingSpinner />
           </div>
         ) : isError ? (
           <div className="flex flex-col items-center justify-center py-20 text-red-500 gap-2">

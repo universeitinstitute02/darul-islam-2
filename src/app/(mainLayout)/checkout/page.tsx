@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const CheckoutContent = () => {
   const searchParams = useSearchParams();
@@ -179,8 +180,7 @@ const CheckoutContent = () => {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>অর্ডার প্রসেস হচ্ছে...</span>
+                    <LoadingSpinner />
                   </>
                 ) : (
                   <>
@@ -300,8 +300,7 @@ const CheckoutContent = () => {
               >
                 {loading ? (
                   <>
-                    <Loader2 className="w-5 h-5 animate-spin" />
-                    <span>অর্ডার প্রসেস হচ্ছে...</span>
+                    <LoadingSpinner />
                   </>
                 ) : (
                   <>

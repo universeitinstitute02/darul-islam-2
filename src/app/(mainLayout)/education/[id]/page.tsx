@@ -12,6 +12,7 @@ import {
 } from "lucide-react";
 import { getAllCourses } from "@/src/lib/data";
 import { motion } from "framer-motion";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 export default function CourseDetailPage() {
   const { id } = useParams();
@@ -48,15 +49,7 @@ export default function CourseDetailPage() {
     router.push(`/education/enroll/${course.id}`);
   };
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-white">
-        <div className="flex flex-col items-center gap-4">
-          <div className="w-12 h-12 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin"></div>
-          <p className="font-bold text-[#105D38] animate-pulse">লোড হচ্ছে...</p>
-        </div>
-      </div>
-    );
+  if (loading) return <LoadingSpinner fullScreen />;
 
   if (!course) {
     return (
@@ -90,7 +83,7 @@ export default function CourseDetailPage() {
             onClick={() => router.back()}
             className="flex items-center gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
           >
-            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors">
+            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors hover:cursor-pointer">
               <ArrowLeft size={20} />
             </div>
             <span className="font-bold text-sm hidden md:block">ফিরে যান</span>

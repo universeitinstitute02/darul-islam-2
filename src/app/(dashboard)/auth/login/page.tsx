@@ -21,6 +21,7 @@ import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
 
 import login1 from "../../../../../public/images/login1.png";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const LoginPage = () => {
   const {
@@ -211,7 +212,7 @@ const LoginPage = () => {
             >
               {isSubmitting ? (
                 <>
-                  <Loader2 size={24} className="animate-spin" /> অপেক্ষা করুন...
+                  <LoadingSpinner />
                 </>
               ) : (
                 "লগইন করুন"

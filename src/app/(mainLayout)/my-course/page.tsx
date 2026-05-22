@@ -13,6 +13,7 @@ import {
   Search,
   Sparkles,
 } from "lucide-react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface Highlight {
   label: string;
@@ -105,7 +106,7 @@ const MyCoursesPage = () => {
       <div className="max-w-7xl mx-auto px-4 sm:px-6 -mt-12 relative z-10">
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-24 bg-white rounded-[2rem] shadow-sm border border-neutral-100 max-w-sm mx-auto">
-            <Loader2 className="animate-spin text-[#105D38] mb-3" size={32} />
+            <LoadingSpinner />
             <p className="text-xs font-bold text-slate-400">
               কোর্স ডাটা লোড হচ্ছে...
             </p>

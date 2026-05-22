@@ -11,6 +11,7 @@ import {
   ShieldCheck,
 } from "lucide-react";
 import Swal from "sweetalert2";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const AllUsersPage = () => {
   const { data: session } = useSession();
@@ -20,7 +21,6 @@ const AllUsersPage = () => {
   const [loading, setLoading] = useState(true);
   const [filterRole, setFilterRole] = useState(""); // filter by student or teacher
 
-  // ১. সকল ইউজার ফেচ করার ফাংশন
   const fetchAllUsers = useCallback(async () => {
     if (!token) return;
     setLoading(true);
@@ -108,7 +108,7 @@ const AllUsersPage = () => {
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center">
-        <Loader2 className="animate-spin text-emerald-600 w-12 h-12" />
+        <LoadingSpinner />
       </div>
     );
 

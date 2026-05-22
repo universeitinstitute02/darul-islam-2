@@ -27,6 +27,7 @@ import useUser from "../../hooks/useUser";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import EvaluationModal from "@/src/components/shared/ResultModal";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const StudentDashboard = () => {
   const axiosSecure = useAxiosSecure();
@@ -105,12 +106,7 @@ const StudentDashboard = () => {
       : "হিফজ বিভাগ - লেভেল ৩";
 
   if (isUserLoading) {
-    return (
-      <div className="h-screen w-full flex items-center justify-center gap-2 text-gray-500 bg-[#F4F7F5]">
-        <Loader2 className="animate-spin text-[#105D38]" size={24} />
-        <span className="font-bold text-sm">ইউজার ডাটা লোড হচ্ছে...</span>
-      </div>
-    );
+    return <LoadingSpinner />;
   }
 
   if (isUserError) {
@@ -222,10 +218,7 @@ const StudentDashboard = () => {
           <div className="mt-6 lg:mt-8">
             {isClassLoading ? (
               <div className="flex flex-col items-center justify-center py-10 bg-neutral-50/50 rounded-2xl border border-dashed border-neutral-200 gap-2">
-                <Loader2 className="animate-spin text-[#105D38]" size={20} />
-                <p className="text-xs font-bold text-neutral-400">
-                  লাইভ ক্লাস শিডিউল চেক করা হচ্ছে...
-                </p>
+                <LoadingSpinner />
               </div>
             ) : classLinks?.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-3 sm:gap-4">

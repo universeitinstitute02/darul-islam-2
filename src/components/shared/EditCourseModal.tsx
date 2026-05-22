@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Save, Loader2 } from "lucide-react";
 import Swal from "sweetalert2";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 const EditCourseModal = ({ course, isOpen, onClose, onUpdate, token }: any) => {
   // কোর্স প্রপ পরিবর্তনের সাথে সাথে স্টেট সিঙ্ক করার জন্য useEffect
@@ -164,11 +165,7 @@ const EditCourseModal = ({ course, isOpen, onClose, onUpdate, token }: any) => {
                 disabled={loading}
                 className="flex-1 py-3 bg-[#105D38] text-white font-bold rounded-2xl shadow-lg hover:bg-[#0c4a2d] transition-all flex items-center justify-center gap-2"
               >
-                {loading ? (
-                  <Loader2 className="animate-spin" size={18} />
-                ) : (
-                  <Save size={18} />
-                )}
+                {loading ? <LoadingSpinner /> : <Save size={18} />}
                 আপডেট করুন
               </button>
             </div>

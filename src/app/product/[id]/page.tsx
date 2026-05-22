@@ -14,6 +14,7 @@ import {
   CheckCircle2,
   ArrowRight,
 } from "lucide-react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -30,7 +31,7 @@ const ProductDetails = () => {
         setProduct(found);
 
         const related = data.products
-          .filter((p: any) => p.id !== id) // এখানেও Number() বাদ দিন
+          .filter((p: any) => p.id !== id)
           .sort(() => 0.5 - Math.random())
           .slice(0, 4);
 
@@ -56,13 +57,7 @@ const ProductDetails = () => {
     router.push(`/checkout?${query}`);
   };
 
-  if (loading)
-    return (
-      <div className="h-screen flex flex-col items-center justify-center gap-4">
-        <div className="w-10 h-10 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin"></div>
-        <p className="font-bold text-gray-500">লোড হচ্ছে...</p>
-      </div>
-    );
+  if (loading) return <LoadingSpinner fullScreen />;
 
   if (!product)
     return (

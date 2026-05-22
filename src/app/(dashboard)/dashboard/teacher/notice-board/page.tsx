@@ -7,6 +7,7 @@ import Swal from "sweetalert2";
 import { Loader2, Megaphone, Pin, Trash2, Plus, Filter } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PostNoticeModal from "@/src/components/shared/NoticeModal";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 type NoticeType = "urgent" | "important" | "general";
 
@@ -163,10 +164,7 @@ export default function NoticePage() {
   if (isLoading) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center gap-2">
-        <Loader2 className="animate-spin text-emerald-600" size={28} />
-        <p className="text-xs font-bold text-slate-400 tracking-wide">
-          লোড হচ্ছে...
-        </p>
+        <LoadingSpinner />
       </div>
     );
   }

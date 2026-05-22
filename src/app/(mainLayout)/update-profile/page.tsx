@@ -19,6 +19,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import Swal from "sweetalert2";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface ProfileFormInput {
   name: string;
@@ -149,7 +150,7 @@ const ProfilePage = () => {
   if (isUserLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-[#F4F7F5]">
-        <Loader2 className="animate-spin text-[#105D38]" size={36} />
+        <LoadingSpinner />
       </div>
     );
   }
@@ -348,8 +349,7 @@ const ProfilePage = () => {
               >
                 {updateProfileMutation.isPending ? (
                   <>
-                    <Loader2 className="animate-spin" size={16} />
-                    আপডেট হচ্ছে...
+                    <LoadingSpinner />
                   </>
                 ) : (
                   <>

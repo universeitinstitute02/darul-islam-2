@@ -17,6 +17,7 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface OrderItem {
   product: {
@@ -206,8 +207,7 @@ export default function AdminPendingOrders() {
         {/* Loading State */}
         {isLoading && (
           <div className="h-64 flex flex-col items-center justify-center text-neutral-500 gap-3">
-            <Loader2 className="w-10 h-10 animate-spin text-[#105D38]" />
-            <p className="font-bold text-sm">অর্ডার ডাটা লোড হচ্ছে...</p>
+            <LoadingSpinner />
           </div>
         )}
 
@@ -240,7 +240,7 @@ export default function AdminPendingOrders() {
             >
               {actionLoading === order._id && (
                 <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
-                  <Loader2 className="w-8 h-8 text-[#105D38] animate-spin" />
+                  <LoadingSpinner />
                 </div>
               )}
 

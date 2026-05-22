@@ -13,6 +13,7 @@ import {
   Lock,
   Sparkles,
 } from "lucide-react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const MyCourseDetailsPage = () => {
   const { id } = useParams();
@@ -42,8 +43,7 @@ const MyCourseDetailsPage = () => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-[#F8FAFC]">
-        <Loader2 className="animate-spin text-[#105D38] mb-3" size={32} />
-        <p className="text-xs font-bold text-slate-400">লেকচার লোড হচ্ছে...</p>
+        <LoadingSpinner />
       </div>
     );
   }

@@ -2,17 +2,17 @@
 import React, { useEffect, useState } from "react";
 import { ChevronRight, Loader2, Sparkles } from "lucide-react";
 import ProductCard from "./ProductCard";
+import LoadingSpinner from "../shared/spinner/LoadingSpinner";
 
 const BestSellingProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
-  const [visibleCount, setVisibleCount] = useState(8); // শুরুতে ৮টি প্রোডাক্ট দেখাবে
+  const [visibleCount, setVisibleCount] = useState(8);
 
   useEffect(() => {
     fetch("https://darulislam-server-v2.vercel.app/api/products/shop")
       .then((res) => res.json())
       .then((data) => {
-        // এখানে শুধু 'Best Seller' পণ্যগুলো ফিল্টার করে দেখানো যেতে পারে অথবা সব পণ্যই
         setProducts(data.products || []);
         setLoading(false);
       })
@@ -23,16 +23,10 @@ const BestSellingProducts = () => {
   }, []);
 
   const handleLoadMore = () => {
-    setVisibleCount((prev) => prev + 8); // প্রতি ক্লিকে ৮টি করে বাড়বে (৪ সারি করে)
+    setVisibleCount((prev) => prev + 8);
   };
 
-  if (loading)
-    return (
-      <div className="flex flex-col items-center justify-center py-20 text-[#105D38] gap-2">
-        <Loader2 className="w-8 h-8 animate-spin" />
-        <span className="font-bold animate-pulse">পণ্যগুলো লোড হচ্ছে...</span>
-      </div>
-    );
+  if (loading) return <LoadingSpinner />;
 
   return (
     <section

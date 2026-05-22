@@ -13,6 +13,7 @@ import {
   AlertCircle,
   CheckCircle2,
 } from "lucide-react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const TestClassLinksPage = () => {
   const axiosSecure = useAxiosSecure();
@@ -151,10 +152,7 @@ const TestClassLinksPage = () => {
 
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-16 gap-2 text-gray-400">
-              <Loader2 className="animate-spin text-[#105D38]" size={28} />
-              <p className="text-sm font-bold">
-                সার্ভার থেকে লাইভ ডাটা আনা হচ্ছে...
-              </p>
+              <LoadingSpinner />
             </div>
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-12 text-red-500 gap-2 bg-red-50 rounded-xl border border-red-200">

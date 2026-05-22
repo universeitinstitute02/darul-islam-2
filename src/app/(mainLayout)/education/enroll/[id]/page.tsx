@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { motion } from "framer-motion";
 import { getAllCourses } from "@/src/lib/data";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 export default function EnrollPage() {
   const { id } = useParams();
@@ -39,12 +40,7 @@ export default function EnrollPage() {
     fetchCourse();
   }, [id]);
 
-  if (loading)
-    return (
-      <div className="min-h-screen flex items-center justify-center font-bold text-[#105D38]">
-        প্রসেসিং হচ্ছে...
-      </div>
-    );
+  if (loading) return <LoadingSpinner fullScreen />;
 
   const finalPrice = course?.details?.admissionFee || course?.price || 0;
 
@@ -56,7 +52,7 @@ export default function EnrollPage() {
         <div className="max-w-5xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#105D38] transition-colors"
+            className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#105D38] transition-colors hover:cursor-pointer"
           >
             <ArrowLeft size={18} /> ফিরে যান
           </button>

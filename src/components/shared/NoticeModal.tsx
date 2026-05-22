@@ -6,6 +6,7 @@ import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import { Loader2, Pin, X } from "lucide-react";
 import { motion } from "framer-motion";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 type NoticeType = "urgent" | "important" | "general";
 
@@ -289,7 +290,7 @@ export default function PostNoticeModal({
               disabled={loading}
               className="flex-1 py-2.5 rounded-xl bg-slate-900 text-white text-xs font-bold hover:bg-slate-800 disabled:opacity-70 transition-all flex items-center justify-center gap-2 shadow-sm"
             >
-              {loading && <Loader2 className="animate-spin" size={14} />}
+              {loading && <LoadingSpinner />}
               {editingNotice ? "আপডেট করুন" : "প্রকাশ করুন"}
             </button>
           </div>

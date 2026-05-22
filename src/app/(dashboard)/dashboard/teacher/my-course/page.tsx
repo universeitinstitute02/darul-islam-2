@@ -6,6 +6,7 @@ import Link from "next/link";
 import Swal from "sweetalert2";
 import CourseCard from "@/src/components/shared/CourseCard";
 import EditCourseModal from "@/src/components/shared/EditCourseModal";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface ICourse {
   _id: string;
@@ -104,8 +105,7 @@ const MyCourses = () => {
   if (status === "loading" || (loading && status === "authenticated")) {
     return (
       <div className="h-64 flex flex-col items-center justify-center gap-3">
-        <Loader2 className="animate-spin text-emerald-600 w-10 h-10" />
-        <p className="text-gray-500 font-medium font-sans">লোড হচ্ছে...</p>
+        <LoadingSpinner />
       </div>
     );
   }

@@ -14,6 +14,7 @@ import {
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 export default function NoticeBoard() {
   const axiosSecure = useAxiosSecure();
@@ -105,10 +106,7 @@ export default function NoticeBoard() {
         <div className="grid grid-cols-1 gap-3">
           {isLoading ? (
             <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl border border-neutral-100 gap-2">
-              <Loader2 className="animate-spin text-[#105D38]" size={24} />
-              <p className="text-xs font-bold text-neutral-400">
-                নোটিশ লোড হচ্ছে...
-              </p>
+              <LoadingSpinner />
             </div>
           ) : isError ? (
             <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl border border-red-100 text-red-500 gap-2 text-center px-4">

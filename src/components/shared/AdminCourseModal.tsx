@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Image as ImageIcon, Loader2 } from "lucide-react";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 interface ProductModalProps {
   isOpen: boolean;
@@ -28,7 +29,6 @@ export default function ProductModal({
   const [features, setFeatures] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
-  // এডিট মোড ওপেন হলে ফিল্ডগুলো পপুলেট করা
   useEffect(() => {
     if (editingProduct) {
       setName(editingProduct.name || "");
@@ -276,7 +276,7 @@ export default function ProductModal({
                   disabled={isPending}
                   className="px-5 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  {isPending && <Loader2 className="animate-spin" size={14} />}
+                  {isPending && <LoadingSpinner />}
                   <span>{editingProduct ? "আপডেট করুন" : "যোগ করুন"}</span>
                 </button>
               </div>

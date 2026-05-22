@@ -16,6 +16,7 @@ import {
   Loader2,
   AlertTriangle,
 } from "lucide-react";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 interface StudentAssignmentDetailsModalProps {
   isOpen: boolean;
@@ -110,10 +111,7 @@ const StudentAssignmentDetailsModal: React.FC<
             {/* Loading View */}
             {isLoading && (
               <div className="flex flex-col items-center justify-center py-12 space-y-3 text-neutral-400">
-                <Loader2 size={36} className="animate-spin text-[#105D38]" />
-                <p className="text-xs font-bold tracking-wide">
-                  সার্ভার থেকে আপনার ডাটা আনা হচ্ছে...
-                </p>
+                <LoadingSpinner />
               </div>
             )}
 

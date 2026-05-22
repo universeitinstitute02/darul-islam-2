@@ -16,6 +16,7 @@ import {
   Step4,
   Step5,
 } from "@/src/components/register/Fromsteps";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const RegisterPage: React.FC = () => {
   const {
@@ -265,8 +266,7 @@ const RegisterPage: React.FC = () => {
                   >
                     {isLoading ? (
                       <>
-                        <Loader2 size={20} className="animate-spin" /> অপেক্ষা
-                        করুন...
+                        <LoadingSpinner />
                       </>
                     ) : (
                       "রেজিস্ট্রেশন সম্পন্ন করুন"

@@ -7,6 +7,7 @@ import { motion } from "framer-motion";
 import EducationHero from "@/src/components/EducationHero/EducationHero";
 import EduCategories from "@/src/components/mainLayout/Educations/EduCategories";
 import { getAllCourses } from "@/src/lib/data";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const EducationPage = () => {
   const [data, setData] = useState<any[] | null>(null);
@@ -24,12 +25,7 @@ const EducationPage = () => {
     fetchData();
   }, []);
 
-  if (!data)
-    return (
-      <div className="min-h-screen flex items-center justify-center font-bold">
-        লোড হচ্ছে...
-      </div>
-    );
+  if (!data) return <LoadingSpinner fullScreen />;
 
   const educationData2 = data.slice(1, 3);
 

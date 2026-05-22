@@ -3,6 +3,7 @@ import React, { useEffect, useState, useRef } from "react";
 import Image from "next/image";
 import { Loader2, ArrowUpRight, BookOpen, Sparkles, Heart } from "lucide-react";
 import ProductCard from "./ProductCard";
+import LoadingSpinner from "../shared/spinner/LoadingSpinner";
 
 const ShopPromoGrid = ({
   onSelectCategory,
@@ -252,9 +253,7 @@ const CategorySection = () => {
             </div>
 
             {loading ? (
-              <div className="flex justify-center py-10">
-                <Loader2 className="w-8 h-8 animate-spin text-[#105D38]" />
-              </div>
+              <LoadingSpinner />
             ) : (
               <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
                 {filteredProducts.map((p) => (

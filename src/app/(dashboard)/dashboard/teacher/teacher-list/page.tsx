@@ -15,6 +15,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const TeacherList = () => {
   const { data: session } = useSession();
@@ -71,10 +72,7 @@ const TeacherList = () => {
   if (loading) {
     return (
       <div className="h-96 flex flex-col items-center justify-center gap-4">
-        <Loader2 className="animate-spin text-[#105D38] w-10 h-10" />
-        <p className="text-sm font-bold text-neutral-500">
-          শিক্ষক তালিকা লোড হচ্ছে...
-        </p>
+        <LoadingSpinner />
       </div>
     );
   }

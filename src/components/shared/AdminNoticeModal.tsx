@@ -3,6 +3,7 @@
 import React, { useEffect, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, Loader2, FileText } from "lucide-react";
+import LoadingSpinner from "./spinner/LoadingSpinner";
 
 interface GeneralNoticeModalProps {
   isOpen: boolean;
@@ -173,7 +174,7 @@ export default function GeneralNoticeModal({
                   disabled={isPending}
                   className="px-5 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
-                  {isPending && <Loader2 className="animate-spin" size={14} />}
+                  {isPending && <LoadingSpinner />}
                   <span>{editingNotice ? "সংশোধন করুন" : "প্রকাশ করুন"}</span>
                 </button>
               </div>
