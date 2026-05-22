@@ -127,7 +127,7 @@ export default function StudentDashboardWelcome() {
             <span className="w-1.5 h-8 bg-[#105D38] rounded-full"></span> আপনার
             এনরোলকৃত কোর্স
           </h2>
-          <button className="text-sm font-bold text-[#105D38] hover:underline flex items-center gap-1">
+          <button className="text-sm font-bold text-[#105D38] hover:underline flex items-center gap-1 hover:cursor-pointer">
             সবগুলো দেখুন <ChevronRight size={16} />
           </button>
         </div>

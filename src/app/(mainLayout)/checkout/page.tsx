@@ -106,7 +106,7 @@ const CheckoutContent = () => {
         <div className="flex items-center gap-4 mb-8">
           <button
             onClick={() => router.back()}
-            className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 transition-all"
+            className="p-3 bg-white rounded-2xl shadow-sm border border-gray-100 text-gray-600 hover:bg-gray-50 transition-all hover:cursor-pointer"
           >
             <ChevronLeft className="w-6 h-6" />
           </button>
@@ -176,7 +176,7 @@ const CheckoutContent = () => {
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full mt-10 py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
+                className="w-full mt-10 hover:cursor-pointer py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
               >
                 {loading ? (
                   <>
@@ -296,7 +296,7 @@ const CheckoutContent = () => {
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
+                className="w-full  py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
               >
                 {loading ? (
                   <>

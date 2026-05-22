@@ -182,12 +182,9 @@ const ProductDetails = () => {
 
             {/* Desktop Buttons */}
             <div className="hidden md:flex gap-4">
-              <button className="flex-1 py-4 border-2 border-gray-200 text-gray-800 font-bold rounded-2xl hover:bg-gray-50 transition-colors uppercase text-xs tracking-widest">
-                কার্টে যোগ করুন
-              </button>
               <button
                 onClick={handleBuyNow}
-                className="flex-[2] py-4 bg-[#105D38] text-white font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-100 hover:bg-[#0c4a2d] transition-all transform active:scale-[0.98] uppercase text-xs tracking-widest"
+                className="flex-[2] py-4 hover:cursor-pointer bg-[#105D38] text-white font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-100 hover:bg-[#0c4a2d] transition-all transform active:scale-[0.98] uppercase text-xs tracking-widest"
               >
                 <ShoppingCart className="w-5 h-5" /> সরাসরি অর্ডার করুন
               </button>
@@ -208,7 +205,7 @@ const ProductDetails = () => {
             </div>
             <button
               onClick={() => router.push("/islamic-shop")}
-              className="flex items-center gap-2 text-xs md:text-sm font-black text-[#105D38] hover:gap-3 transition-all"
+              className="flex items-center gap-2 text-xs md:text-sm font-black text-[#105D38] hover:gap-3 transition-all hover:cursor-pointer"
             >
               সবগুলো দেখুন <ArrowRight className="w-4 h-4" />
             </button>
