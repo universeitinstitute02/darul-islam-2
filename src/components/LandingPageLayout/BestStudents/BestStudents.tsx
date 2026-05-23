@@ -152,7 +152,7 @@ const StudentSlider = () => {
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm text-neutral-600 md:text-base">
-            دارুল ইসলাম ইনস্টিটিউটের মেধাবী ও কৃতি শিক্ষার্থীদের সংক্ষিপ্ত
+            দারুল ইসলাম ইনস্টিটিউটের মেধাবী ও কৃতি শিক্ষার্থীদের সংক্ষিপ্ত
             পরিচিতি।
           </p>
 
@@ -161,8 +161,8 @@ const StudentSlider = () => {
 
         {/* Dynamic Loading/Data State Rendering */}
         {loading ? (
-          <div className="flex justify-center items-center py-16">
-            <Loader2 className="w-10 h-10 text-green-700 animate-spin" />
+          <div className="flex justify-center items-center py-12">
+            <Loader2 className="w-8 h-8 text-green-700 animate-spin" />
           </div>
         ) : students.length === 0 ? (
           <div className="text-center text-neutral-600 text-sm font-bold py-16">
