@@ -1,4 +1,4 @@
-import { HandHeart, Droplets, Building, Users } from "lucide-react";
+import { HandHeart, Building } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -7,51 +7,10 @@ const causes = [
     title: "দারুল ইসলাম ইনস্টিটিউটে দান করুন",
     slug: "darulislam-donate",
     desc: "সদগায়ে জারিয়া হিসেবে দারুল ইসলাম ইনস্টিটিউটে আত্ম উন্নয়নমূলক কাজে সহযোগিতা করুন । আপনার সহযোগিতা দারুন ইসলাম ইনস্টিটিউটের পথ চলা কে সহজ করে",
-    count: "৮৪ জন",
     goal: "২৫,০০,০০০৳",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
     icon: Building,
-  },
-  {
-    title: "এতিম স্পনসর",
-    slug: "etim-sponsor",
-    desc: "মাসিক ১,২০০ টাকায় একটি এতিম শিশুর শিক্ষা, খাদ্য ও বাসস্থানের ব্যবস্থা করুন।",
-    count: "৮৪ জন",
-    goal: "মাসিক ১,২০০৳",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
-    icon: Users,
-  },
-  {
-    title: "কূপ খনন",
-    slug: "kup-khonon",
-    desc: "সুদূর পল্লীতে বিশুদ্ধ পানির ব্যবস্থা করুন। একটি কূপ চিরকালীন সদাকাহ।",
-    count: "৮৪ জন",
-    goal: "৮০,০০০৳",
-    image:
-      "https://images.unsplash.com/photo-1582213713303-9257ac978839?q=80&w=2070&auto=format&fit=crop",
-    icon: Droplets,
-  },
-  {
-    title: "দারুল ইসলাম ইনস্টিটিউটে দান করুন",
-    slug: "mosjid-nirman",
-    desc: "সদগায়ে জারিয়া হিসেবে দারুল ইসলাম ইনস্টিটিউটে আত্ম উন্নয়নমূলক কাজে সহযোগিতা করুন । আপনার সহযোগিতা দারুন ইসলাম ইনস্টিটিউটের পথ চলা কে সহজ করে",
-    count: "৮৪ জন",
-    goal: "২৫,০০,০০০৳",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
-    icon: Building,
-  },
-  {
-    title: "এতিম স্পনসর",
-    slug: "etim-sponsor",
-    desc: "মাসিক ১,২০০ টাকায় একটি এতিম শিশুর শিক্ষা, খাদ্য ও বাসস্থানের ব্যবস্থা করুন।",
-    count: "৮৪ জন",
-    goal: "মাসিক ১,২০০৳",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
-    icon: Users,
   },
 ];
 
@@ -59,11 +18,11 @@ export default function DonationPage() {
   return (
     <div className="flex flex-col min-h-screen mt-16 lg:mt-18">
       {/* Hero Section */}
-      <div className="relative h-48 lg:h-64 bg-gradient-to-br from-[#14281D] to-[#30360E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <div className="relative h-48 lg:h-64 bg-green-800 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#87F56] rounded-2xl flex items-center justify-center text-[#14281D] shadow-lg">
+            <div className="w-16 h-16 bg-[#87F56] rounded-2xl flex items-center justify-center text-white shadow-lg">
               <HandHeart size={40} />
             </div>
             <div>
@@ -139,7 +98,7 @@ export default function DonationPage() {
 
                     <Link
                       href={`/donation/${cause.slug}`}
-                      className="w-full flex items-center justify-center  py-4 rounded-2xl font-black bg-[#14281D] text-[#E2D4B9] transition-all duration-300"
+                      className="w-full flex items-center justify-center  py-4 rounded-2xl font-black bg-green-800 text-white transition-all duration-300"
                     >
                       অনুদান প্রদান করুন
                     </Link>

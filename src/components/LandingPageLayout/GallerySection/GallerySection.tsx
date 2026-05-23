@@ -1,6 +1,7 @@
 "use client";
 import React, { useEffect, useState } from "react";
 import { ImageIcon, Expand, ArrowUpRight } from "lucide-react";
+import Link from "next/link";
 
 // 📌 API ইন্টারফেস ডিফাইন
 interface GalleryAlbum {
@@ -140,28 +141,15 @@ const GallerySection: React.FC = () => {
               })}
             </div>
 
-            {/* 🔘 গ্লাস-মর্ফিজম বাটন (ডাটা লোড হওয়ার সময় টেক্সট চেঞ্জ হবে) */}
-            {hasMore && (
-              <div className="mt-12 flex justify-center">
-                <button
-                  onClick={handleLoadMore}
-                  disabled={loading}
-                  className="group relative flex items-center gap-3 px-12 py-5 bg-[#105D38] text-white font-black rounded-full overflow-hidden transition-all hover:pr-14 active:scale-95 shadow-xl shadow-emerald-900/20 disabled:opacity-70 disabled:pointer-events-none"
-                >
-                  <span className="relative z-10">
-                    {loading
-                      ? "নতুন ছবি লোড হচ্ছে..."
-                      : "সম্পূর্ণ গ্যালারি দেখুন"}
-                  </span>
-                  {!loading && (
-                    <ArrowUpRight className="relative z-10 w-5 h-5 group-hover:rotate-45 transition-transform duration-300" />
-                  )}
-
-                  {/* বাটন এনিমেশন লেয়ার */}
-                  <div className="absolute inset-0 bg-black opacity-0 group-hover:opacity-10 transition-opacity"></div>
-                </button>
-              </div>
-            )}
+            {/*  বাটন  */}
+            <div className="mt-14 mb-6 text-center">
+            <Link
+              href="/gallery"
+              className="cursor-pointer px-12 py-5 bg-[#105D38] text-white font-black rounded-full mt-20"
+            >
+              সম্পূর্ণ গ্যালারি দেখুন
+            </Link>
+            </div>
           </>
         )}
       </div>

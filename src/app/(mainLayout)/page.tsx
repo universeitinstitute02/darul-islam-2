@@ -7,7 +7,6 @@ import AboutHome from "@/src/components/mainLayout/home/AboutHome";
 import WhyChoose from "@/src/components/mainLayout/home/WhyChoose";
 import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestStudents";
 import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
-// import ContactSection from "@/src/components/LandingPageLayout/ContactSection/ContactSection";
 import AdmissionInfo from "@/src/components/LandingPageLayout/AddmissionDoc/AddmissionInfo";
 import GallerySection from "@/src/components/LandingPageLayout/GallerySection/GallerySection";
 import Testimonials from "@/src/components/mainLayout/home/Testimonials";
@@ -38,22 +37,20 @@ export default function Home() {
       {/* ── STUDENTS ── */}
       <StudentSlider />
 
-      {/* ── 1. ADMISSION INFO ── */}
+      {/* ──  ADMISSION INFO ── */}
       <AdmissionInfo />
 
-      {/* ── 3. GALLERY ── */}
+      {/* ──  GALLERY ── */}
       <GallerySection />
 
-      {/* ── 4. WHY CHOOSE US ── */}
+      {/* ──  WHY CHOOSE US ── */}
       <WhyChoose />
 
-      {/* ── 5. TESTIMONIALS ── */}
+      {/* ──  TESTIMONIALS ── */}
       <Testimonials />
+
       {/* Donation section */}
       <DonationSection />
-
-      {/* Contact and Map section */}
-      {/* <ContactSection /> */}
     </main>
   );
 }
