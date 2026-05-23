@@ -79,8 +79,8 @@ const RegisterPage: React.FC = () => {
         "division",
       ],
       2: isTeacher
-        ? ["designation", "department"]
-        : ["fatherName", "fatherMobile"],
+        ? ["designation", "department", "experience"]
+        : ["fatherName", "fatherMobile", "department"],
       3: ["motherName"],
       4: ["district", "studentMobile", "email"],
       5: ["password", "confirmPassword"],
@@ -197,7 +197,7 @@ const RegisterPage: React.FC = () => {
                     register={register}
                     errors={errors}
                     watch={watch}
-                    divisions={staticDivisions}
+                    departments={departments}
                     handleImageClick={() => fileInputRef.current?.click()}
                     handleImageChange={(e: any) => {
                       const file = e.target.files?.[0];
