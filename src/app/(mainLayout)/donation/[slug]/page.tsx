@@ -2,60 +2,129 @@
 
 import { useState } from "react";
 import { useParams } from "next/navigation";
+import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
 import {
-  Clock,
-  Calculator,
   ArrowRight,
   User,
   Phone,
-  Loader2,
   Smartphone,
-  Building2,
   Hash,
+  MapPin,
+  Copy,
+  Check,
 } from "lucide-react";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
-/* --- CONSTANTS --- */
-const campaigns: Record<string, any> = {
-  "masjid-renovation": {
-    title: "মসজিদ সংস্কার",
-    target: 500000,
-    raised: 312000,
-  },
+/* ─────────────────────────────────────────
+   TYPES
+───────────────────────────────────────── */
+interface DonorFormValues {
+  name: string;
+  phone: string;
+  senderNumber?: string;
+  address?: string;
+  trxId?: string;
+}
+
+interface DonationPayload extends DonorFormValues {
+  amount: number;
+  method: string;
+  campaignSlug: string;
+}
+
+/* ─────────────────────────────────────────
+   CONSTANTS
+───────────────────────────────────────── */
+const campaigns: Record<string, { title: string; target: number; raised: number }> = {
+  "masjid-renovation": { title: "মসজিদ সংস্কার", target: 500000, raised: 312000 },
   "yatim-fund": { title: "ইয়াতিম তহবিল", target: 1000000, raised: 678000 },
 };
 const DEFAULT_CAMPAIGN = { title: "সাধারণ দান", target: 100000, raised: 23000 };
 const PRESETS = ["500", "1000", "2000", "5000"];
 
-const PAYMENT_INFO: Record<string, any> = {
+const PAYMENT_INFO: Record<
+  string,
+  { label: string; number?: string; ac?: string; bg: string; borderColor: string; logo: string }
+> = {
   bkash: {
     label: "বিকাশ (পার্সোনাল)",
-    number: "017XX-XXXXXX",
-    color: "text-pink-500",
+    number: "01788002255",
     bg: "bg-pink-50",
+    borderColor: "border-pink-400",
+    logo: "https://freelogopng.com/images/all_img/1656234841bkash-icon-png.png",
   },
   nagad: {
     label: "নগদ (পার্সোনাল)",
-    number: "018XX-XXXXXX",
-    color: "text-orange-500",
+    number: "01788002255",
     bg: "bg-orange-50",
+    borderColor: "border-orange-400",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Nagad_Logo.png/800px-Nagad_Logo.png",
   },
   rocket: {
     label: "রকেট (পার্সোনাল)",
-    number: "019XX-XXXXXX",
-    color: "text-purple-600",
+    number: "01788002255",
     bg: "bg-purple-50",
+    borderColor: "border-purple-400",
+    logo: "https://static.vecteezy.com/system/resources/previews/068/842/062/non_2x/rocket-icon-mobile-banking-logo-emblem-transparent-background-free-png.png",
   },
   bank: {
     label: "ইসলামী ব্যাংক",
-    ac: "2050XXXXXXXXX",
-    color: "text-blue-700",
+    ac: "2050188002255",
     bg: "bg-blue-50",
+    borderColor: "border-blue-400",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Islami_Bank_Bangladesh_logo.svg/800px-Islami_Bank_Bangladesh_logo.svg.png",
   },
 };
 
+/* ─────────────────────────────────────────
+   API FUNCTION
+───────────────────────────────────────── */
+async function postDonation(payload: DonationPayload): Promise<{ success: boolean; message?: string }> {
+  const res = await fetch("/api/donations", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(payload),
+  });
+
+  if (!res.ok) {
+    const error = await res.json().catch(() => ({}));
+    throw new Error(error?.message ?? "সার্ভার ত্রুটি হয়েছে");
+  }
+
+  return res.json();
+}
+
+/* ─────────────────────────────────────────
+   COPY HOOK
+───────────────────────────────────────── */
+function useCopy(text: string) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return { copied, copy };
+}
+
+/* ─────────────────────────────────────────
+   MAIN PAGE
+───────────────────────────────────────── */
 export default function DonationPage() {
   const params = useParams();
   const campaign = campaigns[params?.slug as string] ?? DEFAULT_CAMPAIGN;
@@ -63,54 +132,68 @@ export default function DonationPage() {
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("bkash");
   const [loading, setLoading] = useState(false);
-  const [donor, setDonor] = useState({
-    name: "",
-    phone: "",
-    senderNumber: "",
-    trxId: "",
-  });
-  const [zakat, setZakat] = useState({ input: "", result: 0 });
 
-  const handleSubmit = async () => {
-    if (!amount || Number(amount) < 1)
-      return Swal.fire("ভুল হয়েছে", "দানের পরিমাণ লিখুন", "error");
-    if (method !== "bank" && (!donor.senderNumber || !donor.trxId)) {
+  const {
+    register,
+    handleSubmit,
+    reset,
+    formState: { errors },
+  } = useForm<DonorFormValues>({ mode: "onSubmit" });
+
+  const onSubmit = async (data: DonorFormValues) => {
+    if (!amount || Number(amount) < 1) {
+      return Swal.fire("ভুল হয়েছে", "দানের পরিমাণ লিখুন", "error");
+    }
+    if (method !== "bank" && (!data.senderNumber || !data.trxId)) {
       return Swal.fire(
-        "তথ্য প্রয়োজন",
+        "তথ্য প্রয়োজন",
         "বিকাশ/নগদ পেমেন্টের ক্ষেত্রে নাম্বার ও TrxID দিন",
-        "warning",
+        "warning"
       );
     }
 
+    const payload: DonationPayload = {
+      ...data,
+      amount: Number(amount),
+      method,
+      campaignSlug: (params?.slug as string) ?? "general",
+    };
+
     setLoading(true);
     try {
-      await new Promise((res) => setTimeout(res, 2000));
+      await postDonation(payload);
       Swal.fire({
         title: "জাযাকাল্লাহ খাইর!",
-        text: "আপনার তথ্যটি সফলভাবে গৃহীত হয়েছে।",
+        text: "আপনার তথ্যটি সফলভাবে গৃহীত হয়েছে।",
         icon: "success",
         confirmButtonColor: "#14281D",
       });
       setAmount("");
-      setDonor({ name: "", phone: "", senderNumber: "", trxId: "" });
-    } catch (err) {
-      Swal.fire("দুঃখিত", "আবার চেষ্টা করুন", "error");
+      reset();
+    } catch (err: any) {
+      Swal.fire("দুঃখিত", err?.message ?? "আবার চেষ্টা করুন", "error");
     } finally {
       setLoading(false);
     }
   };
 
+  const paymentInfo = PAYMENT_INFO[method];
+  const copyTarget = method === "bank" ? (paymentInfo.ac ?? "") : (paymentInfo.number ?? "");
+
   return (
     <div className="min-h-screen bg-[#F5F0E8] py-16">
-      <div className="bg-[#14281D] text-[#E2D4B9] px-6 py-12 text-center">
+      {/* Header */}
+      <div className="bg-green-800 text-white px-6 py-12 text-center">
         <h1 className="text-3xl font-black mb-2">{campaign.title}</h1>
         <p className="text-xs opacity-60 uppercase font-bold tracking-widest">
-          মানবতার সেবায় আপনার অংশগ্রহণ
+          মানবতার সেবায় আপনার অংশগ্রহণ
         </p>
       </div>
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-6">
         <div className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5">
+
+          {/* Amount presets */}
           <label className="text-[10px] font-bold text-gray-400 uppercase mb-3 block">
             পরিমাণ নির্বাচন করুন
           </label>
@@ -118,8 +201,11 @@ export default function DonationPage() {
             {PRESETS.map((p) => (
               <button
                 key={p}
+                type="button"
                 onClick={() => setAmount(p)}
-                className={`py-3 rounded-xl text-sm font-bold transition-all ${amount === p ? "bg-[#14281D] text-white" : "bg-gray-100 text-gray-600"}`}
+                className={`py-3 rounded-xl text-sm font-bold transition-all ${
+                  amount === p ? "bg-[#14281D] text-white" : "bg-gray-100 text-gray-600"
+                }`}
               >
                 {p}৳
               </button>
@@ -134,163 +220,191 @@ export default function DonationPage() {
             className="w-full p-4 bg-gray-50 rounded-2xl font-bold text-lg outline-none mb-6 border-2 border-transparent focus:border-[#14281D]/10"
           />
 
+          {/* Payment method selector */}
           <div className="grid grid-cols-4 gap-2 mb-6">
             {["bkash", "nagad", "rocket", "bank"].map((m) => (
               <button
                 key={m}
+                type="button"
                 onClick={() => setMethod(m)}
-                className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1 ${method === m ? "border-[#14281D] bg-gray-50" : "border-gray-50 opacity-60"}`}
+                className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
+                  method === m ? "border-[#14281D] bg-gray-50" : "border-gray-100 opacity-60 hover:opacity-80"
+                }`}
               >
-                {m === "bank" ? (
-                  <Building2 size={20} className="text-blue-700" />
-                ) : (
-                  <Smartphone size={20} className={PAYMENT_INFO[m].color} />
-                )}
+                <img
+                  src={PAYMENT_INFO[m].logo}
+                  alt={m}
+                  className="w-8 h-8 object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
                 <span className="text-[10px] font-black uppercase">{m}</span>
               </button>
             ))}
           </div>
 
+          {/* Payment info card with copy button */}
           <AnimatePresence mode="wait">
             <motion.div
               key={method}
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              className={`p-5 rounded-2xl mb-6 border-l-4 ${PAYMENT_INFO[method].bg} ${PAYMENT_INFO[method].color.replace("text", "border")}`}
+              className={`p-5 rounded-2xl mb-6 border-l-4 ${paymentInfo.bg} ${paymentInfo.borderColor}`}
             >
-              <p className="text-xs font-bold opacity-70 mb-1">
-                {PAYMENT_INFO[method].label}
-              </p>
-              <p
-                className={
-                  method === "bank"
-                    ? "text-sm font-black"
-                    : "text-xl font-black"
-                }
-              >
-                {method === "bank"
-                  ? `A/C: ${PAYMENT_INFO[method].ac}`
-                  : `Number: ${PAYMENT_INFO[method].number}`}
-              </p>
+              <div className="flex items-center gap-2 mb-2">
+                <img
+                  src={paymentInfo.logo}
+                  alt={method}
+                  className="w-6 h-6 object-contain"
+                  onError={(e) => {
+                    (e.target as HTMLImageElement).style.display = "none";
+                  }}
+                />
+                <p className="text-xs font-bold opacity-70">{paymentInfo.label}</p>
+              </div>
+
+              <div className="flex items-center gap-3">
+                <p className={`font-black ${method === "bank" ? "text-sm" : "text-xl"} flex-1`}>
+                  {method === "bank" ? `A/C: ${paymentInfo.ac}` : `Number: ${paymentInfo.number}`}
+                </p>
+                <CopyButton text={copyTarget} />
+              </div>
+
               <p className="text-[10px] mt-2 opacity-60 italic">
-                * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
+                * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
               </p>
             </motion.div>
           </AnimatePresence>
 
-          <div className="space-y-3 mb-6">
-            <div className="grid grid-cols-2 gap-2">
-              {/* এখানে v: string লিখে টাইপ ডিফাইন করা হয়েছে */}
-              <Input
-                icon={<User size={16} />}
-                placeholder="আপনার নাম"
-                value={donor.name}
-                onChange={(v: string) => setDonor({ ...donor, name: v })}
-              />
-              <Input
-                icon={<Phone size={16} />}
-                placeholder="আপনার ফোন"
-                value={donor.phone}
-                onChange={(v: string) => setDonor({ ...donor, phone: v })}
-              />
+          {/* Form fields via react-hook-form */}
+          <form onSubmit={handleSubmit(onSubmit)} noValidate>
+            <div className="space-y-3 mb-6">
+              <div className="grid grid-cols-2 gap-2">
+                <div>
+                  <RHFInput
+                    icon={<User size={16} />}
+                    placeholder="আপনার নাম"
+                    registration={register("name", { required: "নাম দিন" })}
+                  />
+                  {errors.name && <FieldError msg={errors.name.message} />}
+                </div>
+                <div>
+                  <RHFInput
+                    icon={<Phone size={16} />}
+                    placeholder="আপনার ফোন নাম্বার"
+                    registration={register("phone", {
+                      required: "ফোন নাম্বার দিন",
+                      pattern: { value: /^[0-9+]{10,15}$/, message: "সঠিক নাম্বার দিন" },
+                    })}
+                  />
+                  {errors.phone && <FieldError msg={errors.phone.message} />}
+                </div>
+              </div>
+
+              {method !== "bank" && (
+                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                  <div>
+                    <RHFInput
+                      icon={<Smartphone size={16} />}
+                      placeholder="যে নাম্বার থেকে পাঠিয়েছেন"
+                      registration={register("senderNumber", {
+                        required: "সেন্ডার নাম্বার দিন",
+                        pattern: { value: /^[0-9+]{10,15}$/, message: "সঠিক নাম্বার দিন" },
+                      })}
+                    />
+                    {errors.senderNumber && <FieldError msg={errors.senderNumber.message} />}
+                  </div>
+                  <div>
+                    <RHFInput
+                      icon={<MapPin size={16} />}
+                      placeholder="আপনার ঠিকানা"
+                      registration={register("address")}
+                    />
+                  </div>
+                  <div>
+                    <RHFInput
+                      icon={<Hash size={16} />}
+                      placeholder="ট্রানজেকশন আইডি (TrxID)"
+                      registration={register("trxId", { required: "TrxID দিন" })}
+                    />
+                    {errors.trxId && <FieldError msg={errors.trxId.message} />}
+                  </div>
+                </motion.div>
+              )}
             </div>
 
-            {method !== "bank" && (
-              <motion.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                className="space-y-3"
-              >
-                <Input
-                  icon={<Smartphone size={16} />}
-                  placeholder="যে নাম্বার থেকে পাঠিয়েছেন"
-                  value={donor.senderNumber}
-                  onChange={(v: string) =>
-                    setDonor({ ...donor, senderNumber: v })
-                  }
-                />
-                <Input
-                  icon={<Hash size={16} />}
-                  placeholder="ট্রানজেকশন আইডি (TrxID)"
-                  value={donor.trxId}
-                  onChange={(v: string) => setDonor({ ...donor, trxId: v })}
-                />
-              </motion.div>
-            )}
-          </div>
-
-          <button
-            onClick={handleSubmit}
-            disabled={loading}
-            className="w-full bg-[#14281D] text-[#E2D4B9] py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all"
-          >
-            {loading ? <LoadingSpinner /> : "দান নিশ্চিত করুন"}{" "}
-            <ArrowRight size={18} />
-          </button>
-        </div>
-
-        {/* Zakat Calculator */}
-        <div className="bg-white p-6 rounded-[2.5rem] shadow-xl border border-black/5">
-          <div className="flex items-center gap-2 font-black text-[#14281D] mb-4">
-            <Calculator size={20} className="text-amber-600" />
-            <span>যাকাত ক্যালকুলেটর</span>
-          </div>
-          <div className="flex gap-2">
-            <input
-              type="number"
-              placeholder="মোট জমানো টাকা..."
-              className="flex-1 p-4 bg-gray-50 rounded-2xl outline-none font-bold text-sm"
-              onChange={(e) => setZakat({ ...zakat, input: e.target.value })}
-            />
             <button
-              onClick={() =>
-                setZakat({ ...zakat, result: Number(zakat.input) * 0.025 })
-              }
-              className="bg-[#14281D] text-white px-6 rounded-2xl font-bold text-sm"
+              type="submit"
+              disabled={loading}
+              className="w-full cursor-pointer bg-green-800 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all disabled:opacity-60"
             >
-              হিসাব
+              {loading ? <LoadingSpinner /> : "দান নিশ্চিত করুন"}
+              <ArrowRight size={18} />
             </button>
-          </div>
-          {zakat.result > 0 && (
-            <motion.div
-              initial={{ scale: 0.9, opacity: 0 }}
-              animate={{ scale: 1, opacity: 1 }}
-              className="mt-4 p-4 bg-green-50 border border-green-100 rounded-2xl flex items-center justify-between"
-            >
-              <span className="text-sm font-bold text-green-800">
-                আপনার যাকাত:
-              </span>
-              <span className="text-lg font-black text-green-900">
-                ৳{zakat.result.toLocaleString()}
-              </span>
-            </motion.div>
-          )}
+          </form>
         </div>
       </div>
     </div>
   );
 }
 
-/* --- REUSABLE INPUT COMPONENT --- */
-interface InputProps {
-  icon: React.ReactNode;
-  placeholder: string;
-  value: string;
-  onChange: (v: string) => void;
+/* ─────────────────────────────────────────
+   COPY BUTTON COMPONENT
+───────────────────────────────────────── */
+function CopyButton({ text }: { text: string }) {
+  const { copied, copy } = useCopy(text);
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      title="কপি করুন"
+      className={`flex items-center gap-1 px-3 py-1.5 rounded-xl text-xs font-bold transition-all border ${
+        copied
+          ? "bg-green-100 border-green-300 text-green-700"
+          : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
+      }`}
+    >
+      {copied ? (
+        <>
+          <Check size={13} /> কপি হয়েছে
+        </>
+      ) : (
+        <>
+          <Copy size={13} /> কপি
+        </>
+      )}
+    </button>
+  );
 }
 
-function Input({ icon, placeholder, value, onChange }: InputProps) {
+/* ─────────────────────────────────────────
+   RHF INPUT COMPONENT
+───────────────────────────────────────── */
+interface RHFInputProps {
+  icon: React.ReactNode;
+  placeholder: string;
+  registration: ReturnType<import("react-hook-form").UseFormRegister<DonorFormValues>>;
+}
+
+function RHFInput({ icon, placeholder, registration }: RHFInputProps) {
   return (
     <div className="relative">
-      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-        {icon}
-      </span>
+      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{icon}</span>
       <input
         className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-gray-200 transition-all"
         placeholder={placeholder}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
+        {...registration}
       />
     </div>
   );
+}
+
+/* ─────────────────────────────────────────
+   FIELD ERROR
+───────────────────────────────────────── */
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+  return <p className="text-[11px] text-red-500 font-semibold mt-1 ml-2">{msg}</p>;
 }
