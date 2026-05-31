@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Briefcase, GraduationCap, Loader2 } from "lucide-react";
+import { ArrowRight, Briefcase, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -28,6 +28,41 @@ interface TeacherData {
   qualifications: string;
   experience: string;
 }
+
+const TeacherSkeletonCard = () => (
+  <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-green-50/50 bg-white/95 shadow-md animate-pulse mx-auto">
+    <div className="h-24 bg-neutral-200" />
+    <div className="-mt-14 flex justify-center">
+      <div className="h-28 w-28 rounded-full bg-neutral-300 border-4 border-white shadow" />
+    </div>
+    <div className="space-y-4 px-6 pb-6 pt-4">
+      <div className="space-y-2">
+        <div className="h-5 w-1/2 bg-neutral-200 rounded mx-auto" />
+        <div className="h-4 w-3/4 bg-neutral-200 rounded mx-auto" />
+      </div>
+      <div className="space-y-3 rounded-2xl bg-neutral-50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-12 bg-neutral-200 rounded" />
+            <div className="h-4 w-20 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-10 bg-neutral-200 rounded" />
+            <div className="h-4 w-24 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="border-t border-neutral-100 pt-3 space-y-1">
+          <div className="h-3 w-32 bg-neutral-200 rounded" />
+          <div className="h-4 w-24 bg-neutral-200 rounded" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
 
 const fetchTopTeachers = async (): Promise<TeacherData[]> => {
   const response = await axios.get(
@@ -72,15 +107,17 @@ export default function TeacherSlider() {
           </h2>
 
           <p className="text-sm text-neutral-600 lg:text-base">
-            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত ইসলামি শিক্ষা।
+            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত islam শিক্ষার ভিত্তি।
           </p>
 
           <div className="mx-auto h-1 w-16 rounded-full bg-green-500"></div>
         </div>
 
         {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 text-green-700 animate-spin" />
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+            <TeacherSkeletonCard />
+            <TeacherSkeletonCard />
+            <TeacherSkeletonCard />
           </div>
         ) : teachers.length === 0 ? (
           <div className="text-center text-neutral-600 text-sm py-12">

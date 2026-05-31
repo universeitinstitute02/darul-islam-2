@@ -9,7 +9,7 @@ import StudentSlider from "@/src/components/LandingPageLayout/BestStudents/BestS
 import DonationSection from "@/src/components/LandingPageLayout/DonationSection/DonationSection";
 import AdmissionInfo from "@/src/components/LandingPageLayout/AddmissionDoc/AddmissionInfo";
 import GallerySection from "@/src/components/LandingPageLayout/GallerySection/GallerySection";
-import Testimonials from "@/src/components/mainLayout/home/Testimonials";
+import Testimonials from "@/src/components/LandingPageLayout/Testimonial/Testimonials";
 
 /* ── MAIN PAGE ── */
 export default function Home() {

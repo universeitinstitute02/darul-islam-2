@@ -24,6 +24,29 @@ const StarIcon = ({ active }: { active: boolean }) => (
   </svg>
 );
 
+const TestimonialSkeletonCard = () => (
+  <div className="w-[85vw] sm:w-[45vw] md:w-[35vw] lg:w-[28vw] shrink-0 bg-white rounded-3xl p-6 md:p-7 flex flex-col gap-5 border border-gray-100 animate-pulse">
+    <div className="h-5 w-20 bg-neutral-200 rounded-full" />
+    <div className="flex gap-0.5">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div key={i} className="w-3.5 h-3.5 bg-neutral-200 rounded-full" />
+      ))}
+    </div>
+    <div className="space-y-2 flex-1">
+      <div className="h-3 w-full bg-neutral-200 rounded" />
+      <div className="h-3 w-5/6 bg-neutral-200 rounded" />
+      <div className="h-3 w-2/3 bg-neutral-200 rounded" />
+    </div>
+    <div className="flex items-center gap-3 border-t border-gray-50 pt-4">
+      <div className="w-11 h-11 rounded-full bg-neutral-200 shrink-0" />
+      <div className="space-y-1.5 flex-1">
+        <div className="h-3 w-24 bg-neutral-200 rounded" />
+        <div className="h-2.5 w-16 bg-neutral-200 rounded" />
+      </div>
+    </div>
+  </div>
+);
+
 const Testimonials = () => {
   const [testimonials, setTestimonials] = useState<TestimonialData[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
@@ -62,15 +85,7 @@ const Testimonials = () => {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="py-20 flex justify-center items-center">
-        <div className="w-8 h-8 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin" />
-      </div>
-    );
-  }
-
-  if (testimonials.length === 0) return null;
+  if (!loading && testimonials.length === 0) return null;
 
   return (
     <section className="px-4 py-20 bg-gradient-to-b from-white to-gray-50/50 overflow-hidden relative">
@@ -105,63 +120,71 @@ const Testimonials = () => {
           </div>
         </div>
 
-        {/* started bhai ekhan theke */}
         <div
           ref={sliderRef}
           className="flex gap-6 overflow-x-auto snap-x snap-mandatory pb-8 px-2 scroll-smooth"
           style={{
             WebkitOverflowScrolling: "touch",
-            scrollbarWidth: "none", // Firefox-এর জন্য স্ক্রলবার হাইড
-            msOverflowStyle: "none", // IE-এর জন্য স্ক্রলবার হাইড
+            scrollbarWidth: "none",
+            msOverflowStyle: "none",
           }}
         >
-          {testimonials.map((t) => {
-            const initialLetter = t.user?.name ? t.user.name.charAt(0) : "শ";
+          {loading ? (
+            <>
+              <TestimonialSkeletonCard />
+              <TestimonialSkeletonCard />
+              <TestimonialSkeletonCard />
+              <TestimonialSkeletonCard />
+            </>
+          ) : (
+            testimonials.map((t) => {
+              const initialLetter = t.user?.name ? t.user.name.charAt(0) : "শ";
 
-            return (
-              <div
-                key={t._id}
-                className="w-[85vw] sm:w-[45vw] md:w-[35vw] lg:w-[28vw] shrink-0 snap-start snap-always
-                           group relative bg-white rounded-3xl p-6 md:p-7 flex flex-col gap-5 overflow-hidden
-                           shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border border-gray-100"
-              >
-                <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+              return (
+                <div
+                  key={t._id}
+                  className="w-[85vw] sm:w-[45vw] md:w-[35vw] lg:w-[28vw] shrink-0 snap-start snap-always
+                             group relative bg-white rounded-3xl p-6 md:p-7 flex flex-col gap-5 overflow-hidden
+                             shadow-sm hover:shadow-xl hover:-translate-y-1.5 transition-all duration-300 border border-gray-100"
+                >
+                  <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                <span className="absolute -top-2 right-4 text-[7rem] font-serif leading-none text-green-50/70 select-none pointer-events-none">
-                  "
-                </span>
+                  <span className="absolute -top-2 right-4 text-[7rem] font-serif leading-none text-green-50/70 select-none pointer-events-none">
+                    "
+                  </span>
 
-                <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                  শিক্ষার্থী
-                </span>
+                  <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
+                    <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
+                    শিক্ষার্থী
+                  </span>
 
-                <div className="flex gap-0.5 relative z-10">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <StarIcon key={i} active={i < t.rating} />
-                  ))}
-                </div>
-
-                <p className="text-gray-600 leading-relaxed text-xs md:text-[13px] flex-1 font-medium italic">
-                  "{t.text}"
-                </p>
-
-                <div className="flex items-center gap-3 border-t border-gray-50 pt-4 mt-auto">
-                  <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0">
-                    {initialLetter}
+                  <div className="flex gap-0.5 relative z-10">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <StarIcon key={i} active={i < t.rating} />
+                    ))}
                   </div>
-                  <div>
-                    <p className="text-xs md:text-sm font-black text-gray-900">
-                      {t.user?.name || "অজানা শিক্ষার্থী"}
-                    </p>
-                    <p className="text-[10px] text-emerald-700 font-bold tracking-wider mt-0.5 uppercase">
-                      Verified Reviewer
-                    </p>
+
+                  <p className="text-gray-600 leading-relaxed text-xs md:text-[13px] flex-1 font-medium italic">
+                    "{t.text}"
+                  </p>
+
+                  <div className="flex items-center gap-3 border-t border-gray-50 pt-4 mt-auto">
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0">
+                      {initialLetter}
+                    </div>
+                    <div>
+                      <p className="text-xs md:text-sm font-black text-gray-900">
+                        {t.user?.name || "অজানা শিক্ষার্থী"}
+                      </p>
+                      <p className="text-[10px] text-emerald-700 font-bold tracking-wider mt-0.5 uppercase">
+                        Verified Reviewer
+                      </p>
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              );
+            })
+          )}
         </div>
       </div>
     </section>

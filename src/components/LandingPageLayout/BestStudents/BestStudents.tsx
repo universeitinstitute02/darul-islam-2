@@ -12,7 +12,6 @@ import {
   MapPin,
   GraduationCap,
   Calendar,
-  Loader2,
 } from "lucide-react";
 
 type StudentApiType = {
@@ -32,6 +31,41 @@ type StudentApiType = {
   age: string;
 };
 
+const StudentSkeletonCard = () => (
+  <div className="overflow-hidden rounded-3xl border border-green-50/50 bg-white/95 shadow-md h-full animate-pulse">
+    <div className="h-24 bg-neutral-200" />
+    <div className="-mt-14 flex justify-center">
+      <div className="h-28 w-28 rounded-full bg-neutral-300 border-4 border-white shadow" />
+    </div>
+    <div className="space-y-5 px-6 pb-6 pt-4">
+      <div className="h-6 w-3/4 bg-neutral-200 rounded-md mx-auto" />
+      <div className="space-y-3 rounded-2xl bg-neutral-50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-10 bg-neutral-200 rounded" />
+            <div className="h-4 w-16 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-12 bg-neutral-200 rounded" />
+            <div className="h-4 w-28 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3 border-t border-neutral-100 pt-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-10 bg-neutral-200 rounded" />
+            <div className="h-4 w-24 bg-neutral-200 rounded" />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const StudentCard = ({ student }: { student: StudentApiType }) => (
   <div
     className="
@@ -49,7 +83,7 @@ const StudentCard = ({ student }: { student: StudentApiType }) => (
     <div className="-mt-14 flex justify-center">
       <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-xl bg-white">
         <Image
-          src={student.user?.profileImage || "/hujur.webp"} // প্রোফাইল ইমেজ নাল থাকলে ডিফল্ট ইমেজ প্লেসহোল্ডার
+          src={student.user?.profileImage || "/hujur.webp"}
           alt={student.studentNameBn || "Student"}
           fill
           sizes="(max-width: 112px) 100vw, 112px"
@@ -111,7 +145,6 @@ const StudentCard = ({ student }: { student: StudentApiType }) => (
   </div>
 );
 
-// Fetcher Function using Environment URL
 const fetchTalentedStudents = async (): Promise<StudentApiType[]> => {
   const response = await axios.get(
     `${process.env.NEXT_PUBLIC_API_URL}/students?limit=10`,
@@ -120,7 +153,6 @@ const fetchTalentedStudents = async (): Promise<StudentApiType[]> => {
 };
 
 const StudentSlider = () => {
-  // TanStack Query Hooks integration
   const {
     data: students = [],
     isLoading: loading,
@@ -129,7 +161,7 @@ const StudentSlider = () => {
   } = useQuery<StudentApiType[]>({
     queryKey: ["talentedStudents"],
     queryFn: fetchTalentedStudents,
-    staleTime: 1000 * 60 * 5, // ৫ মিনিট পর্যন্ত ক্যাশ তাজা থাকবে
+    staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     retry: 2,
   });
@@ -152,7 +184,7 @@ const StudentSlider = () => {
           </h2>
 
           <p className="mx-auto mt-4 max-w-2xl text-sm text-neutral-600 md:text-base">
-            দারুল ইসলাম ইনস্টিটিউটের মেধাবী ও কৃতি শিক্ষার্থীদের সংক্ষিপ্ত
+            دارুল ইসলাম ইনস্টিটিউটের মেধাবী ও কৃতি শিক্ষার্থীদের সংক্ষিপ্ত
             পরিচিতি।
           </p>
 
@@ -161,8 +193,11 @@ const StudentSlider = () => {
 
         {/* Dynamic Loading/Data State Rendering */}
         {loading ? (
-          <div className="flex justify-center items-center py-12">
-            <Loader2 className="w-8 h-8 text-green-700 animate-spin" />
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 py-4">
+            <StudentSkeletonCard />
+            <StudentSkeletonCard />
+            <StudentSkeletonCard />
+            <StudentSkeletonCard />
           </div>
         ) : students.length === 0 ? (
           <div className="text-center text-neutral-600 text-sm font-bold py-16">
@@ -175,7 +210,7 @@ const StudentSlider = () => {
               modules={[Autoplay, Navigation, Pagination]}
               spaceBetween={24}
               slidesPerView={1}
-              loop={students.length > 1} // ১ জনের বেশি ডাটা থাকলে কেবল লুপ এক্টিভ হবে
+              loop={students.length > 1}
               speed={900}
               autoplay={{
                 delay: 2500,
