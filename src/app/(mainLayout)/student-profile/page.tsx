@@ -135,7 +135,7 @@ const StudentDashboard = () => {
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
               </p>
-              <Link href="/dashboard/profile" className="hover:underline block">
+              <Link href="/update-profile" className="hover:underline block">
                 <h1 className="text-xl lg:text-3xl font-black tracking-tight mt-0.5">
                   {userName}
                 </h1>
@@ -370,7 +370,7 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {/* শিক্ষক প্রোফাইল (ডকুমেন্টেশন অনুযায়ী লাইভ ক্লাসের শিক্ষক পপুলেট করা হয়েছে) */}
+          {/* শিক্ষক প্রোফাইল */}
           <div className="lg:col-span-4 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
             <div>
               <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
@@ -432,8 +432,8 @@ const StudentDashboard = () => {
                   const supportNumber = "+8801700000000"; // 👈 আপনার সাপোর্ট নাম্বার এখানে দিন
                   Swal.fire({
                     title: "হেল্পলাইনে কল করুন",
-                    text: "আপনি কি আমাদের অফিসিয়াল সাপোর্ট নাম্বারে কল করতে চান?",
-                    icon: "phone",
+                    text: "আপনি কি আমাদের অফিসিয়াল সাপোর্ট নাম্বারে কল করতে চান?",
+                    icon: "question", // 👈 "phone"-এর জায়গায় "question" অথবা "info" টাইপ দেওয়া হলো
                     showCancelButton: true,
                     confirmButtonText: "হ্যাঁ, কল দিন",
                     cancelButtonText: "বাতিল",
