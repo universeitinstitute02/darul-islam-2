@@ -7,6 +7,7 @@ import Link from "next/link";
 import { useRouter } from "next/navigation";
 import axios from "axios";
 import { signIn } from "next-auth/react";
+import Swal from "sweetalert2";
 
 import { Sidebar } from "@/src/components/register/Sidebar";
 import {
@@ -68,7 +69,7 @@ const RegisterPage: React.FC = () => {
   ];
 
   const nextStep = async () => {
-    // সঠিক ধাপ অনুযায়ী ভ্যালিডেশন ম্যাপ
+    // সঠিক ধাপ অনুযায়ী ভ্যালিডেশন ম্যাপ
     const validationMap: any = {
       1: [
         "studentNameEn",
@@ -86,7 +87,6 @@ const RegisterPage: React.FC = () => {
       5: ["password", "confirmPassword"],
     };
 
-    // বর্তমান ধাপের ফিল্ডগুলো চেক করবে
     const isStepValid = await trigger(validationMap[step] || []);
 
     if (isStepValid) {
@@ -108,7 +108,13 @@ const RegisterPage: React.FC = () => {
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     if (data.password !== data.confirmPassword) {
-      alert("পাসওয়ার্ড মিলছে না!");
+      Swal.fire({
+        title: "পাসওয়ার্ড মিলেনি!",
+        text: "পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড একই হতে হবে।",
+        icon: "warning",
+        confirmButtonColor: "#105D38",
+        customClass: { popup: "rounded-[2rem]" },
+      });
       return;
     }
 
@@ -134,13 +140,25 @@ const RegisterPage: React.FC = () => {
         },
       );
 
-      alert("রেজিস্ট্রেশন সফল হয়েছে!");
-      router.push("/auth/login");
+      Swal.fire({
+        title: "রেজিস্ট্রেশন সফল হয়েছে!",
+        text: "আপনার অ্যাকাউন্টটি সফলভাবে তৈরি করা হয়েছে।",
+        icon: "success",
+        confirmButtonColor: "#105D38",
+        customClass: { popup: "rounded-[2rem]" },
+      }).then(() => {
+        router.push("/auth/login");
+      });
     } catch (error: any) {
-      alert(
-        error.response?.data?.message ||
-          "রেজিস্ট্রেশন ব্যর্থ হয়েছে। আবার চেষ্টা করুন।",
-      );
+      Swal.fire({
+        title: "রেজিস্ট্রেশন ব্যর্থ হয়েছে",
+        text:
+          error.response?.data?.message ||
+          "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+        icon: "error",
+        confirmButtonColor: "#105D38",
+        customClass: { popup: "rounded-[2rem]" },
+      });
     } finally {
       setIsLoading(false);
     }
