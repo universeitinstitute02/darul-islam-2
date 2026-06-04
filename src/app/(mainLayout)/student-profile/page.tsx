@@ -21,6 +21,7 @@ import {
   RefreshCw,
   AlertCircle,
   HelpCircle,
+  Mail,
 } from "lucide-react";
 
 import useUser from "../../hooks/useUser";
@@ -28,6 +29,7 @@ import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import EvaluationModal from "@/src/components/shared/ResultModal";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+import Swal from "sweetalert2";
 
 const StudentDashboard = () => {
   const axiosSecure = useAxiosSecure();
@@ -106,7 +108,11 @@ const StudentDashboard = () => {
       : "হিফজ বিভাগ - লেভেল ৩";
 
   if (isUserLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-[calc(100vh-200px)] w-full flex items-center justify-center bg-[#F4F7F5]">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (isUserError) {
@@ -133,7 +139,7 @@ const StudentDashboard = () => {
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
               </p>
-              <Link href="/dashboard/profile" className="hover:underline block">
+              <Link href="/update-profile" className="hover:underline block">
                 <h1 className="text-xl lg:text-3xl font-black tracking-tight mt-0.5">
                   {userName}
                 </h1>
@@ -368,7 +374,7 @@ const StudentDashboard = () => {
             </div>
           </div>
 
-          {/* শিক্ষক প্রোফাইল (ডকুমেন্টেশন অনুযায়ী লাইভ ক্লাসের শিক্ষক পপুলেট করা হয়েছে) */}
+          {/* শিক্ষক প্রোফাইল */}
           <div className="lg:col-span-4 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
             <div>
               <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
@@ -408,22 +414,70 @@ const StudentDashboard = () => {
           </div>
 
           {/* কুইক সাপোর্ট ও সাহায্য কেন্দ্র */}
-          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4">
+          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4 font-sans">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-neutral-800">
                 <HelpCircle size={20} className="text-[#105D38]" />
-                <h3 className="font-black text-xs sm:text-sm lg:text-base italic">
-                  সাহায্য কেন্দ্র
+                <h3 className="font-black text-xs sm:text-sm lg:text-base">
+                  সাহায্য ও সাপোর্ট কেন্দ্র
                 </h3>
               </div>
               <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
-                ড্যাশবোর্ড, فی প্রদান বা ক্লাস সংক্রান্ত যেকোনো টেকনিক্যাল
-                সমস্যার জন্য আমাদের সাপোর্ট টিমকে জানান।
+                ড্যাশবোর্ড, ফি প্রদান বা ক্লাস সংক্রান্ত যেকোনো সমস্যার জন্য
+                সরাসরি আমাদের কল করুন অথবা ইমেইল পাঠাতে পারেন।
               </p>
             </div>
-            <button className="w-full py-2 bg-neutral-800 hover:bg-neutral-900 text-white font-bold text-xs rounded-xl transition-all shadow-sm">
-              টিকিট ওপেন করুন
-            </button>
+
+            {/* 📞 ও 📧 অ্যাকশন বাটন গ্রুপ */}
+            <div className="flex flex-col sm:flex-row gap-2 w-full">
+              {/* কল বাটন */}
+              <button
+                onClick={() => {
+                  const supportNumber = "+8801700000000"; // 👈 আপনার সাপোর্ট নাম্বার এখানে দিন
+                  Swal.fire({
+                    title: "হেল্পলাইনে কল করুন",
+                    text: "আপনি কি আমাদের অফিসিয়াল সাপোর্ট নাম্বারে কল করতে চান?",
+                    icon: "question", // 👈 "phone"-এর জায়গায় "question" অথবা "info" টাইপ দেওয়া হলো
+                    showCancelButton: true,
+                    confirmButtonText: "হ্যাঁ, কল দিন",
+                    cancelButtonText: "বাতিল",
+                    confirmButtonColor: "#105D38",
+                    cancelButtonColor: "#d33",
+                    customClass: { popup: "rounded-[2rem]" },
+                  }).then((result) => {
+                    if (result.isConfirmed)
+                      window.location.href = `tel:${supportNumber}`;
+                  });
+                }}
+                className="flex-1 py-2.5 bg-[#105D38] hover:bg-[#0d4d2e] text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Phone size={14} /> কল করুন
+              </button>
+
+              {/* ইমেইল বাটন */}
+              <button
+                onClick={() => {
+                  const supportEmail = "support@darulislam.com"; // 👈 আপনার সাপোর্ট মেইল এখানে দিন
+                  Swal.fire({
+                    title: "মেইল পাঠান",
+                    text: "আপনার সমস্যাটি বিস্তারিত জানাতে মেইল ওপেন করতে চান?",
+                    icon: "question",
+                    showCancelButton: true,
+                    confirmButtonText: "হ্যাঁ, মেইল করুন",
+                    cancelButtonText: "বাতিল",
+                    confirmButtonColor: "#105D38",
+                    cancelButtonColor: "#d33",
+                    customClass: { popup: "rounded-[2rem]" },
+                  }).then((result) => {
+                    if (result.isConfirmed)
+                      window.location.href = `mailto:${supportEmail}`;
+                  });
+                }}
+                className="flex-1 py-2.5 bg-neutral-900 hover:bg-neutral-800 text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+              >
+                <Mail size={14} />
+              </button>
+            </div>
           </div>
         </div>
       </div>

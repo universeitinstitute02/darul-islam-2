@@ -12,15 +12,14 @@ import {
   Store,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import useUserRole from "@/src/app/hooks/useUserRole";
 
-/* ---------------- NAV DATA ---------------- */
-const navItems = [
+const staticNavItems = [
   { name: "হোম", href: "/", icon: Home },
   { name: "শিক্ষা", href: "/education", icon: GraduationCap },
   { name: "লাইব্রেরি", href: "/library", icon: BookOpen },
   { name: "ইসলামিক শপ", href: "/islamic-shop", icon: Store },
   { name: "দান", href: "/donation", icon: HandHeart },
-  { name: "প্রোফাইল", href: "/student-profile", icon: User },
 ];
 
 export default function Navbar() {
@@ -29,11 +28,24 @@ export default function Navbar() {
   const ticking = useRef(false);
   const pathname = usePathname();
 
+  const { role, isAdmin, isTeacher, isStudent } = useUserRole();
+
+  const getProfileHref = () => {
+    if (isStudent) return "/student-profile";
+    if (isTeacher) return "dashboard/teacher/profile";
+    if (isAdmin) return "dashboard/teacher/profile";
+    return "/auth/login";
+  };
+
+  const navItems = [
+    ...staticNavItems,
+    { name: "প্রোফাইল", href: getProfileHref(), icon: User },
+  ];
+
   /* Active check: exact match for "/", prefix match for the rest */
   const isActive = (href: string) =>
     href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-  /* ---------------- SCROLL LOGIC ---------------- */
   useEffect(() => {
     const handleScroll = () => {
       const currentY = window.scrollY;
@@ -66,7 +78,7 @@ export default function Navbar() {
 
   return (
     <>
-      {/* MAIN NAV WRAPPER */}
+      {/* main nav wrapper mamah */}
       <motion.div
         initial={{ y: 0 }}
         animate={{ y: showNavbar ? 0 : -100 }}
@@ -74,7 +86,7 @@ export default function Navbar() {
         className="fixed top-0 left-0 w-full z-40 will-change-transform shadow-md"
       >
         <div className="bg-[#14281D] mt-16 lg:mt-18">
-          <nav className="bg-green-50 border-b border-black/5">
+          <nav className="bg-green-50 ">
             <div className="max-w-screen-xl mx-auto grid grid-cols-6 h-14">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -123,7 +135,7 @@ export default function Navbar() {
                     {active ? (
                       <motion.div
                         layoutId="active-bar"
-                        className="absolute bottom-0 left-0 w-full h-0.5"
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-green-700"
                         transition={{
                           type: "spring",
                           stiffness: 380,
@@ -141,7 +153,6 @@ export default function Navbar() {
         </div>
       </motion.div>
 
-      {/* Spacer so content isn't hidden behind fixed nav */}
       <div className="h-14" />
     </>
   );

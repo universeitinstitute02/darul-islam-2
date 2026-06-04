@@ -27,6 +27,16 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
+  // Redirect teachers and admins away from the student profile layout
+  if (
+    pathname.startsWith("/student-profile") &&
+    (role === "teacher" || role === "admin")
+  ) {
+    return NextResponse.redirect(
+      new URL("/dashboard/teacher/profile", req.url),
+    );
+  }
+
   // 5. Role-Based Protection: Restrict students from accessing any dashboard paths
   if (pathname.startsWith("/dashboard") && role === "student") {
     return NextResponse.redirect(new URL("/", req.url));

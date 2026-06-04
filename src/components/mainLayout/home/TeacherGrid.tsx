@@ -139,7 +139,7 @@ export default function TeacherSlider() {
             shadow hover:bg-green-700 
             transition flex items-center gap-2"
           >
-            সকল উস্তাদজীর তালিকা 
+            সকল উস্তাদজীর তালিকা
             <ArrowRight size={18} className="group-hover:translate-x-1 transition" />
           </Link>
         </div>

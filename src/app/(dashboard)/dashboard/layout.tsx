@@ -20,6 +20,7 @@ import {
   ListOrdered,
   FolderKanban,
   House,
+  Settings2,
 } from "lucide-react";
 import useUserRole from "../../hooks/useUserRole";
 
@@ -153,6 +154,12 @@ export default function DashboardLayout({
       name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
       href: "/dashboard/admin/testimonial",
       icon: FolderKanban,
+      roles: ["admin"],
+    },
+    {
+      name: "কন্টেন্ট কন্ট্রোল",
+      href: "/dashboard/admin/content-control",
+      icon: Settings2,
       roles: ["admin"],
     },
 

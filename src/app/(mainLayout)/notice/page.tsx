@@ -201,7 +201,6 @@ export default function NoticeBoard() {
                         {notice.description}
                       </p>
 
-                      {/* 🟢 ইনস্ট্রাক্টর ইনফো প্রোফাইল কার্ড (যা নোটিশটি পাবলিশ করেছে) */}
                       {notice.instructor && (
                         <div className="flex items-center gap-2 mt-3 pt-2.5 border-t border-neutral-50">
                           <img

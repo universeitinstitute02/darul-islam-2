@@ -20,7 +20,7 @@ export const Step1 = ({
   handleImageChange,
   fileInputRef,
   selectedImage,
-  divisions,
+  departments,
 }: any) => {
   const currentRole = watch("role");
 
@@ -125,18 +125,75 @@ export const Step1 = ({
           )}
         </div>
 
-        {/* <SelectField
-          label="বিভাগ *"
-          options={divisions}
-          register={register("division", { required: "বিভাগ নির্বাচন করুন" })}
-          error={errors.division}
-        /> */}
+        {/* 🚀 ছাত্রদের জন্য ক্লাস লেভেল এবং বিভাগ ফিল্ড পাশাপাশি গ্রিডে সাজানো হলো */}
         {!currentRole || currentRole === "student" ? (
-          <SelectField
-            label="ক্লাস / লেভেল"
-            options={["প্লে", "নার্সারি", "প্রথম শ্রেণি"]}
-            register={register("classLevel")}
-          />
+          <>
+            <SelectField
+              label="ক্লাস / লেভেল"
+              options={[
+                "প্লে",
+                "নার্সারি",
+                "প্রথম শ্রেণি",
+                "দ্বিতীয় শ্রেণি",
+                "তৃতীয় শ্রেণি",
+                "চতুর্থ শ্রেণি",
+                "পঞ্চম শ্রেণি",
+                "ষষ্ঠ শ্রেণি",
+                "সপ্তম শ্রেণি",
+                "অষ্টম শ্রেণি",
+                "নবম শ্রেণি",
+                "দশম শ্রেণি",
+                "একাদশ শ্রেণি",
+                "দ্বাদশ শ্রেণি",
+                "হিফজুল কুরআন",
+                "ডিপ্লোমা ইন ইঞ্জিনিয়ারিং",
+              ]}
+              register={register("classLevel")}
+            />
+
+            <div className="space-y-1.5 lg:space-y-2">
+              <label
+                className={`text-[10px] lg:text-[11px] font-black uppercase tracking-wider ${errors.department ? "text-red-500" : "text-neutral-400"}`}
+              >
+                বিভাগ (Department) *
+              </label>
+              <div className="relative">
+                <select
+                  {...register("department", {
+                    required: "ডিপার্টমেন্ট নির্বাচন করুন",
+                  })}
+                  defaultValue=""
+                  className={`w-full px-5 py-3 lg:py-4 bg-neutral-50/50 border rounded-2xl focus:ring-2 focus:bg-white outline-none transition-all font-bold text-sm appearance-none cursor-pointer ${
+                    errors.department
+                      ? "border-red-500 focus:ring-red-500/50"
+                      : "border-neutral-200 focus:ring-[#105D38]"
+                  }`}
+                >
+                  <option value="" disabled>
+                    বিভাগ নির্বাচন করুন
+                  </option>
+                  {departments?.map((dept: any) => (
+                    <option key={dept._id} value={dept._id}>
+                      {dept.name}
+                    </option>
+                  ))}
+                </select>
+                <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">
+                  <svg
+                    className="w-4 h-4 fill-current rotate-90"
+                    viewBox="0 0 20 20"
+                  >
+                    <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z" />
+                  </svg>
+                </div>
+              </div>
+              {errors.department && (
+                <span className="text-[10px] text-red-500 font-bold block mt-1">
+                  {errors.department.message}
+                </span>
+              )}
+            </div>
+          </>
         ) : null}
       </div>
 
@@ -175,7 +232,6 @@ export const Step1 = ({
 };
 
 export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
-  // শিক্ষক রেজিস্ট্রেশনের জন্য প্রফেশনাল তথ্য ফিল্ড
   if (isTeacher) {
     return (
       <div className="space-y-5">
@@ -183,7 +239,6 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
           পেশাগত তথ্য
         </h3>
 
-        {/* পদবি ফিল্ড */}
         <InputField
           label="পদবি (Designation) *"
           placeholder="যেমন: Lecturer"
@@ -194,7 +249,6 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
           icon={<Briefcase size={18} />}
         />
 
-        {/* ডাইনামিক ডিপার্টমেন্ট ড্রপডাউন */}
         <div className="space-y-1.5 lg:space-y-2">
           <label
             className={`text-[10px] lg:text-[11px] font-black uppercase tracking-wider ${errors.department ? "text-red-500" : "text-neutral-400"}`}
@@ -216,14 +270,12 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
               <option value="" disabled>
                 বিভাগ নির্বাচন করুন
               </option>
-              {/* ডাটাবেস থেকে আসা ডিপার্টমেন্টগুলো এখানে লুপ হবে */}
               {departments?.map((dept: any) => (
                 <option key={dept._id} value={dept._id}>
                   {dept.name}
                 </option>
               ))}
             </select>
-            {/* ড্রপডাউন অ্যারো আইকন */}
             <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">
               <svg
                 className="w-4 h-4 fill-current rotate-90"
@@ -240,12 +292,58 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
           )}
         </div>
 
-        {/* শিক্ষাগত যোগ্যতা ফিল্ড */}
-        <InputField
-          label="শিক্ষাগত যোগ্যতা"
-          placeholder="যেমন: B.Sc in CSE"
-          register={register("qualifications")}
-        />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          <div className="space-y-1.5 lg:space-y-2">
+            <label
+              className={`text-[10px] lg:text-[11px] font-black uppercase tracking-wider ${errors.experience ? "text-red-500" : "text-neutral-400"}`}
+            >
+              অভিজ্ঞতা (Experience) *
+            </label>
+            <div className="relative">
+              <select
+                {...register("experience", {
+                  required: "অভিজ্ঞতা নির্বাচন করা আবশ্যক",
+                })}
+                defaultValue=""
+                className={`w-full px-5 py-3 lg:py-4 bg-neutral-50/50 border rounded-2xl focus:ring-2 focus:bg-white outline-none transition-all font-bold text-sm appearance-none cursor-pointer ${
+                  errors.experience
+                    ? "border-red-500 focus:ring-red-500/50"
+                    : "border-neutral-200 focus:ring-[#105D38]"
+                }`}
+              >
+                <option value="" disabled>
+                  নির্বাচন করুন
+                </option>
+                <option value="১ বছরের অভিজ্ঞতা">১ বছর</option>
+                <option value="২ বছরের অভিজ্ঞতা">২ বছর</option>
+                <option value="৩ বছরের অভিজ্ঞতা">৩ বছর</option>
+                <option value="৪ বছরের অভিজ্ঞতা">৪ বছর</option>
+                <option value="৫ বছরের অভিজ্ঞতা">৫ বছর</option>
+                <option value="৫+ বছরের অভিজ্ঞতা">৫ বছরের বেশি</option>
+                <option value="১০+ বছরের অভিজ্ঞতা">১০ বছরের বেশি</option>
+              </select>
+              <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-neutral-400">
+                <svg
+                  className="w-4 h-4 fill-current rotate-90"
+                  viewBox="0 0 20 20"
+                >
+                  <path d="M12.95 10.707l.707-.707L8 4.343 6.586 5.757 10.828 10l-4.242 4.243L8 15.657l4.95-4.95z" />
+                </svg>
+              </div>
+            </div>
+            {errors.experience && (
+              <span className="text-[10px] text-red-500 font-bold block mt-1">
+                {errors.experience.message}
+              </span>
+            )}
+          </div>
+
+          <InputField
+            label="শিক্ষাগত যোগ্যতা"
+            placeholder="যেমন: B.Sc in CSE"
+            register={register("qualifications")}
+          />
+        </div>
       </div>
     );
   }
@@ -351,7 +449,6 @@ export const Step5 = ({ register, errors, watch }: any) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  // পাসওয়ার্ড ম্যাচিং চেক করার জন্য password ফিল্ডটি ওয়াচ করা
   const password = watch("password");
 
   return (
@@ -360,7 +457,6 @@ export const Step5 = ({ register, errors, watch }: any) => {
         নিরাপত্তা সেটআপ
       </h3>
 
-      {/* মেইন পাসওয়ার্ড ফিল্ড */}
       <div className="relative">
         <InputField
           label="পাসওয়ার্ড *"
@@ -376,7 +472,6 @@ export const Step5 = ({ register, errors, watch }: any) => {
           error={errors.password}
           icon={<Lock size={18} />}
         />
-        {/* আই আইকন বাটন */}
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
@@ -386,7 +481,6 @@ export const Step5 = ({ register, errors, watch }: any) => {
         </button>
       </div>
 
-      {/* পাসওয়ার্ড কনফার্ম ফিল্ড */}
       <div className="relative">
         <InputField
           label="পাসওয়ার্ড পুনরায় নিশ্চিত করুন *"

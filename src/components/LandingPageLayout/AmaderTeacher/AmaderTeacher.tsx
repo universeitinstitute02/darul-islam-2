@@ -1,56 +1,96 @@
 "use client";
 
-import { ArrowRight, Briefcase, ChevronLeft, ChevronRight, GraduationCap } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowRight, Briefcase, GraduationCap } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
+import axios from "axios";
 
 // ✅ swiper
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Autoplay, Pagination, Navigation } from "swiper/modules";
 
-const teachers = [
-  {
-    name: "প্রফেসর ড. আব্দুর রহমান",
-    degree: "দাওরায়ে হাদীস, পিএইচডি",
-    experience: "১৫ বছরের অভিজ্ঞতা",
-    department: "হাদীস বিভাগ",
-    darulDepartment: "দারুল ইসলাম হাদীস অনুষদ",
-    image: "/hujur.webp",
-    profile: "/teachers/rahman",
-  },
-  {
-    name: "মাওলানা মুহাম্মদ ইউসুফ",
-    degree: "মুফতি, তাকমীল ফিকহ",
-    experience: "১২ বছরের অভিজ্ঞতা",
-    department: "ফিকহ বিভাগ",
-    darulDepartment: "দারুল ইসলাম ফিকহ অনুষদ",
-    image: "/hujur.webp",
-    profile: "/teachers/yusuf",
-  },
-  {
-    name: "ড. আয়েশা সিদ্দিকা",
-    degree: "তাফসীর, ইসলামিক স্টাডিজ",
-    experience: "১০ বছরের অভিজ্ঞতা",
-    department: "কুরআন বিভাগ",
-    darulDepartment: "দারুল ইসলাম কুরআন অনুষদ",
-    image: "/hujur.webp",
-    profile: "/teachers/ayesha",
-  },
-  {
-    name: "মাওলানা মুহাম্মদ ইউসুফ",
-    degree: "মুফতি, তাকমীল ফিকহ",
-    experience: "১২ বছরের অভিজ্ঞতা",
-    department: "ফিকহ বিভাগ",
-    darulDepartment: "দারুল ইসলাম ফিকহ অনুষদ",
-    image: "/hujur.webp",
-    profile: "/teachers/yusuf",
-  },
-];
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+interface TeacherData {
+  _id: string;
+  user: {
+    name: string;
+    profileImage: string;
+  };
+  department: {
+    name: string;
+  };
+  designation: string;
+  qualifications: string;
+  experience: string;
+}
+
+const TeacherSkeletonCard = () => (
+  <div className="w-full max-w-sm overflow-hidden rounded-3xl border border-green-50/50 bg-white/95 shadow-md animate-pulse mx-auto">
+    <div className="h-24 bg-neutral-200" />
+    <div className="-mt-14 flex justify-center">
+      <div className="h-28 w-28 rounded-full bg-neutral-300 border-4 border-white shadow" />
+    </div>
+    <div className="space-y-4 px-6 pb-6 pt-4">
+      <div className="space-y-2">
+        <div className="h-5 w-1/2 bg-neutral-200 rounded mx-auto" />
+        <div className="h-4 w-3/4 bg-neutral-200 rounded mx-auto" />
+      </div>
+      <div className="space-y-3 rounded-2xl bg-neutral-50 p-4">
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-12 bg-neutral-200 rounded" />
+            <div className="h-4 w-20 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="h-8 w-8 bg-neutral-200 rounded-xl" />
+          <div className="space-y-1 flex-1">
+            <div className="h-3 w-10 bg-neutral-200 rounded" />
+            <div className="h-4 w-24 bg-neutral-200 rounded" />
+          </div>
+        </div>
+        <div className="border-t border-neutral-100 pt-3 space-y-1">
+          <div className="h-3 w-32 bg-neutral-200 rounded" />
+          <div className="h-4 w-24 bg-neutral-200 rounded" />
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const fetchTopTeachers = async (): Promise<TeacherData[]> => {
+  const response = await axios.get(
+    `${process.env.NEXT_PUBLIC_API_URL}/teachers?limit=5`,
+  );
+  return response.data;
+};
 
 export default function TeacherSlider() {
+  const {
+    data: teachers = [],
+    isLoading: loading,
+    isError,
+    error,
+  } = useQuery<TeacherData[]>({
+    queryKey: ["topTeachers"],
+    queryFn: fetchTopTeachers,
+    staleTime: 1000 * 60 * 5,
+    refetchOnWindowFocus: false,
+    retry: 2,
+  });
+
+  if (isError) {
+    console.error("React Query Error:", error);
+  }
+
   return (
-    <section className="relative overflow-hidden  px-4 py-8 md:py-12 lg:px-8">
+    <section className="relative overflow-hidden px-4 py-8 md:py-12 lg:px-8">
       <div className="relative z-10 bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         {/* Header */}
         <div className="mx-auto mb-12 max-w-2xl space-y-3 text-center">
@@ -67,137 +107,129 @@ export default function TeacherSlider() {
           </h2>
 
           <p className="text-sm text-neutral-600 lg:text-base">
-            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত ইসলামি শিক্ষা।
+            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত islam শিক্ষার ভিত্তি।
           </p>
 
           <div className="mx-auto h-1 w-16 rounded-full bg-green-500"></div>
         </div>
 
-        {/* Swiper */}
-        <Swiper
-          modules={[Autoplay, Pagination, Navigation]}
-          slidesPerView={1}
-          loop={true}
-          speed={1000}
-          autoplay={{
-            delay: 2500,
-            disableOnInteraction: false,
-            pauseOnMouseEnter: true,
-          }}
-          pagination={{ clickable: true }}
-          navigation={true}
-          breakpoints={{
-            768: {
-              slidesPerView: 2,
-            },
-            1024: {
-              slidesPerView: 3,
-            },
-          }}
-          className="teacher-swiper"
-        >
-          {teachers.map((teacher, i) => (
-            <SwiperSlide key={i} className="py-4">
-              <div className="flex justify-center px-3">
-                {/* Card */}
-                <div
-                  className="
-                    group w-full max-w-sm overflow-hidden rounded-3xl
-                    border border-green-100 bg-white/90
-                    shadow-lg backdrop-blur transition-all duration-300
-                     hover:shadow-2xl
-                  "
-                >
-                  {/* top bg */}
-                  <div className="relative h-24 bg-gradient-to-r from-green-700 to-green-500" />
+        {loading ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 py-4">
+            <TeacherSkeletonCard />
+            <TeacherSkeletonCard />
+            <TeacherSkeletonCard />
+          </div>
+        ) : teachers.length === 0 ? (
+          <div className="text-center text-neutral-600 text-sm py-12">
+            কোনো শিক্ষকের তথ্য পাওয়া যায়নি।
+          </div>
+        ) : (
+          <Swiper
+            modules={[Autoplay, Pagination, Navigation]}
+            slidesPerView={1}
+            loop={teachers.length > 1}
+            speed={1000}
+            autoplay={{
+              delay: 2500,
+              disableOnInteraction: false,
+              pauseOnMouseEnter: true,
+            }}
+            pagination={{ clickable: true }}
+            navigation={true}
+            breakpoints={{
+              768: { slidesPerView: 2 },
+              1024: { slidesPerView: 3 },
+            }}
+            className="teacher-swiper"
+          >
+            {teachers.map((teacher) => (
+              <SwiperSlide key={teacher._id} className="py-4">
+                <div className="flex justify-center px-3">
+                  {/* Card */}
+                  <div className="group w-full max-w-sm overflow-hidden rounded-3xl border border-green-100 bg-white/90 shadow-lg backdrop-blur transition-all duration-300 hover:shadow-2xl">
+                    {/* top bg */}
+                    <div className="relative h-24 bg-gradient-to-r from-green-700 to-green-500" />
 
-                  {/* image */}
-                  <div className="-mt-14 flex justify-center">
-                    <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-lg">
-                      <Image
-                        src={teacher.image}
-                        alt={teacher.name}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-                  </div>
-
-                  {/* content */}
-                  <div className="space-y-4 px-6 pb-6 pt-4 text-center">
-                    {/* name */}
-                    <div>
-                      <h3 className="text-lg font-bold text-green-800">
-                        {teacher.name}
-                      </h3>
-
-                      <p className="mt-1 text-sm text-neutral-500">
-                        {teacher.degree}
-                      </p>
+                    {/* image */}
+                    <div className="-mt-14 flex justify-center">
+                      <div className="relative h-28 w-28 overflow-hidden rounded-full border-4 border-white shadow-lg bg-white">
+                        <Image
+                          src={teacher.user?.profileImage || "/hujur.webp"}
+                          alt={teacher.user?.name || "Instructor"}
+                          fill
+                          sizes="(max-width: 112px) 100vw, 112px"
+                          priority
+                          className="object-cover"
+                        />
+                      </div>
                     </div>
 
-                    {/* info */}
-                    <div className="space-y-3 rounded-2xl bg-green-50 p-4 text-left">
-                      <div className="flex items-start gap-3">
-                        <Briefcase
-                          size={18}
-                          className="mt-0.5 text-green-700"
-                        />
-
-                        <div>
-                          <p className="text-xs font-semibold text-green-700">
-                            অভিজ্ঞতা
-                          </p>
-
-                          <p className="text-sm text-neutral-700">
-                            {teacher.experience}
-                          </p>
-                        </div>
+                    {/* content */}
+                    <div className="space-y-4 px-6 pb-6 pt-4 text-center">
+                      {/* name */}
+                      <div>
+                        <h3 className="text-lg font-bold text-green-800">
+                          {teacher.user?.name}
+                        </h3>
+                        <p className="mt-1 text-sm text-neutral-500 line-clamp-1">
+                          {teacher.qualifications}
+                        </p>
                       </div>
 
-                      <div className="flex items-start gap-3">
-                        <GraduationCap
-                          size={18}
-                          className="mt-0.5 text-green-700"
-                        />
+                      {/* info */}
+                      <div className="space-y-3 rounded-2xl bg-green-50 p-4 text-left">
+                        <div className="flex items-start gap-3">
+                          <Briefcase
+                            size={18}
+                            className="mt-0.5 text-green-700 shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs font-semibold text-green-700">
+                              অভিজ্ঞতা
+                            </p>
+                            <p className="text-sm text-neutral-700">
+                              {teacher.experience}
+                            </p>
+                          </div>
+                        </div>
 
-                        <div>
+                        <div className="flex items-start gap-3">
+                          <GraduationCap
+                            size={18}
+                            className="mt-0.5 text-green-700 shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs font-semibold text-green-700">
+                              বিভাগ
+                            </p>
+                            <p className="text-sm text-neutral-700">
+                              {teacher.department?.name}
+                            </p>
+                          </div>
+                        </div>
+
+                        <div className="border-t border-green-100 pt-3">
                           <p className="text-xs font-semibold text-green-700">
-                            বিভাগ
+                            Department of Darul Islam
                           </p>
-
                           <p className="text-sm text-neutral-700">
-                            {teacher.department}
+                            দারুল ইসলাম {teacher.department?.name || "অনুষদ"}
                           </p>
                         </div>
-                      </div>
-
-                      <div className="border-t border-green-100 pt-3">
-                        <p className="text-xs font-semibold text-green-700">
-                          Department of Darul Islam
-                        </p>
-
-                        <p className="text-sm text-neutral-700">
-                          {teacher.darulDepartment}
-                        </p>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
- 
+              </SwiperSlide>
+            ))}
+          </Swiper>
+        )}
+
         {/* CTA */}
         <div className="mt-10 flex justify-center">
           <Link
             href="/teachers"
-            className="
-              group flex items-center gap-2 rounded-full
-              bg-green-700 px-6 py-3 text-sm font-semibold
-              text-white shadow-lg transition hover:bg-green-800
-            "
+            className="group flex items-center gap-2 rounded-full bg-green-700 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-green-800"
           >
             সকল উস্তাদজীর তালিকা
             <ArrowRight

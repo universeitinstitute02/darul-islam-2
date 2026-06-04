@@ -3,7 +3,6 @@ import React, { useEffect, useState } from "react";
 import { ImageIcon, Expand, ArrowUpRight } from "lucide-react";
 import Link from "next/link";
 
-// 📌 API ইন্টারফেস ডিফাইন
 interface GalleryAlbum {
   _id: string;
   title: string;
@@ -11,6 +10,32 @@ interface GalleryAlbum {
   image: string[];
   createdAt: string;
 }
+
+const GallerySkeleton = () => {
+  const skeletonSizes = [
+    "lg:col-span-2 lg:row-span-2 md:col-span-2",
+    "lg:col-span-1 lg:row-span-1",
+    "lg:col-span-1 lg:row-span-2 md:col-span-1",
+    "lg:col-span-1 lg:row-span-1",
+    "lg:col-span-2 lg:row-span-1 md:col-span-2",
+  ];
+
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 auto-rows-[250px] md:auto-rows-[300px]">
+      {Array.from({ length: 5 }).map((_, i) => (
+        <div
+          key={i}
+          className={`bg-neutral-200 animate-pulse rounded-[1.5rem] md:rounded-[2.5rem] relative overflow-hidden ${skeletonSizes[i]}`}
+        >
+          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 space-y-2">
+            <div className="h-3 w-16 bg-neutral-300 rounded" />
+            <div className="h-5 w-3/4 bg-neutral-300 rounded" />
+          </div>
+        </div>
+      ))}
+    </div>
+  );
+};
 
 const GallerySection: React.FC = () => {
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
@@ -21,7 +46,6 @@ const GallerySection: React.FC = () => {
   const BASE_URL = "https://darulislam-server-v2.vercel.app/api";
   const LIMIT = 5;
 
-  // 🔄 এপিআই থেকে ডাটা ফেচ করার ফাংশন
   useEffect(() => {
     setLoading(true);
     fetch(`${BASE_URL}/gallery?page=${page}&limit=${LIMIT}`)
@@ -41,7 +65,6 @@ const GallerySection: React.FC = () => {
       .finally(() => setLoading(false));
   }, [page]);
 
-  // 📐 বেন্টো গ্রিড সাইজ জেনারেটর
   const getGridSize = (index: number) => {
     const sizes = [
       "lg:col-span-2 lg:row-span-2 md:col-span-2",
@@ -53,7 +76,6 @@ const GallerySection: React.FC = () => {
     return sizes[index % sizes.length];
   };
 
-  // 🔗 ইমেজ পাথ ম্যাপার
   const getImageUrl = (imgUrl: string) => {
     if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
       return imgUrl;
@@ -61,7 +83,6 @@ const GallerySection: React.FC = () => {
     return `${BASE_URL.replace("/api", "")}/${imgUrl}`;
   };
 
-  // ➕ "সম্পূর্ণ গ্যালারি দেখুন" বাটনের কাজ
   const handleLoadMore = () => {
     if (hasMore && !loading) {
       setPage((prev) => prev + 1);
@@ -83,11 +104,9 @@ const GallerySection: React.FC = () => {
           <div className="w-20 h-1.5 bg-[#105D38] rounded-full"></div>
         </div>
 
-        {/* 🔄 প্রথমবার পেজ লোড হওয়ার কন্ডিশন */}
+        {/* 🔄 প্রথমবার পেজ লোড হওয়ার কন্ডিশন */}
         {page === 1 && loading ? (
-          <div className="text-center py-20 text-neutral-600 font-bold text-sm tracking-wide animate-pulse">
-            গ্যালারি লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
-          </div>
+          <GallerySkeleton />
         ) : albums.length === 0 ? (
           <div className="text-center py-12 text-gray-600 font-bold">
             বর্তমানে কোনো ছবি আপলোড করা নেই।
@@ -141,14 +160,14 @@ const GallerySection: React.FC = () => {
               })}
             </div>
 
-            {/*  বাটন  */}
+            {/* বাটন  */}
             <div className="mt-14 mb-6 text-center">
-            <Link
-              href="/gallery"
-              className="cursor-pointer px-12 py-5 bg-[#105D38] text-white font-black rounded-full mt-20"
-            >
-              সম্পূর্ণ গ্যালারি দেখুন
-            </Link>
+              <Link
+                href="/gallery"
+                className="cursor-pointer px-12 py-5 bg-[#105D38] text-white font-black rounded-full mt-20"
+              >
+                সম্পূর্ণ গ্যালারি দেখুন
+              </Link>
             </div>
           </>
         )}
