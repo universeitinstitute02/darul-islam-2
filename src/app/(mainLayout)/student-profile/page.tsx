@@ -108,7 +108,11 @@ const StudentDashboard = () => {
       : "হিফজ বিভাগ - লেভেল ৩";
 
   if (isUserLoading) {
-    return <LoadingSpinner />;
+    return (
+      <div className="min-h-[calc(100vh-200px)] w-full flex items-center justify-center bg-[#F4F7F5]">
+        <LoadingSpinner />
+      </div>
+    );
   }
 
   if (isUserError) {
