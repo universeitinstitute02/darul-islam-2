@@ -6,12 +6,8 @@ import { signOut } from "next-auth/react";
 import { useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import {
-  Home,
-  BookOpen,
-  Settings,
   LayoutDashboard,
   LogOut,
-  FileCheck,
   Menu,
   X,
   Library,
@@ -76,12 +72,6 @@ export default function DashboardLayout({
       roles: ["teacher"],
     },
     {
-      name: "কোর্স যুক্ত করুন",
-      href: "/dashboard/teacher/add-course",
-      icon: PlusSquare,
-      roles: ["teacher"],
-    },
-    {
       name: "ক্লাস লিঙ্ক",
       href: "/dashboard/teacher/class-link",
       icon: Video,
@@ -127,6 +117,30 @@ export default function DashboardLayout({
       name: "কোর্স ম্যানেজমেন্ট",
       href: "/dashboard/admin/course-management",
       icon: UserCog,
+      roles: ["admin"],
+    },
+     {
+      name: "কোর্সসমূহ",
+      href: "/dashboard/admin/my-course",
+      icon: Library,
+      roles: ["admin"],
+    },
+    {
+      name: "কোর্স যুক্ত করুন",
+      href: "/dashboard/admin/add-course",
+      icon: PlusSquare,
+      roles: ["admin"],
+    },
+    {
+      name: "ক্যাটাগরি",
+      href: "/dashboard/admin/add-course",
+      icon: PlusSquare,
+      roles: ["admin"],
+    },
+    {
+      name: "শিক্ষক-নিয়োগ",
+      href: "/dashboard/admin/teacher-assign",
+      icon: PlusSquare,
       roles: ["admin"],
     },
     {
@@ -207,7 +221,7 @@ export default function DashboardLayout({
         <div className="p-4 border-t border-green-800">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full p-3 hover:bg-red-600 rounded-xl text-green-100 hover:text-white font-medium transition"
+            className="flex items-center gap-3 w-full p-3 cursor-pointer hover:bg-red-600 rounded-xl text-green-100 hover:text-white font-medium transition"
           >
             <LogOut size={20} /> লগআউট
           </button>
