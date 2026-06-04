@@ -42,14 +42,13 @@ const RegisterPage: React.FC = () => {
   const userRole = watch("role");
   const isTeacher = userRole === "teacher";
 
-  // Fetch Departments from your Category/Bivag API
   useEffect(() => {
     const fetchDepartments = async () => {
       try {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/categories`,
         );
-        setDepartments(res.data); // Assuming res.data is an array of { _id, name }
+        setDepartments(res.data);
       } catch (error) {
         console.error("Failed to fetch departments", error);
       }
@@ -69,7 +68,6 @@ const RegisterPage: React.FC = () => {
   ];
 
   const nextStep = async () => {
-    // সঠিক ধাপ অনুযায়ী ভ্যালিডেশন ম্যাপ
     const validationMap: any = {
       1: [
         "studentNameEn",
@@ -142,7 +140,7 @@ const RegisterPage: React.FC = () => {
 
       Swal.fire({
         title: "রেজিস্ট্রেশন সফল হয়েছে!",
-        text: "আপনার অ্যাকাউন্টটি সফলভাবে তৈরি করা হয়েছে।",
+        text: "আপনার অ্যাকাউন্টটি সফলভাবে তৈরি করা হয়েছে।",
         icon: "success",
         confirmButtonColor: "#105D38",
         customClass: { popup: "rounded-[2rem]" },
@@ -154,7 +152,7 @@ const RegisterPage: React.FC = () => {
         title: "রেজিস্ট্রেশন ব্যর্থ হয়েছে",
         text:
           error.response?.data?.message ||
-          "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
+          "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
         icon: "error",
         confirmButtonColor: "#105D38",
         customClass: { popup: "rounded-[2rem]" },
@@ -168,12 +166,47 @@ const RegisterPage: React.FC = () => {
     signIn("google", { callbackUrl: "/dashboard" });
   };
 
+  const getMobileStepLabel = () => {
+    if (step === 1) return "ব্যক্তিগত তথ্য";
+    if (step === 2) return isTeacher ? "পেশাগত তথ্য" : "পিতার তথ্য";
+    if (step === 3) return "মাতার তথ্য";
+    if (step === 4) return "যোগাযোগ";
+    return "নিরাপত্তা";
+  };
+
   return (
     <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 lg:p-8 font-sans">
       <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl flex flex-col lg:flex-row overflow-hidden border border-neutral-100">
         <Sidebar step={step} isTeacher={isTeacher} />
 
         <div className="flex-1 p-6 lg:p-12 relative">
+          {/* 📱 Mobile Top Step Progress Bar (Hidden on Desktop) */}
+          <div className="lg:hidden mb-6 bg-slate-50 p-4 rounded-2xl border border-neutral-100">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-black text-[#105D38] bg-[#105D38]/10 px-2.5 py-1 rounded-md">
+                ধাপ{" "}
+                {step === 4 && isTeacher
+                  ? 3
+                  : step === 5 && isTeacher
+                    ? 4
+                    : step}{" "}
+                / {isTeacher ? 4 : totalSteps}
+              </span>
+              <span className="text-xs font-bold text-slate-700">
+                {getMobileStepLabel()}
+              </span>
+            </div>
+            {/* Progress Bar Track */}
+            <div className="w-full h-2 bg-neutral-200/70 rounded-full overflow-hidden">
+              <div
+                className="h-full bg-[#105D38] transition-all duration-300 rounded-full"
+                style={{
+                  width: `${(step / totalSteps) * 100}%`,
+                }}
+              />
+            </div>
+          </div>
+
           <div className="mb-6 lg:mb-8">
             <Link
               href="/auth/login"
@@ -280,7 +313,7 @@ const RegisterPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
+                    className="flex-1 flex items-center justify-center gap-2 py-4 px-3 lg:px-0 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
                   >
                     {isLoading ? (
                       <>
