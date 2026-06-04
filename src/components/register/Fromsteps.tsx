@@ -360,7 +360,14 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
       <InputField
         label="মোবাইল নম্বর *"
         placeholder="01XXXXXXXXX"
-        register={register("fatherMobile", { required: "পিতার মোবাইল আবশ্যক" })}
+        isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
+        register={register("fatherMobile", {
+          required: "পিতার মোবাইল আবশ্যক",
+          pattern: {
+            value: /^01[3-9]\d{8}$/,
+            message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
+          },
+        })}
         error={errors.fatherMobile}
         icon={<Phone size={18} />}
       />
@@ -385,8 +392,15 @@ export const Step3 = ({ register, errors }: any) => (
     <InputField
       label="মোবাইল নম্বর"
       placeholder="01XXXXXXXXX"
-      register={register("motherMobile")}
+      isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
+      register={register("motherMobile", {
+        pattern: {
+          value: /^01[3-9]\d{8}$/,
+          message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
+        },
+      })}
       icon={<Phone size={18} />}
+      error={errors.motherMobile} // এরর হ্যান্ডেল করার জন্য প্রপ্স যুক্ত করা হলো
     />
     <InputField
       label="পেশা"
@@ -427,8 +441,13 @@ export const Step4 = ({ register, errors, divisions }: any) => (
       <InputField
         label="মোবাইল নম্বর *"
         placeholder="01XXXXXXXXX"
+        isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
         register={register("studentMobile", {
           required: "মোবাইল নম্বর আবশ্যক",
+          pattern: {
+            value: /^01[3-9]\d{8}$/,
+            message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
+          },
         })}
         error={errors.studentMobile}
         icon={<Phone size={18} />}
