@@ -91,6 +91,12 @@ export default function DashboardLayout({
       roles: ["admin"],
     },
     {
+      name: "শিক্ষার্থীবৃন্দ",
+      href: "/dashboard/admin/students-list",
+      icon: UserCog,
+      roles: ["admin"],
+    },
+    {
       name: "সকল সদস্যবৃন্দ",
       href: "/dashboard/teacher/all-users",
       icon: Users,
@@ -120,7 +126,7 @@ export default function DashboardLayout({
       icon: UserCog,
       roles: ["admin"],
     },
-     {
+    {
       name: "কোর্সসমূহ",
       href: "/dashboard/admin/my-course",
       icon: Library,
@@ -134,7 +140,7 @@ export default function DashboardLayout({
     },
     {
       name: "ক্যাটাগরি",
-      href: "/dashboard/admin/add-course",
+      href: "/dashboard/admin/categories",
       icon: PlusSquare,
       roles: ["admin"],
     },

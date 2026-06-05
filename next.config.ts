@@ -5,6 +5,12 @@ const nextConfig: NextConfig = {
     remotePatterns: [
       {
         protocol: "https",
+        hostname: "api.dicebear.com", // 👈 ডাইসবিয়ার এভাটার ডোমেইন অ্যাড করা হলো
+        port: "",
+        pathname: "/**",
+      },
+      {
+        protocol: "https",
         hostname: "i.ibb.co.com",
         port: "",
         pathname: "/**",

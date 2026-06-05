@@ -1,5 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
+import Image from "next/image"; // 👈 Next.js Image Component Imported
 import {
   Search,
   Filter,
@@ -13,6 +14,10 @@ import {
   Briefcase,
   UserPlus,
   Clock,
+  X,
+  Phone,
+  BookOpen,
+  User,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
@@ -37,6 +42,10 @@ const TeacherList = () => {
   // Pagination States
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
+
+  // Modal States 👈 Added for Teacher Details Modal
+  const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
 
   // Fetch Departments for Filter Dropdown
   useEffect(() => {
@@ -130,6 +139,17 @@ const TeacherList = () => {
               confirmButtonColor: "#105D38",
             });
             fetchTeachers();
+            // মোডাল খোলা থাকলে ডেটা রিফ্রেশ করা
+            if (
+              selectedTeacher &&
+              (selectedTeacher._id === teacherProfileId ||
+                selectedTeacher.profileData?._id === teacherProfileId)
+            ) {
+              setSelectedTeacher((prev: any) => ({
+                ...prev,
+                isApproved: true,
+              }));
+            }
           } else {
             const errData = await res.json();
             throw new Error(errData.message || "Approval process failed");
@@ -205,9 +225,14 @@ const TeacherList = () => {
     });
   };
 
+  // Modal Open Handler 👈
+  const openDetailsModal = (teacher: any) => {
+    setSelectedTeacher(teacher);
+    setIsModalOpen(true);
+  };
+
   return (
     <div className="mt-4 md:mt-8 space-y-6 pb-12 px-2 md:px-0 font-sans">
-      {/* Dynamic Header & Advanced Control Panel */}
       {/* Dynamic Header & Advanced Control Panel */}
       <div className="flex flex-col gap-6 bg-white p-6 rounded-[2.5rem] border border-neutral-100 shadow-sm">
         {/* Top Row: Title and Professional Status Tabs */}
@@ -224,7 +249,7 @@ const TeacherList = () => {
             </p>
           </div>
 
-          {/* 🌟 Image Matched Status Tab Switcher */}
+          {/* Status Tab Switcher */}
           <div className="flex items-center gap-1 bg-neutral-100/80 p-1.5 rounded-2xl w-fit self-start md:self-auto shadow-inner">
             <button
               type="button"
@@ -262,7 +287,7 @@ const TeacherList = () => {
           </div>
         </div>
 
-        {/* Bottom Row: Rest of Filters Grid (Clean and Balanced) */}
+        {/* Bottom Row: Rest of Filters Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-neutral-50 pt-4">
           {/* 1. Name/Email Search */}
           <div className="relative w-full">
@@ -351,11 +376,17 @@ const TeacherList = () => {
                     {/* Top Identity Block */}
                     <div className="p-6 pb-4 flex items-start justify-between">
                       <div className="flex items-center gap-4">
-                        <div className="relative shrink-0">
-                          <img
+                        <div className="relative shrink-0 w-16 h-16">
+                          {/* 🌟 Next.js Image Component used here */}
+                          <Image
                             src={teacherImage}
-                            className="w-16 h-16 rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover"
                             alt={teacherName}
+                            width={64}
+                            height={64}
+                            className="rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover w-16 h-16"
+                            unoptimized={teacherImage.startsWith(
+                              "https://api.dicebear.com",
+                            )}
                           />
                           <div
                             className={`absolute -bottom-1 -right-1 p-1 rounded-full border-2 border-white ${isApproved ? "bg-green-500" : "bg-amber-500"}`}
@@ -412,12 +443,12 @@ const TeacherList = () => {
                           <p className="text-xs font-bold text-neutral-700">
                             {teacher.experience ||
                               teacher.profileData?.experience ||
-                              "তথ্য নেই"}
+                              "정보 없음"}
                           </p>
                         </div>
                       </div>
 
-                      {/* Separation between Badge and Action Button (Senior UX standard) */}
+                      {/* Separation between Badge and Action Button */}
                       <div className="flex items-center justify-between border-t border-neutral-100 pt-3">
                         <span
                           className={`text-[10px] font-black uppercase px-3 py-1 rounded-full ${
@@ -450,17 +481,13 @@ const TeacherList = () => {
 
                   {/* Operational Footer Communication Nodes */}
                   <div className="p-4 flex gap-2">
+                    {/* 🌟 ডিটেইলস বাটন এখন মোডাল ওপেন করবে */}
                     <button
                       type="button"
-                      onClick={() =>
-                        handleEmailClick(
-                          teacher.user?.email || teacher.email,
-                          teacherName,
-                        )
-                      }
+                      onClick={() => openDetailsModal(teacher)}
                       className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#105D38] hover:bg-[#105D38] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <Mail size={14} /> ইমেইল
+                      <User size={14} /> ডিটেইলস
                     </button>
                     <button
                       type="button"
@@ -512,6 +539,227 @@ const TeacherList = () => {
           </div>
         </div>
       )}
+
+      {/* 🌟 3️⃣ FULLY RESPONSIVE TEACHER DETAILS MODAL SEGMENT 🌟 */}
+      <AnimatePresence>
+        {isModalOpen && selectedTeacher && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            {/* Backdrop Effect */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setIsModalOpen(false)}
+              className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm"
+            />
+
+            {/* Modal Body Card */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.95, y: 20 }}
+              className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl border border-neutral-100 relative z-10 max-h-[90vh] flex flex-col font-sans"
+            >
+              {/* Modal Header Actions */}
+              <div className="absolute right-5 top-5 z-20">
+                <button
+                  type="button"
+                  onClick={() => setIsModalOpen(false)}
+                  className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-full text-neutral-500 transition-colors"
+                >
+                  <X size={16} />
+                </button>
+              </div>
+
+              {/* Scrollable Container Content */}
+              <div className="overflow-y-auto p-6 md:p-8 space-y-6">
+                {/* Profile Image & Identification Core */}
+                <div className="flex flex-col items-center text-center space-y-3 pt-4">
+                  <div className="relative w-24 h-24">
+                    <Image
+                      src={
+                        selectedTeacher.user?.profileImage ||
+                        selectedTeacher.profileImage ||
+                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedTeacher.name}`
+                      }
+                      alt={
+                        selectedTeacher.profileData?.teacherNameBn ||
+                        selectedTeacher.name
+                      }
+                      width={96}
+                      height={96}
+                      className="rounded-[2rem] border-4 border-emerald-50 shadow-md object-cover w-24 h-24"
+                      unoptimized={(
+                        selectedTeacher.user?.profileImage ||
+                        selectedTeacher.profileImage ||
+                        ""
+                      ).startsWith("https://api.dicebear.com")}
+                    />
+                  </div>
+                  <div>
+                    <h3 className="text-lg md:text-xl font-black text-neutral-800">
+                      {selectedTeacher.profileData?.teacherNameBn ||
+                        selectedTeacher.name}
+                    </h3>
+                    <p className="text-xs text-neutral-400 font-bold tracking-wide mt-0.5 uppercase text-emerald-700">
+                      {selectedTeacher.designation ||
+                        selectedTeacher.profileData?.designation ||
+                        "शिक्षক"}
+                    </p>
+                  </div>
+
+                  {/* Status Badge inside Modal */}
+                  <span
+                    className={`text-[10px] font-black uppercase px-4 py-1 rounded-full ${
+                      (selectedTeacher.isApproved ??
+                      selectedTeacher.profileData?.isApproved)
+                        ? "bg-emerald-100 text-emerald-700"
+                        : "bg-amber-100 text-amber-700"
+                    }`}
+                  >
+                    {(selectedTeacher.isApproved ??
+                    selectedTeacher.profileData?.isApproved)
+                      ? "Verified Account"
+                      : "Pending Verification"}
+                  </span>
+                </div>
+
+                <hr className="border-neutral-100" />
+
+                {/* Teachers Comprehensive Credentials Matrix */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest">
+                    বিস্তারিত তথ্যাবলী
+                  </h4>
+
+                  <div className="grid grid-cols-1 gap-3.5">
+                    {/* Department Grid Node */}
+                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                      <div className="p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0">
+                        <BookOpen size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                          বিভাগ / সাবজেক্ট
+                        </p>
+                        <p className="text-xs font-bold text-neutral-700 truncate">
+                          {selectedTeacher.department?.name ||
+                            selectedTeacher.profileData?.department?.name ||
+                            "সাধারণ বিভাগ"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Experience Grid Node */}
+                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                      <div className="p-2.5 bg-white text-amber-600 rounded-xl shadow-sm shrink-0">
+                        <Clock size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                          টিচিং অভিজ্ঞতা
+                        </p>
+                        <p className="text-xs font-bold text-neutral-700">
+                          {selectedTeacher.experience ||
+                            selectedTeacher.profileData?.experience ||
+                            "তথ্য পাওয়া যায়নি"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Email Grid Node */}
+                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                      <div className="p-2.5 bg-white text-blue-600 rounded-xl shadow-sm shrink-0">
+                        <Mail size={16} />
+                      </div>
+                      <div className="min-w-0 flex-1">
+                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                          ইমেইল ঠিকানা
+                        </p>
+                        <p className="text-xs font-bold text-neutral-700 break-all lowercase">
+                          {selectedTeacher.user?.email ||
+                            selectedTeacher.email ||
+                            "মেইল নেই"}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Phone Grid Node */}
+                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                      <div className="p-2.5 bg-white text-indigo-600 rounded-xl shadow-sm shrink-0">
+                        <Phone size={16} />
+                      </div>
+                      <div className="min-w-0">
+                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                          মোবাইল নম্বর
+                        </p>
+                        <p className="text-xs font-bold text-neutral-700">
+                          {selectedTeacher.profileData?.phone ||
+                            selectedTeacher.phone ||
+                            "নম্বর নেই"}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Action Operations Footer inside Modal */}
+              <div className="p-6 bg-neutral-50 border-t border-neutral-100 flex gap-3">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setIsModalOpen(false);
+                    handleEmailClick(
+                      selectedTeacher.user?.email || selectedTeacher.email,
+                      selectedTeacher.profileData?.teacherNameBn ||
+                        selectedTeacher.name,
+                    );
+                  }}
+                  className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-100 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer"
+                >
+                  <Mail size={14} /> মেইল করুন
+                </button>
+
+                {!(
+                  selectedTeacher.isApproved ??
+                  selectedTeacher.profileData?.isApproved
+                ) ? (
+                  <button
+                    type="button"
+                    onClick={() =>
+                      handleApproveTeacher(
+                        selectedTeacher._id || selectedTeacher.profileData?._id,
+                        selectedTeacher.profileData?.teacherNameBn ||
+                          selectedTeacher.name,
+                      )
+                    }
+                    className="flex-1 py-3 bg-amber-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                  >
+                    <UserPlus size={14} /> Approve Account
+                  </button>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setIsModalOpen(false);
+                      handleCallClick(
+                        selectedTeacher.profileData?.phone ||
+                          selectedTeacher.phone,
+                        selectedTeacher.profileData?.teacherNameBn ||
+                          selectedTeacher.name,
+                      );
+                    }}
+                    className="flex-1 py-3 bg-[#105D38] hover:bg-[#0c462a] text-white rounded-2xl text-xs font-black flex items-center justify-center gap-2 shadow-md transition-all cursor-pointer"
+                  >
+                    <Phone size={14} /> কল করুন
+                  </button>
+                )}
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

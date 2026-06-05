@@ -125,7 +125,6 @@ export const Step1 = ({
           )}
         </div>
 
-        {/* 🚀 ছাত্রদের জন্য ক্লাস লেভেল এবং বিভাগ ফিল্ড পাশাপাশি গ্রিডে সাজানো হলো */}
         {!currentRole || currentRole === "student" ? (
           <>
             <SelectField
