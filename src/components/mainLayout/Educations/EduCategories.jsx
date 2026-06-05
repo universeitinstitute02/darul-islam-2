@@ -165,7 +165,7 @@ const sectionsData = [
   },
   {
     id: 4,
-    title: "মাদানী নেساب",
+    title: "মাদানী নেসাব",
     image:
       "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?q=80&w=800&auto=format&fit=crop",
     items: [

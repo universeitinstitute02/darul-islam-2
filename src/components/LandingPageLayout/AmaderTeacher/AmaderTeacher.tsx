@@ -107,7 +107,7 @@ export default function TeacherSlider() {
           </h2>
 
           <p className="text-sm text-neutral-600 lg:text-base">
-            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত islam শিক্ষার ভিত্তি।
+            অভিজ্ঞ আলেমদের তত্ত্বাবধানে মানসম্মত ইসলাম শিক্ষার ভিত্তি।
           </p>
 
           <div className="mx-auto h-1 w-16 rounded-full bg-green-500"></div>
