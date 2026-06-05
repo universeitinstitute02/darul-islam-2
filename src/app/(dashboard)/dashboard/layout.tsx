@@ -134,7 +134,7 @@ export default function DashboardLayout({
     },
     {
       name: "ক্যাটাগরি",
-      href: "/dashboard/admin/add-course",
+      href: "/dashboard/admin/categories",
       icon: PlusSquare,
       roles: ["admin"],
     },

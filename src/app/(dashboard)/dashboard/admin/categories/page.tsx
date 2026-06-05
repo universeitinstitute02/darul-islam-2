@@ -1,54 +1,55 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
-import {
-  FolderPlus,
-  FolderTree,
-  Plus,
-  Loader2,
-  Edit3,
-  Trash2,
-  X,
-} from "lucide-react";
+import { FolderPlus, FolderTree, Plus, Loader2, Layers, X } from "lucide-react";
 import Swal from "sweetalert2";
+import CategoryCard from "@/src/components/dashboard/admin/categories/CategoryCard";
+import { AVAILABLE_ICONS } from "@/src/config/icons";
 
 type TCategory = {
   _id: string;
   name: string;
-  subCategories: {
-    _id: string;
-    name: string;
-  }[];
+  icon: string;
+  description?: string;
+  isActive: boolean;
+  displayOrder: number;
+  subCategories: any[];
+  courseCount?: number;
 };
 
 type CategoryFormData = {
   name: string;
+  icon: string;
+  description: string;
+  displayOrder: number;
 };
 
 export default function CategoryPage() {
   const [categories, setCategories] = useState<TCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [creating, setCreating] = useState(false);
+  const [isFormOpenMobile, setIsFormOpenMobile] = useState(false); // মোবাইল ফর্ম টগল স্টেট
   const axiosSecure = useAxiosSecure();
 
   const {
     register,
     handleSubmit,
     reset,
+    watch,
     formState: { errors },
-  } = useForm<CategoryFormData>();
+  } = useForm<CategoryFormData>({
+    defaultValues: { icon: "BookOpen", displayOrder: 0, description: "" },
+  });
 
-  // 🔄 ১. সব ক্যাটাগরি ফেচ করা
+  const selectedMainIcon = watch("icon");
+
   const fetchCategories = async () => {
     setLoading(true);
     try {
-      // আপনার আগের এন্ডপয়েন্টটি ঠিক করে /api/categories বা আপনার ব্যাকএন্ড রাউটে দেওয়া হলো
       const res = await axiosSecure.get("/categories");
-      if (res.data) {
-        setCategories(res.data);
-      }
+      if (res.data) setCategories(res.data);
     } catch (error) {
       console.error("Error fetching categories:", error);
     } finally {
@@ -60,43 +61,49 @@ export default function CategoryPage() {
     fetchCategories();
   }, []);
 
-  // ➕ ২. মেইন ক্যাটাগরি তৈরি করা
   const onSubmit = async (data: CategoryFormData) => {
     try {
       setCreating(true);
-      const res = await axiosSecure.post("/categories", data);
-
+      const res = await axiosSecure.post("/categories", {
+        ...data,
+        isActive: true,
+      });
       if (res.status === 200 || res.status === 201) {
         Swal.fire({
           icon: "success",
-          title: "Category Created!",
+          title: "বিভাগ সফলভাবে তৈরি হয়েছে!",
           toast: true,
           position: "top-end",
           showConfirmButton: false,
           timer: 2000,
         });
-        reset();
+        reset({ name: "", icon: "BookOpen", description: "", displayOrder: 0 });
+        setIsFormOpenMobile(false); // সফলভাবে তৈরি হলে মোবাইলে ফর্ম বন্ধ হবে
         fetchCategories();
       }
     } catch (error) {
       console.error(error);
-      Swal.fire({ icon: "error", title: "Failed to create category" });
+      Swal.fire({
+        icon: "error",
+        title: "ব্যর্থ হয়েছে",
+        text: "বিভাগ তৈরি করা যায়নি।",
+      });
     } finally {
       setCreating(false);
     }
   };
 
-  // ✏️ ৩. মেইন ক্যাটাগরির নাম এডিট করা
   const handleEditCategory = async (id: string, currentName: string) => {
     Swal.fire({
-      title: "Update Category Name",
+      title: "প্রধান বিভাগের নাম পরিবর্তন",
       input: "text",
       inputValue: currentName,
       showCancelButton: true,
-      confirmButtonText: "Update",
-      confirmButtonColor: "#16a34a",
+      confirmButtonText: "আপডেট",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#105D38",
       inputValidator: (value) => {
-        if (!value) return "Category name cannot be empty!";
+        if (!value) return "নাম খালি রাখা যাবে না!";
       },
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -107,30 +114,29 @@ export default function CategoryPage() {
           if (res.status === 200) {
             Swal.fire({
               icon: "success",
-              title: "Updated successfully!",
+              title: "সফলভাবে আপডেট হয়েছে",
               timer: 1500,
               showConfirmButton: false,
             });
             fetchCategories();
           }
         } catch (error) {
-          console.error(error);
-          Swal.fire({ icon: "error", title: "Update failed" });
+          Swal.fire({ icon: "error", title: "আপডেট ব্যর্থ হয়েছে" });
         }
       }
     });
   };
 
-  // 🗑️ ৪. মেইন ক্যাটাগরি ডিলিট করা
   const handleDeleteCategory = async (id: string) => {
     Swal.fire({
-      title: "Are you sure?",
-      text: "All subcategories under this category will also be deleted!",
+      title: "আপনি কি নিশ্চিত?",
+      text: "এই বিভাগের অধীনে থাকা সকল সাব-ক্যাটাগরিও মুছে যাবে!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
       cancelButtonColor: "#3085d6",
-      confirmButtonText: "Yes, delete it!",
+      confirmButtonText: "হ্যাঁ, মুছে ফেলুন!",
+      cancelButtonText: "বাতিল",
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
@@ -138,270 +144,186 @@ export default function CategoryPage() {
           if (res.status === 200) {
             Swal.fire({
               icon: "success",
-              title: "Deleted!",
+              title: "ডিলিট হয়েছে!",
               timer: 1500,
               showConfirmButton: false,
             });
             fetchCategories();
           }
         } catch (error) {
-          console.error(error);
-          Swal.fire({ icon: "error", title: "Delete failed" });
+          Swal.fire({ icon: "error", title: "মুছে ফেলা যায়নি" });
         }
       }
     });
   };
 
   return (
-    <div className="p-4 md:p-6 max-w-7xl mx-auto font-sans">
-      {/* Header */}
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-900">
-          Category Management
-        </h1>
-        <p className="text-sm text-gray-500 mt-1">
-          Create, edit, and manage categories and sub-categories
-        </p>
-      </div>
-
-      {/* Create Category */}
-      <div className="bg-white rounded-3xl border p-5 md:p-8 shadow-sm">
-        <div className="flex items-center gap-2 mb-5">
-          <FolderPlus className="w-5 h-5 text-green-600" />
-          <h2 className="font-bold text-lg">Create Main Category</h2>
-        </div>
-
-        <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
-          <div>
-            <input
-              {...register("name", { required: "Category name is required" })}
-              placeholder="Enter category name"
-              className="w-full border rounded-xl px-4 py-3 outline-none focus:ring-2 focus:ring-green-500"
-            />
-            {errors.name && (
-              <p className="text-red-500 text-sm mt-1">{errors.name.message}</p>
-            )}
-          </div>
-
-          <button
-            disabled={creating}
-            className="bg-green-600 hover:bg-green-700 text-white px-5 py-3 rounded-xl font-semibold flex items-center gap-2 transition-all active:scale-95 disabled:opacity-50"
-          >
-            {creating ? (
-              <>
-                <Loader2 className="w-4 h-4 animate-spin" />
-                Creating...
-              </>
-            ) : (
-              <>
-                <Plus className="w-4 h-4" />
-                Create Category
-              </>
-            )}
-          </button>
-        </form>
-      </div>
-
-      {/* Category List */}
-      <div className="mt-8">
-        <div className="flex items-center gap-2 mb-5">
-          <FolderTree className="w-5 h-5 text-blue-600" />
-          <h2 className="font-bold text-lg">
-            Categories ({categories.length})
-          </h2>
-        </div>
-
-        {loading ? (
-          <div className="text-center py-10 flex items-center justify-center gap-2 text-gray-500">
-            <Loader2 className="w-5 h-5 animate-spin text-blue-600" /> Loading
-            Categories...
-          </div>
-        ) : categories.length === 0 ? (
-          <div className="bg-white border rounded-3xl p-10 text-center text-gray-400">
-            No category found
-          </div>
-        ) : (
-          <div className="grid gap-5">
-            {categories.map((category) => (
-              <CategoryCard
-                key={category._id}
-                category={category}
-                refresh={fetchCategories}
-                onEdit={handleEditCategory}
-                onDelete={handleDeleteCategory}
-              />
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
-  );
-}
-
-/* ==========================================================================
-   📂 CategoryCard Component (মেইন ক্যাটাগরি এবং এর সাব-ক্যাটাগরি হ্যান্ডেলার)
-   ========================================================================== */
-function CategoryCard({
-  category,
-  refresh,
-  onEdit,
-  onDelete,
-}: {
-  category: TCategory;
-  refresh: () => void;
-  onEdit: (id: string, name: string) => void;
-  onDelete: (id: string) => void;
-}) {
-  const [loading, setLoading] = useState(false);
-  const axiosSecure = useAxiosSecure();
-  const { register, handleSubmit, reset } = useForm<{ name: string }>();
-
-  // 🌿 ১. সাব-ক্যাটাগরি যুক্ত করা
-  const addSubCategory = async (data: { name: string }) => {
-    try {
-      setLoading(true);
-      const res = await axiosSecure.put(
-        `/categories/${category._id}/sub-category`,
-        data,
-      );
-
-      if (res.status === 200 || res.status === 201) {
-        Swal.fire({
-          icon: "success",
-          title: "Sub-category Added!",
-          toast: true,
-          position: "top-end",
-          showConfirmButton: false,
-          timer: 2000,
-        });
-        reset();
-        refresh();
-      }
-    } catch (error) {
-      console.error(error);
-      Swal.fire({ icon: "error", title: "Failed to add sub-category" });
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // 🗑️ ২. নির্দিষ্ট সাব-ক্যাটাগরি ডিলিট করা
-  const handleDeleteSubCategory = async (subId: string) => {
-    Swal.fire({
-      title: "Remove Sub-category?",
-      text: "Are you sure you want to remove this sub-category?",
-      icon: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#ef4444",
-      confirmButtonText: "Yes, delete",
-    }).then(async (result) => {
-      if (result.isConfirmed) {
-        try {
-          const res = await axiosSecure.delete(
-            `/categories/${category._id}/sub-category/${subId}`,
-          );
-          if (res.status === 200) {
-            Swal.fire({
-              icon: "success",
-              title: "Sub-category removed!",
-              timer: 1500,
-              showConfirmButton: false,
-            });
-            refresh();
-          }
-        } catch (error) {
-          console.error(error);
-          Swal.fire({ icon: "error", title: "Failed to delete sub-category" });
-        }
-      }
-    });
-  };
-
-  return (
-    <div className="bg-white border rounded-3xl p-5 md:p-6 shadow-sm group hover:border-gray-300 transition-all">
-      {/* Category Details with Edit and Delete Action Buttons */}
-      <div className="flex items-center justify-between mb-5 pb-3 border-b border-gray-100">
+    <div className="p-4 md:p-6 max-w-7xl mx-auto space-y-6 min-h-screen bg-neutral-50/50 relative">
+      {/* Top Banner Header Row */}
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200/60 pb-4">
         <div>
-          <h3 className="font-bold text-lg md:text-xl text-gray-800">
-            {category.name}
-          </h3>
-          <p className="text-sm text-gray-500 mt-0.5">
-            {category.subCategories?.length || 0} Sub Categories
+          <h1 className="text-xl md:text-2xl font-black text-neutral-800 tracking-tight flex items-center gap-2">
+            <Layers className="text-[#105D38]" size={24} /> বিভাগ ও কোর্স
+            ম্যানেজমেন্ট
+          </h1>
+          <p className="text-xs font-semibold text-neutral-500 mt-1">
+            প্রধান ক্যাটাগরি এবং উপ-ক্যাটাগরি (Sub-categories) নিয়ন্ত্রণ প্যানেল
           </p>
         </div>
 
-        {/* এডিট ও ডিলিট বাটন */}
-        <div className="flex items-center gap-1.5 opacity-80 group-hover:opacity-100 transition-opacity">
-          <button
-            onClick={() => onEdit(category._id, category.name)}
-            className="p-2 text-gray-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
-            title="Edit Category Name"
-          >
-            <Edit3 className="w-4 h-4" />
-          </button>
-          <button
-            onClick={() => onDelete(category._id)}
-            className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
-            title="Delete Category"
-          >
-            <Trash2 className="w-4 h-4" />
-          </button>
-        </div>
-      </div>
-
-      {/* Sub Categories Tags List */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        {category.subCategories?.length > 0 ? (
-          category.subCategories.map((sub) => (
-            <span
-              key={sub._id}
-              className="bg-green-50 text-green-700 border border-green-100 pl-3 pr-2 py-1 rounded-xl text-xs font-semibold flex items-center gap-1.5 group/tag hover:bg-green-100/60 transition-all"
-            >
-              {sub.name}
-              <button
-                onClick={() => handleDeleteSubCategory(sub._id)}
-                className="text-green-600/60 hover:text-red-500 rounded-md p-0.5 transition-colors"
-                title="Delete subcategory"
-              >
-                <X className="w-3 h-3" />
-              </button>
-            </span>
-          ))
-        ) : (
-          <p className="text-gray-400 text-xs italic">
-            No Sub Categories added yet.
-          </p>
-        )}
-      </div>
-
-      {/* Add Sub Category In Main Category Form */}
-      <form
-        onSubmit={handleSubmit(addSubCategory)}
-        className="flex flex-col sm:flex-row gap-3"
-      >
-        <input
-          {...register("name", { required: true })}
-          placeholder={`Add new sub category to ${category.name}`}
-          className="flex-1 border rounded-xl px-4 py-2.5 text-sm outline-none focus:ring-2 focus:ring-blue-500/60"
-        />
-
+        {/* Mobile Action Button - Only visible on small screens to toggle the collapse view */}
         <button
-          disabled={loading}
-          className="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold flex items-center justify-center gap-2 min-w-[160px] transition-all disabled:opacity-50"
+          onClick={() => setIsFormOpenMobile(!isFormOpenMobile)}
+          className="flex lg:hidden items-center justify-center gap-2 w-full sm:w-auto px-4 py-3 bg-[#105D38] hover:bg-green-800 text-white text-xs font-black rounded-xl shadow-md transition-all active:scale-[0.98]"
         >
-          {loading ? (
-            <>
-              <Loader2 className="w-3.5 h-3.5 animate-spin" />
-              Adding...
-            </>
-          ) : (
-            <>
-              <Plus className="w-3.5 h-3.5" />
-              Add Sub Category
-            </>
-          )}
+          {isFormOpenMobile ? <X size={16} /> : <Plus size={16} />}
+          {isFormOpenMobile ? "ফর্ম বন্ধ করুন" : "নতুন প্রধান বিভাগ তৈরি করুন"}
         </button>
-      </form>
+      </div>
+
+      <div className="flex flex-col lg:flex-row items-start gap-6">
+        {/* Create Form Sidebar Wrapper Layout */}
+        <div
+          className={`
+          w-full lg:w-1/3 bg-white rounded-2xl border border-neutral-200/80 p-5 shadow-xs lg:sticky lg:top-4 lg:block
+          ${isFormOpenMobile ? "block" : "hidden"}
+        `}
+        >
+          <div className="flex items-center justify-between mb-4 pb-2 border-b">
+            <div className="flex items-center gap-2">
+              <FolderPlus className="w-5 h-5 text-[#105D38]" />
+              <h2 className="font-black text-sm text-neutral-700">
+                নতুন প্রধান বিভাগ যুক্ত করুন
+              </h2>
+            </div>
+            <button
+              type="button"
+              onClick={() => setIsFormOpenMobile(false)}
+              className="lg:hidden p-1 hover:bg-neutral-100 rounded-md text-neutral-400 hover:text-neutral-600"
+            >
+              <X size={16} />
+            </button>
+          </div>
+
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-neutral-500">
+                বিভাগের নাম
+              </label>
+              <input
+                {...register("name", { required: "বিভাগের নাম আবশ্যক" })}
+                placeholder="যেমন: কুরআন বিভাগ"
+                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] focus:bg-white transition-all"
+              />
+              {errors.name && (
+                <p className="text-red-500 text-[11px] font-bold mt-1">
+                  {errors.name.message}
+                </p>
+              )}
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1 relative">
+                <label className="text-xs font-bold text-neutral-500">
+                  আইকন নির্বাচন
+                </label>
+                <div className="relative flex items-center">
+                  <select
+                    {...register("icon", { required: "আইকন আবশ্যক" })}
+                    className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl pl-8 pr-2 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] focus:bg-white appearance-none cursor-pointer transition-all"
+                  >
+                    {Object.keys(AVAILABLE_ICONS).map((key) => (
+                      <option key={key} value={key}>
+                        {key}
+                      </option>
+                    ))}
+                  </select>
+                  <div className="absolute left-2.5 pointer-events-none text-[#105D38]">
+                    {React.createElement(
+                      AVAILABLE_ICONS[selectedMainIcon] ||
+                        AVAILABLE_ICONS.BookOpen,
+                      { className: "w-3.5 h-3.5" },
+                    )}
+                  </div>
+                </div>
+              </div>
+              <div className="space-y-1">
+                <label className="text-xs font-bold text-neutral-500">
+                  ক্রমিক নম্বর
+                </label>
+                <input
+                  type="number"
+                  {...register("displayOrder", { valueAsNumber: true })}
+                  className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] transition-all"
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1">
+              <label className="text-xs font-bold text-neutral-500">
+                সংক্ষিপ্ত বিবরণ
+              </label>
+              <textarea
+                {...register("description")}
+                rows={3}
+                placeholder="বিভাগ সম্পর্কিত সংক্ষিপ্ত তথ্য..."
+                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl p-3 text-xs font-bold outline-none focus:border-[#105D38] transition-all leading-relaxed"
+              />
+            </div>
+
+            <button
+              disabled={creating}
+              className="w-full bg-[#105D38] hover:bg-green-800 text-white py-3 rounded-xl text-xs font-black flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 shadow-xs"
+            >
+              {creating ? (
+                <>
+                  {" "}
+                  <Loader2 className="w-4 h-4 animate-spin" /> সংরক্ষণ
+                  হচ্ছে...{" "}
+                </>
+              ) : (
+                <>
+                  {" "}
+                  <Plus className="w-4 h-4" /> নতুন বিভাগ সংরক্ষণ করুন{" "}
+                </>
+              )}
+            </button>
+          </form>
+        </div>
+
+        {/* Categories List View Container Module */}
+        <div className="w-full lg:w-2/3 space-y-4">
+          <div className="flex items-center gap-2 mb-2">
+            <FolderTree className="w-5 h-5 text-neutral-600" />
+            <h2 className="font-black text-sm text-neutral-700">
+              বর্তমান বিভাগ তালিকা ({categories.length})
+            </h2>
+          </div>
+
+          {loading ? (
+            <div className="bg-white border rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3 text-xs font-bold text-neutral-500">
+              <Loader2 className="w-8 h-8 animate-spin text-[#105D38]" /> ডাটা
+              লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
+            </div>
+          ) : categories.length === 0 ? (
+            <div className="bg-white border border-dashed border-neutral-300 rounded-2xl p-12 text-center text-xs font-bold text-neutral-400 shadow-inner">
+              কোনো বিভাগ পাওয়া যায়নি। নতুন বিভাগ তৈরি করতে উপরের বাটনে চাপ দিন।
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 gap-4">
+              {categories.map((category) => (
+                <CategoryCard
+                  key={category._id}
+                  category={category}
+                  refresh={fetchCategories}
+                  onEdit={handleEditCategory}
+                  onDelete={handleDeleteCategory}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
