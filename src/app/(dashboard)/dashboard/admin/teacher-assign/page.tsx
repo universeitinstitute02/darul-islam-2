@@ -4,14 +4,13 @@ import React, { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   BookOpen,
-  Clock,
   GraduationCap,
-  Layers,
   UserPlus,
   X,
   CheckCircle,
   Search,
   SlidersHorizontal,
+  Trash2,
 } from "lucide-react";
 
 // 📝 ডামি ডাটা টাইপ ডিফাইন
@@ -28,7 +27,11 @@ interface Course {
 interface Teacher {
   id: string;
   name: string;
-  avatar: string;
+  expertise: string;
+}
+interface Students {
+  id: string;
+  name: string;
   expertise: string;
 }
 
@@ -70,26 +73,71 @@ const teachersList: Teacher[] = [
   {
     id: "t1",
     name: "Jhankar Mahbub",
-    avatar: "https://i.pravatar.cc/150?img=33",
     expertise: "Senior Web Developer",
   },
   {
     id: "t2",
     name: "Anisul Islam",
-    avatar: "https://i.pravatar.cc/150?img=68",
     expertise: "Software Engineer",
   },
   {
     id: "t3",
     name: "Sumit Saha",
-    avatar: "https://i.pravatar.cc/150?img=12",
     expertise: "Lead UI/UX Designer",
   },
   {
     id: "t4",
     name: "HM Nayem",
-    avatar: "https://i.pravatar.cc/150?img=47",
     expertise: "JavaScript Architect",
+  },
+];
+const studentsList: Students[] = [
+  {
+    id: "t1",
+    name: "Jhankar Mahbub",
+    expertise: "Senior Web Developer",
+  },
+  {
+    id: "t2",
+    name: "Anisul Islam",
+    expertise: "Software Engineer",
+  },
+  {
+    id: "t3",
+    name: "Sumit Saha",
+    expertise: "Lead UI/UX Designer",
+  },
+  {
+    id: "t4",
+    name: "HM Nayem",
+    expertise: "JavaScript Architect",
+  },
+];
+
+const allBatch = [
+  {
+    id: "1",
+    name: "Batch-1",
+    slug: "batch-1",
+    length: 0,
+  },
+  {
+    id: "2",
+    name: "Batch-2",
+    slug: "batch-2",
+    length: 0,
+  },
+  {
+    id: "3",
+    name: "Batch-3",
+    slug: "batch-3",
+    length: 0,
+  },
+  {
+    id: "4",
+    name: "Batch-4",
+    slug: "batch-4",
+    length: 0,
   },
 ];
 
@@ -97,6 +145,7 @@ export default function TeacherAssign() {
   const [courses, setCourses] = useState<Course[]>(initialCourses);
   const [selectedCourse, setSelectedCourse] = useState<Course | null>(null);
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("");
+  const [selectedStudentsId, setSelectedStudentsId] = useState<string>("");
   const [searchQuery, setSearchQuery] = useState("");
 
   // 🎛️ পপআপ ওপেন করার হ্যান্ডেলার
@@ -166,10 +215,9 @@ export default function TeacherAssign() {
               <thead>
                 <tr className="bg-slate-50/70 border-b border-slate-200/80 text-xs font-bold text-slate-500 uppercase tracking-wider">
                   <th className="py-4 px-6">Course Info</th>
-                  <th className="py-4 px-6">Course Fee</th>
-                  <th className="py-4 px-6">Duration</th>
-                  <th className="py-4 px-6">Total Classes</th>
-                  <th className="py-4 px-6">Assigned Instructor</th>
+                  <th className="py-4 px-6">Fee</th>
+                  <th className="py-4 px-6">Students</th>
+                  <th className="py-4 px-6">Instructor</th>
                   <th className="py-4 px-6 text-right">Actions</th>
                 </tr>
               </thead>
@@ -178,6 +226,7 @@ export default function TeacherAssign() {
                   const currentTeacher = teachersList.find(
                     (t) => t.id === course.assignedTeacherId,
                   );
+                  const currentStudent = studentsList[0];
 
                   return (
                     <motion.tr
@@ -214,32 +263,27 @@ export default function TeacherAssign() {
                         ৳{course.fee.toLocaleString("bn-BD")}
                       </td>
 
-                      {/* সময়কাল */}
-                      <td className="py-4 px-6 text-slate-600 font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <Clock className="w-4 h-4 text-slate-400" />{" "}
-                          {course.duration}
-                        </div>
+                      {/* Students */}
+                      <td className="py-4 px-6">
+                        {currentStudent && (
+                          <div className="flex items-center gap-3 bg-slate-50 py-1.5 pl-2 pr-3 rounded-2xl border border-slate-100 w-fit">
+                            {/* eslint-disable-next-line @next/next/no-img-element */}
+                            <div>
+                              <p className="text-xs font-bold text-slate-800">
+                                {currentStudent.name}
+                              </p>
+                              <p className="text-[10px] text-slate-400 font-medium">
+                                {currentStudent.expertise}
+                              </p>
+                            </div>
+                          </div>
+                        )}
                       </td>
-
-                      {/* মোট ক্লাস */}
-                      <td className="py-4 px-6 text-slate-600 font-medium">
-                        <div className="flex items-center gap-1.5">
-                          <Layers className="w-4 h-4 text-slate-400" />{" "}
-                          {course.totalClasses}টি ক্লাস
-                        </div>
-                      </td>
-
                       {/* অ্যাসাইন করা টিচার */}
                       <td className="py-4 px-6">
                         {currentTeacher ? (
                           <div className="flex items-center gap-3 bg-slate-50 py-1.5 pl-2 pr-3 rounded-2xl border border-slate-100 w-fit">
                             {/* eslint-disable-next-line @next/next/no-img-element */}
-                            <img
-                              src={currentTeacher.avatar}
-                              alt={currentTeacher.name}
-                              className="w-6 h-6 rounded-full border border-white"
-                            />
                             <div>
                               <p className="text-xs font-bold text-slate-800">
                                 {currentTeacher.name}
@@ -257,12 +301,21 @@ export default function TeacherAssign() {
                       </td>
 
                       {/* অ্যাকশন বাটন */}
-                      <td className="py-4 px-6 text-right">
+                      <td className="py-4 px-1 text-right">
                         <button
                           onClick={() => openAssignModal(course)}
-                          className="inline-flex items-center gap-2 px-4 py-2 bg-slate-900 text-white font-bold text-xs rounded-xl shadow-md shadow-slate-900/10 hover:bg-indigo-600 hover:shadow-indigo-600/20 active:scale-95 transition-all"
+                          className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-green-700 text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition-all"
                         >
-                          <UserPlus className="w-3.5 h-3.5" /> Assign Teacher
+                          <UserPlus className="w-3.5 h-3.5" /> Approved
+                        </button>
+                      </td>
+
+                      <td className="py-4 px-1 text-right">
+                        <button
+                          onClick={() => alert("Dhonnabad Ji")}
+                          className="inline-flex items-center gap-2 px-4 py-2 cursor-pointer bg-red-700 text-white font-bold text-xs rounded-xl shadow-md active:scale-95 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" /> Reject
                         </button>
                       </td>
                     </motion.tr>
@@ -281,7 +334,7 @@ export default function TeacherAssign() {
         </div>
       </div>
 
-      {/* 🔮 টিচার অ্যাসাইনমেন্ট অ্যানিমেটেড পপআপ (Modal) */}
+      {/*  টিচার অ্যাসাইনমেন্ট অ্যানিমেটেড পপআপ (Modal) */}
       <AnimatePresence>
         {selectedCourse && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -305,7 +358,7 @@ export default function TeacherAssign() {
               {/* ক্লোজ বাটন */}
               <button
                 onClick={() => setSelectedCourse(null)}
-                className="absolute right-4 top-4 p-2 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
+                className="absolute right-4 top-4 p-2 cursor-pointer text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-full transition-colors"
               >
                 <X className="w-5 h-5" />
               </button>
@@ -329,6 +382,31 @@ export default function TeacherAssign() {
                   <p>ফি: ৳{selectedCourse.fee}</p>
                   <p>•</p>
                   <p>ক্লাস: {selectedCourse.totalClasses}টি</p>
+                </div>
+              </div>
+
+              {/* ড্রপডাউন সিলেকশন এরিয়া */}
+              <div className="mb-6">
+                <label className="block text-xs font-black text-slate-600 mb-2 uppercase tracking-wide">
+                  Batch Number
+                </label>
+                <div className="relative">
+                  <select
+                    value={selectedStudentsId}
+                    onChange={(e) => setSelectedStudentsId(e.target.value)}
+                    className="w-full bg-white border border-slate-200 text-slate-800 rounded-2xl px-4 py-3 text-sm font-semibold focus:outline-none focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 transition-all appearance-none cursor-pointer"
+                  >
+                    <option value="">কোনো শিক্ষক সিলেক্ট করা নেই</option>
+                    {allBatch.map((batch) => (
+                      <option key={batch.id} value={batch.id}>
+                        {batch.name} — ({batch.length})
+                      </option>
+                    ))}
+                  </select>
+                  {/* কাস্টম ড্রপডাউন অ্যারো */}
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 pointer-events-none text-slate-400">
+                    ▼
+                  </div>
                 </div>
               </div>
 
@@ -361,13 +439,13 @@ export default function TeacherAssign() {
               <div className="flex items-center gap-3">
                 <button
                   onClick={() => setSelectedCourse(null)}
-                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 text-slate-700 text-xs font-bold rounded-2xl transition-all"
+                  className="flex-1 py-3 bg-slate-100 hover:bg-slate-200 cursor-pointer text-slate-700 text-xs font-bold rounded-2xl transition-all"
                 >
                   Cancel
                 </button>
                 <button
                   onClick={handleSaveAssign}
-                  className="flex-1 py-3 bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-1.5 transition-all active:scale-95"
+                  className="flex-1 py-3 cursor-pointer bg-indigo-600 hover:bg-indigo-700 text-white text-xs font-bold rounded-2xl shadow-lg shadow-indigo-600/20 flex items-center justify-center gap-1.5 transition-all active:scale-95"
                 >
                   <CheckCircle className="w-4 h-4" /> Save Assignment
                 </button>

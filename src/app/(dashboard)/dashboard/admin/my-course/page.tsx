@@ -122,7 +122,7 @@ const MyCourses = () => {
             মোট {courses.length} টি কোর্স পরিচালনা করছেন
           </p>
         </div>
-        <Link href="/dashboard/teacher/add-course">
+        <Link href="/dashboard/admin/add-course">
           <button className="bg-[#105D38] hover:bg-[#0c4a2d] text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg transition-all">
             <Plus size={18} /> নতুন কোর্স
           </button>
