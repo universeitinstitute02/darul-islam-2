@@ -292,7 +292,7 @@ const RegisterPage: React.FC = () => {
                     type="button"
                     onClick={prevStep}
                     disabled={isLoading}
-                    className="px-6 py-4 border-2 border-neutral-100 rounded-2xl font-black text-neutral-400 hover:bg-neutral-50 flex items-center gap-2 transition-all disabled:opacity-50"
+                    className="px-6 py-4 hover:cursor-pointer border-2 border-neutral-100 rounded-2xl font-black text-neutral-400 hover:bg-neutral-50 flex items-center gap-2 transition-all disabled:opacity-50"
                   >
                     <ChevronLeft size={20} /> ফিরে যান
                   </button>
@@ -305,7 +305,7 @@ const RegisterPage: React.FC = () => {
                       e.preventDefault();
                       nextStep();
                     }}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all"
+                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all"
                   >
                     পরবর্তী ধাপ <ChevronRight size={20} />
                   </button>
@@ -313,7 +313,7 @@ const RegisterPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 flex items-center justify-center gap-2 py-4 px-3 lg:px-0 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
+                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 px-3 lg:px-0 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
                   >
                     {isLoading ? (
                       <>

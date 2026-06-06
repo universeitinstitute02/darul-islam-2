@@ -208,7 +208,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#105D38] hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest disabled:opacity-70 flex justify-center items-center gap-2"
+              className="w-full bg-[#105D38] hover:cursor-pointer hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest disabled:opacity-70 flex justify-center items-center gap-2"
             >
               {isSubmitting ? (
                 <>
