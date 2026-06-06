@@ -208,7 +208,7 @@ const LoginPage = () => {
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full bg-[#105D38] hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest disabled:opacity-70 flex justify-center items-center gap-2"
+              className="w-full bg-[#105D38] hover:cursor-pointer hover:bg-[#0d4d2e] text-white py-5 rounded-2xl font-black text-xl transition-all shadow-xl shadow-green-900/20 active:scale-[0.98] mt-4 uppercase tracking-widest disabled:opacity-70 flex justify-center items-center gap-2"
             >
               {isSubmitting ? (
                 <>
@@ -220,7 +220,7 @@ const LoginPage = () => {
             </button>
           </form>
 
-          <div className="relative my-12">
+          {/* <div className="relative my-12">
             <div className="absolute inset-0 flex items-center">
               <span className="w-full border-t border-neutral-100"></span>
             </div>
@@ -242,7 +242,7 @@ const LoginPage = () => {
             <button className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm">
               <Facebook size={20} className="text-blue-600" /> Facebook
             </button>
-          </div>
+          </div> */}
 
           <div className="mt-10 flex items-center gap-4 p-5 bg-[#105D38]/5 rounded-[2rem] border border-[#105D38]/10">
             <div className="p-3 bg-white rounded-2xl text-[#105D38] shadow-sm">
