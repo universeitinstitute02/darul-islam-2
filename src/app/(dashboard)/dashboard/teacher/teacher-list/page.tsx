@@ -1,6 +1,6 @@
 "use client";
 import React, { useState, useEffect, useCallback } from "react";
-import Image from "next/image"; // 👈 Next.js Image Component Imported
+import Image from "next/image";
 import {
   Search,
   Filter,
@@ -19,6 +19,7 @@ import {
   BookOpen,
   User,
   Edit,
+  Trash2, // 👈 Added for Delete Action
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
@@ -44,11 +45,12 @@ const TeacherList = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const itemsPerPage = 6;
 
-  // Modal States 👈 Added for Teacher Details Modal
+  // Modal States
   const [selectedTeacher, setSelectedTeacher] = useState<any>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalLoading, setModalLoading] = useState(false); // 👈 Added for single user fetch loading
 
-  // Edit Modal States 👈 Newly Added
+  // Edit Modal States
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
   const [editFormData, setEditFormData] = useState({
     name: "",
@@ -73,26 +75,33 @@ const TeacherList = () => {
     fetchDepts();
   }, []);
 
-  // Fetch Teachers with Dynamic Server-Side Query Params
+  // Fetch Teachers with Dynamic Server-Side Query Params (Updated for Company API Structure)
   const fetchTeachers = useCallback(async () => {
     if (!token) return;
     setLoading(true);
     try {
       const queryParams = new URLSearchParams();
+      queryParams.append("role", "teacher"); // 👈 Explicitly setting role=teacher as requested
       if (searchTerm) queryParams.append("search", searchTerm);
       if (statusFilter) queryParams.append("status", statusFilter);
       if (deptFilter) queryParams.append("department", deptFilter);
       if (expFilter) queryParams.append("experience", expFilter);
 
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/all-users?role=teacher&${queryParams.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/all-users?${queryParams.toString()}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
       );
       const result = await res.json();
+
+      // Supporting both direct array response or standard success/data response wrapping
       if (result.success) {
-        setTeachers(result.data);
+        setTeachers(result.data || []);
+      } else if (Array.isArray(result)) {
+        setTeachers(result);
+      } else if (result.users) {
+        setTeachers(result.users);
       }
     } catch (error) {
       console.error("Teacher fetch failed:", error);
@@ -115,7 +124,7 @@ const TeacherList = () => {
       Swal.fire({
         icon: "error",
         title: "ত্রুটি",
-        text: "শিক্ষকের প্রোফাইল আইডি খুঁজে পাওয়া যায়নি।",
+        text: "शिक्षকের প্রোফাইল আইডি খুঁজে পাওয়া যায়নি।",
         confirmButtonColor: "#105D38",
       });
       return;
@@ -149,7 +158,6 @@ const TeacherList = () => {
               confirmButtonColor: "#105D38",
             });
             fetchTeachers();
-            // মোডাল খোলা থাকলে ডেটা রিফ্রেশ করা
             if (
               selectedTeacher &&
               (selectedTeacher._id === teacherProfileId ||
@@ -169,6 +177,51 @@ const TeacherList = () => {
             icon: "error",
             title: "ব্যর্থ হয়েছে",
             text: error.message || "অনুমোদন করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+            confirmButtonColor: "#105D38",
+          });
+        }
+      }
+    });
+  };
+
+  // User Delete Handler 👈 Newly Added based on Company API Docs
+  const handleDeleteUser = async (userID: string, name: string) => {
+    Swal.fire({
+      icon: "warning",
+      title: "মুছে ফেলার নিশ্চিতকরণ",
+      text: `আপনি কি নিশ্চিতভাবে শিক্ষক ${name}-এর অ্যাকাউন্ট মুছে ফেলতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, ডিলিট করুন",
+      cancelButtonText: "না",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/users/admin/delete-user/${userID}`,
+            {
+              method: "DELETE",
+              headers: { Authorization: `Bearer ${token}` },
+            },
+          );
+
+          if (res.ok) {
+            Swal.fire({
+              icon: "success",
+              title: "ডিলিট সম্পন্ন",
+              text: "ব্যবহারকারীর অ্যাকাউন্টটি সফলভাবে মুছে ফেলা হয়েছে।",
+              confirmButtonColor: "#105D38",
+            });
+            fetchTeachers();
+          } else {
+            throw new Error("Failed to delete user");
+          }
+        } catch (error: any) {
+          Swal.fire({
+            icon: "error",
+            title: "ব্যর্থ হয়েছে",
+            text: "অ্যাকাউন্টটি মুছে ফেলা সম্ভব হয়নি। আবার চেষ্টা করুন।",
             confirmButtonColor: "#105D38",
           });
         }
@@ -235,34 +288,52 @@ const TeacherList = () => {
     });
   };
 
-  // Modal Open Handler 👈
-  const openDetailsModal = (teacher: any) => {
-    setSelectedTeacher(teacher);
+  // Modal Open Handler 👈 Dynamically Integrated with Single User Get API
+  const openDetailsModal = async (teacher: any) => {
+    const userID = teacher._id || teacher.user?._id;
     setIsModalOpen(true);
+    setModalLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/user/${userID}`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const result = await res.json();
+      if (res.ok) {
+        setSelectedTeacher(result.data || result);
+      } else {
+        setSelectedTeacher(teacher); // Fallback to raw card data if single API fails
+      }
+    } catch (err) {
+      setSelectedTeacher(teacher);
+    } finally {
+      setModalLoading(false);
+    }
   };
 
-  // Edit Modal Open Handler 👈 Newly Added
+  // Edit Modal Open Handler
   const openEditModal = (teacher: any) => {
     setSelectedTeacher(teacher);
     setEditFormData({
-      name: teacher.profileData?.teacherNameBn || teacher.name || "",
+      name: teacher.name || teacher.profileData?.teacherNameBn || "",
       designation:
         teacher.designation || teacher.profileData?.designation || "",
       experience: teacher.experience || teacher.profileData?.experience || "",
-      phone: teacher.profileData?.phone || teacher.phone || "",
+      phone: teacher.phone || teacher.profileData?.phone || "",
     });
     setIsEditModalOpen(true);
   };
 
-  // Edit Submit Handler 👈 Newly Added
+  // Edit Submit Handler 👈 Completely Synchronized with Company PUT Endpoint
   const handleEditSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    const teacherId = selectedTeacher._id || selectedTeacher.profileData?._id;
+    const userID = selectedTeacher._id || selectedTeacher.user?._id;
 
     try {
-      // এখানে আপনার API এন্ডপয়েন্ট অনুযায়ী মেথড এবং বডি চেঞ্জ করতে পারেন
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/teachers/${teacherId}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/update-user/${userID}`,
         {
           method: "PUT",
           headers: {
@@ -281,17 +352,16 @@ const TeacherList = () => {
           text: "তথ্যগুলো সফলভাবে আপডেট করা হয়েছে।",
           confirmButtonColor: "#105D38",
         });
-        fetchTeachers(); // তালিকার ডাটা রিফ্রেশ করার জন্য
+        fetchTeachers(); // Refresh table data
       } else {
         throw new Error("Failed to update teacher data");
       }
     } catch (error: any) {
-      // API ইন্টিগ্রেশন না থাকলেও ক্লায়েন্ট সাইড রেসপন্স ঠিক রাখার জন্য ব্যাকআপ হ্যান্ডলার
       setIsEditModalOpen(false);
       Swal.fire({
-        icon: "success",
-        title: "সম্পাদনা সফল হয়েছে",
-        text: "তথ্যগুলো সফলভাবে আপডেট করা হয়েছে।",
+        icon: "error",
+        title: "ত্রুটি",
+        text: "তথ্য আপডেট করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
         confirmButtonColor: "#105D38",
       });
     }
@@ -315,9 +385,8 @@ const TeacherList = () => {
             </p>
           </div>
 
-          {/* Right Action Block: Status Tab Switcher & Edit Button 👈 */}
+          {/* Right Action Block: Status Tab Switcher */}
           <div className="flex flex-wrap items-center gap-3 self-start md:self-auto">
-            {/* Status Tab Switcher */}
             <div className="flex items-center gap-1 bg-neutral-100/80 p-1.5 rounded-2xl shadow-inner">
               <button
                 type="button"
@@ -358,7 +427,7 @@ const TeacherList = () => {
 
         {/* Bottom Row: Rest of Filters Grid */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 border-t border-neutral-50 pt-4">
-          {/* 1. Name/Email Search */}
+          {/* 1. Name/Email Search - Server Filter Triggered via UseEffect */}
           <div className="relative w-full">
             <Search
               className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-400"
@@ -423,12 +492,12 @@ const TeacherList = () => {
           <AnimatePresence mode="popLayout">
             {currentItems.map((teacher) => {
               const teacherName =
-                teacher.profileData?.teacherNameBn || teacher.name;
-              const teacherPhone = teacher.profileData?.phone || teacher.phone;
+                teacher.name || teacher.profileData?.teacherNameBn;
+              const teacherPhone = teacher.phone || teacher.profileData?.phone;
               const teacherImage =
-                teacher.user?.profileImage ||
                 teacher.profileImage ||
-                `https://api.dicebear.com/7.x/avataaars/svg?seed=${teacher.name}`;
+                teacher.user?.profileImage ||
+                `https://api.dicebear.com/7.x/avataaars/svg?seed=${teacherName || "Teacher"}`;
               const isApproved =
                 teacher.isApproved ?? teacher.profileData?.isApproved;
 
@@ -446,10 +515,9 @@ const TeacherList = () => {
                     <div className="p-6 pb-4 flex items-start justify-between">
                       <div className="flex items-center gap-4">
                         <div className="relative shrink-0 w-16 h-16">
-                          {/* 🌟 Next.js Image Component used here */}
                           <Image
                             src={teacherImage}
-                            alt={teacherName}
+                            alt={teacherName || "Teacher"}
                             width={64}
                             height={64}
                             className="rounded-2xl bg-emerald-50 border-2 border-white shadow-md object-cover w-16 h-16"
@@ -472,20 +540,32 @@ const TeacherList = () => {
                             {teacherName}
                           </h4>
                           <p className="text-xs text-neutral-400 font-medium mt-1 lowercase break-all">
-                            {teacher.user?.email || teacher.email}
+                            {teacher.email || teacher.user?.email}
                           </p>
                         </div>
                       </div>
 
-                      {/* 👈 Card level Edit Button Added Here for Admins */}
-                      <button
-                        type="button"
-                        onClick={() => openEditModal(teacher)}
-                        className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#105D38] rounded-xl transition-all duration-300 cursor-pointer border border-neutral-100"
-                        title="তথ্য পরিবর্তন করুন"
-                      >
-                        <Edit size={14} />
-                      </button>
+                      {/* Action Controls for Admin */}
+                      <div className="flex gap-1">
+                        <button
+                          type="button"
+                          onClick={() => openEditModal(teacher)}
+                          className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#105D38] rounded-xl transition-all duration-300 cursor-pointer border border-neutral-100"
+                          title="তথ্য পরিবর্তন করুন"
+                        >
+                          <Edit size={14} />
+                        </button>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleDeleteUser(teacher._id, teacherName)
+                          }
+                          className="p-2 bg-neutral-50 hover:bg-red-50 text-neutral-400 hover:text-red-600 rounded-xl transition-all duration-300 cursor-pointer border border-neutral-100"
+                          title="অ্যাকাউন্ট ডিলিট করুন"
+                        >
+                          <Trash2 size={14} />
+                        </button>
+                      </div>
                     </div>
 
                     {/* Meta Parameters Content Block */}
@@ -522,7 +602,7 @@ const TeacherList = () => {
                           <p className="text-xs font-bold text-neutral-700">
                             {teacher.experience ||
                               teacher.profileData?.experience ||
-                              "정보 없음"}
+                              "তথ্য নেই"}
                           </p>
                         </div>
                       </div>
@@ -539,7 +619,6 @@ const TeacherList = () => {
                           {isApproved ? "Approved" : "Pending Verification"}
                         </span>
 
-                        {/* Interactive Mutation Action Button Trigger */}
                         {!isApproved && (
                           <button
                             type="button"
@@ -560,7 +639,6 @@ const TeacherList = () => {
 
                   {/* Operational Footer Communication Nodes */}
                   <div className="p-4 flex gap-2">
-                    {/* 🌟 ডিটেইলস বাটন এখন মোডাল ওপেন করবে */}
                     <button
                       type="button"
                       onClick={() => openDetailsModal(teacher)}
@@ -619,11 +697,10 @@ const TeacherList = () => {
         </div>
       )}
 
-      {/* 🌟 3️⃣ FULLY RESPONSIVE TEACHER DETAILS MODAL SEGMENT 🌟 */}
+      {/* TEACHER DETAILS MODAL SEGMENT (Integrated with single API loading loop) */}
       <AnimatePresence>
         {isModalOpen && selectedTeacher && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop Effect */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -632,14 +709,12 @@ const TeacherList = () => {
               className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm"
             />
 
-            {/* Modal Body Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="bg-white rounded-[2.5rem] w-full max-w-lg overflow-hidden shadow-2xl border border-neutral-100 relative z-10 max-h-[90vh] flex flex-col font-sans"
             >
-              {/* Modal Header Actions */}
               <div className="absolute right-5 top-5 z-20">
                 <button
                   type="button"
@@ -650,185 +725,132 @@ const TeacherList = () => {
                 </button>
               </div>
 
-              {/* Scrollable Container Content */}
-              <div className="overflow-y-auto p-6 md:p-8 space-y-6">
-                {/* Profile Image & Identification Core */}
-                <div className="flex flex-col items-center text-center space-y-3 pt-4">
-                  <div className="relative w-24 h-24">
-                    <Image
-                      src={
-                        selectedTeacher.user?.profileImage ||
-                        selectedTeacher.profileImage ||
-                        `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedTeacher.name}`
-                      }
-                      alt={
-                        selectedTeacher.profileData?.teacherNameBn ||
-                        selectedTeacher.name
-                      }
-                      width={96}
-                      height={96}
-                      className="rounded-[2rem] border-4 border-emerald-50 shadow-md object-cover w-24 h-24"
-                      unoptimized={(
-                        selectedTeacher.user?.profileImage ||
-                        selectedTeacher.profileImage ||
-                        ""
-                      ).startsWith("https://api.dicebear.com")}
-                    />
-                  </div>
-                  <div>
-                    <h3 className="text-lg md:text-xl font-black text-neutral-800">
-                      {selectedTeacher.profileData?.teacherNameBn ||
-                        selectedTeacher.name}
-                    </h3>
-                    <p className="text-xs text-neutral-400 font-bold tracking-wide mt-0.5 uppercase text-emerald-700">
-                      {selectedTeacher.designation ||
-                        selectedTeacher.profileData?.designation ||
-                        "शिक्षক"}
-                    </p>
-                  </div>
+              {modalLoading ? (
+                <div className="p-20 flex justify-center items-center">
+                  <LoadingSpinner />
+                </div>
+              ) : (
+                <div className="overflow-y-auto p-6 md:p-8 space-y-6">
+                  <div className="flex flex-col items-center text-center space-y-3 pt-4">
+                    <div className="relative w-24 h-24">
+                      <Image
+                        src={
+                          selectedTeacher.profileImage ||
+                          selectedTeacher.user?.profileImage ||
+                          `https://api.dicebear.com/7.x/avataaars/svg?seed=${selectedTeacher.name || "Teacher"}`
+                        }
+                        alt={selectedTeacher.name || "Teacher"}
+                        width={96}
+                        height={96}
+                        className="rounded-[2rem] border-4 border-emerald-50 shadow-md object-cover w-24 h-24"
+                        unoptimized={true}
+                      />
+                    </div>
+                    <div>
+                      <h3 className="text-lg md:text-xl font-black text-neutral-800">
+                        {selectedTeacher.name ||
+                          selectedTeacher.profileData?.teacherNameBn}
+                      </h3>
+                      <p className="text-xs text-neutral-400 font-bold tracking-wide mt-0.5 uppercase text-emerald-700">
+                        {selectedTeacher.designation || "শিক্ষক"}
+                      </p>
+                    </div>
 
-                  {/* Status Badge inside Modal */}
-                  <span
-                    className={`text-[10px] font-black uppercase px-4 py-1 rounded-full ${
-                      (selectedTeacher.isApproved ??
+                    <span
+                      className={`text-[10px] font-black uppercase px-4 py-1 rounded-full ${
+                        (selectedTeacher.isApproved ??
+                        selectedTeacher.profileData?.isApproved)
+                          ? "bg-emerald-100 text-emerald-700"
+                          : "bg-amber-100 text-amber-700"
+                      }`}
+                    >
+                      {(selectedTeacher.isApproved ??
                       selectedTeacher.profileData?.isApproved)
-                        ? "bg-emerald-100 text-emerald-700"
-                        : "bg-amber-100 text-amber-700"
-                    }`}
-                  >
-                    {(selectedTeacher.isApproved ??
-                    selectedTeacher.profileData?.isApproved)
-                      ? "Verified Account"
-                      : "Pending Verification"}
-                  </span>
-                </div>
+                        ? "Verified Account"
+                        : "Pending Verification"}
+                    </span>
+                  </div>
 
-                <hr className="border-neutral-100" />
+                  <hr className="border-neutral-100" />
 
-                {/* Teachers Comprehensive Credentials Matrix */}
-                <div className="space-y-4">
-                  <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest">
-                    বিস্তারিত তথ্যাবলী
-                  </h4>
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-black text-neutral-400 uppercase tracking-widest">
+                      বিস্তারিত তথ্যাবলী
+                    </h4>
 
-                  <div className="grid grid-cols-1 gap-3.5">
-                    {/* Department Grid Node */}
-                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
-                      <div className="p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0">
-                        <BookOpen size={16} />
+                    <div className="grid grid-cols-1 gap-3.5">
+                      <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                        <div className="p-2.5 bg-white text-emerald-600 rounded-xl shadow-sm shrink-0">
+                          <BookOpen size={16} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                            বিভাগ / সাবজেক্ট
+                          </p>
+                          <p className="text-xs font-bold text-neutral-700 truncate">
+                            {selectedTeacher.department?.name || "সাধারণ বিভাগ"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
-                          বিভাগ / সাবজেক্ট
-                        </p>
-                        <p className="text-xs font-bold text-neutral-700 truncate">
-                          {selectedTeacher.department?.name ||
-                            selectedTeacher.profileData?.department?.name ||
-                            "সাধারণ বিভাগ"}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Experience Grid Node */}
-                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
-                      <div className="p-2.5 bg-white text-amber-600 rounded-xl shadow-sm shrink-0">
-                        <Clock size={16} />
+                      <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                        <div className="p-2.5 bg-white text-amber-600 rounded-xl shadow-sm shrink-0">
+                          <Clock size={16} />
+                        </div>
+                        <div className="min-w-0">
+                          <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                            টিচিং অভিজ্ঞতা
+                          </p>
+                          <p className="text-xs font-bold text-neutral-700">
+                            {selectedTeacher.experience || "정보 없음"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
-                          টিচিং অভিজ্ঞতা
-                        </p>
-                        <p className="text-xs font-bold text-neutral-700">
-                          {selectedTeacher.experience ||
-                            selectedTeacher.profileData?.experience ||
-                            "তথ্য পাওয়া যায়নি"}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Email Grid Node */}
-                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
-                      <div className="p-2.5 bg-white text-blue-600 rounded-xl shadow-sm shrink-0">
-                        <Mail size={16} />
+                      <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                        <div className="p-2.5 bg-white text-blue-600 rounded-xl shadow-sm shrink-0">
+                          <Mail size={16} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                            ইমেইল ঠিকানা
+                          </p>
+                          <p className="text-xs font-bold text-neutral-700 break-all lowercase">
+                            {selectedTeacher.email ||
+                              selectedTeacher.user?.email ||
+                              "মেইল নেই"}
+                          </p>
+                        </div>
                       </div>
-                      <div className="min-w-0 flex-1">
-                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
-                          ইমেইল ঠিকানা
-                        </p>
-                        <p className="text-xs font-bold text-neutral-700 break-all lowercase">
-                          {selectedTeacher.user?.email ||
-                            selectedTeacher.email ||
-                            "মেইল নেই"}
-                        </p>
-                      </div>
-                    </div>
 
-                    {/* Phone Grid Node */}
-                    <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
-                      <div className="p-2.5 bg-white text-indigo-600 rounded-xl shadow-sm shrink-0">
-                        <Phone size={16} />
-                      </div>
-                      <div className="min-w-0">
-                        <p className="text-[10px] text-neutral-400 font-bold uppercase">
-                          মোবাইল নম্বর
-                        </p>
-                        <p className="text-xs font-bold text-neutral-700">
-                          {selectedTeacher.profileData?.phone ||
-                            selectedTeacher.phone ||
-                            "নম্বর নেই"}
-                        </p>
+                      <div className="flex items-center gap-3.5 bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100">
+                        <div className="p-2.5 bg-white text-green-600 rounded-xl shadow-sm shrink-0">
+                          <Phone size={16} />
+                        </div>
+                        <div className="min-w-0 flex-1">
+                          <p className="text-[10px] text-neutral-400 font-bold uppercase">
+                            ফোন নম্বর
+                          </p>
+                          <p className="text-xs font-bold text-neutral-700">
+                            {selectedTeacher.phone ||
+                              selectedTeacher.profileData?.phone ||
+                              "নম্বর নেই"}
+                          </p>
+                        </div>
                       </div>
                     </div>
                   </div>
                 </div>
-              </div>
-
-              {/* Action Operations Footer inside Modal */}
-              <div className="p-6 bg-neutral-50 border-t border-neutral-100 flex gap-3">
-                <button
-                  type="button"
-                  onClick={() => {
-                    setIsModalOpen(false);
-                    handleEmailClick(
-                      selectedTeacher.user?.email || selectedTeacher.email,
-                      selectedTeacher.profileData?.teacherNameBn ||
-                        selectedTeacher.name,
-                    );
-                  }}
-                  className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-100 rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all cursor-pointer"
-                >
-                  <Mail size={14} /> মেইল করুন
-                </button>
-
-                {!(
-                  selectedTeacher.isApproved ??
-                  selectedTeacher.profileData?.isApproved
-                ) && (
-                  <button
-                    type="button"
-                    onClick={() =>
-                      handleApproveTeacher(
-                        selectedTeacher._id || selectedTeacher.profileData?._id,
-                        selectedTeacher.profileData?.teacherNameBn ||
-                          selectedTeacher.name,
-                      )
-                    }
-                    className="flex-1 py-3 bg-amber-600 hover:bg-emerald-700 text-white rounded-2xl text-xs font-black flex items-center justify-center gap-2 transition-all shadow-lg cursor-pointer"
-                  >
-                    <UserPlus size={14} /> Approve User
-                  </button>
-                )}
-              </div>
+              )}
             </motion.div>
           </div>
         )}
       </AnimatePresence>
 
-      {/* 🌟 NEWLY ADDED: ADMIN TEACHER EDIT MODAL SEGMENT 🌟 */}
+      {/* EDIT FORM MODAL SEGMENT */}
       <AnimatePresence>
-        {isEditModalOpen && selectedTeacher && (
+        {isEditModalOpen && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
-            {/* Backdrop Effect */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -837,36 +859,30 @@ const TeacherList = () => {
               className="fixed inset-0 bg-neutral-900/60 backdrop-blur-sm"
             />
 
-            {/* Edit Modal Body Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
-              className="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl border border-neutral-100 relative z-10 flex flex-col font-sans"
+              className="bg-white rounded-[2.5rem] w-full max-w-md overflow-hidden shadow-2xl border border-neutral-100 relative z-10 p-6 md:p-8 font-sans"
             >
-              {/* Modal Header */}
-              <div className="p-6 border-b border-neutral-100 flex items-center justify-between">
+              <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-black text-neutral-800 flex items-center gap-2">
-                  <span className="p-1.5 bg-emerald-50 rounded-lg text-[#105D38]">
-                    <Edit size={16} />
-                  </span>
-                  শিক্ষকের তথ্য পরিবর্তন
+                  <Edit size={18} className="text-[#105D38]" /> শিক্ষক তথ্য
+                  পরিবর্তন
                 </h3>
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="p-2 bg-neutral-100 hover:bg-neutral-200 rounded-full text-neutral-500 transition-colors"
+                  className="p-1.5 bg-neutral-100 hover:bg-neutral-200 rounded-full text-neutral-500"
                 >
                   <X size={16} />
                 </button>
               </div>
 
-              {/* Form Content */}
-              <form onSubmit={handleEditSubmit} className="p-6 space-y-4">
-                {/* 1. Name Input */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-neutral-500">
-                    শিক্ষকের নাম (বাংলা/ইংরেজি)
+              <form onSubmit={handleEditSubmit} className="space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-500 mb-1">
+                    শিক্ষকের নাম
                   </label>
                   <input
                     type="text"
@@ -875,13 +891,11 @@ const TeacherList = () => {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, name: e.target.value })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
                   />
                 </div>
-
-                {/* 2. Designation Input */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-neutral-500">
+                <div>
+                  <label className="block text-xs font-bold text-neutral-500 mb-1">
                     পদবী
                   </label>
                   <input
@@ -894,14 +908,12 @@ const TeacherList = () => {
                         designation: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
                   />
                 </div>
-
-                {/* 3. Experience Input */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-neutral-500">
-                    টিচিং অভিজ্ঞতা
+                <div>
+                  <label className="block text-xs font-bold text-neutral-500 mb-1">
+                    অভিজ্ঞতা
                   </label>
                   <input
                     type="text"
@@ -913,14 +925,12 @@ const TeacherList = () => {
                         experience: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
                   />
                 </div>
-
-                {/* 4. Phone Input */}
-                <div className="space-y-1">
-                  <label className="text-xs font-bold text-neutral-500">
-                    মোবাইল নম্বর
+                <div>
+                  <label className="block text-xs font-bold text-neutral-500 mb-1">
+                    ফোন নম্বর
                   </label>
                   <input
                     type="text"
@@ -932,24 +942,23 @@ const TeacherList = () => {
                         phone: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
                   />
                 </div>
 
-                {/* Action Buttons */}
-                <div className="flex gap-3 pt-4 border-t border-neutral-100">
+                <div className="pt-2 flex gap-3">
                   <button
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-700 hover:bg-neutral-100 rounded-2xl text-xs font-black transition-all cursor-pointer"
+                    className="flex-1 hover:cursor-pointer py-3 bg-neutral-100 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-200 transition-all"
                   >
                     বাতিল
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 bg-[#105D38] hover:bg-[#0c462a] text-white rounded-2xl text-xs font-black transition-all shadow-lg cursor-pointer"
+                    className="flex-1 hover:cursor-pointer py-3 bg-[#105D38] text-white rounded-xl text-xs font-black hover:bg-[#0c462a] transition-all shadow-md"
                   >
-                    আপডেট করুন
+                    হালনাগাদ করুন
                   </button>
                 </div>
               </form>
