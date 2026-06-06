@@ -32,8 +32,8 @@ export default function Navbar() {
 
   const getProfileHref = () => {
     if (isStudent) return "/student-profile";
-    if (isTeacher) return "dashboard/teacher/profile";
-    if (isAdmin) return "dashboard/teacher/profile";
+    if (isTeacher) return "/dashboard/teacher/profile";
+    if (isAdmin) return "/dashboard/teacher/profile";
     return "/auth/login";
   };
 
