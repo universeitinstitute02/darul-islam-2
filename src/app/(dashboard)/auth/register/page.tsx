@@ -338,7 +338,7 @@ const RegisterPage: React.FC = () => {
 
               {step === 1 && (
                 <div className="mt-4">
-                  <div className="relative flex items-center py-4">
+                  {/* <div className="relative flex items-center py-4">
                     <div className="flex-grow border-t border-neutral-200"></div>
                     <span className="flex-shrink-0 mx-4 text-neutral-400 text-sm font-bold">
                       অথবা
@@ -369,7 +369,7 @@ const RegisterPage: React.FC = () => {
                       />
                     </svg>
                     Google-এর মাধ্যমে যুক্ত হোন
-                  </button>
+                  </button> */}
                 </div>
               )}
             </div>

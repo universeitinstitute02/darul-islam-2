@@ -37,7 +37,7 @@ export const Step1 = ({
 
       <div className="space-y-2 mb-4">
         <label className="text-[11px] font-black text-neutral-400 uppercase">
-          অ্যাকাউন্টের ধরন
+          অ্যাক্যাউন্টের ধরন
         </label>
         <div className="flex gap-3">
           <label
@@ -359,16 +359,17 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
       <InputField
         label="মোবাইল নম্বর *"
         placeholder="01XXXXXXXXX"
-        isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
+        type="tel"
+        isNumberOnly={true}
+        icon={<Phone size={18} />}
+        error={errors.fatherMobile}
         register={register("fatherMobile", {
           required: "পিতার মোবাইল আবশ্যক",
           pattern: {
-            value: /^01[3-9]\d{8}$/,
+            value: /^\d{11}$/,
             message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
           },
         })}
-        error={errors.fatherMobile}
-        icon={<Phone size={18} />}
       />
       <InputField
         label="পেশা"
@@ -391,15 +392,16 @@ export const Step3 = ({ register, errors }: any) => (
     <InputField
       label="মোবাইল নম্বর"
       placeholder="01XXXXXXXXX"
-      isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
+      type="tel"
+      isNumberOnly={true}
+      icon={<Phone size={18} />}
+      error={errors.motherMobile}
       register={register("motherMobile", {
         pattern: {
-          value: /^01[3-9]\d{8}$/,
+          value: /^\d{11}$/,
           message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
         },
       })}
-      icon={<Phone size={18} />}
-      error={errors.motherMobile} // এরর হ্যান্ডেল করার জন্য প্রপ্স যুক্ত করা হলো
     />
     <InputField
       label="পেশা"
@@ -437,19 +439,21 @@ export const Step4 = ({ register, errors, divisions }: any) => (
     />
 
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {/* 🔄 আপনার দেওয়া নতুন /^\d{11}$/ প্যাটার্ন এখানে যুক্ত করা হয়েছে */}
       <InputField
         label="মোবাইল নম্বর *"
         placeholder="01XXXXXXXXX"
-        isNumberOnly={true} // 👈 শুধু সংখ্যা নিবে
+        type="tel"
+        isNumberOnly={true}
+        icon={<Phone size={18} />}
+        error={errors.studentMobile}
         register={register("studentMobile", {
           required: "মোবাইল নম্বর আবশ্যক",
           pattern: {
-            value: /^01[3-9]\d{8}$/,
+            value: /^\d{11}$/,
             message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
           },
         })}
-        error={errors.studentMobile}
-        icon={<Phone size={18} />}
       />
       <InputField
         label="ইমেইল অ্যাড্রেস *"

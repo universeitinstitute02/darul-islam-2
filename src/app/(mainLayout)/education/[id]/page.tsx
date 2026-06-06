@@ -126,9 +126,9 @@ export default function CourseDetailPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
+            className="flex items-center hover:cursor-pointer gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
           >
-            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors hover:cursor-pointer">
+            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors ">
               <ArrowLeft size={20} />
             </div>
             <span className="font-bold text-sm hidden md:block">পেছনে যান</span>
