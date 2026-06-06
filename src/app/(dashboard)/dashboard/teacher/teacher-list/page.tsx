@@ -802,7 +802,7 @@ const TeacherList = () => {
                             টিচিং অভিজ্ঞতা
                           </p>
                           <p className="text-xs font-bold text-neutral-700">
-                            {selectedTeacher.experience || "정보 없음"}
+                            {selectedTeacher.experience || "নতুন শিক্ষক"}
                           </p>
                         </div>
                       </div>
