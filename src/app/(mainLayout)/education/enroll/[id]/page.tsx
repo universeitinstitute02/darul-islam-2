@@ -6,11 +6,22 @@ import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
-  CreditCard,
   ShieldCheck,
   Lock,
   ChevronRight,
   CheckCircle2,
+<<<<<<< HEAD
+  ArrowRight,
+  User,
+  Phone,
+  Smartphone,
+  Hash,
+  MapPin,
+} from "lucide-react";
+
+import { useForm, type UseFormRegisterReturn } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
+=======
   Wallet,
   Copy,
   Check,
@@ -21,6 +32,7 @@ import {
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
+>>>>>>> 4afb893a86eee8edf8df4e1288c766fc83bfddf1
 import { getAllCourses } from "@/src/lib/data";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
@@ -62,18 +74,143 @@ const CHANNEL_NUMBERS: Record<
   },
 };
 
+type PaymentMethod = "bkash" | "nagad" | "rocket" | "bank";
+
+const PAYMENT_INFO: Record<
+  PaymentMethod,
+  {
+    label: string;
+    number?: string;
+    ac?: string;
+    bg: string;
+    borderColor: string;
+    logo: string;
+  }
+> = {
+  bkash: {
+    label: "বিকাশ (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-pink-50",
+    borderColor: "border-pink-400",
+    logo: "https://freelogopng.com/images/all_img/1656234841bkash-icon-png.png",
+  },
+  nagad: {
+    label: "নগদ (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-orange-50",
+    borderColor: "border-orange-400",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Nagad-png.png",
+  },
+  rocket: {
+    label: "রকেট (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-purple-50",
+    borderColor: "border-purple-400",
+    logo: "https://static.vecteezy.com/system/resources/previews/068/842/062/non_2x/rocket-icon-mobile-banking-logo-emblem-transparent-background-free-png.png",
+  },
+  bank: {
+    label: "ইসলামী ব্যাংক",
+    ac: "2050188002255",
+    bg: "bg-blue-50",
+    borderColor: "border-blue-400",
+    logo: "https://res.cloudinary.com/darulislam/image/upload/v1780811223/central-bank_z1rprw.png",
+  },
+};
+
+/* ─────────────────────────────────────────
+    COPY HOOK
+───────────────────────────────────────── */
+function useCopy(text: string) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return { copied, copy };
+}
+
+function CopyButton({ text }: { text: string }) {
+  const { copied, copy } = useCopy(text);
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="px-3 py-2 rounded-xl bg-white/80 text-xs font-black text-neutral-700 border border-black/5 shadow-sm hover:bg-white transition-colors"
+    >
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+function RHFInput({
+  icon,
+  registration,
+  className = "",
+  ...props
+}: {
+  icon: React.ReactNode;
+  registration: UseFormRegisterReturn;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-3 py-3 focus-within:border-[#105D38] transition-colors">
+      <span className="text-neutral-400 shrink-0">{icon}</span>
+      <input
+        {...props}
+        {...registration}
+        className={`w-full bg-transparent text-sm font-semibold text-neutral-800 outline-none placeholder:text-neutral-400 ${className}`}
+      />
+    </div>
+  );
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+
+  return <p className="mt-1 text-xs font-semibold text-red-600">{msg}</p>;
+}
+
+interface DonorFormValues {
+  name: string;
+  phone: string;
+  senderNumber?: string;
+  address?: string;
+  trxId?: string;
+}
+
 export default function EnrollPage() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
   const axiosSecure = useAxiosSecure();
 
+<<<<<<< HEAD
+  const [course, setCourse] = useState<any>(null);
+  const [courseLoading, setCourseLoading] = useState(true);
+  const [method, setMethod] = useState<PaymentMethod>("bkash");
+  const [isPaymentComplete, setIsPaymentComplete] = useState(false);
+=======
   const [selectedBatchId, setSelectedBatchId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("bkash");
   const [senderName, setSenderName] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [transactionId, setTransactionId] = useState("");
   const [copied, setCopied] = useState(false);
+>>>>>>> 4afb893a86eee8edf8df4e1288c766fc83bfddf1
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   const { user, isLoading: isUserLoading, role } = useUserRole();
@@ -125,8 +262,36 @@ export default function EnrollPage() {
     }
   };
 
-  const handlePaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors },
+  } = useForm<DonorFormValues>({ mode: "onSubmit" });
+
+  const paymentInfo = PAYMENT_INFO[method];
+  const copyTarget =
+    method === "bank" ? (paymentInfo.ac ?? "") : (paymentInfo.number ?? "");
+
+  const handleMethodChange = (selectedMethod: PaymentMethod) => {
+    setMethod(selectedMethod);
+    setIsPaymentComplete(false);
+  };
+
+  const handlePaymentComplete = async () => {
+    const requiredFields: (keyof DonorFormValues)[] =
+      method === "bank"
+        ? ["name", "phone", "trxId"]
+        : ["name", "phone", "senderNumber", "trxId"];
+    const isValid = await trigger(requiredFields, { shouldFocus: true });
+    if (!isValid) return;
+
+    setIsPaymentComplete(true);
+  };
+
+  const handlePaymentSubmit = async (data: DonorFormValues) => {
+    if (!isPaymentComplete) return;
+
     if (!user) {
       return Swal.fire(
         "নির্দেশনা",
@@ -152,6 +317,28 @@ export default function EnrollPage() {
     setIsSubmitting(true);
     const finalPrice = course?.details?.admissionFee || course?.price || 0;
 
+<<<<<<< HEAD
+    // ডকুমেন্টেশনের প্রোডাক্ট অর্ডার আর্কিটেকচার অনুযায়ী নিখুঁত অবজেক্ট ম্যাপিং
+    const checkoutPayload = {
+      customerDetails: {
+        name: data.name || user?.name || "Anonymous User",
+        phone: data.phone || user?.phone || "01XXXXXXXXX",
+        address: data.address || user?.profile?.address || "মাদরাসা ক্যাম্পাস",
+        district: user?.profile?.district || "Dhaka",
+      },
+      items: [
+        {
+          product: id, // কোর্স আইডিটি প্রোডাক্টের ট্র্যাকার হিসেবে পাস হবে
+          quantity: 1,
+        },
+      ],
+      paymentDetails: {
+        method, // 'bkash' | 'nagad' | 'rocket' | 'bank'
+        status: "unpaid",
+        bkashMsisdn: method === "bank" ? "" : (data.senderNumber ?? ""),
+        transactionId: method === "bank" ? "" : (data.trxId ?? ""),
+      },
+=======
     const requestPayload = {
       courseId: id,
       batchId: selectedBatchId,
@@ -159,6 +346,7 @@ export default function EnrollPage() {
       bkashNumber: accountNumber.trim(),
       transactionId: transactionId.trim().toUpperCase(),
       amountPaid: Number(finalPrice),
+>>>>>>> 4afb893a86eee8edf8df4e1288c766fc83bfddf1
     };
 
     try {
@@ -218,7 +406,7 @@ export default function EnrollPage() {
 
       <main className="max-w-7xl mx-auto px-4 py-10">
         <form
-          onSubmit={handlePaymentSubmit}
+          onSubmit={handleSubmit(handlePaymentSubmit)}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
         >
           {/* Left Column Form Framework Box matching Donation Layout */}
@@ -329,6 +517,141 @@ export default function EnrollPage() {
                   </p>
                 </div>
 
+<<<<<<< HEAD
+            {/* Premium Method Selection */}
+
+            {/* Payment method selector */}
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              {(["bkash", "nagad", "rocket", "bank"] as PaymentMethod[]).map(
+                (m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => handleMethodChange(m)}
+                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
+                      method === m
+                        ? "border-[#14281D] bg-gray-50"
+                        : "border-gray-100 opacity-60 hover:opacity-80"
+                    }`}
+                  >
+                    <img
+                      src={PAYMENT_INFO[m].logo}
+                      alt={m}
+                      className="w-8 h-8 object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                    <span className="text-[10px] font-black uppercase">
+                      {m}
+                    </span>
+                  </button>
+                ),
+              )}
+            </div>
+
+            {/* Payment info card with copy button */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={method}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-5 rounded-2xl mb-6 border-l-4 ${paymentInfo.bg} ${paymentInfo.borderColor}`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <img
+                    src={paymentInfo.logo}
+                    alt={method}
+                    className="w-6 h-6 object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                  <p className="text-xs font-bold opacity-70">
+                    {paymentInfo.label}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <p
+                    className={`font-black ${method === "bank" ? "text-sm" : "text-xl"} flex-1`}
+                  >
+                    {method === "bank"
+                      ? `A/C: ${paymentInfo.ac}`
+                      : `Number: ${paymentInfo.number}`}
+                  </p>
+                  <CopyButton text={copyTarget} />
+                </div>
+
+                <p className="text-[10px] mt-2 opacity-60 italic">
+                  * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Form fields via react-hook-form */}
+            <div>
+              <div className="space-y-3 mb-6">
+
+                
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-3"
+                  >
+                    <div>
+                      <RHFInput
+                        icon={<Smartphone size={16} />}
+                        placeholder="যে নাম্বার থেকে পাঠিয়েছেন"
+                        registration={register("senderNumber", {
+                          required: "সেন্ডার নাম্বার দিন",
+                          pattern: {
+                            value: /^[0-9+]{10,15}$/,
+                            message: "সঠিক নাম্বার দিন",
+                          },
+                        })}
+                      />
+                      {errors.senderNumber && (
+                        <FieldError msg={errors.senderNumber.message} />
+                      )}
+                    </div>
+
+                    <div>
+                      <RHFInput
+                        icon={<Hash size={16} />}
+                        placeholder="ট্রানজেকশন আইডি (TrxID) / ব্যাংক অ্যাকাউন্ট নম্বর"
+                        registration={register("trxId", {
+                          required: "TrxID দিন",
+                        })}
+                      />
+                      {errors.trxId && (
+                        <FieldError msg={errors.trxId.message} />
+                      )}
+                    </div>
+                  </motion.div>
+                
+              </div>
+
+              <button
+                type="button"
+                onClick={handlePaymentComplete}
+                disabled={isSubmitting}
+                className="relative w-full cursor-pointer bg-green-800 text-white py-4 rounded-2xl font-black flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-60 overflow-hidden"
+              >
+                {isSubmitting && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-green-800">
+                    <LoadingSpinner />
+                  </div>
+                )}
+
+                <span
+                  className={`flex items-center justify-center gap-2 transition-opacity duration-200 ${isSubmitting ? "opacity-0" : "opacity-100"}`}
+                >
+                  পেমেন্ট করুন
+                  <ArrowRight size={18} />
+                </span>
+              </button>
+=======
                 <button
                   type="button"
                   onClick={() => handleCopyClipboard(activeChannel.number)}
@@ -396,6 +719,7 @@ export default function EnrollPage() {
                   required
                 />
               </div>
+>>>>>>> 4afb893a86eee8edf8df4e1288c766fc83bfddf1
             </div>
           </div>
 
@@ -454,6 +778,16 @@ export default function EnrollPage() {
 
               <button
                 type="submit"
+<<<<<<< HEAD
+                disabled={!isPaymentComplete || isSubmitting}
+                className="w-full bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center gap-2 group hover:cursor-pointer shadow-md text-base mt-6 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
+              >
+                সম্পূর্ণ করুন
+                <ChevronRight
+                  size={18}
+                  className="group-hover:translate-x-1 transition-transform"
+                />
+=======
                 disabled={isSubmitting || !selectedBatchId}
                 className="relative w-full cursor-pointer bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center shadow-md text-base mt-6 active:scale-[0.98] disabled:opacity-60 overflow-hidden"
               >
@@ -471,6 +805,7 @@ export default function EnrollPage() {
                     className="group-hover:translate-x-1 transition-transform"
                   />
                 </span>
+>>>>>>> 4afb893a86eee8edf8df4e1288c766fc83bfddf1
               </button>
 
               <div className="mt-6 flex items-center justify-center gap-5 text-[10px] text-white/40 font-bold uppercase tracking-widest">

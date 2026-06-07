@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
@@ -144,6 +144,7 @@ export default function DonationPage() {
   const [amount, setAmount] = useState("");
   const [method, setMethod] = useState("bkash");
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
 
   const {
     register,
@@ -187,6 +188,7 @@ export default function DonationPage() {
       });
       setAmount("");
       reset();
+      router.push("/donation");
     } catch (err: any) {
       Swal.fire("দুঃখিত", err?.message ?? "আবার চেষ্টা করুন", "error");
     } finally {
