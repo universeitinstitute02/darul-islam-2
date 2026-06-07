@@ -121,7 +121,7 @@ export default function DashboardLayout({
       roles: ["admin"],
     },
     {
-      name: "order management",
+      name: "Order management",
       href: "/dashboard/admin/order-management",
       icon: UserCog,
       roles: ["admin"],

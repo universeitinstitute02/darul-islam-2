@@ -114,7 +114,7 @@ export default function ProductModal({
               </div>
               <button
                 onClick={onClose}
-                className="p-1.5 hover:bg-neutral-200/60 rounded-lg text-neutral-400 transition-all"
+                className="p-1.5 hover:bg-neutral-200/60 rounded-lg cursor-pointer text-neutral-400 transition-all"
               >
                 <X size={16} />
               </button>
@@ -177,15 +177,15 @@ export default function ProductModal({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="space-y-1">
                   <label className="font-bold text-neutral-600">
-                    কোর্স স্ট্যাটাস *
+                    স্টক স্ট্যাটাস *
                   </label>
                   <select
                     value={inStock}
                     onChange={(e) => setInStock(e.target.value)}
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full cursor-pointer p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
                   >
-                    <option value="true">চলছে</option>
-                    <option value="false">মেয়াদ শেষ</option>
+                    <option value="true">In Stock</option>
+                    <option value="false">Stock Out</option>
                   </select>
                 </div>
 
@@ -267,14 +267,14 @@ export default function ProductModal({
                 <button
                   type="button"
                   onClick={onClose}
-                  className="px-4 py-2 bg-neutral-100 hover:bg-neutral-200/70 text-neutral-600 font-bold rounded-xl transition-all"
+                  className="px-4 py-2 cursor-pointer bg-neutral-100 hover:bg-neutral-200/70 text-neutral-600 font-bold rounded-xl transition-all"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="px-5 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2 cursor-pointer bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
                   {isPending && <Loader2 className="animate-spin" />}
                   <span>{editingProduct ? "আপডেট করুন" : "যোগ করুন"}</span>

@@ -15,7 +15,16 @@ import {
 } from "lucide-react";
 
 // ডামি ডাটা
-const initialOrders = [
+type Order = {
+  id: string;
+  customer: string;
+  phone: string;
+  address: string;
+  product: string;
+  price: string;
+  status: "pending" | "successful";
+};
+const initialOrders: Order[] = [
   {
     id: "ORD-001",
     customer: "Rahim Ahmed",
@@ -56,11 +65,11 @@ const initialOrders = [
 
 export default function DeliveryDashboard() {
   const [orders, setOrders] = useState(initialOrders);
-  const [activeTab, setActiveTab] = useState("pending"); // ডিফল্ট ট্যাব 'pending'
-  const [selectedOrder, setSelectedOrder] = useState(null);
+  const [activeTab, setActiveTab] = useState("pending");
+  const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
 
   // ডেলিভারি স্ট্যাটাস চেঞ্জ করার ফাংশন
-  const handleDeliverySuccess = (id) => {
+  const handleDeliverySuccess = (id: string) => {
     setOrders((prevOrders) =>
       prevOrders.map((order) =>
         order.id === id ? { ...order, status: "successful" } : order,

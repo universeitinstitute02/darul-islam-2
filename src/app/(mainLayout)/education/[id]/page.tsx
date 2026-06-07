@@ -374,10 +374,113 @@ export default function CourseDetailPage() {
                 </div>
               </div>
             </div>
+
+            {/* কোর্স মডিউল হাইলাইটস */}
+            {/* {details?.highlights && details.highlights.length > 0 && (
+              <div className="pt-6 border-t border-neutral-100">
+                <h4 className="text-xs font-black text-neutral-800 mb-4 uppercase tracking-widest flex items-center gap-2">
+                  <Star size={14} className="text-amber-500 fill-amber-500" />{" "}
+                  کোর্স মডিউল হাইলাইটস
+                </h4>
+                <ul className="space-y-3.5">
+                  {details.highlights.map((h: any, i: number) => (
+                    <li key={i} className="flex gap-3 text-xs items-start">
+                      <div className="mt-1 shrink-0">
+                        <div className="w-1.5 h-1.5 rounded-full bg-[#105D38]" />
+                      </div>
+                      <span className="text-neutral-600 leading-tight">
+                        <strong className="text-neutral-900 block mb-0.5">
+                          {h.label}
+                        </strong>
+                        {h.value}
+                      </span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )} */}
           </div>
 
           {/* ==================== RIGHT COLUMN (Playlist & Action Sidebar) ==================== */}
           <div className="space-y-6 lg:sticky lg:top-28 h-fit">
+                        {/* 💳 ভর্তি অ্যাকশন ও স্টুডেন্ট প্রোগ্রেস কন্ট্রোল প্যানেল */}
+            <motion.div
+              initial={{ opacity: 0, scale: 0.95 }}
+              animate={{ opacity: 1, scale: 1 }}
+              className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-neutral-100 shadow-2xl space-y-6"
+            >
+              {!isEnrolled ? (
+                /* ❌ ভর্তি না হওয়া ইউজার এর জন্য প্রাইসিং প্যানেল */
+                <>
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                      ভর্তি ফি সর্বমোট
+                    </p>
+                    <div className="flex items-baseline gap-3">
+                      <span className="text-4xl md:text-5xl font-black text-[#105D38]">
+                        {details?.admissionFee === 0 ||
+                        (!price && !details?.admissionFee)
+                          ? "ফ্রি!"
+                          : `৳${details?.admissionFee || price}`}
+                      </span>
+                      {details?.oldAdmissionFee > 0 && (
+                        <span className="text-neutral-300 line-through text-lg font-bold">
+                          ৳{details.oldAdmissionFee}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="space-y-3">
+                    <button
+                      onClick={handleEnrollAction}
+                      className="w-full bg-[#105D38] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#105D38]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                    >
+                      এখনই ভর্তি হবো <CheckCircle2 size={20} />
+                    </button>
+                    <p className="text-[10px] text-center text-neutral-400 font-medium">
+                      নিরাপদ পেমেন্ট গেটওয়ের মাধ্যমে ইনস্ট্যান্ট অ্যাক্সেস পান
+                    </p>
+                  </div>
+                </>
+              ) : (
+                /* ✅ ভর্তি হওয়া স্টুডেন্ট এর প্রোগ্রেস ও কমপ্লিশন প্যানেল */
+                <div className="space-y-4">
+                  <div className="space-y-1.5">
+                    <div className="flex justify-between text-xs font-bold text-slate-600">
+                      <span>আপনার কোর্স প্রোগ্রেস</span>
+                      <span>{isAllModulesFinished ? "১০০%" : "৫০%"}</span>
+                    </div>
+                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                      <div
+                        className={`h-full transition-all duration-500 ${isAllModulesFinished ? "w-full bg-emerald-600" : "w-1/2 bg-amber-500"}`}
+                      ></div>
+                    </div>
+                  </div>
+
+                  <button
+                    onClick={() => {
+                      if (isAllModulesFinished) router.push("/education");
+                    }}
+                    disabled={!isAllModulesFinished}
+                    className={`w-full py-4 font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 ${
+                      isAllModulesFinished
+                        ? "bg-slate-950 text-white hover:bg-black hover:cursor-pointer"
+                        : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
+                    }`}
+                  >
+                    <CheckCircle2 size={15} />
+                    <span>কোর্স সম্পন্ন করুন</span>
+                  </button>
+                  {!isAllModulesFinished && (
+                    <p className="text-[10px] text-center text-amber-600 font-medium">
+                      সবগুলো লাইভ সেশন এবং অ্যাসাইনমেন্ট শেষ করে কোর্সটি কমপ্লিট
+                      করুন।
+                    </p>
+                  )}
+                </div>
+              )}
+            </motion.div>
             {/* 📋 মডিউল ও প্লেলিস্ট লিস্টিং কার্ড */}
             <div className="bg-white rounded-[2rem] border border-neutral-100 shadow-xl overflow-hidden flex flex-col justify-between">
               <div className="p-5 bg-slate-50/80 border-b border-neutral-100 flex justify-between items-center">
@@ -471,112 +574,79 @@ export default function CourseDetailPage() {
                     </h4>
                   </div>
                 </div>
+                {/* আইটেম ০১: লাইভ সেশন মডিউল */}
+                <div
+                  onClick={() => isEnrolled && setActiveTab("live")}
+                  className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
+                    !isEnrolled
+                      ? "cursor-not-allowed opacity-60"
+                      : "cursor-pointer"
+                  } ${isEnrolled && activeTab === "live" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                >
+                  <div
+                    onClick={(e) =>
+                      isEnrolled && toggleItemComplete("session-01", e)
+                    }
+                    className="mt-0.5 shrink-0"
+                  >
+                    {completedItems.includes("session-01") ? (
+                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                    ) : (
+                      <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-slate-800 leading-tight">
+                      ০১. অরিয়েন্টেশন ও ড্যাশবোর্ড সেটআপ
+                    </h4>
+                    <span className="text-[10px] text-[#105D38] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#105D38]/10">
+                      <Video size={10} /> লাইভ ক্লাস - একটিভ
+                    </span>
+                  </div>
+                </div>
+
+                {/* আইটেম ০২: অ্যাসাইনমেন্ট মডিউল */}
+                <div
+                  onClick={() => isEnrolled && setActiveTab("assignment")}
+                  className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
+                    !isEnrolled
+                      ? "cursor-not-allowed opacity-60"
+                      : "cursor-pointer"
+                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                >
+                  <div className="mt-0.5 shrink-0">
+                    {assignmentSubmitted ? (
+                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                    ) : (
+                      <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
+                    )}
+                  </div>
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-slate-800 leading-tight">
+                      ০২. মডিউল ১ টাস্ক: হোমওয়ার্ক সাবমিশন
+                    </h4>
+                    <span
+                      className={`text-[10px] font-bold inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${assignmentSubmitted ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
+                    >
+                      <FileText size={10} />{" "}
+                      {assignmentSubmitted
+                        ? "সাবমিট সম্পন্ন"
+                        : "অ্যাসাইনমেন্ট পেন্ডিং"}
+                    </span>
+                  </div>
+                </div>
+
+                {/* আইটেম ০৩: লকড থিওরি মডিউল */}
+                <div className="p-4 flex items-start gap-3.5 text-slate-400 bg-slate-50/40">
+                  <Lock size={15} className="mt-0.5 shrink-0 text-slate-300" />
+                  <div className="space-y-1">
+                    <h4 className="text-xs font-bold text-slate-400 leading-snug">
+                      ০৩. অ্যাডভান্সড আর্কিটেকচার ও প্রজেক্ট রিভিউ
+                    </h4>
+                  </div>
+                </div>
               </div>
             </div>
-
-            {/* 💳 ভর্তি অ্যাকশন ও স্টুডেন্ট প্রোগ্রেস কন্ট্রোল প্যানেল */}
-            <motion.div
-              initial={{ opacity: 0, scale: 0.95 }}
-              animate={{ opacity: 1, scale: 1 }}
-              className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-neutral-100 shadow-2xl space-y-6"
-            >
-              {!isEnrolled ? (
-                /* ❌ ভর্তি না হওয়া ইউজার এর জন্য প্রাইসিং প্যানেল */
-                <>
-                  <div className="space-y-1">
-                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
-                      ভর্তি ফি সর্বমোট
-                    </p>
-                    <div className="flex items-baseline gap-3">
-                      <span className="text-4xl md:text-5xl font-black text-[#105D38]">
-                        {details?.admissionFee === 0 ||
-                        (!price && !details?.admissionFee)
-                          ? "ফ্রি!"
-                          : `৳${details?.admissionFee || price}`}
-                      </span>
-                      {details?.oldAdmissionFee > 0 && (
-                        <span className="text-neutral-300 line-through text-lg font-bold">
-                          ৳{details.oldAdmissionFee}
-                        </span>
-                      )}
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <button
-                      onClick={handleEnrollAction}
-                      className="w-full bg-[#105D38] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#105D38]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
-                    >
-                      এখনই ভর্তি হবো <CheckCircle2 size={20} />
-                    </button>
-                    <p className="text-[10px] text-center text-neutral-400 font-medium">
-                      নিরাপদ পেমেন্ট গেটওয়ের মাধ্যমে ইনস্ট্যান্ট অ্যাক্সেস পান
-                    </p>
-                  </div>
-                </>
-              ) : (
-                /* ✅ ভর্তি হওয়া স্টুডেন্ট এর প্রোগ্রেস ও কমপ্লিশন প্যানেল */
-                <div className="space-y-4">
-                  <div className="space-y-1.5">
-                    <div className="flex justify-between text-xs font-bold text-slate-600">
-                      <span>আপনার কোর্স প্রোগ্রেস</span>
-                      <span>{isAllModulesFinished ? "১০০%" : "৫০%"}</span>
-                    </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
-                      <div
-                        className={`h-full transition-all duration-500 ${isAllModulesFinished ? "w-full bg-emerald-600" : "w-1/2 bg-amber-500"}`}
-                      ></div>
-                    </div>
-                  </div>
-
-                  <button
-                    onClick={() => {
-                      if (isAllModulesFinished) router.push("/education");
-                    }}
-                    disabled={!isAllModulesFinished}
-                    className={`w-full py-4 font-black text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 ${
-                      isAllModulesFinished
-                        ? "bg-slate-950 text-white hover:bg-black hover:cursor-pointer"
-                        : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
-                    }`}
-                  >
-                    <CheckCircle2 size={15} />
-                    <span>কোর্স সম্পন্ন করুন</span>
-                  </button>
-                  {!isAllModulesFinished && (
-                    <p className="text-[10px] text-center text-amber-600 font-medium">
-                      সবগুলো লাইভ সেশন এবং অ্যাসাইনমেন্ট শেষ করে কোর্সটি কমপ্লিট
-                      করুন।
-                    </p>
-                  )}
-                </div>
-              )}
-
-              {/* কোর্স মডিউল হাইলাইটস */}
-              {details?.highlights && details.highlights.length > 0 && (
-                <div className="pt-6 border-t border-neutral-100">
-                  <h4 className="text-xs font-black text-neutral-800 mb-4 uppercase tracking-widest flex items-center gap-2">
-                    <Star size={14} className="text-amber-500 fill-amber-500" />{" "}
-                    کোর্স মডিউল হাইলাইটস
-                  </h4>
-                  <ul className="space-y-3.5">
-                    {details.highlights.map((h: any, i: number) => (
-                      <li key={i} className="flex gap-3 text-xs items-start">
-                        <div className="mt-1 shrink-0">
-                          <div className="w-1.5 h-1.5 rounded-full bg-[#105D38]" />
-                        </div>
-                        <span className="text-neutral-600 leading-tight">
-                          <strong className="text-neutral-900 block mb-0.5">
-                            {h.label}
-                          </strong>
-                          {h.value}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </motion.div>
           </div>
         </div>
       </div>

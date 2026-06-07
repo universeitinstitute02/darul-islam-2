@@ -5,20 +5,144 @@ import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
   ArrowLeft,
-  CreditCard,
   ShieldCheck,
   Lock,
   ChevronRight,
   CheckCircle2,
-  Wallet,
+  ArrowRight,
+  User,
+  Phone,
+  Smartphone,
+  Hash,
+  MapPin,
 } from "lucide-react";
-import { motion } from "framer-motion";
+
+import { useForm, type UseFormRegisterReturn } from "react-hook-form";
+import { motion, AnimatePresence } from "framer-motion";
 import { getAllCourses } from "@/src/lib/data";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 // আপনার প্রোভাইড করা কাস্টম হুক এবং সিকিউর এক্সিওস ক্লায়েন্ট ইমপোর্ট
 import useUserRole from "@/src/app/hooks/useUserRole";
 import { axiosSecure } from "@/src/app/hooks/useAxiosSecure";
+
+type PaymentMethod = "bkash" | "nagad" | "rocket" | "bank";
+
+const PAYMENT_INFO: Record<
+  PaymentMethod,
+  {
+    label: string;
+    number?: string;
+    ac?: string;
+    bg: string;
+    borderColor: string;
+    logo: string;
+  }
+> = {
+  bkash: {
+    label: "বিকাশ (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-pink-50",
+    borderColor: "border-pink-400",
+    logo: "https://freelogopng.com/images/all_img/1656234841bkash-icon-png.png",
+  },
+  nagad: {
+    label: "নগদ (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-orange-50",
+    borderColor: "border-orange-400",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Nagad-png.png",
+  },
+  rocket: {
+    label: "রকেট (পার্সোনাল)",
+    number: "01788002255",
+    bg: "bg-purple-50",
+    borderColor: "border-purple-400",
+    logo: "https://static.vecteezy.com/system/resources/previews/068/842/062/non_2x/rocket-icon-mobile-banking-logo-emblem-transparent-background-free-png.png",
+  },
+  bank: {
+    label: "ইসলামী ব্যাংক",
+    ac: "2050188002255",
+    bg: "bg-blue-50",
+    borderColor: "border-blue-400",
+    logo: "https://res.cloudinary.com/darulislam/image/upload/v1780811223/central-bank_z1rprw.png",
+  },
+};
+
+/* ─────────────────────────────────────────
+    COPY HOOK
+───────────────────────────────────────── */
+function useCopy(text: string) {
+  const [copied, setCopied] = useState(false);
+
+  const copy = async () => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    } catch {
+      const el = document.createElement("textarea");
+      el.value = text;
+      document.body.appendChild(el);
+      el.select();
+      document.execCommand("copy");
+      document.body.removeChild(el);
+      setCopied(true);
+      setTimeout(() => setCopied(false), 2000);
+    }
+  };
+
+  return { copied, copy };
+}
+
+function CopyButton({ text }: { text: string }) {
+  const { copied, copy } = useCopy(text);
+
+  return (
+    <button
+      type="button"
+      onClick={copy}
+      className="px-3 py-2 rounded-xl bg-white/80 text-xs font-black text-neutral-700 border border-black/5 shadow-sm hover:bg-white transition-colors"
+    >
+      {copied ? "Copied" : "Copy"}
+    </button>
+  );
+}
+
+function RHFInput({
+  icon,
+  registration,
+  className = "",
+  ...props
+}: {
+  icon: React.ReactNode;
+  registration: UseFormRegisterReturn;
+} & React.InputHTMLAttributes<HTMLInputElement>) {
+  return (
+    <div className="flex items-center gap-2 rounded-2xl border border-neutral-200 bg-white px-3 py-3 focus-within:border-[#105D38] transition-colors">
+      <span className="text-neutral-400 shrink-0">{icon}</span>
+      <input
+        {...props}
+        {...registration}
+        className={`w-full bg-transparent text-sm font-semibold text-neutral-800 outline-none placeholder:text-neutral-400 ${className}`}
+      />
+    </div>
+  );
+}
+
+function FieldError({ msg }: { msg?: string }) {
+  if (!msg) return null;
+
+  return <p className="mt-1 text-xs font-semibold text-red-600">{msg}</p>;
+}
+
+interface DonorFormValues {
+  name: string;
+  phone: string;
+  senderNumber?: string;
+  address?: string;
+  trxId?: string;
+}
 
 export default function EnrollPage() {
   const params = useParams();
@@ -27,7 +151,8 @@ export default function EnrollPage() {
 
   const [course, setCourse] = useState<any>(null);
   const [courseLoading, setCourseLoading] = useState(true);
-  const [paymentMethod, setPaymentMethod] = useState("bkash");
+  const [method, setMethod] = useState<PaymentMethod>("bkash");
+  const [isPaymentComplete, setIsPaymentComplete] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
   // কাস্টম হুক থেকে রিয়েল-টাইম লগইন থাকা ইউজারের ডাটা রিট্রিভ
@@ -59,8 +184,36 @@ export default function EnrollPage() {
     fetchCourse();
   }, [id]);
 
-  const handlePaymentSubmit = async (e: React.FormEvent) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    trigger,
+    formState: { errors },
+  } = useForm<DonorFormValues>({ mode: "onSubmit" });
+
+  const paymentInfo = PAYMENT_INFO[method];
+  const copyTarget =
+    method === "bank" ? (paymentInfo.ac ?? "") : (paymentInfo.number ?? "");
+
+  const handleMethodChange = (selectedMethod: PaymentMethod) => {
+    setMethod(selectedMethod);
+    setIsPaymentComplete(false);
+  };
+
+  const handlePaymentComplete = async () => {
+    const requiredFields: (keyof DonorFormValues)[] =
+      method === "bank"
+        ? ["name", "phone", "trxId"]
+        : ["name", "phone", "senderNumber", "trxId"];
+    const isValid = await trigger(requiredFields, { shouldFocus: true });
+    if (!isValid) return;
+
+    setIsPaymentComplete(true);
+  };
+
+  const handlePaymentSubmit = async (data: DonorFormValues) => {
+    if (!isPaymentComplete) return;
+
     if (!user) {
       alert("দয়া করে পেমেন্ট করার আগে লগইন সম্পন্ন করুন।");
       return;
@@ -72,9 +225,9 @@ export default function EnrollPage() {
     // ডকুমেন্টেশনের প্রোডাক্ট অর্ডার আর্কিটেকচার অনুযায়ী নিখুঁত অবজেক্ট ম্যাপিং
     const checkoutPayload = {
       customerDetails: {
-        name: user?.name || "Anonymous User",
-        phone: user?.phone || "01XXXXXXXXX",
-        address: user?.profile?.address || "মাদরাসা ক্যাম্পাস",
+        name: data.name || user?.name || "Anonymous User",
+        phone: data.phone || user?.phone || "01XXXXXXXXX",
+        address: data.address || user?.profile?.address || "মাদরাসা ক্যাম্পাস",
         district: user?.profile?.district || "Dhaka",
       },
       items: [
@@ -84,10 +237,10 @@ export default function EnrollPage() {
         },
       ],
       paymentDetails: {
-        method: paymentMethod, // 'bkash' | 'nagad' | 'rocket'
+        method, // 'bkash' | 'nagad' | 'rocket' | 'bank'
         status: "unpaid",
-        bkashMsisdn: "",
-        transactionId: "",
+        bkashMsisdn: method === "bank" ? "" : (data.senderNumber ?? ""),
+        transactionId: method === "bank" ? "" : (data.trxId ?? ""),
       },
     };
 
@@ -139,7 +292,7 @@ export default function EnrollPage() {
 
       <main className="max-w-5xl mx-auto px-4 py-10">
         <form
-          onSubmit={handlePaymentSubmit}
+          onSubmit={handleSubmit(handlePaymentSubmit)}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
         >
           {/* Left Column: Premium Payment selection & User Context Profile */}
@@ -174,85 +327,139 @@ export default function EnrollPage() {
             </motion.div>
 
             {/* Premium Method Selection */}
-            <motion.div
-              initial={{ opacity: 0, y: 15 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.05 }}
-              className="bg-white p-6 md:p-8 rounded-3xl border border-neutral-200/60 shadow-sm space-y-6"
-            >
-              <div className="flex items-center justify-between">
-                <h2 className="text-lg font-black flex items-center gap-2 text-neutral-800">
-                  <CreditCard size={20} className="text-[#105D38]" /> পেমেন্ট
-                  গেটওয়ে সিলেক্ট করুন
-                </h2>
-                <Wallet size={18} className="text-neutral-400" />
-              </div>
 
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-                {[
-                  {
-                    id: "bkash",
-                    label: "bKash",
-                    color: "text-pink-500",
-                    labelBn: "বিকাশ",
-                    mark: "bK",
-                  },
-                  {
-                    id: "nagad",
-                    label: "Nagad",
-                    color: "text-orange-500",
-                    labelBn: "নগদ",
-                    mark: "নগদ",
-                  },
-                  {
-                    id: "rocket",
-                    label: "Rocket",
-                    color: "text-purple-600",
-                    labelBn: "রকেট",
-                    mark: "R",
-                  },
-                ].map((method) => {
-                  const isSelected = paymentMethod === method.id;
-                  return (
-                    <button
-                      type="button"
-                      key={method.id}
-                      onClick={() => setPaymentMethod(method.id)}
-                      className={`p-4 rounded-2xl border-2 transition-all flex sm:flex-col items-center justify-between sm:justify-center gap-3 text-left sm:text-center hover:cursor-pointer relative overflow-hidden group ${
-                        isSelected
-                          ? "border-[#105D38] bg-[#105D38]/[0.03] text-[#105D38]"
-                          : "border-neutral-100 bg-neutral-50 hover:border-neutral-200 text-neutral-600"
-                      }`}
-                    >
-                      <div className="flex items-center sm:flex-col gap-3">
-                        <div
-                          className={`w-12 h-12 bg-white rounded-xl shadow-sm flex items-center justify-center font-black text-sm uppercase border border-neutral-100 transition-transform group-hover:scale-105 ${method.color}`}
-                        >
-                          {method.mark}
-                        </div>
-                        <div>
-                          <span className="block text-sm font-bold tracking-tight capitalize sm:mt-1">
-                            {method.label}
-                          </span>
-                          <span className="block text-[10px] text-neutral-400 sm:hidden">
-                            {method.labelBn} পেমেন্ট চ্যানেল
-                          </span>
-                        </div>
-                      </div>
+            {/* Payment method selector */}
+            <div className="grid grid-cols-4 gap-2 mb-6">
+              {(["bkash", "nagad", "rocket", "bank"] as PaymentMethod[]).map(
+                (m) => (
+                  <button
+                    key={m}
+                    type="button"
+                    onClick={() => handleMethodChange(m)}
+                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
+                      method === m
+                        ? "border-[#14281D] bg-gray-50"
+                        : "border-gray-100 opacity-60 hover:opacity-80"
+                    }`}
+                  >
+                    <img
+                      src={PAYMENT_INFO[m].logo}
+                      alt={m}
+                      className="w-8 h-8 object-contain"
+                      onError={(e) => {
+                        (e.target as HTMLImageElement).style.display = "none";
+                      }}
+                    />
+                    <span className="text-[10px] font-black uppercase">
+                      {m}
+                    </span>
+                  </button>
+                ),
+              )}
+            </div>
 
-                      {/* Active Check Dot */}
-                      <div
-                        className={`w-4 h-4 rounded-full border-4 flex items-center justify-center border-white shadow-sm shrink-0 transition-all ${
-                          isSelected
-                            ? "bg-[#105D38] scale-100"
-                            : "bg-neutral-200 scale-90"
-                        }`}
+            {/* Payment info card with copy button */}
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={method}
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                className={`p-5 rounded-2xl mb-6 border-l-4 ${paymentInfo.bg} ${paymentInfo.borderColor}`}
+              >
+                <div className="flex items-center gap-2 mb-2">
+                  <img
+                    src={paymentInfo.logo}
+                    alt={method}
+                    className="w-6 h-6 object-contain"
+                    onError={(e) => {
+                      (e.target as HTMLImageElement).style.display = "none";
+                    }}
+                  />
+                  <p className="text-xs font-bold opacity-70">
+                    {paymentInfo.label}
+                  </p>
+                </div>
+
+                <div className="flex items-center gap-3">
+                  <p
+                    className={`font-black ${method === "bank" ? "text-sm" : "text-xl"} flex-1`}
+                  >
+                    {method === "bank"
+                      ? `A/C: ${paymentInfo.ac}`
+                      : `Number: ${paymentInfo.number}`}
+                  </p>
+                  <CopyButton text={copyTarget} />
+                </div>
+
+                <p className="text-[10px] mt-2 opacity-60 italic">
+                  * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
+                </p>
+              </motion.div>
+            </AnimatePresence>
+
+            {/* Form fields via react-hook-form */}
+            <div>
+              <div className="space-y-3 mb-6">
+
+                
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    className="space-y-3"
+                  >
+                    <div>
+                      <RHFInput
+                        icon={<Smartphone size={16} />}
+                        placeholder="যে নাম্বার থেকে পাঠিয়েছেন"
+                        registration={register("senderNumber", {
+                          required: "সেন্ডার নাম্বার দিন",
+                          pattern: {
+                            value: /^[0-9+]{10,15}$/,
+                            message: "সঠিক নাম্বার দিন",
+                          },
+                        })}
                       />
-                    </button>
-                  );
-                })}
+                      {errors.senderNumber && (
+                        <FieldError msg={errors.senderNumber.message} />
+                      )}
+                    </div>
+
+                    <div>
+                      <RHFInput
+                        icon={<Hash size={16} />}
+                        placeholder="ট্রানজেকশন আইডি (TrxID) / ব্যাংক অ্যাকাউন্ট নম্বর"
+                        registration={register("trxId", {
+                          required: "TrxID দিন",
+                        })}
+                      />
+                      {errors.trxId && (
+                        <FieldError msg={errors.trxId.message} />
+                      )}
+                    </div>
+                  </motion.div>
+                
               </div>
-            </motion.div>
+
+              <button
+                type="button"
+                onClick={handlePaymentComplete}
+                disabled={isSubmitting}
+                className="relative w-full cursor-pointer bg-green-800 text-white py-4 rounded-2xl font-black flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-60 overflow-hidden"
+              >
+                {isSubmitting && (
+                  <div className="absolute inset-0 flex items-center justify-center bg-green-800">
+                    <LoadingSpinner />
+                  </div>
+                )}
+
+                <span
+                  className={`flex items-center justify-center gap-2 transition-opacity duration-200 ${isSubmitting ? "opacity-0" : "opacity-100"}`}
+                >
+                  পেমেন্ট করুন
+                  <ArrowRight size={18} />
+                </span>
+              </button>
+            </div>
           </div>
 
           {/* Right Column: Order Summary (Sticky Panel) */}
@@ -312,9 +519,10 @@ export default function EnrollPage() {
               {/* Action Button */}
               <button
                 type="submit"
-                className="w-full bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center gap-2 group hover:cursor-pointer shadow-md text-base mt-6"
+                disabled={!isPaymentComplete || isSubmitting}
+                className="w-full bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center gap-2 group hover:cursor-pointer shadow-md text-base mt-6 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:bg-white"
               >
-                পেমেন্ট করুন
+                সম্পূর্ণ করুন
                 <ChevronRight
                   size={18}
                   className="group-hover:translate-x-1 transition-transform"
