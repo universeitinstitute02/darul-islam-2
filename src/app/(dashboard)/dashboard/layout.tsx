@@ -145,6 +145,12 @@ export default function DashboardLayout({
       roles: ["admin"],
     },
     {
+      name: "ব্যাচ ম্যানেজমেন্ট",
+      href: "/dashboard/admin/manage-batch",
+      icon: PlusSquare,
+      roles: ["admin"],
+    },
+    {
       name: "ক্যাটাগরি",
       href: "/dashboard/admin/categories",
       icon: PlusSquare,

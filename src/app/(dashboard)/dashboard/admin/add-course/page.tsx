@@ -201,7 +201,7 @@ const AddCoursePage = () => {
       <div className="max-w-5xl mx-auto">
         <div className="mb-8 text-center md:text-left">
           <h1 className="text-3xl font-black text-[#105D38]">
-            নতুন курс তৈরি করুন
+            নতুন কোর্স তৈরি করুন
           </h1>
           <p className="text-gray-500 text-sm mt-1">
             প্রয়োজনীয় তথ্য দিয়ে আপনার কোর্সটি পাবলিশ করুন

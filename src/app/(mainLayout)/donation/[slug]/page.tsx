@@ -203,7 +203,7 @@ export default function DonationPage() {
       {/* Header */}
       <div className="bg-green-800 text-white px-6 py-12 text-center">
         <h1 className="text-3xl font-black mb-2">{campaign.title}</h1>
-        <p className="text-xs opacity-60 uppercase font-bold tracking-widest">
+        <p className="text-xs">
           মানবতার সেবায় আপনার অংশগ্রহণ
         </p>
       </div>
@@ -211,7 +211,7 @@ export default function DonationPage() {
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-6">
         <div className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5">
           {/* Amount presets */}
-          <label className="text-[10px] font-bold text-gray-400 uppercase mb-3 block">
+          <label className="text-[10px] font-bold text-gray-600 uppercase mb-3 block">
             পরিমাণ নির্বাচন করুন
           </label>
           <div className="grid grid-cols-4 gap-2 mb-4">
@@ -298,7 +298,7 @@ export default function DonationPage() {
                 <CopyButton text={copyTarget} />
               </div>
 
-              <p className="text-[10px] mt-2 opacity-60 italic">
+              <p className="text-xs mt-2 opacity-60 italic">
                 * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
               </p>
             </motion.div>
@@ -423,7 +423,7 @@ function CopyButton({ text }: { text: string }) {
         </>
       ) : (
         <>
-          <Copy size={13} /> কপি
+          <Copy size={13} /> কপি করুন
         </>
       )}
     </button>
