@@ -121,8 +121,14 @@ export default function DashboardLayout({
       roles: ["admin"],
     },
     {
-      name: "কোর্স ম্যানেজমেন্ট",
-      href: "/dashboard/admin/course-management",
+      name: "order management",
+      href: "/dashboard/admin/order-management",
+      icon: UserCog,
+      roles: ["admin"],
+    },
+    {
+      name: "Product Delivey",
+      href: "/dashboard/admin/product-delivey",
       icon: UserCog,
       roles: ["admin"],
     },
@@ -165,6 +171,12 @@ export default function DashboardLayout({
     {
       name: "কন্টেন্ট কন্ট্রোল",
       href: "/dashboard/admin/content-control",
+      icon: Settings2,
+      roles: ["admin"],
+    },
+    {
+      name: "Donations",
+      href: "/dashboard/admin/donations",
       icon: Settings2,
       roles: ["admin"],
     },
