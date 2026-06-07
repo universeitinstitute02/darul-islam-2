@@ -16,9 +16,10 @@ import {
   Check,
 } from "lucide-react";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+import axios from "axios";
 
 /* ─────────────────────────────────────────
-   TYPES
+    TYPES
 ───────────────────────────────────────── */
 interface DonorFormValues {
   name: string;
@@ -35,10 +36,17 @@ interface DonationPayload extends DonorFormValues {
 }
 
 /* ─────────────────────────────────────────
-   CONSTANTS
+    CONSTANTS
 ───────────────────────────────────────── */
-const campaigns: Record<string, { title: string; target: number; raised: number }> = {
-  "masjid-renovation": { title: "মসজিদ সংস্কার", target: 500000, raised: 312000 },
+const campaigns: Record<
+  string,
+  { title: string; target: number; raised: number }
+> = {
+  "masjid-renovation": {
+    title: "মসজিদ সংস্কার",
+    target: 500000,
+    raised: 312000,
+  },
   "yatim-fund": { title: "ইয়াতিম তহবিল", target: 1000000, raised: 678000 },
 };
 const DEFAULT_CAMPAIGN = { title: "সাধারণ দান", target: 100000, raised: 23000 };
@@ -46,7 +54,14 @@ const PRESETS = ["500", "1000", "2000", "5000"];
 
 const PAYMENT_INFO: Record<
   string,
-  { label: string; number?: string; ac?: string; bg: string; borderColor: string; logo: string }
+  {
+    label: string;
+    number?: string;
+    ac?: string;
+    bg: string;
+    borderColor: string;
+    logo: string;
+  }
 > = {
   bkash: {
     label: "বিকাশ (পার্সোনাল)",
@@ -60,7 +75,7 @@ const PAYMENT_INFO: Record<
     number: "01788002255",
     bg: "bg-orange-50",
     borderColor: "border-orange-400",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/4/4b/Nagad_Logo.png/800px-Nagad_Logo.png",
+    logo: "https://upload.wikimedia.org/wikipedia/commons/8/8f/Nagad-png.png",
   },
   rocket: {
     label: "রকেট (পার্সোনাল)",
@@ -74,30 +89,27 @@ const PAYMENT_INFO: Record<
     ac: "2050188002255",
     bg: "bg-blue-50",
     borderColor: "border-blue-400",
-    logo: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/85/Islami_Bank_Bangladesh_logo.svg/800px-Islami_Bank_Bangladesh_logo.svg.png",
+    logo: "https://res.cloudinary.com/darulislam/image/upload/v1780811223/central-bank_z1rprw.png",
   },
 };
 
 /* ─────────────────────────────────────────
-   API FUNCTION
+    API FUNCTION
 ───────────────────────────────────────── */
-async function postDonation(payload: DonationPayload): Promise<{ success: boolean; message?: string }> {
-  const res = await fetch("/api/donations", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload),
-  });
-
-  if (!res.ok) {
-    const error = await res.json().catch(() => ({}));
-    throw new Error(error?.message ?? "সার্ভার ত্রুটি হয়েছে");
+async function postDonation(
+  payload: DonationPayload,
+): Promise<{ success: boolean; message?: string }> {
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || "";
+  try {
+    const response = await axios.post(`${baseUrl}/donations`, payload);
+    return response.data;
+  } catch (error: any) {
+    throw new Error(error?.response?.data?.message ?? "সার্ভার ত্রুটি হয়েছে");
   }
-
-  return res.json();
 }
 
 /* ─────────────────────────────────────────
-   COPY HOOK
+    COPY HOOK
 ───────────────────────────────────────── */
 function useCopy(text: string) {
   const [copied, setCopied] = useState(false);
@@ -123,7 +135,7 @@ function useCopy(text: string) {
 }
 
 /* ─────────────────────────────────────────
-   MAIN PAGE
+    MAIN PAGE
 ───────────────────────────────────────── */
 export default function DonationPage() {
   const params = useParams();
@@ -148,15 +160,20 @@ export default function DonationPage() {
       return Swal.fire(
         "তথ্য প্রয়োজন",
         "বিকাশ/নগদ পেমেন্টের ক্ষেত্রে নাম্বার ও TrxID দিন",
-        "warning"
+        "warning",
       );
     }
 
     const payload: DonationPayload = {
-      ...data,
+      name: data.name,
+      phone: data.phone,
+      address: data.address || "",
       amount: Number(amount),
       method,
       campaignSlug: (params?.slug as string) ?? "general",
+      // Exclude mobile-banking fields cleanly if processing direct bank transfers
+      senderNumber: method !== "bank" ? data.senderNumber : undefined,
+      trxId: method !== "bank" ? data.trxId : undefined,
     };
 
     setLoading(true);
@@ -178,7 +195,8 @@ export default function DonationPage() {
   };
 
   const paymentInfo = PAYMENT_INFO[method];
-  const copyTarget = method === "bank" ? (paymentInfo.ac ?? "") : (paymentInfo.number ?? "");
+  const copyTarget =
+    method === "bank" ? (paymentInfo.ac ?? "") : (paymentInfo.number ?? "");
 
   return (
     <div className="min-h-screen bg-[#F5F0E8] py-16">
@@ -192,7 +210,6 @@ export default function DonationPage() {
 
       <div className="max-w-xl mx-auto px-4 -mt-8 space-y-6">
         <div className="bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5">
-
           {/* Amount presets */}
           <label className="text-[10px] font-bold text-gray-400 uppercase mb-3 block">
             পরিমাণ নির্বাচন করুন
@@ -204,7 +221,9 @@ export default function DonationPage() {
                 type="button"
                 onClick={() => setAmount(p)}
                 className={`py-3 rounded-xl text-sm font-bold transition-all ${
-                  amount === p ? "bg-[#14281D] text-white" : "bg-gray-100 text-gray-600"
+                  amount === p
+                    ? "bg-[#14281D] text-white"
+                    : "bg-gray-100 text-gray-600"
                 }`}
               >
                 {p}৳
@@ -228,7 +247,9 @@ export default function DonationPage() {
                 type="button"
                 onClick={() => setMethod(m)}
                 className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
-                  method === m ? "border-[#14281D] bg-gray-50" : "border-gray-100 opacity-60 hover:opacity-80"
+                  method === m
+                    ? "border-[#14281D] bg-gray-50"
+                    : "border-gray-100 opacity-60 hover:opacity-80"
                 }`}
               >
                 <img
@@ -261,12 +282,18 @@ export default function DonationPage() {
                     (e.target as HTMLImageElement).style.display = "none";
                   }}
                 />
-                <p className="text-xs font-bold opacity-70">{paymentInfo.label}</p>
+                <p className="text-xs font-bold opacity-70">
+                  {paymentInfo.label}
+                </p>
               </div>
 
               <div className="flex items-center gap-3">
-                <p className={`font-black ${method === "bank" ? "text-sm" : "text-xl"} flex-1`}>
-                  {method === "bank" ? `A/C: ${paymentInfo.ac}` : `Number: ${paymentInfo.number}`}
+                <p
+                  className={`font-black ${method === "bank" ? "text-sm" : "text-xl"} flex-1`}
+                >
+                  {method === "bank"
+                    ? `A/C: ${paymentInfo.ac}`
+                    : `Number: ${paymentInfo.number}`}
                 </p>
                 <CopyButton text={copyTarget} />
               </div>
@@ -295,7 +322,10 @@ export default function DonationPage() {
                     placeholder="আপনার ফোন নাম্বার"
                     registration={register("phone", {
                       required: "ফোন নাম্বার দিন",
-                      pattern: { value: /^[0-9+]{10,15}$/, message: "সঠিক নাম্বার দিন" },
+                      pattern: {
+                        value: /^[0-9+]{10,15}$/,
+                        message: "সঠিক নাম্বার দিন",
+                      },
                     })}
                   />
                   {errors.phone && <FieldError msg={errors.phone.message} />}
@@ -303,17 +333,26 @@ export default function DonationPage() {
               </div>
 
               {method !== "bank" && (
-                <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-3">
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  className="space-y-3"
+                >
                   <div>
                     <RHFInput
                       icon={<Smartphone size={16} />}
                       placeholder="যে নাম্বার থেকে পাঠিয়েছেন"
                       registration={register("senderNumber", {
                         required: "সেন্ডার নাম্বার দিন",
-                        pattern: { value: /^[0-9+]{10,15}$/, message: "সঠিক নাম্বার দিন" },
+                        pattern: {
+                          value: /^[0-9+]{10,15}$/,
+                          message: "সঠিক নাম্বার দিন",
+                        },
                       })}
                     />
-                    {errors.senderNumber && <FieldError msg={errors.senderNumber.message} />}
+                    {errors.senderNumber && (
+                      <FieldError msg={errors.senderNumber.message} />
+                    )}
                   </div>
                   <div>
                     <RHFInput
@@ -326,7 +365,9 @@ export default function DonationPage() {
                     <RHFInput
                       icon={<Hash size={16} />}
                       placeholder="ট্রানজেকশন আইডি (TrxID)"
-                      registration={register("trxId", { required: "TrxID দিন" })}
+                      registration={register("trxId", {
+                        required: "TrxID দিন",
+                      })}
                     />
                     {errors.trxId && <FieldError msg={errors.trxId.message} />}
                   </div>
@@ -337,10 +378,20 @@ export default function DonationPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full cursor-pointer bg-green-800 text-white py-4 rounded-2xl font-black flex items-center justify-center gap-2 shadow-lg active:scale-95 transition-all disabled:opacity-60"
+              className="relative w-full cursor-pointer bg-green-800 text-white py-4 rounded-2xl font-black flex items-center justify-center shadow-lg active:scale-95 transition-all disabled:opacity-60 overflow-hidden"
             >
-              {loading ? <LoadingSpinner /> : "দান নিশ্চিত করুন"}
-              <ArrowRight size={18} />
+              {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-green-800">
+                  <LoadingSpinner />
+                </div>
+              )}
+
+              <span
+                className={`flex items-center justify-center gap-2 transition-opacity duration-200 ${loading ? "opacity-0" : "opacity-100"}`}
+              >
+                দান নিশ্চিত করুন
+                <ArrowRight size={18} />
+              </span>
             </button>
           </form>
         </div>
@@ -350,7 +401,7 @@ export default function DonationPage() {
 }
 
 /* ─────────────────────────────────────────
-   COPY BUTTON COMPONENT
+    COPY BUTTON COMPONENT
 ───────────────────────────────────────── */
 function CopyButton({ text }: { text: string }) {
   const { copied, copy } = useCopy(text);
@@ -380,18 +431,22 @@ function CopyButton({ text }: { text: string }) {
 }
 
 /* ─────────────────────────────────────────
-   RHF INPUT COMPONENT
+    RHF INPUT COMPONENT
 ───────────────────────────────────────── */
 interface RHFInputProps {
   icon: React.ReactNode;
   placeholder: string;
-  registration: ReturnType<import("react-hook-form").UseFormRegister<DonorFormValues>>;
+  registration: ReturnType<
+    import("react-hook-form").UseFormRegister<DonorFormValues>
+  >;
 }
 
 function RHFInput({ icon, placeholder, registration }: RHFInputProps) {
   return (
     <div className="relative">
-      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">{icon}</span>
+      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
+        {icon}
+      </span>
       <input
         className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-gray-200 transition-all"
         placeholder={placeholder}
@@ -402,9 +457,11 @@ function RHFInput({ icon, placeholder, registration }: RHFInputProps) {
 }
 
 /* ─────────────────────────────────────────
-   FIELD ERROR
+    FIELD ERROR
 ───────────────────────────────────────── */
 function FieldError({ msg }: { msg?: string }) {
   if (!msg) return null;
-  return <p className="text-[11px] text-red-500 font-semibold mt-1 ml-2">{msg}</p>;
+  return (
+    <p className="text-[11px] text-red-500 font-semibold mt-1 ml-2">{msg}</p>
+  );
 }
