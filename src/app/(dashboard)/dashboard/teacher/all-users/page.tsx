@@ -9,6 +9,8 @@ import {
   UserCog,
   Loader2,
   ShieldCheck,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
@@ -20,6 +22,10 @@ const AllUsersPage = () => {
   const [users, setUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [filterRole, setFilterRole] = useState(""); // filter by student or teacher
+
+  // 🔹 পেজিনেশন স্টেট
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 8; // প্রতি পেজে ইউজারের সংখ্যা
 
   const fetchAllUsers = useCallback(async () => {
     if (!token) return;
@@ -45,6 +51,7 @@ const AllUsersPage = () => {
 
   useEffect(() => {
     fetchAllUsers();
+    setCurrentPage(1); // ফিল্টার চেঞ্জ হলে যেন ১ম পেজে ফেরত যায়
   }, [fetchAllUsers]);
 
   // ২. টিচার অ্যাপ্রুভ করার হ্যান্ডলার
@@ -56,7 +63,9 @@ const AllUsersPage = () => {
       icon: "question",
       showCancelButton: true,
       confirmButtonColor: "#105D38",
+      cancelButtonColor: "#64748b",
       confirmButtonText: "হ্যাঁ",
+      cancelButtonText: "বাতিল",
     });
 
     if (result.isConfirmed) {
@@ -73,35 +82,71 @@ const AllUsersPage = () => {
           },
         );
         if (res.ok) {
-          Swal.fire("সফল!", "স্ট্যাটাস আপডেট হয়েছে।", "success");
+          Swal.fire("সফল!", "স্ট্যাটাস আপডেট হয়েছে।", "success");
           fetchAllUsers();
         }
       } catch (error) {
-        Swal.fire("এরর", "কিছু সমস্যা হয়েছে", "error");
+        Swal.fire("এরর", "কিছু সমস্যা হয়েছে", "error");
       }
     }
   };
 
-  // ৩. রোল পরিবর্তন করার হ্যান্ডলার
+  // ৩. রোল পরিবর্তন করার হ্যান্ডলার (SweetAlert Confirmation ও রিয়েলটাইম আপডেট সহ)
   const handleRoleChange = async (userId: string, newRole: string) => {
-    try {
-      const res = await fetch(
-        `https://darulislam-server-v2.vercel.app/api/users/admin/update-role/${userId}`,
-        {
-          method: "PUT",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
+    const result = await Swal.fire({
+      title: "ইউজার রোল পরিবর্তন নিশ্চিত করুন",
+      text: `আপনি কি আসলেই ইউজারের রোল পরিবর্তন করে "${newRole.toUpperCase()}" করতে চান?`,
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#105D38",
+      cancelButtonColor: "#ef4444",
+      confirmButtonText: "হ্যাঁ, পরিবর্তন করুন",
+      cancelButtonText: "বাতিল",
+    });
+
+    if (result.isConfirmed) {
+      try {
+        const res = await fetch(
+          `https://darulislam-server-v2.vercel.app/api/users/admin/update-role/${userId}`,
+          {
+            method: "PUT",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({ role: newRole }),
           },
-          body: JSON.stringify({ role: newRole }),
-        },
-      );
-      if (res.ok) {
-        Swal.fire("সফল!", `রোল পরিবর্তন করে ${newRole} করা হয়েছে।`, "success");
-        fetchAllUsers();
+        );
+        if (res.ok) {
+          Swal.fire(
+            "সফল!",
+            `রোল পরিবর্তন করে ${newRole} করা হয়েছে।`,
+            "success",
+          );
+          fetchAllUsers(); // ডাটাবেজ থেকে নতুন ডাটা ফেচ করে রিয়েলটাইম রিফ্লেক্ট করবে
+        } else {
+          Swal.fire("ব্যর্থ", "রোল আপডেট করা যায়নি", "error");
+        }
+      } catch (error) {
+        Swal.fire("ব্যর্থ", "সার্ভারে কিছু সমস্যা হয়েছে", "error");
       }
-    } catch (error) {
-      Swal.fire("ব্যর্থ", "রোল আপডেট হয়নি", "error");
+    } else {
+      // ইউজার বাতিল করলে আগের স্টেট ধরে রাখার জন্য পুনরায় ডাটা লোড করা যেতে পারে
+      fetchAllUsers();
+    }
+  };
+
+  // 🔹 পেজিনেশন ক্যালকুলেশন লজিক
+  const totalItems = users.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentUsers = users.slice(indexOfFirstItem, indexOfLastItem);
+
+  const handlePageChange = (pageNumber: number) => {
+    if (pageNumber >= 1 && pageNumber <= totalPages) {
+      setCurrentPage(pageNumber);
     }
   };
 
@@ -121,7 +166,7 @@ const AllUsersPage = () => {
             <Users className="text-emerald-600" /> ইউজার ম্যানেজমেন্ট
           </h1>
           <p className="text-gray-500 text-sm">
-            মোট {users.length} জন ইউজার পাওয়া গেছে
+            মোট {users.length} জন ইউজার পাওয়া গেছে
           </p>
         </div>
 
@@ -167,7 +212,7 @@ const AllUsersPage = () => {
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-50">
-              {users.map((user) => (
+              {currentUsers.map((user) => (
                 <tr
                   key={user._id}
                   className="hover:bg-gray-50/50 transition-colors"
@@ -188,7 +233,7 @@ const AllUsersPage = () => {
                       onChange={(e) =>
                         handleRoleChange(user._id, e.target.value)
                       }
-                      className="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-2 rounded-lg border-none focus:ring-2 focus:ring-emerald-500 outline-none"
+                      className="bg-emerald-50 text-emerald-700 text-xs font-bold px-3 py-2 rounded-lg border-none focus:ring-2 focus:ring-emerald-500 outline-none cursor-pointer"
                     >
                       <option value="student">STUDENT</option>
                       <option value="teacher">TEACHER</option>
@@ -227,6 +272,89 @@ const AllUsersPage = () => {
             </tbody>
           </table>
         </div>
+
+        {/* 🔹 পিওর এবং রেসপন্সিভ পেজিনেশন কন্ট্রোল UI */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between border-t border-gray-100 bg-white px-6 py-4">
+            {/* মোবাইল মোড */}
+            <div className="flex flex-1 justify-between sm:hidden">
+              <button
+                disabled={currentPage === 1}
+                onClick={() => handlePageChange(currentPage - 1)}
+                className="inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                পূর্ববর্তী
+              </button>
+              <button
+                disabled={currentPage === totalPages}
+                onClick={() => handlePageChange(currentPage + 1)}
+                className="inline-flex items-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-xs font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+              >
+                পরবর্তী
+              </button>
+            </div>
+
+            {/* ডেস্কটপ মোড */}
+            <div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
+              <div>
+                <p className="text-sm text-gray-500">
+                  সর্বমোট{" "}
+                  <span className="font-semibold text-gray-800">
+                    {totalItems}
+                  </span>{" "}
+                  জনের মধ্যে{" "}
+                  <span className="font-semibold text-gray-800">
+                    {indexOfFirstItem + 1}
+                  </span>{" "}
+                  -{" "}
+                  <span className="font-semibold text-gray-800">
+                    {Math.min(indexOfLastItem, totalItems)}
+                  </span>{" "}
+                  দেখানো হচ্ছে
+                </p>
+              </div>
+              <div>
+                <div
+                  className="inline-flex items-center gap-1.5"
+                  aria-label="Pagination"
+                >
+                  <button
+                    disabled={currentPage === 1}
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    className="inline-flex items-center rounded-xl border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                  >
+                    <ChevronLeft className="h-4 w-4" />
+                  </button>
+
+                  {Array.from({ length: totalPages }, (_, index) => {
+                    const pageNum = index + 1;
+                    return (
+                      <button
+                        key={pageNum}
+                        onClick={() => handlePageChange(pageNum)}
+                        className={`inline-flex items-center justify-center rounded-xl text-sm font-semibold w-9 h-9 transition-all ${
+                          currentPage === pageNum
+                            ? "bg-emerald-600 text-white shadow-sm"
+                            : "border border-gray-200 bg-white text-gray-700 hover:bg-gray-50"
+                        }`}
+                      >
+                        {pageNum}
+                      </button>
+                    );
+                  })}
+
+                  <button
+                    disabled={currentPage === totalPages}
+                    onClick={() => handlePageChange(currentPage + 1)}
+                    className="inline-flex items-center rounded-xl border border-gray-200 bg-white p-2 text-gray-500 hover:bg-gray-50 disabled:opacity-40 transition-colors"
+                  >
+                    <ChevronRight className="h-4 w-4" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
