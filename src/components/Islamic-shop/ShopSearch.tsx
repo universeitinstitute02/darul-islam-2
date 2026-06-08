@@ -1,11 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Grid, RotateCcw, X } from "lucide-react";
+import { Search, Grid, RotateCcw, X, ShoppingCart } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import { useRouter } from "next/navigation";
 import ProductCard from "./ProductCard";
 import LoadingSpinner from "../shared/spinner/LoadingSpinner";
 
 const ProductSearchSection = () => {
+  const router = useRouter();
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [searchedProducts, setSearchedProducts] = useState<any[]>([]);
@@ -16,7 +18,7 @@ const ProductSearchSection = () => {
 
   const categories = [
     { id: "", name: "সব ক্যাটাগরি" },
-    { id: "Religious Book", name: "কুরআন শরীফ & ধর্মীয় বই" },
+    { id: "Religious Book", name: "কুরআন শরীফ & ধর্মীয় বই" },
     { id: "Accessories", name: "তাসবিহ" },
     { id: "Islamic Books", name: "ইসলামিক বই" },
     { id: "Fragrance", name: "আতর" },
@@ -37,7 +39,7 @@ const ProductSearchSection = () => {
     setLoading(true);
 
     const delayDebounceFn = setTimeout(() => {
-      // 🎯 ডকুমেন্টেশন অনুযায়ী ডাইনামিক URL প্যারামিটার বিল্ড করা হচ্ছে
+      // 🎯 ডকুমেন্টেশন অনুযায়ী ডাইনামিক URL প্যারামিটার বিল্ড করা হচ্ছে
       const queryParams = new URLSearchParams();
       if (searchQuery.trim()) queryParams.append("search", searchQuery.trim());
       if (selectedCategory) queryParams.append("category", selectedCategory);
@@ -76,7 +78,7 @@ const ProductSearchSection = () => {
   return (
     <section className="px-4 py-6 max-w-7xl mx-auto bg-white">
       <div className="bg-neutral-50 border border-neutral-100 p-4 rounded-3xl shadow-xs grid grid-cols-1 md:grid-cols-12 gap-3 items-center">
-        <div className="relative md:col-span-8 w-full">
+        <div className="relative md:col-span-7 w-full">
           <Search
             className="absolute left-4 top-3.5 text-neutral-400"
             size={18}
@@ -117,7 +119,8 @@ const ProductSearchSection = () => {
           <div className="absolute right-4 top-5 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-500 w-0 h-0" />
         </div>
 
-        <div className="md:col-span-1 w-full flex justify-end">
+        {/* অ্যাকশন বাটনসমূহ (রিসেট ও কার্ট আইকন) */}
+        <div className="md:col-span-2 w-full flex items-center justify-end gap-2">
           <button
             onClick={handleClearSearch}
             disabled={!hasSearched}
@@ -129,6 +132,15 @@ const ProductSearchSection = () => {
             title="ফিল্টার রিসেট করুন"
           >
             <RotateCcw size={18} />
+          </button>
+
+          {/* 🛒 কার্ট বাটন */}
+          <button
+            onClick={() => router.push("/cart")}
+            className="w-full md:w-max p-3.5 bg-emerald-50 border border-emerald-100 text-[#105D38] hover:bg-emerald-100 transition-all rounded-2xl flex items-center justify-center cursor-pointer"
+            title="কার্ট পেজে যান"
+          >
+            <ShoppingCart size={18} />
           </button>
         </div>
       </div>
@@ -147,7 +159,7 @@ const ProductSearchSection = () => {
                   <h3 className="font-black text-[#105D38] text-sm md:text-base flex items-center gap-2">
                     🔍 অনুসন্ধান ফলাফল
                     <span className="text-xs bg-emerald-50 text-[#105D38] px-2.5 py-0.5 rounded-full font-bold">
-                      {searchedProducts.length} টি পণ্য পাওয়া গেছে
+                      {searchedProducts.length} টি পণ্য পাওয়া গেছে
                     </span>
                   </h3>
                 </div>
@@ -175,7 +187,7 @@ const ProductSearchSection = () => {
               ) : (
                 <div className="text-center py-16 bg-white rounded-3xl border border-neutral-100">
                   <p className="text-neutral-400 font-bold text-sm tracking-wider">
-                    আপনার সার্চের সাথে মিলে যায় এমন কোনো পণ্য পাওয়া যায়নি!
+                    আপনার সার্চের সাথে মিলে যায় এমন কোনো পণ্য পাওয়া যায়নি!
                   </p>
                 </div>
               )}

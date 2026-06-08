@@ -1,5 +1,5 @@
 "use client";
-import React, { Suspense, useState } from "react";
+import React, { Suspense, useEffect, useState } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import {
@@ -14,26 +14,80 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
-import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+
+interface OrderItem {
+  product: string;
+  quantity: number;
+  name?: string;
+  price?: number;
+  image?: string;
+}
 
 const CheckoutContent = () => {
   const searchParams = useSearchParams();
   const router = useRouter();
   const axiosSecure = useAxiosSecure();
 
-  const productId = searchParams.get("id") || "";
-  const productName = searchParams.get("name") || "পণ্য";
-  const productPrice = Number(searchParams.get("price")) || 0;
-  const productImage = searchParams.get("image") || "";
+  const isFromCart = searchParams.get("from") === "cart";
 
-  const deliveryCharge = 70;
-  const totalPrice = productPrice + deliveryCharge;
+  const [checkoutItems, setCheckoutItems] = useState<OrderItem[]>([]);
+  const [subtotal, setSubtotal] = useState(0);
+  const [deliveryCharge, setDeliveryCharge] = useState(70);
 
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [district, setDistrict] = useState("Rangpur");
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (isFromCart) {
+      const cartData = JSON.parse(localStorage.getItem("cart") || "[]");
+      if (cartData.length === 0) {
+        Swal.fire("দুঃখিত!", "আপনার কার্টটি খালি!", "warning");
+        router.push("/cart");
+        return;
+      }
+
+      const formattedItems = cartData.map((item: any) => ({
+        product: item.id,
+        quantity: item.quantity,
+        name: item.name,
+        price: item.price,
+        image: item.image,
+      }));
+
+      const cartSubtotal = cartData.reduce(
+        (acc: number, item: any) => acc + item.price * item.quantity,
+        0,
+      );
+
+      setCheckoutItems(formattedItems);
+      setSubtotal(cartSubtotal);
+      setDeliveryCharge(cartSubtotal > 1000 ? 0 : 60);
+    } else {
+      const productId = searchParams.get("id") || "";
+      const productName = searchParams.get("name") || "পণ্য";
+      const productPrice = Number(searchParams.get("price")) || 0;
+      const productImage = searchParams.get("image") || "";
+
+      if (productId) {
+        setCheckoutItems([
+          {
+            product: productId,
+            quantity: 1,
+            name: productName,
+            price: productPrice,
+            image: productImage,
+          },
+        ]);
+        setSubtotal(productPrice);
+        setDeliveryCharge(70);
+      }
+    }
+  }, [isFromCart, searchParams, router]);
+
+  const totalPrice = subtotal + deliveryCharge;
 
   const handleOrder = async () => {
     if (!name.trim())
@@ -42,8 +96,8 @@ const CheckoutContent = () => {
       return Swal.fire("দুঃখিত!", "সঠিক ফোন নম্বর দিন।", "warning");
     if (!address.trim())
       return Swal.fire("দুঃখিত!", "আপনার পুরো ঠিকানাটি লিখুন।", "warning");
-    if (!productId)
-      return Swal.fire("ত্রুটি!", "প্রোডাক্ট আইডি পাওয়া যায়নি!", "error");
+    if (checkoutItems.length === 0)
+      return Swal.fire("ত্রুটি!", "কোনো প্রোডাক্ট পাওয়া যায়নি!", "error");
 
     setLoading(true);
 
@@ -54,18 +108,20 @@ const CheckoutContent = () => {
         address: address.trim(),
         district: district.trim(),
       },
-      items: [
-        {
-          product: productId,
-          quantity: 1,
-        },
-      ],
+      items: checkoutItems.map((item) => ({
+        product: item.product,
+        quantity: item.quantity,
+      })),
     };
 
     try {
       const response = await axiosSecure.post("/orders/checkout", orderPayload);
 
       if (response.status === 201 || response.data?.orderId) {
+        if (isFromCart) {
+          localStorage.removeItem("cart");
+        }
+
         Swal.fire({
           title: "অর্ডার সফল হয়েছে!",
           text: response.data?.message || "আপনার অর্ডারটি আমরা পেয়েছি।",
@@ -87,10 +143,10 @@ const CheckoutContent = () => {
     } catch (error: any) {
       console.error("Order Checkout Error:", error);
       Swal.fire({
-        title: "অর্ডার ব্যর্থ হয়েছে!",
+        title: "ব্যর্থ হয়েছে!",
         text:
           error?.response?.data?.message ||
-          "সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন।",
+          "সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন।",
         icon: "error",
         confirmButtonColor: "#105D38",
       });
@@ -120,48 +176,59 @@ const CheckoutContent = () => {
           </div>
         </div>
 
-        {/* 📱 Grid Order: মোবাইলে অর্ডার সামারি (lg:col-span-5) আগে আসবে */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 flex-col-reverse">
-          {/* 🛍️ Right Side (Now First on Mobile): Order Summary */}
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+          {/* 🛍️ Right Side: Order Summary */}
           <div className="lg:col-span-5 order-1 lg:order-2">
             <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-green-900/5 border border-gray-50 lg:sticky lg:top-28">
-              <h2 className="text-xl font-black text-gray-800 mb-8 flex items-center gap-2">
+              <h2 className="text-xl font-black text-gray-800 mb-6 flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-[#105D38]" /> অর্ডার সামারি
               </h2>
 
-              <div className="flex gap-4 p-4 bg-gray-50 rounded-2xl mb-8 border border-gray-100/50">
-                <div className="relative w-20 h-20 bg-white rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
-                  {productImage ? (
-                    <Image
-                      src={productImage}
-                      alt={productName}
-                      fill
-                      className="object-contain p-2"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-neutral-400">
-                      No Image
+              <div className="space-y-3 max-h-[240px] overflow-y-auto mb-6 pr-1 custom-scrollbar">
+                {checkoutItems.map((item, index) => (
+                  <div
+                    key={index}
+                    className="flex gap-4 p-3 bg-gray-50 rounded-2xl border border-gray-100/50 relative"
+                  >
+                    <div className="relative w-16 h-16 bg-white rounded-xl overflow-hidden border border-gray-100 flex-shrink-0">
+                      {item.image ? (
+                        <Image
+                          src={item.image}
+                          alt={item.name || "Product"}
+                          fill
+                          className="object-contain p-1"
+                        />
+                      ) : (
+                        <div className="w-full h-full bg-neutral-100 flex items-center justify-center text-[10px] font-bold text-neutral-400">
+                          No Image
+                        </div>
+                      )}
                     </div>
-                  )}
-                </div>
-                <div className="flex flex-col justify-center">
-                  <h3 className="font-bold text-gray-800 text-sm md:text-base line-clamp-2 leading-snug">
-                    {productName}
-                  </h3>
-                  <p className="text-[#105D38] font-black mt-1">
-                    ৳ {productPrice}
-                  </p>
-                </div>
+                    <div className="flex flex-col justify-center min-w-0 flex-1">
+                      <h3 className="font-bold text-gray-800 text-xs md:text-sm truncate leading-snug">
+                        {item.name}
+                      </h3>
+                      <p className="text-[#105D38] text-xs font-black mt-1">
+                        ৳ {item.price}{" "}
+                        <span className="text-gray-400 font-normal">
+                          × {item.quantity}
+                        </span>
+                      </p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
               <div className="space-y-4 px-2">
                 <div className="flex justify-between text-gray-500 font-medium">
-                  <span>পণ্যের দাম</span>
-                  <span className="text-gray-900">৳ {productPrice}</span>
+                  <span>পণ্যের দাম (সাবটোটাল)</span>
+                  <span className="text-gray-900 font-bold">৳ {subtotal}</span>
                 </div>
                 <div className="flex justify-between text-gray-500 font-medium">
                   <span>ডেলিভারি চার্জ</span>
-                  <span className="text-gray-900">৳ {deliveryCharge}</span>
+                  <span className="text-gray-900 font-bold">
+                    {deliveryCharge === 0 ? "ফ্রি" : `৳ ${deliveryCharge}`}
+                  </span>
                 </div>
                 <div className="h-px border-t border-dashed border-gray-200 my-4"></div>
                 <div className="flex justify-between items-center text-gray-900">
@@ -172,16 +239,14 @@ const CheckoutContent = () => {
                 </div>
               </div>
 
-              {/* 💻 শুধুমাত্র ডেস্কটপ ডিভাইসের বাটন (নিচে থাকবে না, কার্ডের ভেতরেই থাকবে) */}
+              {/* ডেস্কটপ বাটন */}
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full mt-10 hover:cursor-pointer py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
+                className="w-full mt-8 hover:cursor-pointer py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
               >
                 {loading ? (
-                  <>
-                    <Loader2 className="animate-spin" />
-                  </>
+                  <Loader2 className="animate-spin" />
                 ) : (
                   <>
                     <span>অর্ডার নিশ্চিত করুন</span>
@@ -191,14 +256,10 @@ const CheckoutContent = () => {
                   </>
                 )}
               </button>
-
-              <p className="text-center text-[10px] text-gray-400 mt-6 font-medium uppercase tracking-widest hidden lg:block">
-                নিরাপদ ও দ্রুত ডেলিভারির নিশ্চয়তা
-              </p>
             </div>
           </div>
 
-          {/* 📝 Left Side (Now Second on Mobile): Delivery Form & Niche Sob */}
+          {/* 📝 Left Side: Delivery Form */}
           <div className="lg:col-span-7 space-y-6 order-2 lg:order-1">
             <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-50">
               <div className="flex items-center gap-3 mb-8">
@@ -291,17 +352,15 @@ const CheckoutContent = () => {
               </div>
             </div>
 
-            {/* 📱 শুধুমাত্র মোবাইল ডিভাইসের জন্য বাটন (একদম নিচে থাকবে) */}
+            {/* মোবাইল বাটন */}
             <div className="block lg:hidden pt-4">
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full  py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
+                className="w-full py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
               >
                 {loading ? (
-                  <>
-                    <LoadingSpinner />
-                  </>
+                  <Loader2 className="animate-spin" />
                 ) : (
                   <>
                     <span>অর্ডার নিশ্চিত করুন</span>
@@ -311,9 +370,6 @@ const CheckoutContent = () => {
                   </>
                 )}
               </button>
-              <p className="text-center text-[10px] text-gray-400 mt-4 font-medium uppercase tracking-widest">
-                নিরাপদ ও দ্রুত ডেলিভারির নিশ্চয়তা
-              </p>
             </div>
           </div>
         </div>

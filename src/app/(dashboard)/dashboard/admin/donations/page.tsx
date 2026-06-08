@@ -9,103 +9,135 @@ import {
   Phone,
   User,
   BadgeDollarSign,
+  Loader2,
 } from "lucide-react";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import Swal from "sweetalert2";
 
 type DonationStatus = "pending" | "approved" | "rejected";
 
-interface Donation {
-  id: number;
-  projectImage: string;
-  projectName: string;
-  transactionId: string;
+interface DonationData {
+  _id: string;
+  name: string;
+  phone: string;
   amount: number;
-  senderName: string;
-  senderPhone: string;
+  method: string;
   status: DonationStatus;
+  createdAt: string;
+  campaignSlug?: string;
+  senderNumber?: string;
+  trxId?: string;
 }
 
 export default function DonationManagementPage() {
+  const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const [activeTab, setActiveTab] = useState<
     "all" | "pending" | "approved" | "rejected"
   >("all");
 
-  const donations: Donation[] = [
-    {
-      id: 1,
-      projectImage:
-        "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500",
-      projectName: "Help Flood Victims",
-      transactionId: "TXN-87456321",
-      amount: 5000,
-      senderName: "Rakib Hasan",
-      senderPhone: "01712345678",
-      status: "pending",
+  const { data: donationResponse, isLoading } = useQuery({
+    queryKey: ["donations", activeTab],
+    queryFn: async () => {
+      const url =
+        activeTab === "all"
+          ? "/donations/admin/all"
+          : `/donations/admin/all?status=${activeTab}`;
+      const res = await axiosSecure.get(url);
+      return res.data;
     },
-    {
-      id: 2,
-      projectImage:
-        "https://images.unsplash.com/photo-1469571486292-b53601020f1f?w=500",
-      projectName: "Food Distribution Program",
-      transactionId: "TXN-45218976",
-      amount: 2500,
-      senderName: "Nusrat Jahan",
-      senderPhone: "01898765432",
-      status: "approved",
+    staleTime: 2 * 60 * 1000,
+  });
+
+  const donations: DonationData[] = donationResponse?.data || [];
+
+  const approveMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await axiosSecure.put(`/donations/admin/approve/${id}`);
+      return res.data;
     },
-    {
-      id: 3,
-      projectImage:
-        "https://images.unsplash.com/photo-1517048676732-d65bc937f952?w=500",
-      projectName: "Winter Clothes Donation",
-      transactionId: "TXN-36521489",
-      amount: 3500,
-      senderName: "Tanvir Islam",
-      senderPhone: "01625874123",
-      status: "rejected",
+    onSuccess: () => {
+      Swal.fire("সফল!", "ডোনেশনটি অ্যাপ্রুভ করা হয়েছে।", "success");
+      queryClient.invalidateQueries({ queryKey: ["donations"] });
     },
-    {
-      id: 4,
-      projectImage:
-        "https://images.unsplash.com/photo-1529156069898-49953e39b3ac?w=500",
-      projectName: "Orphan Education Fund",
-      transactionId: "TXN-78541236",
-      amount: 10000,
-      senderName: "Sabbir Ahmed",
-      senderPhone: "01945612378",
-      status: "pending",
+    onError: (error: any) => {
+      const serverMessage =
+        error?.response?.data?.message ||
+        "অ্যাপ্রুভ করার সময় কিছু সমস্যা হয়েছে।";
+      Swal.fire("ব্যর্থ", serverMessage, "error");
     },
-    {
-      id: 5,
-      projectImage:
-        "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=500",
-      projectName: "Medical Support Campaign",
-      transactionId: "TXN-99887744",
-      amount: 7000,
-      senderName: "Fahim Khan",
-      senderPhone: "01512345678",
-      status: "approved",
+  });
+
+  const rejectMutation = useMutation({
+    mutationFn: async (id: string) => {
+      const res = await axiosSecure.put(`/donations/admin/reject/${id}`);
+      return res.data;
     },
-  ];
+    onSuccess: () => {
+      Swal.fire(
+        "রিজেক্টেড!",
+        "ডোনেশন রিকোয়েস্টটি বাতিল করা হয়েছে।",
+        "success",
+      );
+      queryClient.invalidateQueries({ queryKey: ["donations"] });
+    },
+    onError: (error: any) => {
+      const serverMessage =
+        error?.response?.data?.message ||
+        "রিজেক্ট করার সময় কিছু সমস্যা হয়েছে।";
+      Swal.fire("ব্যর্থ", serverMessage, "error");
+    },
+  });
 
-  const pendingCount = donations.filter(
-    (item) => item.status === "pending"
-  ).length;
+  const handleApproveConfirm = (id: string) => {
+    Swal.fire({
+      title: "ডোনেশনটি অ্যাপ্রুভ করবেন?",
+      text: "টাকা সঠিকভাবে জমা হয়েছে কিনা তা নিশ্চিত হয়ে নিন।",
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: "#105D38",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "হ্যাঁ, ভেরিফাই করুন",
+      cancelButtonText: "বাতিল",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        approveMutation.mutate(id);
+      }
+    });
+  };
 
-  const approvedCount = donations.filter(
-    (item) => item.status === "approved"
-  ).length;
+  const handleRejectConfirm = (id: string) => {
+    Swal.fire({
+      title: "ডোনেশনটি রিজেক্ট করবেন?",
+      text: "ভুল বা ফেক ট্রানজেকশনের ক্ষেত্রে এটি ব্যবহার করুন।",
+      icon: "warning",
+      showCancelButton: true,
+      confirmButtonColor: "#ef4444",
+      cancelButtonColor: "#64748b",
+      confirmButtonText: "হ্যাঁ, রিজেক্ট করুন",
+      cancelButtonText: "বাতিল",
+    }).then((result) => {
+      if (result.isConfirmed) {
+        rejectMutation.mutate(id);
+      }
+    });
+  };
 
-  const rejectedCount = donations.filter(
-    (item) => item.status === "rejected"
-  ).length;
+  const totalCount = donationResponse?.count || donations.length;
 
-  const filteredDonations = useMemo(() => {
-    if (activeTab === "all") return donations;
-
-    return donations.filter(
-      (donation) => donation.status === activeTab
-    );
-  }, [activeTab]);
+  const pendingCount = useMemo(
+    () => donations.filter((item) => item.status === "pending").length,
+    [donations],
+  );
+  const approvedCount = useMemo(
+    () => donations.filter((item) => item.status === "approved").length,
+    [donations],
+  );
+  const rejectedCount = useMemo(
+    () => donations.filter((item) => item.status === "rejected").length,
+    [donations],
+  );
 
   const statusClasses: Record<DonationStatus, string> = {
     pending: "bg-amber-100 text-amber-700",
@@ -114,73 +146,71 @@ export default function DonationManagementPage() {
   };
 
   const tabs = [
-    {
-      label: "All",
-      value: "all",
-      count: donations.length,
-    },
+    { label: "All", value: "all", count: totalCount },
     {
       label: "Pending",
       value: "pending",
-      count: pendingCount,
+      count: activeTab === "all" ? pendingCount : totalCount,
     },
     {
       label: "Approved",
       value: "approved",
-      count: approvedCount,
+      count: activeTab === "all" ? approvedCount : totalCount,
     },
     {
       label: "Rejected",
       value: "rejected",
-      count: rejectedCount,
+      count: activeTab === "all" ? rejectedCount : totalCount,
     },
   ];
 
+  const getCampaignImage = (slug?: string) => {
+    if (slug === "masjid-renovation")
+      return "https://images.unsplash.com/photo-1593113598332-cd288d649433?w=500";
+    return "https://images.unsplash.com/photo-1532629345422-7515f3d16bb6?w=500";
+  };
+
   return (
-    <div className="min-h-screen bg-slate-50 p-4 md:p-8">
+    <div className="min-h-screen bg-slate-50 p-4 md:p-8 font-sans">
       <div className="mx-auto max-w-7xl">
         {/* Header */}
-
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-slate-900">
             Donation Management
           </h1>
-
           <p className="mt-2 text-slate-500">
-            Manage and review all donation requests.
+            Manage and review all donation requests dynamically.
           </p>
         </div>
 
         {/* Stats */}
-
         <div className="mb-6 grid gap-4 md:grid-cols-3">
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-sm text-slate-500">
-              Total Donations
-            </p>
-
+            <p className="text-sm text-slate-500">Total Requests Shown</p>
             <h3 className="mt-2 text-3xl font-bold text-slate-900">
-              {donations.length}
+              {isLoading ? "..." : totalCount}
             </h3>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
-            <p className="text-sm text-slate-500">
-              Pending Requests
-            </p>
-
+            <p className="text-sm text-slate-500">Pending Requests</p>
             <h3 className="mt-2 text-3xl font-bold text-amber-500">
-              {pendingCount}
+              {isLoading
+                ? "..."
+                : activeTab === "all"
+                  ? pendingCount
+                  : activeTab === "pending"
+                    ? totalCount
+                    : 0}
             </h3>
           </div>
 
           <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
             <p className="text-sm text-slate-500">
-              Total Amount
+              Total Amount (Current View)
             </p>
-
             <h3 className="mt-2 text-3xl font-bold text-emerald-600">
-              ৳
+              ৳{" "}
               {donations
                 .reduce((acc, item) => acc + item.amount, 0)
                 .toLocaleString()}
@@ -189,20 +219,11 @@ export default function DonationManagementPage() {
         </div>
 
         {/* Tabs */}
-
         <div className="mb-6 flex flex-wrap gap-3">
           {tabs.map((tab) => (
             <button
               key={tab.value}
-              onClick={() =>
-                setActiveTab(
-                  tab.value as
-                    | "all"
-                    | "pending"
-                    | "approved"
-                    | "rejected"
-                )
-              }
+              onClick={() => setActiveTab(tab.value as any)}
               className={`rounded-2xl border px-5 py-3 font-medium transition-all duration-300 ${
                 activeTab === tab.value
                   ? "border-emerald-500 bg-emerald-500 text-white shadow-lg shadow-emerald-500/20"
@@ -211,7 +232,6 @@ export default function DonationManagementPage() {
             >
               <div className="flex items-center gap-3">
                 <span>{tab.label}</span>
-
                 <span
                   className={`rounded-full px-2 py-1 text-xs ${
                     activeTab === tab.value
@@ -219,7 +239,7 @@ export default function DonationManagementPage() {
                       : "bg-slate-100 text-slate-700"
                   }`}
                 >
-                  {tab.count}
+                  {isLoading ? "..." : tab.count}
                 </span>
               </div>
             </button>
@@ -227,36 +247,29 @@ export default function DonationManagementPage() {
         </div>
 
         {/* Table */}
-
         <div className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm">
           <div className="overflow-x-auto">
             <table className="w-full min-w-[1200px]">
               <thead>
                 <tr className="border-b bg-slate-50">
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
-                    Project
+                    Campaign
                   </th>
-
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
-                    Transaction ID
+                    Method / Trx ID
                   </th>
-
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
                     Amount
                   </th>
-
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
-                    Sender
+                    Donor
                   </th>
-
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
                     Phone
                   </th>
-
                   <th className="px-6 py-4 text-left text-xs font-bold uppercase text-slate-500">
                     Status
                   </th>
-
                   <th className="px-6 py-4 text-center text-xs font-bold uppercase text-slate-500">
                     Actions
                   </th>
@@ -264,118 +277,173 @@ export default function DonationManagementPage() {
               </thead>
 
               <tbody>
-                {filteredDonations.length > 0 ? (
-                  filteredDonations.map(
-                    (donation, index) => (
-                      <motion.tr
-                        key={donation.id}
-                        initial={{
-                          opacity: 0,
-                          y: 10,
-                        }}
-                        animate={{
-                          opacity: 1,
-                          y: 0,
-                        }}
-                        transition={{
-                          delay: index * 0.05,
-                        }}
-                        className="border-b hover:bg-slate-50"
-                      >
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-4">
-                            <Image
-                              src={donation.projectImage}
-                              alt={donation.projectName}
-                              width={60}
-                              height={60}
-                              className="h-14 w-14 rounded-xl object-cover"
-                            />
-
-                            <div>
-                              <h4 className="font-semibold text-slate-900">
-                                {donation.projectName}
-                              </h4>
-
-                              <p className="text-sm text-slate-500">
-                                Donation Campaign
-                              </p>
-                            </div>
+                {isLoading ? (
+                  Array.from({ length: 3 }).map((_, idx) => (
+                    <tr key={idx} className="border-b animate-pulse">
+                      <td className="px-6 py-5">
+                        <div className="h-12 w-48 bg-slate-200 rounded-xl"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-5 w-28 bg-slate-200 rounded"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-5 w-20 bg-slate-200 rounded"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-5 w-32 bg-slate-200 rounded"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-5 w-28 bg-slate-200 rounded"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-6 w-16 bg-slate-200 rounded-full"></div>
+                      </td>
+                      <td className="px-6 py-5">
+                        <div className="h-9 w-40 bg-slate-200 rounded-xl mx-auto"></div>
+                      </td>
+                    </tr>
+                  ))
+                ) : donations.length > 0 ? (
+                  donations.map((donation, index) => (
+                    <motion.tr
+                      key={donation._id}
+                      initial={{ opacity: 0, y: 10 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: index * 0.03 }}
+                      className="border-b hover:bg-slate-50/80 transition-colors"
+                    >
+                      {/* Campaign / Project */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-4">
+                          <Image
+                            src={getCampaignImage(donation.campaignSlug)}
+                            alt={donation.campaignSlug || "General"}
+                            width={60}
+                            height={60}
+                            className="h-11 w-11 rounded-xl object-cover"
+                          />
+                          <div>
+                            <h4 className="font-semibold text-slate-900 capitalize">
+                              {(donation.campaignSlug || "general").replace(
+                                "-",
+                                " ",
+                              )}
+                            </h4>
+                            <p className="text-xs text-slate-400">
+                              {new Date(donation.createdAt).toLocaleDateString(
+                                "bn-BD",
+                              )}
+                            </p>
                           </div>
-                        </td>
+                        </div>
+                      </td>
 
-                        <td className="px-6 py-5">
-                          <span className="font-mono text-sm font-medium">
-                            {donation.transactionId}
+                      {/* Method & Trx ID */}
+                      <td className="px-6 py-5">
+                        <div className="flex flex-col">
+                          <span className="text-xs font-bold text-slate-500 uppercase bg-slate-100 px-2 py-0.5 rounded w-fit">
+                            {donation.method}
                           </span>
-                        </td>
-
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-2 font-semibold text-emerald-600">
-                            <BadgeDollarSign size={18} />
-                            ৳
-                            {donation.amount.toLocaleString()}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-2">
-                            <User
-                              size={16}
-                              className="text-slate-400"
-                            />
-                            {donation.senderName}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-5">
-                          <div className="flex items-center gap-2">
-                            <Phone
-                              size={16}
-                              className="text-slate-400"
-                            />
-                            {donation.senderPhone}
-                          </div>
-                        </td>
-
-                        <td className="px-6 py-5">
-                          <span
-                            className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusClasses[donation.status]}`}
-                          >
-                            {donation.status}
+                          <span className="font-mono text-sm font-medium mt-1 text-slate-700">
+                            {donation.method === "bank"
+                              ? "Bank Transfer"
+                              : donation.trxId || "N/A"}
                           </span>
-                        </td>
+                        </div>
+                      </td>
 
-                        <td className="px-6 py-5">
-                          <div className="flex justify-center gap-2">
-                            <button className="flex items-center gap-2 rounded-xl bg-emerald-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-emerald-600">
-                              <CheckCircle2 size={18} />
-                              Approve
-                            </button>
+                      {/* Amount */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-1.5 font-bold text-emerald-600">
+                          <BadgeDollarSign size={16} />৳{" "}
+                          {donation.amount.toLocaleString()}
+                        </div>
+                      </td>
 
-                            <button className="flex items-center gap-2 rounded-xl bg-red-500 px-4 py-2 text-sm font-medium text-white transition hover:bg-red-600">
-                              <XCircle size={18} />
-                              Reject
-                            </button>
-                          </div>
-                        </td>
-                      </motion.tr>
-                    )
-                  )
+                      {/* Sender Name */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2 text-slate-700 font-medium">
+                          <User size={15} className="text-slate-400" />
+                          {donation.name}
+                        </div>
+                      </td>
+
+                      {/* Sender Phone */}
+                      <td className="px-6 py-5">
+                        <div className="flex items-center gap-2 text-slate-600">
+                          <Phone size={15} className="text-slate-400" />
+                          {donation.phone}
+                        </div>
+                      </td>
+
+                      {/* Status Badge */}
+                      <td className="px-6 py-5">
+                        <span
+                          className={`rounded-full px-3 py-1 text-xs font-semibold capitalize ${statusClasses[donation.status]}`}
+                        >
+                          {donation.status}
+                        </span>
+                      </td>
+
+                      {/* Actions */}
+                      <td className="px-6 py-5">
+                        <div className="flex justify-center gap-2">
+                          {donation.status === "pending" ? (
+                            <>
+                              <button
+                                onClick={() =>
+                                  handleApproveConfirm(donation._id)
+                                }
+                                disabled={
+                                  approveMutation.isPending ||
+                                  rejectMutation.isPending
+                                }
+                                className="flex items-center gap-1.5 rounded-xl bg-emerald-500 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-emerald-600 disabled:opacity-50"
+                              >
+                                {approveMutation.isPending ? (
+                                  <Loader2 size={16} className="animate-spin" />
+                                ) : (
+                                  <CheckCircle2 size={16} />
+                                )}
+                                Approve
+                              </button>
+
+                              <button
+                                onClick={() =>
+                                  handleRejectConfirm(donation._id)
+                                }
+                                disabled={
+                                  approveMutation.isPending ||
+                                  rejectMutation.isPending
+                                }
+                                className="flex items-center gap-1.5 rounded-xl bg-red-500 px-3.5 py-2 text-sm font-medium text-white shadow-sm transition hover:bg-red-600 disabled:opacity-50"
+                              >
+                                {rejectMutation.isPending ? (
+                                  <Loader2 size={16} className="animate-spin" />
+                                ) : (
+                                  <XCircle size={16} />
+                                )}
+                                Reject
+                              </button>
+                            </>
+                          ) : (
+                            <span className="text-xs text-slate-400 font-medium bg-slate-100 px-3 py-1.5 rounded-xl">
+                              Resolved
+                            </span>
+                          )}
+                        </div>
+                      </td>
+                    </motion.tr>
+                  ))
                 ) : (
                   <tr>
-                    <td
-                      colSpan={7}
-                      className="py-20 text-center"
-                    >
+                    <td colSpan={7} className="py-20 text-center">
                       <div>
                         <h3 className="font-semibold text-slate-700">
                           No donations found
                         </h3>
-
                         <p className="mt-1 text-sm text-slate-500">
-                          There are no records in this
-                          category.
+                          There are no records in this category right now.
                         </p>
                       </div>
                     </td>

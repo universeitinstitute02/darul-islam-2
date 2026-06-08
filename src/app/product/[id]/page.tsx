@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
+import Swal from "sweetalert2";
 import ProductCard from "@/src/components/Islamic-shop/ProductCard";
 import {
   ChevronLeft,
@@ -11,7 +12,6 @@ import {
   RotateCcw,
   Heart,
   Star,
-  CheckCircle2,
   ArrowRight,
 } from "lucide-react";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
@@ -57,6 +57,52 @@ const ProductDetails = () => {
     router.push(`/checkout?${query}`);
   };
 
+  const handleAddToCart = () => {
+    if (!product) return;
+
+    const existingCart = JSON.parse(localStorage.getItem("cart") || "[]");
+    const existingProductIndex = existingCart.findIndex(
+      (item: any) => item.id === product.id,
+    );
+
+    if (existingProductIndex > -1) {
+      existingCart[existingProductIndex].quantity += 1;
+    } else {
+      existingCart.push({
+        id: product.id,
+        name: product.name,
+        price: Number(product.price),
+        image: product.image,
+        category: product.category,
+        quantity: 1,
+      });
+    }
+
+    localStorage.setItem("cart", JSON.stringify(existingCart));
+
+    Swal.fire({
+      title: "মাশাআল্লাহ্!",
+      text: `"${product.name}" সফলভাবে কার্টে যোগ করা হয়েছে।`,
+      icon: "success",
+      showCancelButton: true,
+      confirmButtonColor: "#105D38", // আপনার থিম কালার গ্রিন
+      cancelButtonColor: "#6b7280",
+      confirmButtonText: "🛒 কার্ট পেজে যান",
+      cancelButtonText: "আরো শপিং করুন",
+      background: "#ffffff",
+      customClass: {
+        popup: "rounded-[2rem] font-sans", // এই rounded-[2rem] আপনার ২৪ পিক্সেলের কাজ করে দেবে
+        title: "text-xl font-black text-neutral-900",
+        confirmButton: "px-5 py-3 rounded-xl font-bold text-sm",
+        cancelButton: "px-5 py-3 rounded-xl font-bold text-sm",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        router.push("/cart"); // ইউজার কনফার্ম করলে কার্ট পেজে যাবে
+      }
+    });
+  };
+
   if (loading) return <LoadingSpinner fullScreen />;
 
   if (!product)
@@ -70,26 +116,30 @@ const ProductDetails = () => {
   const oldPrice = Math.floor(currentPrice * 1.2);
 
   return (
-    <div className="min-h-screen bg-gray-50 pb-32 md:pb-12">
+    <main className="min-h-screen bg-gray-50 pb-32 md:pb-12">
       {/* Navigation - Mobile */}
-      <div className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b px-4 py-3 flex items-center justify-between md:hidden">
+      <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-lg border-b px-4 py-3 flex items-center justify-between md:hidden">
         <button
           onClick={handleGoBack}
           className="p-2 hover:bg-gray-100 rounded-full transition-colors"
+          aria-label="Go back"
         >
           <ChevronLeft className="w-6 h-6 text-gray-700" />
         </button>
         <span className="font-bold text-gray-800 tracking-tight">
           বিস্তারিত
         </span>
-        <button className="p-2 text-gray-400 hover:text-red-500 transition-colors">
+        <button
+          className="p-2 text-gray-400 hover:text-red-500 transition-colors"
+          aria-label="Add to wishlist"
+        >
           <Heart className="w-6 h-6" />
         </button>
-      </div>
+      </nav>
 
       <div className="max-w-6xl mx-auto md:py-10 md:px-6">
-        {/* Product Info Card */}
-        <div className="flex flex-col lg:flex-row bg-white md:rounded-3xl overflow-hidden shadow-sm md:shadow-xl border-gray-100 mb-12">
+        {/* Product Info Card - Semantic Content */}
+        <section className="flex flex-col lg:flex-row bg-white md:rounded-3xl overflow-hidden shadow-sm md:shadow-xl border-gray-100 mb-12">
           {/* Left: Image Section */}
           <div className="w-full lg:w-1/2 bg-white flex items-center justify-center relative group">
             <button
@@ -110,13 +160,13 @@ const ProductDetails = () => {
             </div>
 
             <div className="absolute top-4 right-4 md:top-8 md:right-8 bg-red-500 text-white px-3 py-1 md:px-4 md:py-1.5 rounded-full text-xs md:text-sm font-black shadow-lg">
-              ২০% ছাড়
+              ২০% ছাড়
             </div>
           </div>
 
           {/* Right: Product Info */}
           <div className="w-full lg:w-1/2 p-6 md:p-10 lg:p-14 flex flex-col justify-center border-t lg:border-t-0 lg:border-l border-gray-50">
-            <div className="flex items-center gap-2 mb-4">
+            <header className="flex items-center gap-2 mb-4">
               <span className="px-3 py-1 bg-green-50 text-[#105D38] text-[10px] md:text-xs font-bold rounded-lg uppercase tracking-wider">
                 {product.category}
               </span>
@@ -126,7 +176,7 @@ const ProductDetails = () => {
                   {product.details.rating || "4.8"}
                 </span>
               </div>
-            </div>
+            </header>
 
             <h1 className="text-2xl md:text-4xl lg:text-5xl font-black text-gray-900 leading-[1.2] mb-6">
               {product.name}
@@ -148,7 +198,7 @@ const ProductDetails = () => {
                   <Truck className="w-5 h-5" />
                 </div>
                 <span className="text-[10px] font-bold text-gray-500 uppercase tracking-tighter">
-                  ফ্রি শিপিং
+                  ف্রি শিপিং
                 </span>
               </div>
               <div className="flex flex-col items-center text-center gap-2 border-x border-gray-100">
@@ -170,7 +220,7 @@ const ProductDetails = () => {
             </div>
 
             {/* Description */}
-            <div className="mb-10">
+            <article className="mb-10">
               <h3 className="text-sm font-black text-gray-900 uppercase mb-3 flex items-center gap-2">
                 <span className="w-1.5 h-4 bg-[#105D38] rounded-full inline-block"></span>
                 পণ্যের বিবরণ
@@ -178,22 +228,29 @@ const ProductDetails = () => {
               <p className="text-gray-600 text-sm md:text-base leading-relaxed">
                 {product.details.description}
               </p>
-            </div>
+            </article>
 
             {/* Desktop Buttons */}
             <div className="hidden md:flex gap-4">
               <button
+                onClick={handleAddToCart}
+                className="flex-1 py-4 border-2 border-[#105D38] text-[#105D38] hover:bg-green-50 font-bold rounded-2xl flex items-center justify-center gap-2 transition-all active:scale-[0.98] text-xs tracking-widest uppercase cursor-pointer"
+              >
+                <ShoppingCart className="w-4 h-4" /> কার্টে যোগ করুন
+              </button>
+
+              <button
                 onClick={handleBuyNow}
                 className="flex-[2] py-4 hover:cursor-pointer bg-[#105D38] text-white font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-100 hover:bg-[#0c4a2d] transition-all transform active:scale-[0.98] uppercase text-xs tracking-widest"
               >
-                <ShoppingCart className="w-5 h-5" /> সরাসরি অর্ডার করুন
+                সরাসরি অর্ডার করুন
               </button>
             </div>
           </div>
-        </div>
+        </section>
 
         {/* --- Related Products Section --- */}
-        <div className="px-4 md:px-0">
+        <section className="px-4 md:px-0">
           <div className="flex items-center justify-between mb-8">
             <div>
               <h2 className="text-xl md:text-3xl font-black text-gray-900">
@@ -216,22 +273,26 @@ const ProductDetails = () => {
               <ProductCard key={p.id} product={p} />
             ))}
           </div>
-        </div>
+        </section>
       </div>
 
       {/* Mobile Floating Bottom Bar */}
-      <div className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-100 flex gap-3 z-50 md:hidden">
-        <button className="w-14 h-14 flex items-center justify-center bg-gray-100 text-gray-700 rounded-2xl border border-gray-200">
-          <Heart className="w-6 h-6" />
+      <footer className="fixed bottom-0 left-0 right-0 p-4 bg-white/90 backdrop-blur-xl border-t border-gray-100 flex gap-3 z-50 md:hidden">
+        <button
+          onClick={handleAddToCart}
+          className="w-14 h-14 flex items-center justify-center bg-green-50 text-[#105D38] border border-green-200 rounded-2xl active:scale-95 transition-transform"
+          title="কার্টে যোগ করুন"
+        >
+          <ShoppingCart className="w-6 h-6" />
         </button>
         <button
           onClick={handleBuyNow}
           className="flex-1 bg-[#105D38] text-white font-bold rounded-2xl flex items-center justify-center gap-3 shadow-lg shadow-green-200 text-sm uppercase tracking-widest active:scale-95 transition-transform"
         >
-          <ShoppingCart className="w-5 h-5" /> সরাসরি কিনুন
+          সরাসরি কিনুন
         </button>
-      </div>
-    </div>
+      </footer>
+    </main>
   );
 };
 
