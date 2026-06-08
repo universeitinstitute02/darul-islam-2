@@ -59,7 +59,6 @@ const CHANNEL_NUMBERS: Record<
   },
 };
 
-
 export default function EnrollPage() {
   const params = useParams();
   const id = params?.id;
@@ -218,9 +217,7 @@ export default function EnrollPage() {
           onSubmit={handlePaymentSubmit}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
         >
-          {/* Left Column Form Framework Box matching Donation Layout */}
           <div className="lg:col-span-7 bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5 space-y-6">
-            {/* Profile Information Context Banner */}
             <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-neutral-100">
               <div className="w-12 h-12 bg-[#105D38]/10 rounded-2xl flex items-center justify-center text-[#105D38] shrink-0">
                 <CheckCircle2 size={24} />
@@ -243,8 +240,7 @@ export default function EnrollPage() {
               </div>
             </div>
 
-            {/* Live Batch Channel Availability State Status Bar Indicator */}
-            {/* <div className="space-y-2">
+            <div className="space-y-2">
               <label className="text-[10px] font-bold text-gray-400 uppercase block">
                 ব্যাচ প্রাপ্যতা (Batch Availability)
               </label>
@@ -260,11 +256,10 @@ export default function EnrollPage() {
                   প্যানেল থেকে আপনার ব্যাচ বরাদ্দ করা হবে।
                 </div>
               )}
-            </div> */}
+            </div>
 
-            {/* Payment Method Option Selector Grid Area */}
             <div className="space-y-3">
-              <label className="text-xs font-bold text-gray-800 uppercase block">
+              <label className="text-[10px] font-bold text-gray-400 uppercase block">
                 পেমেন্ট গেটওয়ে সিলেক্ট করুন
               </label>
               <div className="grid grid-cols-3 gap-2">
@@ -273,7 +268,7 @@ export default function EnrollPage() {
                     key={m}
                     type="button"
                     onClick={() => setPaymentMethod(m)}
-                    className={`p-3 cursor-pointer rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
+                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
                       paymentMethod === m
                         ? "border-[#105D38] bg-gray-50 text-[#105D38]"
                         : "border-gray-100 opacity-60 hover:opacity-80"
@@ -295,7 +290,6 @@ export default function EnrollPage() {
               </div>
             </div>
 
-            {/* Dynamic Copy Instruction Card Drawer Module */}
             <AnimatePresence mode="wait">
               <motion.div
                 key={paymentMethod}
@@ -321,7 +315,7 @@ export default function EnrollPage() {
                   <p className="text-xl font-black text-neutral-800 tracking-wide">
                     Number: {activeChannel.number}
                   </p>
-                  <p className="text-xs mt-2 opacity-60 italic">
+                  <p className="text-[10px] mt-2 opacity-60 italic">
                     * এই ঠিকানায় টাকা পাঠিয়ে নিচের তথ্যগুলো পূরণ করুন।
                   </p>
                 </div>
@@ -348,7 +342,6 @@ export default function EnrollPage() {
               </motion.div>
             </AnimatePresence>
 
-            {/* Form Fields Data Entries Section Area */}
             <div className="space-y-3">
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative">
@@ -396,7 +389,6 @@ export default function EnrollPage() {
             </div>
           </div>
 
-          {/* Right Column Summary Context Layout Block Panel */}
           <div className="lg:col-span-5 sticky top-24">
             <motion.div
               initial={{ opacity: 0, x: 15 }}
