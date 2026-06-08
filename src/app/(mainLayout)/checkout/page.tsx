@@ -64,7 +64,7 @@ const CheckoutContent = () => {
 
       setCheckoutItems(formattedItems);
       setSubtotal(cartSubtotal);
-      setDeliveryCharge(cartSubtotal > 1000 ? 0 : 60);
+      setDeliveryCharge(cartSubtotal > 1000 ? 0 : 70);
     } else {
       const productId = searchParams.get("id") || "";
       const productName = searchParams.get("name") || "পণ্য";

@@ -76,7 +76,7 @@ export default function CartPage() {
     (acc, item) => acc + item.price * item.quantity,
     0,
   );
-  const shippingFee = subtotal > 1000 || subtotal === 0 ? 0 : 60;
+  const shippingFee = subtotal > 1000 || subtotal === 0 ? 0 : 70;
   const total = subtotal + shippingFee;
 
   const handleCheckout = () => {
