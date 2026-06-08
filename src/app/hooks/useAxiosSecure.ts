@@ -5,7 +5,7 @@ import { useSession } from "next-auth/react";
 import { useEffect } from "react";
 
 export const axiosSecure = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL,
+  baseURL: process.env.NEXT_PUBLIC_API_URL?.trim(),
   withCredentials: true,
 });
 
@@ -30,3 +30,4 @@ export default function useAxiosSecure() {
 
   return axiosSecure;
 }
+
