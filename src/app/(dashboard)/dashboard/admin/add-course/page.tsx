@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useForm, useFieldArray, Controller } from "react-hook-form";
 import {
@@ -28,10 +29,10 @@ interface ICategory {
   subCategory?: ISubCategory[];
 }
 
-// React Hook Form Inputs Type
 interface ICourseFormInputs {
   title: string;
   fullTitle: string;
+  label: string;
   subCategory: string;
   description: string;
   price: string;
@@ -56,7 +57,6 @@ const AddCoursePage = () => {
   const axiosSecure = useAxiosSecure();
   const [categories, setCategories] = useState<ICategory[]>([]);
 
-  // React Hook Form Initialization
   const { register, control, handleSubmit, setValue, watch, reset } =
     useForm<ICourseFormInputs>({
       defaultValues: {
@@ -74,7 +74,6 @@ const AddCoursePage = () => {
       },
     });
 
-  // Dynamic Fields for Highlights
   const {
     fields: highlightFields,
     append: appendHighlight,
@@ -84,7 +83,6 @@ const AddCoursePage = () => {
     name: "highlights",
   });
 
-  // Dynamic Fields for Modules
   const {
     fields: moduleFields,
     append: appendModule,
@@ -94,13 +92,11 @@ const AddCoursePage = () => {
     name: "modules",
   });
 
-  // Fetch Categories
   useEffect(() => {
     const fetchCategories = async () => {
       setCategoriesLoading(true);
       try {
         const res = await axiosSecure.get("/categories");
-        // আপনার এপিআই রেসপন্স ফরম্যাট অনুযায়ী সেট করুন
         if (res.data) {
           setCategories(res.data.categories || res.data);
         }
@@ -113,7 +109,6 @@ const AddCoursePage = () => {
     fetchCategories();
   }, [axiosSecure]);
 
-  // Handle Image Selection
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
@@ -122,7 +117,6 @@ const AddCoursePage = () => {
     }
   };
 
-  // Form Submit Handler
   const onSubmit = async (data: ICourseFormInputs) => {
     if (!token) return Swal.fire("Error", "লগইন সেশন পাওয়া যায়নি!", "error");
     if (!imageFile) return Swal.fire("Warning", "কোর্সের ইমেজ দিন", "warning");
@@ -134,7 +128,6 @@ const AddCoursePage = () => {
       didOpen: () => Swal.showLoading(),
     });
 
-    // কনসোলে ডেটা শো করার জন্য অবজেক্ট তৈরি
     const detailsPayload = {
       fullTitle: data.fullTitle || data.title,
       description: data.description,
@@ -143,24 +136,10 @@ const AddCoursePage = () => {
       highlights: data.highlights.filter((h) => h.label && h.value),
     };
 
-    const finalDataConsoleLog = {
-      title: data.title,
-      category: data.subCategory, // সাবক্যাটাগরি আইডিকে ক্যাটাগরি ফিল্ডে পাঠানো হচ্ছে
-      duration: data.duration,
-      courseType: data.courseType,
-      price: data.price,
-      oldPrice: data.oldPrice || "0",
-      details: detailsPayload,
-      modules: data.modules, // মডিউল কারিকুলাম ডেটা
-      image: imageFile.name,
-    };
-
-    // আপনার রিকোয়েস্ট অনুযায়ী কনসোলে ডেটা প্রিন্ট
-    console.log("--- SUBMITTED COURSE DATA ---", finalDataConsoleLog);
-
     try {
       const formData = new FormData();
       formData.append("title", data.title);
+      formData.append("label", data.label);
       formData.append("image", imageFile);
       formData.append("category", data.subCategory);
       formData.append("duration", data.duration);
@@ -168,29 +147,30 @@ const AddCoursePage = () => {
       formData.append("price", data.price);
       formData.append("oldPrice", data.oldPrice || "0");
       formData.append("details", JSON.stringify(detailsPayload));
-      // যদি সার্ভার মডিউল এক্সেপ্ট করে তবে অ্যাপেন্ড করতে পারেন:
       formData.append("modules", JSON.stringify(data.modules));
 
-      const response = await fetch(
-        "https://darulislam-server-v2.vercel.app/api/courses/teacher/add-course",
+      const response = await axiosSecure.post(
+        "/courses/teacher/add-course",
+        formData,
         {
-          method: "POST",
-          headers: { Authorization: `Bearer ${token}` },
-          body: formData,
+          headers: {
+            "Content-Type": "multipart/form-data",
+          },
         },
       );
 
-      if (response.ok) {
+      if (response.data) {
         Swal.fire("অভিনন্দন!", "কোর্সটি সফলভাবে তৈরি হয়েছে।", "success");
         reset();
         setImageFile(null);
         setPreviewUrl(null);
-      } else {
-        const errData = await response.json();
-        throw new Error(errData.message || "সার্ভার এরর");
       }
     } catch (err: any) {
-      Swal.fire("ব্যর্থ হয়েছে", err.message, "error");
+      Swal.fire(
+        "ব্যর্থ হয়েছে",
+        err?.response?.data?.message || "সার্ভার এরর",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -199,14 +179,14 @@ const AddCoursePage = () => {
   return (
     <div className="min-h-screen bg-[#F1F5F9] pb-12 pt-8 px-4">
       <div className="max-w-5xl mx-auto">
-        <div className="mb-8 text-center md:text-left">
+        <header className="mb-8 text-center md:text-left">
           <h1 className="text-3xl font-black text-[#105D38]">
             নতুন কোর্স তৈরি করুন
           </h1>
           <p className="text-gray-500 text-sm mt-1">
             প্রয়োজনীয় তথ্য দিয়ে আপনার কোর্সটি পাবলিশ করুন
           </p>
-        </div>
+        </header>
 
         <form
           onSubmit={handleSubmit(onSubmit)}
@@ -214,7 +194,7 @@ const AddCoursePage = () => {
         >
           {/* Main Info Section */}
           <div className="lg:col-span-8 space-y-6">
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+            <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b pb-4">
                 <BookOpen className="w-5 h-5 text-emerald-600" /> বেসিক ইনফরমেশন
               </h3>
@@ -245,7 +225,18 @@ const AddCoursePage = () => {
                   />
                 </div>
 
-                {/* Category Selection */}
+                <div>
+                  <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
+                    লেবেল যুক্ত করুন (Course Label)
+                  </label>
+                  <input
+                    type="text"
+                    {...register("label")}
+                    className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none focus:ring-2 ring-emerald-500/20"
+                    placeholder="যেমন: ভাষা শিক্ষা, দরসি কিতাব অথবা দাখিল প্রস্তুতি"
+                  />
+                </div>
+
                 <div>
                   <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
                     Select Sub Category
@@ -274,7 +265,6 @@ const AddCoursePage = () => {
                   </select>
                 </div>
 
-                {/* Tiptap Description Editor */}
                 <div>
                   <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
                     কোর্সের বিবরণ (Description)
@@ -291,10 +281,10 @@ const AddCoursePage = () => {
                   />
                 </div>
               </div>
-            </div>
+            </section>
 
             {/* Highlights Builder */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
+            <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
                   <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্স
@@ -333,10 +323,10 @@ const AddCoursePage = () => {
                   </div>
                 ))}
               </div>
-            </div>
+            </section>
 
             {/* Curriculum Modules Section */}
-            <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
+            <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
               <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-4 mb-2">
                 <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্সের
                 কারিকুলাম / মডিউল
@@ -362,7 +352,7 @@ const AddCoursePage = () => {
                     />
                   </div>
 
-                  <div className=" pl-10">
+                  <div className="pl-10">
                     <input
                       type="text"
                       placeholder="স্ট্যাটাস টেক্সট"
@@ -401,12 +391,11 @@ const AddCoursePage = () => {
                   + আরও মডিউল যোগ করুন
                 </button>
               </div>
-            </div>
+            </section>
           </div>
 
           {/* Sidebar Section */}
-          <div className="lg:col-span-4 space-y-6">
-            {/* Image Upload */}
+          <aside className="lg:col-span-4 space-y-6">
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 text-center">
               <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2 justify-center">
                 <ImageIcon className="w-4 h-4 text-emerald-600" /> থাম্বনেইল
@@ -428,7 +417,7 @@ const AddCoursePage = () => {
                       <Upload className="w-6 h-6" />
                     </div>
                     <p className="text-xs font-bold text-gray-400 uppercase">
-                      ইমেজ সিলেক্ট করুন
+                      ইমেজে সিলেক্ট করুন
                     </p>
                   </>
                 )}
@@ -442,7 +431,6 @@ const AddCoursePage = () => {
               </div>
             </div>
 
-            {/* Pricing & Duration Card */}
             <div className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-5">
               <div>
                 <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">
@@ -503,7 +491,7 @@ const AddCoursePage = () => {
                 )}
               </button>
             </div>
-          </div>
+          </aside>
         </form>
       </div>
     </div>

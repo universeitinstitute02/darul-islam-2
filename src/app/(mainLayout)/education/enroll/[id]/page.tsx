@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
+import { useForm } from "react-hook-form";
 import {
   ArrowLeft,
   ShieldCheck,
@@ -30,6 +31,12 @@ interface Batch {
   maxSeats: number;
   enrolledStudents: string[];
   status: string;
+}
+
+interface EnrollFormValues {
+  senderName: string;
+  accountNumber: string;
+  transactionId: string;
 }
 
 const CHANNEL_NUMBERS: Record<
@@ -65,14 +72,11 @@ export default function EnrollPage() {
   const router = useRouter();
   const axiosSecure = useAxiosSecure();
 
-  const [selectedBatchId, setSelectedBatchId] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("bkash");
-  const [senderName, setSenderName] = useState("");
-  const [accountNumber, setAccountNumber] = useState("");
-  const [transactionId, setTransactionId] = useState("");
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  const { register, handleSubmit } = useForm<EnrollFormValues>();
   const { user, isLoading: isUserLoading, role } = useUserRole();
 
   const { data: course = null, isLoading: courseLoading } = useQuery({
@@ -95,23 +99,6 @@ export default function EnrollPage() {
     enabled: !!id,
   });
 
-  const { data: batches = [], isLoading: batchesLoading } = useQuery({
-    queryKey: ["courseBatches", id],
-    queryFn: async (): Promise<Batch[]> => {
-      const response = await axiosSecure.get(
-        `/batches?course=${id}&status=active`,
-      );
-      return response.data.data as Batch[];
-    },
-    enabled: !!id,
-  });
-
-  useEffect(() => {
-    if (batches.length > 0 && !selectedBatchId) {
-      setSelectedBatchId(batches[0]._id);
-    }
-  }, [batches, selectedBatchId]);
-
   const handleCopyClipboard = async (text: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -121,9 +108,8 @@ export default function EnrollPage() {
       console.error("Failed to execute copy sequence", err);
     }
   };
-  const handlePaymentSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
-    event.preventDefault();
 
+  const handlePaymentSubmit = async (data: EnrollFormValues) => {
     if (!user) {
       return Swal.fire(
         "নির্দেশনা",
@@ -131,14 +117,11 @@ export default function EnrollPage() {
         "warning",
       );
     }
-    if (!selectedBatchId) {
-      return Swal.fire(
-        "তথ্য প্রয়োজন",
-        "দুঃখিত, বর্তমানে কোনো সক্রিয় ব্যাচ উপলব্ধ না থাকায় এনরোলমেন্ট করা সম্ভব নয়।",
-        "warning",
-      );
-    }
-    if (!senderName.trim() || !accountNumber.trim() || !transactionId.trim()) {
+    if (
+      !data.senderName.trim() ||
+      !data.accountNumber.trim() ||
+      !data.transactionId.trim()
+    ) {
       return Swal.fire(
         "তথ্য প্রয়োজন",
         "পেমেন্ট ভেরিফিকেশনের জন্য সবগুলো ফিল্ড পূরণ করুন।",
@@ -151,10 +134,10 @@ export default function EnrollPage() {
 
     const requestPayload = {
       courseId: id,
-      batchId: selectedBatchId,
-      senderName: senderName.trim(),
-      bkashNumber: accountNumber.trim(),
-      transactionId: transactionId.trim().toUpperCase(),
+      method: paymentMethod,
+      senderName: data.senderName.trim(),
+      bkashNumber: data.accountNumber.trim(),
+      transactionId: data.transactionId.trim().toUpperCase(),
       amountPaid: Number(finalPrice),
     };
 
@@ -184,43 +167,48 @@ export default function EnrollPage() {
     }
   };
 
-  if (courseLoading || isUserLoading || batchesLoading)
-    return <LoadingSpinner fullScreen />;
+  if (courseLoading || isUserLoading) return <LoadingSpinner fullScreen />;
 
   const finalPrice = course?.details?.admissionFee || course?.price || 0;
   const activeChannel = CHANNEL_NUMBERS[paymentMethod];
 
   return (
     <div className="min-h-screen bg-[#F4F7F4] pb-24 pt-20 md:pt-24 antialiased selection:bg-[#105D38]/10 selection:text-[#105D38]">
-      <header className="bg-white/80 backdrop-blur-md border-b border-neutral-200/60 py-4 px-4 transition-all">
+      <header className="bg-white/80 border-b border-neutral-200/60 py-4 px-4">
         <div className="max-w-7xl px-4 mx-auto flex items-center justify-between">
           <button
             type="button"
             onClick={() => router.back()}
             className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#105D38] transition-all hover:cursor-pointer group"
+            aria-label="পূর্ববর্তী পৃষ্ঠায় ফিরে যান"
           >
             <ArrowLeft
               size={18}
               className="group-hover:-translate-x-0.5 transition-transform"
+              aria-hidden="true"
             />
             ফিরে যান
           </button>
           <h1 className="text-xl font-black text-neutral-800 tracking-tight">
             নিরাপদ চেকআউট
           </h1>
-          <div className="w-10"></div>
+          <div className="w-10" aria-hidden="true"></div>
         </div>
       </header>
 
-      <main className="max-w-7xl mx-auto px-4 py-10">
+      <main className="max-w-6xl mx-auto px-4 py-10">
         <form
-          onSubmit={handlePaymentSubmit}
+          onSubmit={handleSubmit(handlePaymentSubmit)}
           className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start"
         >
-          <div className="lg:col-span-7 bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5 space-y-6">
-            <div className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-neutral-100">
+          <section className="lg:col-span-7 bg-white rounded-[2.5rem] p-6 shadow-xl border border-black/5 space-y-6">
+            <div
+              className="flex items-center gap-4 bg-gray-50/50 p-4 rounded-2xl border border-neutral-100"
+              role="region"
+              aria-label="ইউজার প্রোফাইল তথ্য"
+            >
               <div className="w-12 h-12 bg-[#105D38]/10 rounded-2xl flex items-center justify-center text-[#105D38] shrink-0">
-                <CheckCircle2 size={24} />
+                <CheckCircle2 size={24} aria-hidden="true" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
@@ -231,52 +219,35 @@ export default function EnrollPage() {
                     অ্যাকাউন্ট ভেরিফাইড
                   </span>
                 </div>
-                <h3 className="text-base font-bold text-neutral-800 mt-0.5">
+                <h2 className="text-base font-bold text-neutral-800 mt-0.5">
                   {user?.name || "ইউজারের নাম পাওয়া যায়নি"}
-                </h3>
+                </h2>
                 <p className="text-xs text-neutral-500 font-medium">
                   {user?.email}
                 </p>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-[10px] font-bold text-gray-400 uppercase block">
-                ব্যাচ প্রাপ্যতা (Batch Availability)
-              </label>
-              {batches.length === 0 ? (
-                <div className="p-4 bg-red-50 text-red-700 text-xs font-bold rounded-2xl border border-red-100">
-                  দুঃখিত, এই কোর্সে বর্তমানে কোনো রানিং বা ওপেন ব্যাচ পাওয়া
-                  যায়নি। অনুগ্রহ করে অ্যাডমিনের সাথে যোগাযোগ করুন।
-                </div>
-              ) : (
-                <div className="p-4 bg-green-50 text-green-700 text-xs font-bold rounded-2xl border border-green-100 flex items-center gap-2">
-                  <CheckCircle2 size={16} className="text-[#105D38]" /> এই
-                  কোর্সে নতুন ব্যাচ উপলব্ধ আছে। সফলভাবে ফি প্রদানের পর অ্যাডমিন
-                  প্যানেল থেকে আপনার ব্যাচ বরাদ্দ করা হবে।
-                </div>
-              )}
-            </div>
-
-            <div className="space-y-3">
-              <label className="text-[10px] font-bold text-gray-400 uppercase block">
+            <fieldset className="space-y-3 border-none p-0 m-0">
+              <legend className="text-xs font-bold uppercase tracking-wider text-neutral-600 block mb-1">
                 পেমেন্ট গেটওয়ে সিলেক্ট করুন
-              </label>
+              </legend>
               <div className="grid grid-cols-3 gap-2">
                 {["bkash", "nagad", "rocket"].map((m) => (
                   <button
                     key={m}
                     type="button"
                     onClick={() => setPaymentMethod(m)}
-                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
+                    className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
                       paymentMethod === m
                         ? "border-[#105D38] bg-gray-50 text-[#105D38]"
                         : "border-gray-100 opacity-60 hover:opacity-80"
                     }`}
+                    aria-pressed={paymentMethod === m}
                   >
                     <img
                       src={CHANNEL_NUMBERS[m].logo}
-                      alt={m}
+                      alt={`${m} লোগো`}
                       className="w-8 h-8 object-contain"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = "none";
@@ -288,7 +259,7 @@ export default function EnrollPage() {
                   </button>
                 ))}
               </div>
-            </div>
+            </fieldset>
 
             <AnimatePresence mode="wait">
               <motion.div
@@ -296,13 +267,13 @@ export default function EnrollPage() {
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: -10 }}
-                className={`p-5 rounded-2xl border-l-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${activeChannel.bg} ${activeChannel.border}`}
+                className={`p-5 mt-7 rounded-2xl border-l-4 flex flex-col sm:flex-row sm:items-center justify-between gap-4 ${activeChannel.bg} ${activeChannel.border}`}
               >
                 <div>
                   <div className="flex items-center gap-2 mb-2">
                     <img
                       src={activeChannel.logo}
-                      alt={paymentMethod}
+                      alt=""
                       className="w-6 h-6 object-contain"
                       onError={(e) => {
                         (e.target as HTMLImageElement).style.display = "none";
@@ -328,45 +299,56 @@ export default function EnrollPage() {
                       ? "bg-green-100 border-green-300 text-green-700"
                       : "bg-white border-gray-200 text-gray-500 hover:bg-gray-50"
                   }`}
+                  aria-label="নম্বরটি ক্লিপবোর্ডে কপি করুন"
                 >
                   {copied ? (
                     <>
-                      <Check size={13} /> কপি হয়েছে
+                      <Check size={13} aria-hidden="true" /> কপি হয়েছে
                     </>
                   ) : (
                     <>
-                      <Copy size={13} /> কপি করুন
+                      <Copy size={13} aria-hidden="true" /> কপি করুন
                     </>
                   )}
                 </button>
               </motion.div>
             </AnimatePresence>
 
-            <div className="space-y-3">
+            <div className="space-y-4">
+              <h3 className="text-xs font-black text-neutral-400 uppercase tracking-widest border-b border-neutral-100 pb-2">
+                পেমেন্ট ভেরিফিকেশন তথ্য দিন
+              </h3>
+
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 <div className="relative">
+                  <label htmlFor="sender-name-field" className="sr-only">
+                    প্রেরক এর নাম
+                  </label>
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <User size={16} />
+                    <User size={16} aria-hidden="true" />
                   </span>
                   <input
+                    id="sender-name-field"
                     type="text"
                     placeholder="প্রেরক এর নাম (Sender Name)"
-                    value={senderName}
-                    onChange={(e) => setSenderName(e.target.value)}
+                    {...register("senderName", { required: true })}
                     className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-gray-200 transition-all text-neutral-800"
                     required
                   />
                 </div>
 
                 <div className="relative">
+                  <label htmlFor="account-number-field" className="sr-only">
+                    যে নম্বর থেকে টাকা পাঠিয়েছেন
+                  </label>
                   <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                    <Smartphone size={16} />
+                    <Smartphone size={16} aria-hidden="true" />
                   </span>
                   <input
+                    id="account-number-field"
                     type="text"
                     placeholder="যে নম্বর থেকে টাকা পাঠিয়েছেন"
-                    value={accountNumber}
-                    onChange={(e) => setAccountNumber(e.target.value)}
+                    {...register("accountNumber", { required: true })}
                     className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-2xl text-sm font-bold outline-none border border-transparent focus:border-gray-200 transition-all text-neutral-800"
                     required
                   />
@@ -374,22 +356,25 @@ export default function EnrollPage() {
               </div>
 
               <div className="relative">
+                <label htmlFor="transaction-id-field" className="sr-only">
+                  ট্রানজেকশন আইডি
+                </label>
                 <span className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400">
-                  <Hash size={16} />
+                  <Hash size={16} aria-hidden="true" />
                 </span>
                 <input
+                  id="transaction-id-field"
                   type="text"
-                  placeholder="ট্রানজেকশন আইডি (Transaction ID / TxnID)"
-                  value={transactionId}
-                  onChange={(e) => setTransactionId(e.target.value)}
+                  placeholder="ট্রানজেকশন আইডি (Transaction ID)"
+                  {...register("transactionId", { required: true })}
                   className="w-full pl-11 pr-4 py-3.5 bg-gray-50 rounded-2xl text-sm font-bold font-mono uppercase tracking-wide outline-none border border-transparent focus:border-gray-200 transition-all text-neutral-800 placeholder:normal-case"
                   required
                 />
               </div>
             </div>
-          </div>
+          </section>
 
-          <div className="lg:col-span-5 sticky top-24">
+          <aside className="lg:col-span-5 sticky top-24">
             <motion.div
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
@@ -405,7 +390,7 @@ export default function EnrollPage() {
                   {course?.image && (
                     <Image
                       src={course.image}
-                      alt={course.title || "Course Cover"}
+                      alt=""
                       fill
                       className="object-cover"
                       priority
@@ -443,7 +428,7 @@ export default function EnrollPage() {
 
               <button
                 type="submit"
-                disabled={isSubmitting || !selectedBatchId}
+                disabled={isSubmitting}
                 className="relative w-full cursor-pointer bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center shadow-md text-base mt-6 active:scale-[0.98] disabled:opacity-60 overflow-hidden"
               >
                 {isSubmitting && (
@@ -458,6 +443,7 @@ export default function EnrollPage() {
                   <ChevronRight
                     size={18}
                     className="group-hover:translate-x-1 transition-transform"
+                    aria-hidden="true"
                   />
                 </span>
               </button>
@@ -472,10 +458,9 @@ export default function EnrollPage() {
                 </div>
               </div>
             </motion.div>
-          </div>
+          </aside>
         </form>
       </main>
     </div>
   );
 }
-

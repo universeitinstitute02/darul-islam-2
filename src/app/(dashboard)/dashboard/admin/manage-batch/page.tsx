@@ -253,9 +253,6 @@ export default function AdminBatchManagement() {
     <div className="min-h-screen bg-[#F5F0E8]/40 p-6 md:p-10 font-sans">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
         <div>
-          <span className="text-[10px] uppercase font-bold text-green-700 bg-green-50 px-3 py-1 rounded-md border border-green-200/50">
-            Admin Control Panel
-          </span>
           <h1 className="text-3xl font-black text-[#14281D] mt-2 flex items-center gap-2">
             <Layers className="text-green-800" size={28} /> ব্যাচ ম্যানেজমেন্ট
             প্যানেল

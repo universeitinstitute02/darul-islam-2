@@ -25,6 +25,9 @@ import { getAllCourses } from "@/src/lib/data";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
+import useUserRole from "@/src/app/hooks/useUserRole";
+import Swal from "sweetalert2";
+
 export default function CourseDetailPage() {
   const { id } = useParams();
   const router = useRouter();
@@ -37,6 +40,8 @@ export default function CourseDetailPage() {
   const [activeTab, setActiveTab] = useState<"live" | "assignment">("live");
   const [completedItems, setCompletedItems] = useState<string[]>([]);
   const [assignmentSubmitted, setAssignmentSubmitted] = useState(false);
+
+  const { role } = useUserRole();
 
   const [liveSession] = useState<any>({
     id: "session-01",
@@ -80,7 +85,7 @@ export default function CourseDetailPage() {
 
   const toggleItemComplete = (itemId: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    if (!isEnrolled) return; // এনরোল না থাকলে ক্লিক কাজ করবে না
+    if (!isEnrolled) return;
     if (completedItems.includes(itemId)) {
       setCompletedItems(completedItems.filter((id) => id !== itemId));
     } else {
@@ -92,6 +97,13 @@ export default function CourseDetailPage() {
     completedItems.includes("session-01") && assignmentSubmitted;
 
   const handleEnrollAction = () => {
+    if (role && role.toLowerCase() !== "student") {
+      return Swal.fire(
+        "অ্যাক্সেস অস্বীকৃত",
+        "দুঃখিত, শিক্ষক বা অ্যাডমিন অ্যাকাউন্ট থেকে কোর্সে এনরোল করা সম্ভব নয়। অনুগ্রহ করে শিক্ষার্থী অ্যাকাউন্ট ব্যবহার করুন।",
+        "warning",
+      );
+    }
     router.push(`/education/enroll/${id}`);
   };
 
@@ -105,12 +117,12 @@ export default function CourseDetailPage() {
             কোর্সটি পাওয়া যায়নি!
           </h2>
           <p className="text-neutral-500">
-            সম্ভবত লিংকটি ভুল অথবা কোর্সটি বর্তমানে উপলব্ধ নেই।
+            সম্ভবত লিংকটি ভুল অথবা курсটি বর্তমানে উপলব্ধ নেই।
           </p>
         </div>
         <button
           onClick={() => router.back()}
-          className="bg-[#105D38] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-[#0d4d2e] transition-all"
+          className="bg-[#105D38] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-[#0d4d2e] transition-all cursor-pointer"
         >
           <ArrowLeft size={20} /> পেছনে ফিরে যান
         </button>
@@ -121,15 +133,20 @@ export default function CourseDetailPage() {
   const { details, image, category, title, price } = course;
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 font-sans">
-      <div className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3">
+    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 font-sans antialiased">
+      {/* Navigation Sub-header Bar */}
+      <nav
+        className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3"
+        aria-label="ব্রেডক্রাম্ব ও নেভিগেশন"
+      >
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
             className="flex items-center hover:cursor-pointer gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
+            aria-label="পূর্ববর্তী পৃষ্ঠায় ফিরে যান"
           >
             <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors ">
-              <ArrowLeft size={20} />
+              <ArrowLeft size={20} aria-hidden="true" />
             </div>
             <span className="font-bold text-sm hidden md:block">পেছনে যান</span>
           </button>
@@ -137,7 +154,8 @@ export default function CourseDetailPage() {
           <div className="flex items-center gap-3">
             {isEnrolled && (
               <span className="bg-emerald-50 text-emerald-700 border border-emerald-200 text-[10px] md:text-xs font-black px-3 py-1 rounded-full flex items-center gap-1">
-                <BookmarkCheck size={14} /> আপনি এই কোর্সে এনরোলড
+                <BookmarkCheck size={14} aria-hidden="true" /> আপনি এই কোর্সে
+                এনরোলড
               </span>
             )}
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold">
@@ -147,19 +165,22 @@ export default function CourseDetailPage() {
               >
                 এডুকেশন
               </Link>
-              <span className="text-neutral-300">/</span>
+              <span className="text-neutral-300" aria-hidden="true">
+                /
+              </span>
               <span className="text-[#105D38] line-clamp-1 max-w-[120px] md:max-w-none uppercase">
                 {title}
               </span>
             </div>
           </div>
         </div>
-      </div>
+      </nav>
 
+      {/* Main Grid Content Matrix */}
       <div className="max-w-7xl mx-auto px-4 py-6 md:py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start">
-          <div className="lg:col-span-2 space-y-6">
-            {/* কোর্স হেডার এবং টাইটেল */}
+          {/* Left Column Area: Details & Core Interaction Panel */}
+          <article className="lg:col-span-2 space-y-6">
             <motion.div
               initial={{ opacity: 0, y: 15 }}
               animate={{ opacity: 1, y: 0 }}
@@ -169,8 +190,12 @@ export default function CourseDetailPage() {
                 <span className="inline-block bg-[#105D38] text-white px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
                   {category}
                 </span>
-                <div className="flex items-center gap-1 text-amber-500 font-bold text-sm">
-                  <Star size={16} fill="currentColor" /> 4.9 (রিভিউ)
+                <div
+                  className="flex items-center gap-1 text-amber-500 font-bold text-sm"
+                  aria-label="কোর্স রেটিং ৪.৯"
+                >
+                  <Star size={16} fill="currentColor" aria-hidden="true" /> 4.9
+                  (রিভিউ)
                 </div>
               </div>
               <h1 className="text-2xl md:text-4xl font-black text-neutral-900 leading-tight">
@@ -178,7 +203,7 @@ export default function CourseDetailPage() {
               </h1>
             </motion.div>
 
-            {/* 🔒 IF NOT ENROLLED: শো কোর্স ব্যানার/ভিডিও প্লেসহোল্ডার */}
+            {/* Banner/Video Access Control Logic */}
             {!isEnrolled ? (
               <motion.div
                 initial={{ opacity: 0, scale: 0.98 }}
@@ -197,10 +222,13 @@ export default function CourseDetailPage() {
                     <div
                       onClick={handleEnrollAction}
                       className="absolute inset-0 bg-black/40 flex flex-col items-center justify-center text-white p-4 text-center cursor-pointer"
+                      role="button"
+                      aria-label="কোর্সে জয়েন করতে এনরোলমেন্ট প্রক্রিয়া শুরু করুন"
                     >
                       <PlayCircle
                         size={64}
                         className="text-white opacity-90 drop-shadow-md mb-2 animate-pulse"
+                        aria-hidden="true"
                       />
                       <p className="text-xs md:text-sm font-bold tracking-wide bg-black/40 px-4 py-1.5 rounded-full backdrop-blur-sm">
                         কোর্সে জয়েন করতে এখনই এনরোল করুন
@@ -214,7 +242,10 @@ export default function CourseDetailPage() {
                 )}
               </motion.div>
             ) : (
-              <div className="space-y-6">
+              <section
+                className="space-y-6"
+                aria-label="অ্যাক্টিভ লার্নিং ড্যাশবোর্ড"
+              >
                 <AnimatePresence mode="wait">
                   {activeTab === "live" ? (
                     <motion.div
@@ -240,6 +271,7 @@ export default function CourseDetailPage() {
                             <Sparkles
                               className="text-emerald-400 shrink-0"
                               size={20}
+                              aria-hidden="true"
                             />
                             {liveSession.title}
                           </h2>
@@ -266,9 +298,9 @@ export default function CourseDetailPage() {
                             rel="noreferrer"
                             className="inline-flex items-center gap-2 px-6 py-3 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
                           >
-                            <Video size={16} />
+                            <Video size={16} aria-hidden="true" />
                             <span>গুগল মিট ক্লাসে জয়েন করুন</span>
-                            <ExternalLink size={12} />
+                            <ExternalLink size={12} aria-hidden="true" />
                           </a>
                         </div>
                       </div>
@@ -308,19 +340,25 @@ export default function CourseDetailPage() {
                             type="text"
                             placeholder="আপনার অ্যাসাইনমেন্ট ড্রাইভ লিংকটি এখানে দিন..."
                             className="flex-1 px-4 py-2.5 bg-slate-50 border border-neutral-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#105D38] transition-all"
+                            aria-label="অ্যাসাইনমেন্ট ড্রাইভ লিংক ইনপুট"
                           />
                           <button
                             onClick={() => setAssignmentSubmitted(true)}
-                            className="px-5 py-2.5 bg-slate-950 hover:bg-[#105D38] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
+                            className="px-5 py-2.5 bg-slate-950 hover:bg-[#105D38] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
                           >
-                            <UploadCloud size={14} /> অ্যাসাইনমেন্ট জমা দিন
+                            <UploadCloud size={14} aria-hidden="true" />{" "}
+                            অ্যাসাইনমেন্ট জমা দিন
                           </button>
                         </div>
                       ) : (
-                        <div className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-2 text-emerald-800 text-xs font-bold">
+                        <div
+                          className="p-4 bg-emerald-50 border border-emerald-100 rounded-xl flex items-center gap-2 text-emerald-800 text-xs font-bold"
+                          role="status"
+                        >
                           <CheckCircle
                             size={18}
                             className="text-emerald-600 shrink-0"
+                            aria-hidden="true"
                           />
                           <span>
                             আলহামদুলিল্লাহ্‌! আপনার অ্যাসাইনমেন্টটি সফলভাবে জমা
@@ -331,25 +369,34 @@ export default function CourseDetailPage() {
                     </motion.div>
                   )}
                 </AnimatePresence>
-              </div>
+              </section>
             )}
 
-            {/* সাধারণ কোর্সের বিবরণ বিবরণী */}
-            <div className="bg-white p-6 sm:p-8 rounded-[2rem] border border-neutral-100 shadow-sm space-y-4">
-              <h3 className="text-xs sm:text-sm font-black text-slate-400 uppercase tracking-wider">
+            {/* Course Description Card Summary Component */}
+            <section
+              className="bg-white p-6 sm:p-8 rounded-[2rem] border border-neutral-100 shadow-sm space-y-4"
+              aria-labelledby="desc-heading"
+            >
+              <h3
+                id="desc-heading"
+                className="text-xs sm:text-sm font-black text-slate-400 uppercase tracking-wider"
+              >
                 কোর্সের বিবরণ
               </h3>
               <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
                 {details?.description ||
                   "এই কোর্সটি আপনাকে সম্পূর্ণ জিরো থেকে অ্যাডভান্স লেভেল পর্যন্ত প্রফেশনালি গাইড করবে।"}
               </p>
-            </div>
+            </section>
 
-            {/* মেটা ইনফো কার্ড (ফিচারসমূহ) */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            {/* Core Course Meta Badges Feature Grid */}
+            <section
+              className="grid grid-cols-1 md:grid-cols-2 gap-4"
+              aria-label="কোর্স ফিচারসমূহ"
+            >
               <div className="p-5 bg-white rounded-2xl border border-neutral-100 flex items-center gap-4">
                 <div className="p-3 bg-blue-50 text-blue-600 rounded-xl">
-                  <Clock size={22} />
+                  <Clock size={22} aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="font-bold text-xs text-neutral-800">
@@ -362,55 +409,29 @@ export default function CourseDetailPage() {
               </div>
               <div className="p-5 bg-white rounded-2xl border border-neutral-100 flex items-center gap-4">
                 <div className="p-3 bg-green-50 text-green-600 rounded-xl">
-                  <ShieldCheck size={22} />
+                  <ShieldCheck size={22} aria-hidden="true" />
                 </div>
                 <div>
                   <h4 className="font-bold text-xs text-neutral-800">
                     সার্টিফিকেশন
                   </h4>
                   <p className="text-[11px] text-neutral-500">
-                    কোর্স শেষে ভেরিফাইড সার্টিফিকেট
+                    কোর্স শেষে ভেরিভাইড সার্টিফিকেট
                   </p>
                 </div>
               </div>
-            </div>
+            </section>
+          </article>
 
-            {/* কোর্স মডিউল হাইলাইটস */}
-            {/* {details?.highlights && details.highlights.length > 0 && (
-              <div className="pt-6 border-t border-neutral-100">
-                <h4 className="text-xs font-black text-neutral-800 mb-4 uppercase tracking-widest flex items-center gap-2">
-                  <Star size={14} className="text-amber-500 fill-amber-500" />{" "}
-                  کোর্স মডিউল হাইলাইটস
-                </h4>
-                <ul className="space-y-3.5">
-                  {details.highlights.map((h: any, i: number) => (
-                    <li key={i} className="flex gap-3 text-xs items-start">
-                      <div className="mt-1 shrink-0">
-                        <div className="w-1.5 h-1.5 rounded-full bg-[#105D38]" />
-                      </div>
-                      <span className="text-neutral-600 leading-tight">
-                        <strong className="text-neutral-900 block mb-0.5">
-                          {h.label}
-                        </strong>
-                        {h.value}
-                      </span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )} */}
-          </div>
-
-          {/* ==================== RIGHT COLUMN (Playlist & Action Sidebar) ==================== */}
-          <div className="space-y-6 lg:sticky lg:top-28 h-fit">
-                        {/* 💳 ভর্তি অ্যাকশন ও স্টুডেন্ট প্রোগ্রেস কন্ট্রোল প্যানেল */}
+          {/* Right Column Area: Progress Registry & Curriculum Tracking Panel */}
+          <aside className="space-y-6 lg:sticky lg:top-28 h-fit">
+            {/* Action Checkout CTA & Progress Panel Configuration Layer */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
               className="bg-white p-6 md:p-8 rounded-[2.5rem] border border-neutral-100 shadow-2xl space-y-6"
             >
               {!isEnrolled ? (
-                /* ❌ ভর্তি না হওয়া ইউজার এর জন্য প্রাইসিং প্যানেল */
                 <>
                   <div className="space-y-1">
                     <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
@@ -436,7 +457,8 @@ export default function CourseDetailPage() {
                       onClick={handleEnrollAction}
                       className="w-full bg-[#105D38] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#105D38]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      এখনই ভর্তি হবো <CheckCircle2 size={20} />
+                      এখনী ভর্তি হবো{" "}
+                      <CheckCircle2 size={20} aria-hidden="true" />
                     </button>
                     <p className="text-[10px] text-center text-neutral-400 font-medium">
                       নিরাপদ পেমেন্ট গেটওয়ের মাধ্যমে ইনস্ট্যান্ট অ্যাক্সেস পান
@@ -444,14 +466,19 @@ export default function CourseDetailPage() {
                   </div>
                 </>
               ) : (
-                /* ✅ ভর্তি হওয়া স্টুডেন্ট এর প্রোগ্রেস ও কমপ্লিশন প্যানেল */
                 <div className="space-y-4">
                   <div className="space-y-1.5">
                     <div className="flex justify-between text-xs font-bold text-slate-600">
                       <span>আপনার কোর্স প্রোগ্রেস</span>
                       <span>{isAllModulesFinished ? "১০০%" : "৫০%"}</span>
                     </div>
-                    <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
+                    <div
+                      className="w-full h-2 bg-slate-100 rounded-full overflow-hidden"
+                      role="progressbar"
+                      aria-valuenow={isAllModulesFinished ? 100 : 50}
+                      aria-valuemin={0}
+                      aria-valuemax={100}
+                    >
                       <div
                         className={`h-full transition-all duration-500 ${isAllModulesFinished ? "w-full bg-emerald-600" : "w-1/2 bg-amber-500"}`}
                       ></div>
@@ -469,7 +496,7 @@ export default function CourseDetailPage() {
                         : "bg-slate-100 text-slate-400 cursor-not-allowed shadow-none"
                     }`}
                   >
-                    <CheckCircle2 size={15} />
+                    <CheckCircle2 size={15} aria-hidden="true" />
                     <span>কোর্স সম্পন্ন করুন</span>
                   </button>
                   {!isAllModulesFinished && (
@@ -481,8 +508,12 @@ export default function CourseDetailPage() {
                 </div>
               )}
             </motion.div>
-            {/* 📋 মডিউল ও প্লেলিস্ট লিস্টিং কার্ড */}
-            <div className="bg-white rounded-[2rem] border border-neutral-100 shadow-xl overflow-hidden flex flex-col justify-between">
+
+            {/* Curriculum/Playlist Hierarchy Layout Framework Wrapper */}
+            <section
+              className="bg-white rounded-[2rem] border border-neutral-100 shadow-xl overflow-hidden flex flex-col justify-between"
+              aria-label="কোর্স কারিকুলাম সিলেবাস"
+            >
               <div className="p-5 bg-slate-50/80 border-b border-neutral-100 flex justify-between items-center">
                 <div>
                   <h3 className="text-xs sm:text-sm font-black text-slate-800">
@@ -495,15 +526,21 @@ export default function CourseDetailPage() {
                   </p>
                 </div>
                 {!isEnrolled ? (
-                  <Lock size={14} className="text-slate-400" />
+                  <Lock
+                    size={14}
+                    className="text-slate-400"
+                    aria-label="মডিউল লকড"
+                  />
                 ) : (
-                  <Unlock size={14} className="text-emerald-600" />
+                  <Unlock
+                    size={14}
+                    className="text-emerald-600"
+                    aria-label="মডিউল আনলকড"
+                  />
                 )}
               </div>
 
-              {/* প্লেলিস্ট রেন্ডারিং লেয়ার */}
               <div className="divide-y divide-neutral-100 overflow-y-auto max-h-[320px]">
-                {/* আইটেম ০১: লাইভ সেশন মডিউল */}
                 <div
                   onClick={() => isEnrolled && setActiveTab("live")}
                   className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
@@ -517,6 +554,8 @@ export default function CourseDetailPage() {
                       isEnrolled && toggleItemComplete("session-01", e)
                     }
                     className="mt-0.5 shrink-0"
+                    role="checkbox"
+                    aria-checked={completedItems.includes("session-01")}
                   >
                     {completedItems.includes("session-01") ? (
                       <CheckCircle2 size={18} className="text-[#105D38]" />
@@ -529,12 +568,11 @@ export default function CourseDetailPage() {
                       ০১. অরিয়েন্টেশন ও ড্যাশবোর্ড সেটআপ
                     </h4>
                     <span className="text-[10px] text-[#105D38] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#105D38]/10">
-                      <Video size={10} /> লাইভ ক্লাস - একটিভ
+                      <Video size={10} aria-hidden="true" /> লাইভ ক্লাস - একটিভ
                     </span>
                   </div>
                 </div>
 
-                {/* আইটেম ০২: অ্যাসাইনমেন্ট মডিউল */}
                 <div
                   onClick={() => isEnrolled && setActiveTab("assignment")}
                   className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
@@ -543,7 +581,11 @@ export default function CourseDetailPage() {
                       : "cursor-pointer"
                   } ${isEnrolled && activeTab === "assignment" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
                 >
-                  <div className="mt-0.5 shrink-0">
+                  <div
+                    className="mt-0.5 shrink-0"
+                    role="checkbox"
+                    aria-checked={assignmentSubmitted}
+                  >
                     {assignmentSubmitted ? (
                       <CheckCircle2 size={18} className="text-[#105D38]" />
                     ) : (
@@ -557,7 +599,7 @@ export default function CourseDetailPage() {
                     <span
                       className={`text-[10px] font-bold inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${assignmentSubmitted ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
                     >
-                      <FileText size={10} />{" "}
+                      <FileText size={10} aria-hidden="true" />{" "}
                       {assignmentSubmitted
                         ? "সাবমিট সম্পন্ন"
                         : "অ্যাসাইনমেন্ট পেন্ডিং"}
@@ -565,16 +607,19 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
 
-                {/* আইটেম ০৩: লকড থিওরি মডিউল */}
                 <div className="p-4 flex items-start gap-3.5 text-slate-400 bg-slate-50/40">
-                  <Lock size={15} className="mt-0.5 shrink-0 text-slate-300" />
+                  <Lock
+                    size={15}
+                    className="mt-0.5 shrink-0 text-slate-300"
+                    aria-hidden="true"
+                  />
                   <div className="space-y-1">
                     <h4 className="text-xs font-bold text-slate-400 leading-snug">
                       ০৩. অ্যাডভান্সড আর্কিটেকচার ও প্রজেক্ট রিভিউ
                     </h4>
                   </div>
                 </div>
-                {/* আইটেম ০১: লাইভ সেশন মডিউল */}
+
                 <div
                   onClick={() => isEnrolled && setActiveTab("live")}
                   className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
@@ -605,7 +650,6 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
 
-                {/* আইটেম ০২: অ্যাসাইনমেন্ট মডিউল */}
                 <div
                   onClick={() => isEnrolled && setActiveTab("assignment")}
                   className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
@@ -636,7 +680,6 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
 
-                {/* আইটেম ০৩: লকড থিওরি মডিউল */}
                 <div className="p-4 flex items-start gap-3.5 text-slate-400 bg-slate-50/40">
                   <Lock size={15} className="mt-0.5 shrink-0 text-slate-300" />
                   <div className="space-y-1">
@@ -646,8 +689,8 @@ export default function CourseDetailPage() {
                   </div>
                 </div>
               </div>
-            </div>
-          </div>
+            </section>
+          </aside>
         </div>
       </div>
     </main>
