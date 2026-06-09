@@ -1,8 +1,9 @@
 "use client";
 
 import React from "react";
+import Image from "next/image";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
-import { Edit3, Trash2, CheckCircle, FileText, X } from "lucide-react";
+import { Edit3, Trash2, CheckCircle, FileText, Layers, X } from "lucide-react";
 import Swal from "sweetalert2";
 import SubCategoryForm from "./SubCategoryForm";
 import { RenderIcon } from "@/src/config/icons";
@@ -18,10 +19,9 @@ type TSubCategory = {
 type TCategory = {
   _id: string;
   name: string;
-  icon: string;
+  image: string;
   description?: string;
   isActive: boolean;
-  displayOrder: number;
   subCategories: TSubCategory[];
   courseCount?: number;
 };
@@ -64,7 +64,7 @@ export default function CategoryCard({
       if (res.status === 200) {
         Swal.fire({
           icon: "success",
-          title: "উপ-বিভাগ যুক্ত হয়েছে!",
+          title: "উপ-বিভাগ যুক্ত হয়েছে!",
           toast: true,
           position: "top-end",
           showConfirmButton: false,
@@ -75,8 +75,8 @@ export default function CategoryCard({
     } catch (error) {
       Swal.fire({
         icon: "error",
-        title: "ব্যর্থ হয়েছে",
-        text: "সাব-ক্যাটাগরি যুক্ত করা যায়নি।",
+        title: "ব্যর্থ হয়েছে",
+        text: "সাব-ক্যাটাগরি যুক্ত করা যায়নি।",
       });
     }
   };
@@ -109,44 +109,58 @@ export default function CategoryCard({
           if (res.status === 200) {
             Swal.fire({
               icon: "success",
-              title: "সরানো হয়েছে!",
+              title: "সরানো হয়েছে!",
               timer: 1500,
               showConfirmButton: false,
             });
             refresh();
           }
         } catch (error) {
-          Swal.fire({ icon: "error", title: "অপারেশন ব্যর্থ হয়েছে" });
+          Swal.fire({ icon: "error", title: "অপারেশন ব্যর্থ হয়েছে" });
         }
       }
     });
   };
 
   return (
-    <div className="bg-white border border-neutral-200/70 rounded-2xl p-4 sm:p-5 shadow-xs group hover:border-neutral-300 transition-all">
+    <article className="bg-white border border-neutral-200/70 rounded-2xl p-4 sm:p-5 shadow-xs group hover:border-neutral-300 transition-all">
       <div className="flex items-start justify-between gap-4 mb-4 pb-3 border-b border-neutral-100">
-        <div className="min-w-0 flex gap-3 items-start">
-          {/* মেইন ক্যাটাগরি লাইভ আইকন রেন্ডারিং */}
-          <div className="p-3 bg-neutral-50 rounded-xl border text-[#105D38] shrink-0 mt-1">
-            <RenderIcon name={category.icon} className="w-5 h-5" />
+        <div className="min-w-0 flex gap-4 items-start">
+          {/* Next.js Optimized Image Handling Framework Container */}
+          <div className="relative w-14 h-14 rounded-xl border border-neutral-200 bg-neutral-50 overflow-hidden shrink-0 shadow-xs">
+            {category.image ? (
+              <Image
+                src={category.image}
+                alt={`${category.name} থাম্বনেইল`}
+                fill
+                sizes="56px"
+                className="object-cover"
+                priority={false}
+              />
+            ) : (
+              <div
+                className="w-full h-full flex items-center justify-center bg-emerald-50 text-[#105D38]"
+                aria-hidden="true"
+              >
+                <Layers className="w-5 h-5" />
+              </div>
+            )}
           </div>
+
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
-              <span className="px-2 py-0.5 bg-neutral-100 rounded-md text-[10px] font-bold text-neutral-500 border">
-                ক্রম: {category.displayOrder}
-              </span>
               {category.courseCount !== undefined && (
                 <span className="px-2 py-0.5 bg-emerald-50 text-[#105D38] border border-emerald-100 rounded-md text-[10px] font-bold flex items-center gap-1">
-                  <CheckCircle size={10} /> {category.courseCount}টি প্রকাশিত
-                  কোর্স
+                  <CheckCircle size={10} aria-hidden="true" />{" "}
+                  {category.courseCount}টি প্রকাশিত কোর্স
                 </span>
               )}
             </div>
-            <h3 className="font-black text-base sm:text-lg text-neutral-800 mt-1 truncate">
+            <h2 className="font-black text-base sm:text-lg text-neutral-800 mt-1 truncate">
               {category.name}
-            </h3>
+            </h2>
             {category.description && (
-              <p className="text-[11px] font-bold text-neutral-400 mt-0.5 line-clamp-1">
+              <p className="text-[11px] text-neutral-700 mt-0.5 line-clamp-1">
                 {category.description}
               </p>
             )}
@@ -156,21 +170,26 @@ export default function CategoryCard({
         <div className="flex items-center gap-1 shrink-0">
           <button
             onClick={() => onEdit(category._id, category.name)}
-            className="p-2 text-neutral-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all"
+            className="p-2 text-neutral-500 hover:text-blue-600 hover:bg-blue-50 rounded-xl transition-all cursor-pointer"
+            aria-label={`${category.name} নাম পরিবর্তন করুন`}
           >
-            <Edit3 className="w-4 h-4" />
+            <Edit3 className="w-4 h-4" aria-hidden="true" />
           </button>
           <button
             onClick={() => onDelete(category._id)}
-            className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all"
+            className="p-2 text-neutral-400 hover:text-red-500 hover:bg-red-50 rounded-xl transition-all cursor-pointer"
+            aria-label={`${category.name} বিভাগটি মুছে ফেলুন`}
           >
-            <Trash2 className="w-4 h-4" />
+            <Trash2 className="w-4 h-4" aria-hidden="true" />
           </button>
         </div>
       </div>
 
-      {/* সাব ক্যাটাগরি মেটাডাটা লিস্ট উইথ আইকনস */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4">
+      <div
+        className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-4"
+        role="region"
+        aria-label={`${category.name} উপ-বিভাগ তালিকা`}
+      >
         {category.subCategories && category.subCategories.length > 0 ? (
           category.subCategories.map((sub) => (
             <div
@@ -178,18 +197,21 @@ export default function CategoryCard({
               className="group/sub relative bg-neutral-50/50 hover:bg-neutral-50 border border-neutral-200/60 p-2.5 rounded-xl flex items-center justify-between gap-3 transition-all"
             >
               <div className="flex items-center gap-2 min-w-0">
-                <div className="p-1.5 bg-white border rounded-lg text-neutral-600">
+                <div
+                  className="p-1.5 bg-white border rounded-lg text-neutral-600"
+                  aria-hidden="true"
+                >
                   <RenderIcon
                     name={sub.icon || "BookOpen"}
                     className="w-3.5 h-3.5"
                   />
                 </div>
                 <div className="min-w-0">
-                  <p className="text-xs font-black text-neutral-700 truncate">
+                  <h3 className="text-xs font-black truncate">
                     {sub.name}
-                  </p>
+                  </h3>
                   {sub.description && (
-                    <p className="text-[10px] font-semibold text-neutral-400 truncate max-w-[180px]">
+                    <p className="text-[10px] font-semibold text-neutral-700 truncate max-w-[180px]">
                       {sub.description}
                     </p>
                   )}
@@ -198,16 +220,17 @@ export default function CategoryCard({
               <button
                 type="button"
                 onClick={() => handleDeleteSubCategory(sub._id)}
-                className="text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-md p-1 transition-colors shrink-0"
+                className="text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-md p-1 transition-colors shrink-0 cursor-pointer"
+                aria-label={`${sub.name} উপ-বিভাগটি মুছে ফেলুন`}
               >
-                <X className="w-3 h-3" />
+                <X className="w-3 h-3" aria-hidden="true" />
               </button>
             </div>
           ))
         ) : (
           <p className="text-neutral-400 text-xs font-semibold italic flex items-center gap-1 sm:col-span-2 py-2">
-            <FileText size={14} /> কোনো উপ-বিভাগ বা সাব-ক্যাটাগরি যুক্ত করা
-            হয়নি।
+            <FileText size={14} aria-hidden="true" /> কোনো উপ-বিভাগ বা
+            সাব-ক্যাটাগরি যুক্ত করা হয়নি।
           </p>
         )}
       </div>
@@ -216,6 +239,6 @@ export default function CategoryCard({
         categoryName={category.name}
         onAddSub={handleAddSubCategory}
       />
-    </div>
+    </article>
   );
 }

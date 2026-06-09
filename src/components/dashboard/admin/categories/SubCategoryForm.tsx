@@ -39,7 +39,7 @@ export default function SubCategoryForm({
       onSubmit={handleSubmit(onSubmit)}
       className="space-y-3 bg-neutral-50/60 border border-neutral-100 p-4 rounded-xl mt-3"
     >
-      <span className="text-[11px] font-black text-neutral-500 uppercase tracking-wider block">
+      <span className="text-[11px] font-black text-neutral-700 block">
         নতুন উপ-বিভাগ ফর্ম ({categoryName})
       </span>
 
@@ -93,7 +93,7 @@ export default function SubCategoryForm({
       <div className="flex justify-end">
         <button
           disabled={loading}
-          className="bg-neutral-800 hover:bg-neutral-900 text-white px-5 py-2.5 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 w-full sm:w-auto transition-all disabled:opacity-50 active:scale-[0.98]"
+          className="bg-neutral-800 hover:bg-neutral-900 text-white px-5 py-2.5 rounded-xl text-xs md:text-sm flex items-center justify-center gap-1.5 w-full sm:w-auto transition-all disabled:opacity-50 active:scale-[0.98]"
         >
           {loading ? (
             <>
