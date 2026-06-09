@@ -21,8 +21,97 @@ import {
   FolderKanban,
   House,
   Settings2,
+  ChevronDown,
 } from "lucide-react";
 import useUserRole from "../../hooks/useUserRole";
+
+// ড্রপডাউন আইটেম ম্যানেজ করার সাব-কম্পোনেন্ট
+function SidebarLinkGroup({
+  link,
+  pathname,
+  setSidebarOpen,
+}: {
+  link: any;
+  pathname: string;
+  setSidebarOpen: (open: boolean) => void;
+}) {
+  const hasActiveChild = link.children?.some((child: any) => pathname === child.href);
+  const [isOpen, setIsOpen] = useState(hasActiveChild);
+
+  const LinkIcon = link.icon;
+
+  if (!link.children) {
+    // --- অ্যাক্টিভ রুট চেক করার ফিক্সড লজিক (স্ট্রিক্ট ম্যাচিং) ---
+    let isActive = false;
+
+    if (link.href === "/") {
+      isActive = pathname === "/";
+    } else if (link.href === "/dashboard") {
+      isActive = pathname === "/dashboard";
+    } else if (link.href === "/dashboard/teacher/teacher-dashboard") {
+      isActive = pathname === "/dashboard/teacher/teacher-dashboard";
+    } else {
+      isActive = pathname === link.href;
+    }
+
+    return (
+      <Link
+        href={link.href}
+        onClick={() => setSidebarOpen(false)}
+        className={`flex items-center gap-3 p-3 rounded-xl font-medium transition-all ${
+          isActive
+            ? "bg-[#C5A059] text-white shadow-lg" // অ্যাক্টিভ ক্লাস স্টাইল
+            : "text-green-100 hover:bg-green-800/50"
+        }`}
+      >
+        <LinkIcon size={20} /> {link.name}
+      </Link>
+    );
+  }
+
+  return (
+    <div className="space-y-1">
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className={`flex items-center justify-between w-full p-3 rounded-xl font-medium transition-all text-green-100 hover:bg-green-800/50 ${
+          hasActiveChild ? "bg-green-900/40 text-white" : ""
+        }`}
+      >
+        <div className="flex items-center gap-3">
+          <LinkIcon size={20} />
+          <span>{link.name}</span>
+        </div>
+        <ChevronDown
+          size={16}
+          className={`transition-transform duration-200 ${isOpen ? "rotate-180" : ""}`}
+        />
+      </button>
+
+      {isOpen && (
+        <div className="pl-6 space-y-1 transition-all">
+          {link.children.map((child: any) => {
+            const isChildActive = pathname === child.href;
+            const ChildIcon = child.icon;
+            return (
+              <Link
+                key={child.href}
+                href={child.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center gap-3 p-2 rounded-lg text-sm font-medium transition-all ${
+                  isChildActive
+                    ? "bg-[#C5A059] text-white shadow-md"
+                    : "text-green-200 hover:bg-green-800/30 hover:text-white"
+                }`}
+              >
+                <ChildIcon size={18} /> {child.name}
+              </Link>
+            );
+          })}
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function DashboardLayout({
   children,
@@ -31,7 +120,7 @@ export default function DashboardLayout({
 }) {
   const [isSidebarOpen, setSidebarOpen] = useState(false);
   const pathname = usePathname();
-  const { role, user } = useUserRole();
+  const { role } = useUserRole();
   const queryClient = useQueryClient();
 
   const handleLogout = async () => {
@@ -53,151 +142,59 @@ export default function DashboardLayout({
     });
   };
 
-  const allLinks = [
-    {
-      name: "হোম",
-      href: "/",
-      icon: House,
-      roles: ["teacher", "admin"],
-    },
-    {
-      name: "টিচার ড্যাশবোর্ড",
-      href: "/dashboard/teacher/teacher-dashboard",
-      icon: LayoutDashboard,
-      roles: ["teacher"],
-    },
-    {
-      name: "আমার কোর্সসমূহ",
-      href: "/dashboard/teacher/my-course",
-      icon: Library,
-      roles: ["teacher"],
-    },
-    {
-      name: "ক্লাস লিঙ্ক",
-      href: "/dashboard/teacher/class-link",
-      icon: Video,
-      roles: ["teacher"],
-    },
-    {
-      name: "শপ অর্ডার ",
-      href: "/dashboard/admin/admin-order",
-      icon: ListOrdered,
-      roles: ["admin"],
-    },
-    {
-      name: "শিক্ষকবৃন্দ",
-      href: "/dashboard/teacher/teacher-list",
-      icon: Users,
-      roles: ["admin"],
-    },
-    {
-      name: "শিক্ষার্থীবৃন্দ",
-      href: "/dashboard/admin/students-list",
-      icon: UserCog,
-      roles: ["admin"],
-    },
-    {
-      name: "সকল সদস্যবৃন্দ",
-      href: "/dashboard/teacher/all-users",
-      icon: Users,
-      roles: ["admin"],
-    },
-    {
-      name: "অ্যাসাইনমেন্ট ও মূল্যায়ন",
-      href: "/dashboard/teacher/assignment",
-      icon: GraduationCap,
-      roles: ["teacher"],
-    },
-    {
-      name: "নোটিশ বোর্ড",
-      href: "/dashboard/teacher/notice-board",
-      icon: Bell,
-      roles: ["teacher"],
-    },
-    {
-      name: "নোটিশ বোর্ড",
-      href: "/dashboard/admin/admin-notice",
-      icon: Bell,
-      roles: ["admin"],
-    },
-    {
-      name: "Order management",
-      href: "/dashboard/admin/order-management",
-      icon: UserCog,
-      roles: ["admin"],
-    },
-    {
-      name: "Product Delivey",
-      href: "/dashboard/admin/product-delivey",
-      icon: UserCog,
-      roles: ["admin"],
-    },
-    {
-      name: "কোর্সসমূহ",
-      href: "/dashboard/admin/my-course",
-      icon: Library,
-      roles: ["admin"],
-    },
-    {
-      name: "কোর্স যুক্ত করুন",
-      href: "/dashboard/admin/add-course",
-      icon: PlusSquare,
-      roles: ["admin"],
-    },
-    {
-      name: "ব্যাচ ম্যানেজমেন্ট",
-      href: "/dashboard/admin/manage-batch",
-      icon: PlusSquare,
-      roles: ["admin"],
-    },
-    {
-      name: "ক্যাটাগরি",
-      href: "/dashboard/admin/categories",
-      icon: PlusSquare,
-      roles: ["admin"],
-    },
-    {
-      name: "শিক্ষক-নিয়োগ",
-      href: "/dashboard/admin/teacher-assign",
-      icon: PlusSquare,
-      roles: ["admin"],
-    },
-    {
-      name: "গ্যালারি ম্যনেজমেন্ট",
-      href: "/dashboard/admin/gallery",
-      icon: FolderKanban,
-      roles: ["admin"],
-    },
-    {
-      name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
-      href: "/dashboard/admin/testimonial",
-      icon: FolderKanban,
-      roles: ["admin"],
-    },
-    {
-      name: "কন্টেন্ট কন্ট্রোল",
-      href: "/dashboard/admin/content-control",
-      icon: Settings2,
-      roles: ["admin"],
-    },
-    {
-      name: "Donations",
-      href: "/dashboard/admin/donations",
-      icon: Settings2,
-      roles: ["admin"],
-    },
-
-    {
-      name: "প্রোফাইল সেটিংস",
-      href: "/dashboard/teacher/profile",
-      icon: UserCog,
-      roles: ["teacher", "admin"],
-    },
+  // --- শিক্ষক (Teacher) এর মেনু লিংক সমূহ ---
+  const teacherLinks = [
+    { name: "হোম", href: "/", icon: House },
+    { name: "Dashboard", href: "/dashboard/teacher/teacher-dashboard", icon: LayoutDashboard },
+    { name: "আমার কোর্সসমূহ", href: "/dashboard/teacher/my-course", icon: Library },
+    { name: "ক্লাস লিঙ্ক", href: "/dashboard/teacher/class-link", icon: Video },
+    { name: "অ্যাসাইনমেন্ট ও মূল্যায়ন", href: "/dashboard/teacher/assignment", icon: GraduationCap },
+    { name: "নোটিশ বোর্ড (টিচার)", href: "/dashboard/teacher/notice-board", icon: Bell },
+    { name: "সকল সদস্যবৃন্দ", href: "/dashboard/teacher/all-users", icon: Users },
+    { name: "প্রোফাইল সেটিংস", href: "/dashboard/teacher/profile", icon: UserCog },
   ];
 
-  const navLinks = allLinks.filter((link) =>
-    link.roles.includes(role as string),
-  );
+  // --- অ্যাডমিন (Admin) এর মেনু লিংক সমূহ ---
+  const adminLinks = [
+    { name: "হোম", href: "/", icon: House },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    {
+      name: "কোর্স ম্যানেজমেন্ট",
+      icon: ListOrdered,
+      children: [
+        { name: "কোর্সসমূহ", href: "/dashboard/admin/my-course", icon: Library },
+        { name: "কোর্স যুক্ত করুন", href: "/dashboard/admin/add-course", icon: PlusSquare },
+        { name: "ব্যাচ নিযুক্ত", href: "/dashboard/admin/batch-assign", icon: PlusSquare },
+        { name: "ব্যাচ ম্যানেজমেন্ট", href: "/dashboard/admin/manage-batch", icon: PlusSquare },
+        { name: "ক্যাটাগরি", href: "/dashboard/admin/categories", icon: PlusSquare },
+      ],
+    },
+    {
+      name: "ব্যবহারকারী ও শিক্ষক",
+      icon: Users,
+      children: [
+        { name: "শিক্ষকবৃন্দ", href: "/dashboard/admin/teacher-list", icon: Users },
+        { name: "শিক্ষার্থীবৃন্দ", href: "/dashboard/admin/students-list", icon: UserCog },
+      ],
+    },
+    {
+      name: "শপ ম্যানেজমেন্ট",
+      icon: ListOrdered,
+      children: [
+        { name: "Product Management", href: "/dashboard/admin/products-management", icon: UserCog },
+        { name: "Order Management", href: "/dashboard/admin/order-management", icon: ListOrdered },
+        { name: "Product Delivery", href: "/dashboard/admin/product-delivey", icon: UserCog },
+      ],
+    },
+    { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },
+    { name: "গ্যালারি ম্যনেজমেন্ট", href: "/dashboard/admin/gallery", icon: FolderKanban },
+    { name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট", href: "/dashboard/admin/testimonial", icon: FolderKanban },
+    { name: "কন্টেন্ট কন্ট্রোল", href: "/dashboard/admin/content-control", icon: Settings2 },
+    { name: "অনুদান", href: "/dashboard/admin/donations", icon: Settings2 },
+    { name: "প্রোফাইল সেটিংস", href: "/dashboard/teacher/profile", icon: UserCog },
+  ];
+
+  const navLinks = role === "admin" ? adminLinks : role === "teacher" ? teacherLinks : [];
 
   return (
     <div className="flex h-screen bg-neutral-100">
@@ -210,11 +207,11 @@ export default function DashboardLayout({
 
       <aside
         className={`
-        fixed inset-y-0 left-0 z-50 w-64 bg-[#105D38] text-white flex flex-col 
-        transition-transform duration-300 transform md:relative md:translate-x-0
-        ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
-        rounded-tr-2xl shadow-xl overflow-hidden
-      `}
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#105D38] text-white flex flex-col 
+          transition-transform duration-300 transform md:relative md:translate-x-0
+          ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
+          rounded-tr-2xl shadow-xl overflow-hidden
+        `}
       >
         <div className="p-6 border-b border-green-800 flex items-center justify-between">
           <div className="flex items-center gap-3">
@@ -229,30 +226,21 @@ export default function DashboardLayout({
           </button>
         </div>
 
-        <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
-          {navLinks.map((link) => {
-            const isActive = pathname === link.href;
-            return (
-              <Link
-                key={link.href}
-                href={link.href}
-                onClick={() => setSidebarOpen(false)}
-                className={`flex items-center gap-3 p-3 rounded-xl font-medium transition-all ${
-                  isActive
-                    ? "bg-[#C5A059] text-white shadow-lg"
-                    : "text-green-100 hover:bg-green-800/50"
-                }`}
-              >
-                <link.icon size={20} /> {link.name}
-              </Link>
-            );
-          })}
+        <nav className="flex-1 p-4 space-y-1 overflow-y-auto scrollbar-none">
+          {navLinks.map((link, index) => (
+            <SidebarLinkGroup
+              key={index}
+              link={link}
+              pathname={pathname}
+              setSidebarOpen={setSidebarOpen}
+            />
+          ))}
         </nav>
 
         <div className="p-4 border-t border-green-800">
           <button
             onClick={handleLogout}
-            className="flex items-center gap-3 w-full p-3 cursor-pointer hover:bg-red-600 rounded-xl text-green-100 hover:text-white font-medium transition"
+            className="flex items-center gap-3 w-full p-3 cursor-pointer bg-red-600 rounded-xl text-white font-medium transition"
           >
             <LogOut size={20} /> লগআউট
           </button>
@@ -281,6 +269,16 @@ export default function DashboardLayout({
           {children}
         </div>
       </main>
+
+      <style jsx global>{`
+        .scrollbar-none::-webkit-scrollbar {
+          display: none;
+        }
+        .scrollbar-none {
+          -ms-overflow-style: none;
+          scrollbar-width: none;
+        }
+      `}</style>
     </div>
   );
 }

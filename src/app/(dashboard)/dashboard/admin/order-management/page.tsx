@@ -1,313 +1,387 @@
 "use client";
-
 import React, { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
+import Image from "next/image";
 import {
-  Plus,
-  Edit3,
-  Trash2,
-  Package,
-  AlertTriangle,
-  CheckCircle2,
+  ShoppingBag,
+  User,
+  Phone,
+  MapPin,
+  Calendar,
+  Clock,
+  Loader2,
+  RefreshCw,
+  Check,
   X,
-  ChevronLeft,
-  ChevronRight,
+  Trash2,
 } from "lucide-react";
-import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
-import ProductModal from "@/src/components/shared/AdminCourseModal";
 import Swal from "sweetalert2";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
-export default function AdminProducts() {
+interface OrderItem {
+  product: {
+    _id: string;
+    name: string;
+    price: number;
+    image: string;
+  };
+  quantity: number;
+  priceAtPurchase: number;
+}
+
+interface OrderData {
+  _id: string;
+  customerDetails: {
+    name: string;
+    phone: string;
+    address: string;
+    district: string;
+  };
+  items: OrderItem[];
+  totalAmount: number;
+  orderStatus: string;
+  paymentDetails: {
+    method: string;
+    status: string;
+    bkashMsisdn: string;
+    transactionId: string;
+  };
+  createdAt: string;
+}
+
+export default function AdminPendingOrders() {
   const axiosSecure = useAxiosSecure();
-  const queryClient = useQueryClient();
+  const [actionLoading, setActionLoading] = useState<string | null>(null);
 
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const [editingProduct, setEditingProduct] = useState<any>(null);
-
-  const [currentPage, setCurrentPage] = useState(1);
-  const itemsPerPage = 10;
-
-  const {
-    data: products = [],
-    isLoading,
-    isError,
-  } = useQuery({
-    queryKey: ["adminProducts"],
+  const { data, isLoading, isError, refetch, isFetching } = useQuery({
+    queryKey: ["adminPendingOrders"],
     queryFn: async () => {
-      const res = await axiosSecure.get("/products");
+      const res = await axiosSecure.get("/orders/admin/pending");
       return res.data;
     },
+    staleTime: 30 * 1000,
   });
 
-  const createProductMutation = useMutation({
-    mutationFn: async (formData: FormData) => {
-      return (
-        await axiosSecure.post("/products", formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-      ).data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      setIsModalOpen(false);
-      Swal.fire("সফল!", "প্রোডাক্ট তৈরি হয়েছে।", "success");
-    },
-    onError: (err: any) => {
+  const orders: OrderData[] = data?.data || [];
+  const totalPending = data?.totalPending || 0;
+
+  const handleUpdateStatus = async (
+    orderId: string,
+    statusValue: "processing" | "cancelled",
+  ) => {
+    const confirmText =
+      statusValue === "processing"
+        ? "আপনি কি অর্ডারটি কনফার্ম করতে চান?"
+        : "আপনি কি অর্ডারটি বাতিল করতে চান?";
+    const confirmButtonColor =
+      statusValue === "processing" ? "#105D38" : "#d33";
+
+    const result = await Swal.fire({
+      title: "নিশ্চিত করুন",
+      text: confirmText,
+      icon: "question",
+      showCancelButton: true,
+      confirmButtonColor: confirmButtonColor,
+      cancelButtonColor: "#aaa",
+      confirmButtonText:
+        statusValue === "processing"
+          ? "হ্যাঁ, কনফার্ম করুন"
+          : "হ্যাঁ, বাতিল করুন",
+      cancelButtonText: "না",
+    });
+
+    if (!result.isConfirmed) return;
+
+    setActionLoading(orderId);
+    try {
+      const response = await axiosSecure.put(
+        `/orders/admin/${orderId}/status`,
+        {
+          orderStatus: statusValue,
+        },
+      );
+
+      if (response.status === 200) {
+        Swal.fire({
+          title: "সফল হয়েছে!",
+          text: response.data?.message || "অর্ডার স্ট্যাটাস আপডেট হয়েছে।",
+          icon: "success",
+          confirmButtonColor: "#105D38",
+        });
+        refetch();
+      }
+    } catch (error: any) {
+      console.error("Status Update Error:", error);
       Swal.fire(
-        "এরর!",
-        err?.response?.data?.message || "ব্যর্থ হয়েছে",
+        "ব্যর্থ হয়েছে!",
+        error?.response?.data?.message || "স্ট্যাটাস পরিবর্তন করা যায়নি।",
         "error",
       );
-    },
-  });
-
-  const updateProductMutation = useMutation({
-    mutationFn: async ({
-      id,
-      formData,
-    }: {
-      id: string;
-      formData: FormData;
-    }) => {
-      return (
-        await axiosSecure.put(`/products/${id}`, formData, {
-          headers: { "Content-Type": "multipart/form-data" },
-        })
-      ).data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      setIsModalOpen(false);
-      Swal.fire("সফল!", "প্রোডাক্ট আপডেট হয়েছে।", "success");
-    },
-  });
-
-  const deleteProductMutation = useMutation({
-    mutationFn: async (id: string) => {
-      return (await axiosSecure.delete(`/products/${id}`)).data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["adminProducts"] });
-      if (paginatedProducts.length === 1 && currentPage > 1) {
-        setCurrentPage(currentPage - 1);
-      }
-      Swal.fire("ডিলিট হয়েছে!", "প্রোডাক্টটি সফলভাবে ডিলিট হয়েছে।", "success");
-    },
-  });
-
-  const totalPages = Math.ceil(products.length / itemsPerPage);
-  const indexOfLastItem = currentPage * itemsPerPage;
-  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const paginatedProducts = products.slice(indexOfFirstItem, indexOfLastItem);
-
-  const handleModalSubmit = (formData: FormData) => {
-    if (editingProduct) {
-      updateProductMutation.mutate({ id: editingProduct._id, formData });
-    } else {
-      createProductMutation.mutate(formData);
+    } finally {
+      setActionLoading(null);
     }
   };
 
-  const handleDelete = (id: string) => {
-    Swal.fire({
+  const handleDeleteOrder = async (orderId: string) => {
+    const result = await Swal.fire({
       title: "আপনি কি নিশ্চিত?",
-      text: "ডিলিট করার পর ডাটা রিকভার করা সম্ভব নয়!",
+      text: "এই অর্ডারের রেকর্ডটি চিরতরে ডাটাবেস থেকে মুছে ফেলা হবে!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#105D38",
-      confirmButtonText: "হ্যাঁ, ডিলিট করুন!",
+      cancelButtonColor: "#aaa",
+      confirmButtonText: "হ্যাঁ, ডিলিট করুন",
       cancelButtonText: "বাতিল",
-    }).then((result) => {
-      if (result.isConfirmed) deleteProductMutation.mutate(id);
     });
+
+    if (!result.isConfirmed) return;
+
+    setActionLoading(orderId);
+    try {
+      const response = await axiosSecure.delete(`/orders/admin/${orderId}`);
+
+      if (response.status === 200) {
+        Swal.fire({
+          title: "মুছে ফেলা হয়েছে!",
+          text: response.data?.message || "অর্ডারটি সফলভাবে ডিলিট হয়েছে।",
+          icon: "success",
+          confirmButtonColor: "#105D38",
+        });
+        refetch();
+      }
+    } catch (error: any) {
+      console.error("Order Delete Error:", error);
+      Swal.fire(
+        "ত্রুটি!",
+        error?.response?.data?.message || "অর্ডারটি ডিলিট করা সম্ভব হয়নি।",
+        "error",
+      );
+    } finally {
+      setActionLoading(null);
+    }
+  };
+
+  const formatDate = (dateString: string) => {
+    const options: Intl.DateTimeFormatOptions = {
+      day: "numeric",
+      month: "short",
+      year: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+    };
+    return new Date(dateString).toLocaleDateString("bn-BD", options);
   };
 
   return (
-    <div className="min-h-screen bg-[#F4F7F5] p-4 md:p-8 pt-20 lg:pt-24">
-      {/* হেডার সেকশন */}
-      <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-neutral-100 shadow-sm mb-6">
-        <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-emerald-50 text-[#105D38] rounded-xl flex items-center justify-center shadow-inner">
-            <Package size={24} />
-          </div>
+    <div className="min-h-screen bg-[#F9FBFA] pt-24 pb-12 px-4 md:px-8">
+      <div className="max-w-6xl mx-auto">
+        {/* Header Section */}
+        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 bg-white p-6 rounded-[2rem] border border-neutral-100 shadow-sm">
           <div>
-            <h1 className="text-lg md:text-xl font-black text-neutral-800">
-              অর্ডার ম্যানেজমেন্ট
-            </h1>
-            <p className="text-xs text-neutral-400 font-medium">
-              মোট অর্ডার সংখ্যা: {products.length} টি
+            <div className="flex items-center gap-2">
+              <h1 className="text-xl md:text-2xl font-black text-neutral-900">
+                পেন্ডিং অর্ডারসমূহ
+              </h1>
+              <span className="bg-amber-100 text-amber-800 text-xs font-black px-2.5 py-1 rounded-full flex items-center gap-1 animate-pulse">
+                <Clock className="w-3 h-3" /> {totalPending} টি পেন্ডিং
+              </span>
+            </div>
+            <p className="text-xs md:text-sm text-neutral-400 font-medium mt-1">
+              কাস্টমারদের নতুন অর্ডারগুলো অ্যাকশন বাটনের সাহায্যে ম্যানেজ করুন
             </p>
           </div>
-        </div>
-        <button
-          onClick={() => {
-            setEditingProduct(null);
-            setIsModalOpen(true);
-          }}
-          className="w-full cursor-pointer sm:w-auto px-4 py-2.5 bg-[#105D38] hover:bg-[#0c462a] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
-        >
-          <Plus size={16} />
-          <span>নতুন প্রোডাক্ট যোগ করুন</span>
-        </button>
-      </div>
 
-      {/* প্রোডাক্ট টেবিল */}
-      <div className="max-w-6xl mx-auto bg-white rounded-2xl border border-neutral-100 shadow-sm overflow-hidden">
-        {isLoading ? (
-          <div className="flex flex-col items-center justify-center py-20 gap-2">
+          <button
+            onClick={() => refetch()}
+            disabled={isLoading || isFetching}
+            className="flex items-center gap-2 px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 active:scale-95 text-neutral-600 rounded-xl text-xs font-bold border border-neutral-200/60 transition-all disabled:opacity-50"
+          >
+            <RefreshCw
+              className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`}
+            />
+            রিফ্রেশ করুন
+          </button>
+        </div>
+
+        {/* Loading State */}
+        {isLoading && (
+          <div className="h-64 flex flex-col items-center justify-center text-neutral-500 gap-3">
             <LoadingSpinner />
           </div>
-        ) : isError ? (
-          <div className="flex flex-col items-center justify-center py-20 text-red-500 gap-2">
-            <AlertTriangle size={32} />
-            <p className="text-xs font-bold">সার্ভার এরর!</p>
-          </div>
-        ) : paginatedProducts.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 text-neutral-400 gap-2">
-            <Package size={40} />
-            <p className="text-xs font-bold">কোনো প্রোডাক্ট নেই।</p>
-          </div>
-        ) : (
-          <>
-            <div className="overflow-x-auto">
-              <table className="w-full text-left border-collapse">
-                <thead>
-                  <tr className="bg-neutral-50 border-b border-neutral-100 text-[11px] font-black uppercase text-neutral-500 tracking-wider">
-                    <th className="py-4 px-6">প্রোডাক্ট</th>
-                    <th className="py-4 px-4">ক্যাটাগরি</th>
-                    <th className="py-4 px-4">মূল্য</th>
-                    <th className="py-4 px-4"> কোর্স স্ট্যাটাস</th>
-                    <th className="py-4 px-4 text-right">অ্যাকশন</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-neutral-50 text-xs text-neutral-700 font-medium">
-                  {paginatedProducts.map((product: any) => (
-                    <tr
-                      key={product._id}
-                      className="hover:bg-neutral-50/50 transition-all"
-                    >
-                      <td className="py-4 px-6 flex items-center gap-3 min-w-[250px]">
-                        <img
-                          src={`${axiosSecure.defaults.baseURL?.replace("/api", "")}/${product.image}`}
-                          alt={product.name}
-                          className="w-10 h-10 rounded-lg object-cover bg-neutral-100 border border-neutral-200/60"
-                          onError={(e: any) => {
-                            e.target.src =
-                              "https://placehold.co/100x100?text=Book";
-                          }}
-                        />
-                        <div className="space-y-0.5">
-                          <p className="font-black text-neutral-800 leading-tight">
-                            {product.name}
-                          </p>
-                          <p className="text-[10px] text-neutral-400">
-                            {product.details?.publisher || "পাবলিশার নেই"}
-                          </p>
-                        </div>
-                      </td>
-                      <td className="py-4 px-4">
-                        <span className="px-2 py-1 bg-neutral-100 text-neutral-600 rounded-md text-[10px] font-bold">
-                          {product.category}
-                        </span>
-                      </td>
-                      <td className="py-4 px-4 font-bold text-neutral-800">
-                        ৳{product.price}
-                      </td>
-                      <td className="py-4 px-4">
-                        {product.inStock ? (
-                          <span className="px-2 py-0.5 bg-emerald-50 text-emerald-600 rounded text-[10px] font-bold inline-flex items-center gap-1">
-                            <CheckCircle2 size={10} /> In Stock
-                          </span>
-                        ) : (
-                          <span className="px-2 py-0.5 bg-red-50 text-red-500 rounded text-[10px] font-bold inline-flex items-center gap-1">
-                            <X size={10} /> মেয়াদ শেষ
-                          </span>
-                        )}
-                      </td>
-                      <td className="py-4 px-4 text-right">
-                        <div className="flex items-center justify-end gap-2">
-                          <button
-                            onClick={() => {
-                              setEditingProduct(product);
-                              setIsModalOpen(true);
-                            }}
-                            className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg"
-                          >
-                            <Edit3 size={15} />
-                          </button>
-                          <button
-                            onClick={() => handleDelete(product._id)}
-                            className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg"
-                          >
-                            <Trash2 size={15} />
-                          </button>
-                        </div>
-                      </td>
-                    </tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
+        )}
 
-            {totalPages > 1 && (
-              <div className="px-6 py-4 border-t border-neutral-100 flex flex-col sm:flex-row items-center justify-between gap-3 bg-neutral-50/50">
-                <p className="text-[11px] font-bold text-neutral-400">
-                  {products.length} এর মধ্যে {indexOfFirstItem + 1}-
-                  {Math.min(indexOfLastItem, products.length)} নম্বর প্রোডাক্ট
-                  দেখানো হচ্ছে
-                </p>
-                <div className="flex items-center gap-1.5">
+        {/* Error State */}
+        {isError && (
+          <div className="bg-red-50 border border-red-200 text-red-800 p-6 rounded-2xl text-center">
+            <p className="font-bold">ডাটা লোড করতে সমস্যা হয়েছে!</p>
+            <p className="text-xs mt-1 text-red-600">
+              দয়া করে আপনার অ্যাডমিন অ্যাকাউন্ট রি-লগইন করে চেক করুন।
+            </p>
+          </div>
+        )}
+
+        {/* Empty State */}
+        {!isLoading && orders.length === 0 && (
+          <div className="bg-white rounded-[2rem] p-12 text-center border border-neutral-100 shadow-sm">
+            <ShoppingBag className="w-12 h-12 text-neutral-300 mx-auto mb-3" />
+            <p className="text-neutral-500 font-bold">
+              আলহামদুলিল্লাহ, কোনো পেন্ডিং অর্ডার নেই!
+            </p>
+          </div>
+        )}
+
+        {/* Responsive Mobile-First Card Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {orders.map((order) => (
+            <div
+              key={order._id}
+              className="bg-white border border-neutral-100/80 rounded-[2.2rem] p-5 md:p-6 shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between relative overflow-hidden"
+            >
+              {actionLoading === order._id && (
+                <div className="absolute inset-0 bg-white/80 backdrop-blur-sm z-10 flex items-center justify-center">
+                  <LoadingSpinner />
+                </div>
+              )}
+
+              {/* Card Body */}
+              <div>
+                <div className="flex justify-between items-start border-b border-dashed border-neutral-100 pb-4 mb-4">
+                  <div>
+                    <span className="text-[10px] uppercase font-bold tracking-wider text-neutral-400 block">
+                      Order ID
+                    </span>
+                    <span className="text-xs font-black text-neutral-700 bg-neutral-100 px-2 py-0.5 rounded-md">
+                      #{order._id.slice(-6)}
+                    </span>
+                  </div>
                   <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.max(prev - 1, 1))
-                    }
-                    disabled={currentPage === 1}
-                    className="p-1.5 rounded-lg border border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    onClick={() => handleDeleteOrder(order._id)}
+                    className="p-1.5 text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    title="রেকর্ড ডিলিট করুন"
                   >
-                    <ChevronLeft size={14} />
+                    <Trash2 className="w-4 h-4" />
                   </button>
-                  {Array.from({ length: totalPages }, (_, i) => i + 1).map(
-                    (page) => (
-                      <button
-                        key={page}
-                        onClick={() => setCurrentPage(page)}
-                        className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all ${
-                          currentPage === page
-                            ? "bg-[#105D38] text-white border-[#105D38]"
-                            : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
-                        }`}
-                      >
-                        {page}
-                      </button>
-                    ),
-                  )}
+                </div>
+
+                {/* Customer Info Box */}
+                <div className="space-y-2.5 mb-5 bg-neutral-50/60 p-3.5 rounded-2xl border border-neutral-100/50">
+                  <div className="flex items-center gap-2.5 text-neutral-800">
+                    <User className="w-4 h-4 text-[#105D38] flex-shrink-0" />
+                    <span className="font-black text-sm">
+                      {order.customerDetails.name}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-neutral-600">
+                    <Phone className="w-4 h-4 text-[#105D38] flex-shrink-0" />
+                    <a
+                      href={`tel:${order.customerDetails.phone}`}
+                      className="font-bold text-xs hover:underline hover:text-[#105D38]"
+                    >
+                      {order.customerDetails.phone}
+                    </a>
+                  </div>
+                  <div className="flex items-start gap-2.5 text-neutral-500">
+                    <MapPin className="w-4 h-4 text-[#105D38] mt-0.5 flex-shrink-0" />
+                    <span className="font-medium text-xs leading-relaxed">
+                      {order.customerDetails.address},{" "}
+                      <b className="text-neutral-700">
+                        {order.customerDetails.district}
+                      </b>
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2.5 text-neutral-400 border-t border-neutral-200/40 pt-2 mt-1">
+                    <Calendar className="w-3.5 h-3.5 text-neutral-400 flex-shrink-0" />
+                    <span className="text-[11px] font-bold">
+                      {formatDate(order.createdAt)}
+                    </span>
+                  </div>
+                </div>
+
+                {/* Ordered Items List */}
+                <div className="space-y-3 mb-4">
+                  <span className="text-[11px] font-black text-neutral-400 uppercase tracking-wider block px-1">
+                    অর্ডারকৃত পণ্য
+                  </span>
+                  {order.items.map((item, idx) => (
+                    <div
+                      key={idx}
+                      className="flex gap-3 items-center p-2 bg-white border border-neutral-100 rounded-xl"
+                    >
+                      <div className="relative w-12 h-12 bg-neutral-50 rounded-lg overflow-hidden border border-neutral-100 flex-shrink-0">
+                        {item.product?.image ? (
+                          <Image
+                            src={
+                              item.product.image.startsWith("http")
+                                ? item.product.image
+                                : `/${item.product.image}`
+                            }
+                            alt={item.product?.name || "Product"}
+                            fill
+                            className="object-contain p-1"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-neutral-100 text-[8px] flex items-center justify-center">
+                            No Img
+                          </div>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <h4 className="font-bold text-xs text-neutral-800 line-clamp-1 leading-snug">
+                          {item.product?.name || "প্রোডাক্টের নাম নেই"}
+                        </h4>
+                        <p className="text-[11px] font-medium text-neutral-400 mt-0.5">
+                          ৳{item.priceAtPurchase} × {item.quantity}
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+
+              {/* Total Amount & Call to Actions */}
+              <div className="mt-4 pt-4 border-t border-neutral-100">
+                <div className="flex justify-between items-center mb-4 px-1">
+                  <div>
+                    <span className="text-[10px] font-bold text-neutral-400 block uppercase">
+                      পেমেন্ট মেথড
+                    </span>
+                    <span className="text-[11px] font-black text-blue-600 uppercase bg-blue-50 px-2 py-0.5 rounded-md mt-0.5 inline-block">
+                      ক্যাশ অন ডেলিভারি
+                    </span>
+                  </div>
+                  <div className="text-right">
+                    <span className="text-[10px] font-bold text-neutral-400 block">
+                      সর্বমোট বিল
+                    </span>
+                    <span className="text-lg font-black text-[#105D38]">
+                      ৳{order.totalAmount}
+                    </span>
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-3">
                   <button
-                    onClick={() =>
-                      setCurrentPage((prev) => Math.min(prev + 1, totalPages))
-                    }
-                    disabled={currentPage === totalPages}
-                    className="p-1.5 rounded-lg border cursor-pointer border-neutral-200 bg-white hover:bg-neutral-50 text-neutral-600 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+                    onClick={() => handleUpdateStatus(order._id, "cancelled")}
+                    className="py-2.5 border border-red-100 hover:bg-red-50 text-red-600 text-xs font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-1"
                   >
-                    <ChevronRight size={14} />
+                    <X className="w-3.5 h-3.5" />
+                    অর্ডার বাতিল
+                  </button>
+                  {/* কনফার্ম বাটন -> স্ট্যাটাস processing */}
+                  <button
+                    onClick={() => handleUpdateStatus(order._id, "processing")}
+                    className="py-2.5 bg-[#105D38] hover:bg-[#0c4a2c] text-white text-xs font-black rounded-xl shadow-md shadow-green-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1"
+                  >
+                    <Check className="w-3.5 h-3.5" />
+                    অর্ডার কনফার্ম
                   </button>
                 </div>
               </div>
-            )}
-          </>
-        )}
+            </div>
+          ))}
+        </div>
       </div>
-
-      <ProductModal
-        isOpen={isModalOpen}
-        onClose={() => setIsModalOpen(false)}
-        editingProduct={editingProduct}
-        onSubmit={handleModalSubmit}
-        isPending={
-          createProductMutation.isPending || updateProductMutation.isPending
-        }
-      />
     </div>
   );
 }
