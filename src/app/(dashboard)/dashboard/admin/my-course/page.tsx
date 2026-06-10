@@ -120,7 +120,7 @@ const MyCourses = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-neutral-800">
-            আমার курсসমূহ
+            আমার কোর্সসমূহ
           </h2>
           <p className="text-[10px] md:text-sm text-neutral-500">
             মোট {courses.length} টি কোর্স পরিচালনা করছেন
