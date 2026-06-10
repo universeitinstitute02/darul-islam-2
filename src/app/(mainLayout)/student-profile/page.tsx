@@ -62,9 +62,9 @@ const StudentDashboard = () => {
       link: "/notice",
     },
     {
-      title: "কোর্স রিভিউ",
+      title: "নীতিমালা",
       icon: <Calendar size={24} />,
-      link: "/student-review",
+      link: "/nitimala",
     },
   ];
 

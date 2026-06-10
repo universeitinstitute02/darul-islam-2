@@ -270,7 +270,7 @@ const Header = () => {
                 {user && (
                   <button
                     onClick={handleLogout}
-                    className="w-full mt-6 flex items-center gap-3 p-3 bg-red-600/10 hover:bg-red-600/20 rounded-lg font-bold text-red-600 transition"
+                    className="w-full hover:cursor-pointer mt-6 flex items-center gap-3 p-3 bg-red-600/10 hover:bg-red-600/20 rounded-lg font-bold text-red-600 transition"
                   >
                     <LogOut size={18} />
                     লগআউট
