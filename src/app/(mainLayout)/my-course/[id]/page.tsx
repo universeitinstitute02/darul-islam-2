@@ -133,7 +133,7 @@ const MyCourseDetailsPage = () => {
           </h2>
           <button
             onClick={() => router.push("/my-courses")}
-            className="mt-4 hover:cursor-pointer w-full py-2.5 bg-slate-950 hover:bg-[#105D38] text-white text-xs font-bold rounded-xl transition-all shadow-sm"
+            className="mt-4 hover:cursor-pointer w-full py-2.5 bg-slate-950 hover:bg-[#0B5D3B] text-white text-xs font-bold rounded-xl transition-all shadow-sm"
           >
             ড্যাশবোর্ডে ফিরে যান
           </button>
@@ -148,7 +148,7 @@ const MyCourseDetailsPage = () => {
         {/* Back navigation */}
         <button
           onClick={() => router.back()}
-          className="mb-6 hover:cursor-pointer inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#105D38] transition-colors bg-white px-4 py-2 rounded-full border border-neutral-100 shadow-sm"
+          className="mb-6 hover:cursor-pointer inline-flex items-center gap-2 text-xs font-bold text-slate-500 hover:text-[#0B5D3B] transition-colors bg-white px-4 py-2 rounded-full border border-neutral-100 shadow-sm"
         >
           <ArrowLeft size={14} />
           <span>ড্যাশবোর্ডে ফিরে যান</span>
@@ -161,7 +161,7 @@ const MyCourseDetailsPage = () => {
             {/* 🟢 Live Class Workspace */}
             {activeItem?.type === "live" && (
               <div className="bg-gradient-to-br from-[#0d4d2e] via-[#052214] to-black rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden shadow-xl border border-neutral-100 animate-fadeIn">
-                <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-[#105D38]/30 rounded-full blur-3xl pointer-events-none"></div>
+                <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-[#0B5D3B]/30 rounded-full blur-3xl pointer-events-none"></div>
 
                 <div className="relative z-10 space-y-4">
                   <div className="flex items-center gap-2">
@@ -199,7 +199,7 @@ const MyCourseDetailsPage = () => {
                       href={activeItem.meetLink}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex items-center gap-2 px-6 py-3 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-xs rounded-xl shadow-md transition-all border border-white/10 active:scale-95"
+                      className="inline-flex items-center gap-2 px-6 py-3 bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold text-xs rounded-xl shadow-md transition-all border border-white/10 active:scale-95"
                     >
                       <Video size={16} />
                       <span>গুগল মিট ক্লাসে জয়েন করুন</span>
@@ -239,11 +239,11 @@ const MyCourseDetailsPage = () => {
                     <input
                       type="text"
                       placeholder="আপনার অ্যাসাইনমেন্ট ড্রাইভ লিংকটি এখানে দিন..."
-                      className="flex-1 px-4 py-2.5 bg-slate-50 border border-neutral-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#105D38] transition-all"
+                      className="flex-1 px-4 py-2.5 bg-slate-50 border border-neutral-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0B5D3B] transition-all"
                     />
                     <button
                       onClick={() => handleAssignmentSubmit(activeItem.id)}
-                      className="px-5 py-2.5 bg-slate-950 hover:bg-[#105D38] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
+                      className="px-5 py-2.5 bg-slate-950 hover:bg-[#0B5D3B] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap"
                     >
                       <UploadCloud size={14} />
                       অ্যাসাইনমেন্ট সাবমিট করুন
@@ -267,7 +267,7 @@ const MyCourseDetailsPage = () => {
             {/* Common Course Information Card */}
             <div className="bg-white p-6 sm:p-8 rounded-[2rem] border border-neutral-100 shadow-sm space-y-4">
               <div className="flex flex-wrap items-center gap-2">
-                <span className="text-[10px] sm:text-xs font-bold text-[#105D38] bg-[#105D38]/5 px-3 py-1 rounded-md">
+                <span className="text-[10px] sm:text-xs font-bold text-[#0B5D3B] bg-[#0B5D3B]/5 px-3 py-1 rounded-md">
                   {course.details.batchInfo.split(" ")[0]}
                 </span>
                 <span className="text-[10px] sm:text-xs font-bold text-indigo-600 bg-indigo-50 px-3 py-1 rounded-md">
@@ -337,16 +337,16 @@ const MyCourseDetailsPage = () => {
                   <div
                     key={item.id}
                     onClick={() => setActiveItem(item)}
-                    className={`p-4 flex items-start gap-3.5 cursor-pointer transition-all border-l-4 ${isSelected ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                    className={`p-4 flex items-start gap-3.5 cursor-pointer transition-all border-l-4 ${isSelected ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
                   >
                     <div
                       onClick={(e) => toggleItemComplete(item.id, e)}
                       className="mt-0.5 shrink-0 transition-transform active:scale-95"
                     >
                       {isCompleted ? (
-                        <CheckCircle2 size={18} className="text-[#105D38]" />
+                        <CheckCircle2 size={18} className="text-[#0B5D3B]" />
                       ) : (
-                        <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300 hover:border-[#105D38]"></div>
+                        <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300 hover:border-[#0B5D3B]"></div>
                       )}
                     </div>
                     <div className="space-y-1">
@@ -358,7 +358,7 @@ const MyCourseDetailsPage = () => {
                       <span
                         className={`text-[10px] font-bold inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${
                           item.type === "live"
-                            ? "text-[#105D38] bg-white border border-[#105D38]/10"
+                            ? "text-[#0B5D3B] bg-white border border-[#0B5D3B]/10"
                             : isCompleted
                               ? "bg-emerald-50 text-emerald-700"
                               : "bg-amber-50 text-amber-700"
@@ -395,7 +395,7 @@ const MyCourseDetailsPage = () => {
                 disabled={!isAllModulesFinished}
                 className={`w-full py-3 font-bold text-xs rounded-xl shadow-md transition-all flex items-center justify-center gap-2 active:scale-[0.98] cursor-pointer ${
                   isAllModulesFinished
-                    ? "bg-[#105D38] hover:bg-[#0c462a] text-white"
+                    ? "bg-[#0B5D3B] hover:bg-[#0c462a] text-white"
                     : "bg-slate-200 text-slate-400 cursor-not-allowed shadow-none"
                 }`}
               >

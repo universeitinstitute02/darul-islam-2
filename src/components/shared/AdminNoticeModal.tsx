@@ -105,7 +105,7 @@ export default function GeneralNoticeModal({
                   value={title}
                   onChange={(e) => setTitle(e.target.value)}
                   placeholder="উদা: রমজানুল মোবারক উপলক্ষে মাদরাসার সময়সূচী পরিবর্তন"
-                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                 />
               </div>
 
@@ -118,7 +118,7 @@ export default function GeneralNoticeModal({
                   <select
                     value={type}
                     onChange={(e) => setType(e.target.value)}
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                   >
                     <option value="normal">সাধারণ (Normal)</option>
                     <option value="important">গুরুত্বপূর্ণ (Important)</option>
@@ -133,7 +133,7 @@ export default function GeneralNoticeModal({
                   <select
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                   >
                     <option value="others">সাধারণ নোটিশ</option>
                     <option value="holiday">ছুটি সংক্রান্ত</option>
@@ -156,7 +156,7 @@ export default function GeneralNoticeModal({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="নোটিশের বিস্তারিত কন্টেন্ট এখানে লিখুন..."
                   rows={5}
-                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all resize-none font-medium leading-relaxed"
+                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all resize-none font-medium leading-relaxed"
                 />
               </div>
 
@@ -172,7 +172,7 @@ export default function GeneralNoticeModal({
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="px-5 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2 bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
                   {isPending && <Loader2 className="animate-spin" />}
                   <span>{editingNotice ? "সংশোধন করুন" : "প্রকাশ করুন"}</span>

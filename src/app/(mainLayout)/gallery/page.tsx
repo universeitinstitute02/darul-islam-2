@@ -93,17 +93,17 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FFFCDC]">
+    <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
       <div className="relative h-48 lg:h-64 bg-green-800 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#87F56] rounded-2xl flex items-center justify-center text-white shadow-lg">
+            <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-white shadow-lg">
               <Images size={40} />
             </div>
             <div>
               <h1 className="text-2xl lg:text-4xl font-black">গ্যালারি</h1>
-              <p className="text-sm font-bold text-[#E2D4B9]/80 uppercase tracking-widest mt-1">
+              <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">
                 ক্যাম্পাসের এক পলক
               </p>
             </div>
@@ -114,13 +114,13 @@ export default function GalleryPage() {
       <main className="max-w-screen-xl mx-auto w-full px-4 py-12 space-y-12">
         {/* Tab Switcher */}
         <div className="flex justify-center">
-          <div className="bg-white p-1.5 rounded-2xl shadow-xl flex gap-1 border border-[#14281D]/5">
+          <div className="bg-white p-1.5 rounded-2xl shadow-xl flex gap-1 border border-[#0B3D2E]/5">
             <button
               onClick={() => setActiveTab("photos")}
               className={`flex items-center gap-2 px-8 py-3 cursor-pointer rounded-xl font-black transition-all ${
                 activeTab === "photos"
-                  ? "bg-[#14281D] text-[#E2D4B9]"
-                  : "text-[#14281D]/60 hover:bg-[#14281D]/5"
+                  ? "bg-[#0B3D2E] text-[#F5EFE1]"
+                  : "text-[#0B3D2E]/60 hover:bg-[#0B3D2E]/5"
               }`}
             >
               <ImageIcon size={18} /> চিত্র গ্যালারি
@@ -130,8 +130,8 @@ export default function GalleryPage() {
               onClick={() => setActiveTab("videos")}
               className={`flex items-center gap-2 px-8 py-3 cursor-pointer rounded-xl font-black transition-all ${
                 activeTab === "videos"
-                  ? "bg-[#14281D] text-[#E2D4B9]"
-                  : "text-[#14281D]/60 hover:bg-[#14281D]/5"
+                  ? "bg-[#0B3D2E] text-[#F5EFE1]"
+                  : "text-[#0B3D2E]/60 hover:bg-[#0B3D2E]/5"
               }`}
             >
               <Video size={18} /> ভিডিও গ্যালারি
@@ -154,7 +154,7 @@ export default function GalleryPage() {
                     setSelectedImage(img);
                     setSelectedIndex(i);
                   }}
-                  className="group relative aspect-square bg-white rounded-[2rem] overflow-hidden shadow-xl border border-[#14281D]/5 cursor-pointer"
+                  className="group relative aspect-square bg-white rounded-[2rem] overflow-hidden shadow-xl border border-[#0B3D2E]/5 cursor-pointer"
                 >
                   <img
                     src={img.url}
@@ -162,8 +162,8 @@ export default function GalleryPage() {
                     alt={img.title}
                   />
 
-                  <div className="absolute inset-0 bg-gradient-to-t from-[#14281D] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-[#87F56] mb-1">
+                  <div className="absolute inset-0 bg-gradient-to-t from-[#0B3D2E] via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity flex flex-col justify-end p-8">
+                    <span className="text-[10px] font-black uppercase tracking-widest text-[#8FE3A9] mb-1">
                       {img.category}
                     </span>
 
@@ -187,7 +187,7 @@ export default function GalleryPage() {
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
                   transition={{ delay: i * 0.1 }}
-                  className="group relative aspect-video bg-[#14281D] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white"
+                  className="group relative aspect-video bg-[#0B3D2E] rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white"
                 >
                   <iframe
                     className="w-full h-full"
@@ -206,13 +206,13 @@ export default function GalleryPage() {
         </section>
 
         {/* CTA */}
-        <section className="bg-[#14281D] rounded-[3rem] p-12 text-center text-white relative overflow-hidden">
+        <section className="bg-[#0B3D2E] rounded-[3rem] p-12 text-center text-white relative overflow-hidden">
           <div className="relative z-10 space-y-6">
             <h2 className="text-3xl font-black">
               আমাদের সম্পর্কে আরও জানতে চান?
             </h2>
 
-            <p className="text-[#E2D4B9]/80 max-w-xl mx-auto">
+            <p className="text-[#F5EFE1]/80 max-w-xl mx-auto">
               আমাদের ইউটিউব চ্যানেলে আপনি মাদরাসার সকল কার্যক্রমের ভিডিও দেখতে
               পাবেন।
             </p>
@@ -270,7 +270,7 @@ export default function GalleryPage() {
             />
 
             <div className="text-center mt-6">
-              <span className="text-[#87F56] uppercase tracking-widest text-xs font-black">
+              <span className="text-[#8FE3A9] uppercase tracking-widest text-xs font-black">
                 {selectedImage.category}
               </span>
 

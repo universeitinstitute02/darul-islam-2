@@ -114,7 +114,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
       text: "এই স্লাইডটি ওয়েবসাইট থেকে মুছে ফেলা হবে!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       confirmButtonText: "হ্যাঁ, ডিলিট করুন",
       cancelButtonText: "বাতিল",
     }).then((result) => {
@@ -136,7 +136,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
           className={`flex items-center gap-2 px-4 py-2.5 text-xs font-black rounded-xl shadow-md transition-all ${
             isOpenForm
               ? "bg-red-800 hover:bg-red-700 text-white"
-              : "bg-[#105D38] hover:bg-green-800 text-white"
+              : "bg-[#0B5D3B] hover:bg-green-800 text-white"
           }`}
         >
           {isOpenForm ? <X size={16} /> : <Plus size={16} />}
@@ -237,7 +237,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             />
           </div>
 
-          <div className="md:col-span-2 border-2 border-dashed border-neutral-300 rounded-xl p-4 flex flex-col items-center justify-center bg-white cursor-pointer relative hover:border-[#105D38] transition-all">
+          <div className="md:col-span-2 border-2 border-dashed border-neutral-300 rounded-xl p-4 flex flex-col items-center justify-center bg-white cursor-pointer relative hover:border-[#0B5D3B] transition-all">
             <input
               type="file"
               name="image"
@@ -259,7 +259,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
           <button
             type="submit"
             disabled={createMutation.isPending || updateMutation.isPending}
-            className="md:col-span-2 p-3.5 bg-[#C5A059] text-white font-black text-sm rounded-xl hover:bg-amber-700 shadow transition-all flex justify-center items-center gap-2"
+            className="md:col-span-2 p-3.5 bg-[#C8A44D] text-white font-black text-sm rounded-xl hover:bg-amber-700 shadow transition-all flex justify-center items-center gap-2"
           >
             {(createMutation.isPending || updateMutation.isPending) && (
               <Loader2 className="animate-spin" size={18} />
@@ -271,7 +271,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
 
       {isLoading ? (
         <div className="flex justify-center py-12">
-          <Loader2 className="animate-spin text-[#105D38]" size={36} />
+          <Loader2 className="animate-spin text-[#0B5D3B]" size={36} />
         </div>
       ) : (
         <div className="overflow-x-auto border border-neutral-100 rounded-2xl">

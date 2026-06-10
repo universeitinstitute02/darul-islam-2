@@ -49,7 +49,7 @@ export default function NoticeBoard() {
   return (
     <div className="min-h-screen bg-[#F4F7F5] pb-12">
       {/* 🟢 Top Hero Header Banner */}
-      <div className="bg-[#105D38] text-white pt-20 lg:pt-24 pb-24 px-4 relative overflow-hidden">
+      <div className="bg-[#0B5D3B] text-white pt-20 lg:pt-24 pb-24 px-4 relative overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[radial-gradient(#fff_1px,transparent_1px)] [background-size:16px_16px]"></div>
         <div className="max-w-4xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6 relative z-10">
           <div className="space-y-2">
@@ -90,7 +90,7 @@ export default function NoticeBoard() {
         {/* নোটিশ হেডার টাইটেল */}
         <div className="bg-white px-4 py-3 rounded-xl shadow-md border border-neutral-100 flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <span className="flex h-2 w-2 rounded-full bg-[#105D38]"></span>
+            <span className="flex h-2 w-2 rounded-full bg-[#0B5D3B]"></span>
             <h2 className="text-xs font-black text-neutral-700 uppercase tracking-wider">
               সকল নোটিশ ({isLoading ? "..." : filteredNotices.length})
             </h2>
@@ -141,7 +141,7 @@ export default function NoticeBoard() {
                           ? "bg-orange-50 text-orange-500"
                           : isPinned
                             ? "bg-blue-50 text-blue-600"
-                            : "bg-emerald-50 text-[#105D38]"
+                            : "bg-emerald-50 text-[#0B5D3B]"
                       }`}
                     >
                       {isPinned ? (
@@ -237,7 +237,7 @@ export default function NoticeBoard() {
         {/* ফুটার হেল্প ডেক্স পার্ট */}
         <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
           <div className="flex flex-col sm:flex-row items-center gap-3">
-            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-[#105D38] shrink-0">
+            <div className="w-10 h-10 bg-emerald-50 rounded-xl flex items-center justify-center text-[#0B5D3B] shrink-0">
               <FileText size={18} />
             </div>
             <div>
@@ -250,7 +250,7 @@ export default function NoticeBoard() {
               </p>
             </div>
           </div>
-          <button className="w-full sm:w-auto px-4 py-2 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-[11px] rounded-lg transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0">
+          <button className="w-full sm:w-auto px-4 py-2 bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold text-[11px] rounded-lg transition-all shadow-sm flex items-center justify-center gap-1.5 shrink-0">
             <span>সাপোর্ট রুম</span>
             <ExternalLink size={12} />
           </button>

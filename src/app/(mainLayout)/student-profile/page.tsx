@@ -132,7 +132,7 @@ const StudentDashboard = () => {
   return (
     <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-18 font-sans">
       {/* 🟢 Header Section */}
-      <div className="bg-[#105D38] text-white p-6 pt-12 pb-24 rounded-b-[2.5rem] lg:rounded-b-[4.5rem] shadow-lg relative z-0">
+      <div className="bg-[#0B5D3B] text-white p-6 pt-12 pb-24 rounded-b-[2.5rem] lg:rounded-b-[4.5rem] shadow-lg relative z-0">
         <div className="max-w-7xl mx-auto flex justify-between items-start gap-4">
           <div className="flex gap-4 items-center">
             <div>
@@ -166,7 +166,7 @@ const StudentDashboard = () => {
             </Link>
             <div className="absolute -top-1.5 -right-1.5 flex items-center justify-center bg-red-500 rounded-full w-5 h-5 shadow-sm">
               <Bell size={12} className="text-white" strokeWidth={2.5} />
-              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center text-[9px] font-bold text-white border border-[#105D38]">
+              <span className="absolute -top-1 -right-1 w-4 h-4 bg-red-600 rounded-full flex items-center justify-center text-[9px] font-bold text-white border border-[#0B5D3B]">
                 ৩
               </span>
             </div>
@@ -207,7 +207,7 @@ const StudentDashboard = () => {
                 />
               </button>
               <div className="bg-neutral-50 px-3 py-2 sm:px-5 sm:py-2.5 rounded-xl sm:rounded-2xl border border-neutral-100 flex items-center gap-2 sm:gap-3">
-                <Calendar size={14} className="text-[#105D38]" />
+                <Calendar size={14} className="text-[#0B5D3B]" />
                 <span className="text-[10px] lg:text-xs font-black text-neutral-600 whitespace-nowrap">
                   আজ:{" "}
                   {new Date().toLocaleDateString("bn-BD", {
@@ -245,7 +245,7 @@ const StudentDashboard = () => {
                         </div>
                       </div>
                       <div>
-                        <h4 className="text-xs sm:text-sm lg:text-base font-black text-neutral-800 group-hover:text-[#105D38] transition-colors line-clamp-2">
+                        <h4 className="text-xs sm:text-sm lg:text-base font-black text-neutral-800 group-hover:text-[#0B5D3B] transition-colors line-clamp-2">
                           {item.classTitle}
                         </h4>
                         <div className="flex flex-col sm:flex-row sm:flex-wrap gap-x-3 gap-y-0.5 mt-1.5 text-neutral-500 font-medium text-[10px] sm:text-[11px]">
@@ -269,7 +269,7 @@ const StudentDashboard = () => {
                       href={item.link}
                       target="_blank"
                       rel="noreferrer"
-                      className="w-full py-2 sm:py-2.5 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-[10px] sm:text-xs rounded-lg sm:rounded-xl shadow-sm transition-all flex items-center justify-center gap-1 sm:gap-2 mt-1"
+                      className="w-full py-2 sm:py-2.5 bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold text-[10px] sm:text-xs rounded-lg sm:rounded-xl shadow-sm transition-all flex items-center justify-center gap-1 sm:gap-2 mt-1"
                     >
                       <span className="truncate">জয়েন করুন</span>
                       <ExternalLink
@@ -301,9 +301,9 @@ const StudentDashboard = () => {
                     <div
                       key={idx}
                       onClick={() => setIsModalOpen(true)}
-                      className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#105D38] hover:text-white transition-all duration-300 cursor-pointer group"
+                      className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 cursor-pointer group"
                     >
-                      <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#105D38]">
+                      <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#0B5D3B]">
                         {React.cloneElement(item.icon, {
                           className:
                             "group-hover:text-white size-[16px] sm:size-[20px]",
@@ -320,9 +320,9 @@ const StudentDashboard = () => {
                   <Link
                     href={item.link}
                     key={idx}
-                    className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#105D38] hover:text-white transition-all duration-300 cursor-pointer group"
+                    className="bg-white p-4 lg:p-8 rounded-[1.2rem] lg:rounded-[1.5rem] border border-neutral-100 shadow-sm flex flex-col items-center justify-center gap-2 sm:gap-3 hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 cursor-pointer group"
                   >
-                    <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#105D38]">
+                    <div className="p-2.5 sm:p-3 bg-[#F4F7F5] rounded-xl sm:rounded-2xl group-hover:bg-white/20 transition-colors text-[#0B5D3B]">
                       {React.cloneElement(item.icon, {
                         className:
                           "group-hover:text-white size-[16px] sm:size-[20px]",
@@ -347,7 +347,7 @@ const StudentDashboard = () => {
                 <h3 className="font-black text-neutral-800 text-xs sm:text-sm lg:text-base italic">
                   সাম্প্রতিক নোটিশ
                 </h3>
-                <button className="text-[10px] font-bold text-[#105D38] hover:underline">
+                <button className="text-[10px] font-bold text-[#0B5D3B] hover:underline">
                   সব দেখুন
                 </button>
               </div>
@@ -407,7 +407,7 @@ const StudentDashboard = () => {
                 <Phone size={11} />{" "}
                 <span className="hidden sm:inline">কল করুন</span>
               </a>
-              <button className="w-full flex items-center justify-center gap-1 py-2 bg-[#105D38] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-sm active:scale-95 transition-all hover:bg-[#0c462a]">
+              <button className="w-full flex items-center justify-center gap-1 py-2 bg-[#0B5D3B] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-sm active:scale-95 transition-all hover:bg-[#0c462a]">
                 <MessageCircle size={11} /> <span>মেসেজ</span>
               </button>
             </div>
@@ -417,7 +417,7 @@ const StudentDashboard = () => {
           <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4 font-sans">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-neutral-800">
-                <HelpCircle size={20} className="text-[#105D38]" />
+                <HelpCircle size={20} className="text-[#0B5D3B]" />
                 <h3 className="font-black text-xs sm:text-sm lg:text-base">
                   সাহায্য ও সাপোর্ট কেন্দ্র
                 </h3>
@@ -441,7 +441,7 @@ const StudentDashboard = () => {
                     showCancelButton: true,
                     confirmButtonText: "হ্যাঁ, কল দিন",
                     cancelButtonText: "বাতিল",
-                    confirmButtonColor: "#105D38",
+                    confirmButtonColor: "#0B5D3B",
                     cancelButtonColor: "#d33",
                     customClass: { popup: "rounded-[2rem]" },
                   }).then((result) => {
@@ -449,7 +449,7 @@ const StudentDashboard = () => {
                       window.location.href = `tel:${supportNumber}`;
                   });
                 }}
-                className="flex-1 py-2.5 bg-[#105D38] hover:bg-[#0d4d2e] text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
+                className="flex-1 py-2.5 bg-[#0B5D3B] hover:bg-[#0d4d2e] text-white font-bold text-xs rounded-xl transition-all shadow-sm flex items-center justify-center gap-2 cursor-pointer"
               >
                 <Phone size={14} /> কল করুন
               </button>
@@ -465,7 +465,7 @@ const StudentDashboard = () => {
                     showCancelButton: true,
                     confirmButtonText: "হ্যাঁ, মেইল করুন",
                     cancelButtonText: "বাতিল",
-                    confirmButtonColor: "#105D38",
+                    confirmButtonColor: "#0B5D3B",
                     cancelButtonColor: "#d33",
                     customClass: { popup: "rounded-[2rem]" },
                   }).then((result) => {

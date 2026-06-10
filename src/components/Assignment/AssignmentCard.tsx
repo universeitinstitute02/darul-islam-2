@@ -70,7 +70,7 @@ const AssignmentCard = ({ submission, idx, onEvaluate }: CardProps) => {
       {/* Student Profile Info */}
       <div className="flex items-start gap-3">
         <div className="shrink-0 mt-0.5">
-          <div className="w-9 h-9 bg-neutral-50 border border-neutral-200 rounded-full flex items-center justify-center text-[#105D38] overflow-hidden">
+          <div className="w-9 h-9 bg-neutral-50 border border-neutral-200 rounded-full flex items-center justify-center text-[#0B5D3B] overflow-hidden">
             {submission.student?.profilePicture ? (
               <Image
                 src={`${process.env.NEXT_PUBLIC_API_URL?.replace("/api", "")}/${submission.student.profilePicture}`}
@@ -168,7 +168,7 @@ const AssignmentCard = ({ submission, idx, onEvaluate }: CardProps) => {
           onClick={() => onEvaluate(submission)}
           className={`h-9 rounded-xl text-xs font-black flex items-center justify-center gap-1.5 active:scale-95 transition-all ${
             submission.status === "pending"
-              ? "bg-[#105D38] text-white hover:bg-green-800"
+              ? "bg-[#0B5D3B] text-white hover:bg-green-800"
               : "bg-blue-50 text-blue-600 hover:bg-blue-100 border border-blue-200"
           }`}
         >

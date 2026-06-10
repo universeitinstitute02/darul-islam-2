@@ -110,7 +110,7 @@ const RegisterPage: React.FC = () => {
         title: "পাসওয়ার্ড মিলেনি!",
         text: "পাসওয়ার্ড এবং কনফার্ম পাসওয়ার্ড একই হতে হবে।",
         icon: "warning",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
         customClass: { popup: "rounded-[2rem]" },
       });
       return;
@@ -142,7 +142,7 @@ const RegisterPage: React.FC = () => {
         title: "রেজিস্ট্রেশন সফল হয়েছে!",
         text: "আপনার অ্যাকাউন্টটি সফলভাবে তৈরি করা হয়েছে।",
         icon: "success",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
         customClass: { popup: "rounded-[2rem]" },
       }).then(() => {
         router.push("/auth/login");
@@ -154,7 +154,7 @@ const RegisterPage: React.FC = () => {
           error.response?.data?.message ||
           "কিছু একটা ভুল হয়েছে। অনুগ্রহ করে আবার চেষ্টা করুন।",
         icon: "error",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
         customClass: { popup: "rounded-[2rem]" },
       });
     } finally {
@@ -183,7 +183,7 @@ const RegisterPage: React.FC = () => {
           {/* 📱 Mobile Top Step Progress Bar (Hidden on Desktop) */}
           <div className="lg:hidden mb-6 bg-slate-50 p-4 rounded-2xl border border-neutral-100">
             <div className="flex justify-between items-center mb-2">
-              <span className="text-xs font-black text-[#105D38] bg-[#105D38]/10 px-2.5 py-1 rounded-md">
+              <span className="text-xs font-black text-[#0B5D3B] bg-[#0B5D3B]/10 px-2.5 py-1 rounded-md">
                 ধাপ{" "}
                 {step === 4 && isTeacher
                   ? 3
@@ -199,7 +199,7 @@ const RegisterPage: React.FC = () => {
             {/* Progress Bar Track */}
             <div className="w-full h-2 bg-neutral-200/70 rounded-full overflow-hidden">
               <div
-                className="h-full bg-[#105D38] transition-all duration-300 rounded-full"
+                className="h-full bg-[#0B5D3B] transition-all duration-300 rounded-full"
                 style={{
                   width: `${(step / totalSteps) * 100}%`,
                 }}
@@ -210,7 +210,7 @@ const RegisterPage: React.FC = () => {
           <div className="mb-6 lg:mb-8">
             <Link
               href="/auth/login"
-              className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#105D38] transition-colors group"
+              className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#0B5D3B] transition-colors group"
             >
               <div className="p-2 lg:p-0 bg-neutral-50 lg:bg-transparent rounded-full lg:rounded-none">
                 <ArrowLeft
@@ -305,7 +305,7 @@ const RegisterPage: React.FC = () => {
                       e.preventDefault();
                       nextStep();
                     }}
-                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all"
+                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 bg-[#0B5D3B] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all"
                   >
                     পরবর্তী ধাপ <ChevronRight size={20} />
                   </button>
@@ -313,7 +313,7 @@ const RegisterPage: React.FC = () => {
                   <button
                     type="submit"
                     disabled={isLoading}
-                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 px-3 lg:px-0 bg-[#105D38] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
+                    className="flex-1 flex hover:cursor-pointer items-center justify-center gap-2 py-4 px-3 lg:px-0 bg-[#0B5D3B] text-white rounded-2xl font-black shadow-xl active:scale-[0.98] transition-all disabled:opacity-70"
                   >
                     {isLoading ? (
                       <>
@@ -330,7 +330,7 @@ const RegisterPage: React.FC = () => {
                 ইতোমধ্যে অ্যাকাউন্ট আছে?{" "}
                 <Link
                   href="/auth/login"
-                  className="text-[#105D38] hover:underline font-black"
+                  className="text-[#0B5D3B] hover:underline font-black"
                 >
                   লগইন করুন
                 </Link>

@@ -86,7 +86,7 @@ const StudentAssignmentDetailsModal: React.FC<
           {/* Header */}
           <div className="p-4 sm:p-6 border-b border-neutral-100 flex justify-between items-center bg-gradient-to-r from-emerald-50/30 to-white">
             <div className="flex items-center gap-2.5">
-              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#105D38] flex items-center justify-center shadow-sm">
+              <div className="w-9 h-9 rounded-xl bg-emerald-50 text-[#0B5D3B] flex items-center justify-center shadow-sm">
                 <BookOpen size={18} />
               </div>
               <div>
@@ -189,7 +189,7 @@ const StudentAssignmentDetailsModal: React.FC<
                       </span>
                       <h4 className="text-sm font-black mt-0.5 text-neutral-800">
                         {isReviewed ? (
-                          <span className="text-base sm:text-lg font-black text-[#105D38]">
+                          <span className="text-base sm:text-lg font-black text-[#0B5D3B]">
                             {marksObtained}{" "}
                             <span className="text-xs text-neutral-400 font-medium">
                               / {totalMarks}
@@ -219,7 +219,7 @@ const StudentAssignmentDetailsModal: React.FC<
                 {isReviewed && submission.instructorFeedback && (
                   <div className="space-y-2">
                     <h5 className="text-[11px] sm:text-xs font-black text-neutral-500 flex items-center gap-1.5">
-                      <MessageSquare size={14} className="text-[#105D38]" />{" "}
+                      <MessageSquare size={14} className="text-[#0B5D3B]" />{" "}
                       শিক্ষকের মন্তব্য:
                     </h5>
                     <div className="text-xs sm:text-sm text-neutral-700 bg-emerald-50/20 p-4 rounded-xl border border-emerald-100/50 leading-relaxed font-medium italic">

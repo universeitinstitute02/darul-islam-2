@@ -94,7 +94,7 @@ export default function CartPage() {
           <div>
             <button
               onClick={() => router.push("/islamic-shop")}
-              className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 hover:text-[#105D38] transition-colors mb-3 group cursor-pointer"
+              className="inline-flex items-center gap-2 text-xs font-bold text-neutral-500 hover:text-[#0B5D3B] transition-colors mb-3 group cursor-pointer"
             >
               <ArrowLeft className="w-4 h-4 group-hover:-translate-x-1 transition-transform" />{" "}
               শপিং চালিয়ে যান
@@ -105,7 +105,7 @@ export default function CartPage() {
           </div>
           <div className="text-xs md:text-sm font-medium text-neutral-500 bg-white border border-neutral-200 px-4 py-2 rounded-2xl w-fit shadow-2xs">
             মোট পণ্য:{" "}
-            <span className="font-bold text-[#105D38]">
+            <span className="font-bold text-[#0B5D3B]">
               {cartItems.length} টি
             </span>
           </div>
@@ -120,7 +120,7 @@ export default function CartPage() {
               exit={{ opacity: 0, scale: 0.95 }}
               className="bg-white border border-neutral-100 rounded-[2.5rem] p-8 md:p-12 text-center shadow-xs flex flex-col items-center justify-center min-h-[400px]"
             >
-              <div className="w-20 h-20 bg-emerald-50 text-[#105D38] rounded-full flex items-center justify-center mb-6">
+              <div className="w-20 h-20 bg-emerald-50 text-[#0B5D3B] rounded-full flex items-center justify-center mb-6">
                 <ShoppingBag className="w-10 h-10" />
               </div>
               <h2 className="text-xl md:text-2xl font-black text-neutral-900 mb-2">
@@ -132,7 +132,7 @@ export default function CartPage() {
               </p>
               <button
                 onClick={() => router.push("/islamic-shop")}
-                className="px-8 py-4 bg-[#105D38] text-white font-bold rounded-2xl text-sm hover:bg-[#0c4a2d] transition-all shadow-lg shadow-emerald-900/10 active:scale-98 cursor-pointer"
+                className="px-8 py-4 bg-[#0B5D3B] text-white font-bold rounded-2xl text-sm hover:bg-[#0c4a2d] transition-all shadow-lg shadow-emerald-900/10 active:scale-98 cursor-pointer"
               >
                 পণ্য পছন্দ করুন
               </button>
@@ -171,7 +171,7 @@ export default function CartPage() {
                           <h2 className="text-sm md:text-base font-black text-neutral-900 truncate mt-1.5 mb-1">
                             {item.name}
                           </h2>
-                          <p className="text-sm md:text-base font-black text-[#105D38]">
+                          <p className="text-sm md:text-base font-black text-[#0B5D3B]">
                             ৳{item.price}
                           </p>
                         </div>
@@ -236,7 +236,7 @@ export default function CartPage() {
                     <span className="flex items-center gap-1.5">
                       ডেলিভারি চার্জ
                       {shippingFee === 0 && (
-                        <span className="text-[10px] bg-emerald-50 text-[#105D38] px-2 py-0.5 rounded-md font-bold">
+                        <span className="text-[10px] bg-emerald-50 text-[#0B5D3B] px-2 py-0.5 rounded-md font-bold">
                           ফ্রি
                         </span>
                       )}
@@ -255,7 +255,7 @@ export default function CartPage() {
 
                   <div className="border-t border-neutral-100 pt-4 flex justify-between items-center text-base font-black text-neutral-900">
                     <span>সর্বমোট মূল্য</span>
-                    <span className="text-xl font-black text-[#105D38]">
+                    <span className="text-xl font-black text-[#0B5D3B]">
                       ৳{total}
                     </span>
                   </div>
@@ -264,7 +264,7 @@ export default function CartPage() {
                 {/* Checkout Button */}
                 <button
                   onClick={handleCheckout}
-                  className="w-full py-4 bg-[#105D38] hover:bg-[#0c4a2d] text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-900/10 active:scale-98 text-sm uppercase tracking-wider cursor-pointer mb-4"
+                  className="w-full py-4 bg-[#0B5D3B] hover:bg-[#0c4a2d] text-white font-bold rounded-2xl flex items-center justify-center gap-2 transition-all shadow-lg shadow-emerald-900/10 active:scale-98 text-sm uppercase tracking-wider cursor-pointer mb-4"
                 >
                   অর্ডার সম্পন্ন করুন <ChevronRight className="w-4 h-4" />
                 </button>

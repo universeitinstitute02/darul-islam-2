@@ -1,6 +1,6 @@
-import React from "react";
-import TeacherOverview from "@/src/components/teacher/TeacherOverview"; // পাথ ঠিক করে নিন
 import CourseManagement from "@/src/components/teacher/CourseManagement";
+import TeacherOverview from "@/src/components/teacher/TeacherOverview";
+import React from "react";
 
 export default function TeacherDashboardPage() {
   return (

@@ -133,7 +133,7 @@ export default function CategoryPage() {
       showCancelButton: true,
       confirmButtonText: "আপডেট",
       cancelButtonText: "বাতিল",
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       inputValidator: (value) => {
         if (!value) return "নাম খালি রাখা যাবে না!";
       },
@@ -194,7 +194,7 @@ export default function CategoryPage() {
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-neutral-200/60 pb-4">
         <div>
           <h1 className="text-xl md:text-3xl font-bold text-neutral-800 tracking-tight flex items-center gap-2">
-            <Layers className="text-[#105D38]" size={24} /> বিভাগ ও কোর্স
+            <Layers className="text-[#0B5D3B]" size={24} /> বিভাগ ও কোর্স
             ম্যানেজমেন্ট
           </h1>
           <p className="text-xs md:text-sm font-semibold text-neutral-500 mt-1">
@@ -205,7 +205,7 @@ export default function CategoryPage() {
 
         <button
           onClick={() => setIsFormOpenMobile(!isFormOpenMobile)}
-          className="flex lg:hidden items-center justify-center gap-2 w-full sm:w-auto px-4 py-3 bg-[#105D38] hover:bg-green-800 text-white text-xs font-black rounded-xl shadow-md transition-all active:scale-[0.98]"
+          className="flex lg:hidden items-center justify-center gap-2 w-full sm:w-auto px-4 py-3 bg-[#0B5D3B] hover:bg-green-800 text-white text-xs font-black rounded-xl shadow-md transition-all active:scale-[0.98]"
         >
           {isFormOpenMobile ? <X size={16} /> : <Plus size={16} />}
           {isFormOpenMobile ? "ফর্ম বন্ধ করুন" : "নতুন প্রধান বিভাগ তৈরি করুন"}
@@ -221,7 +221,7 @@ export default function CategoryPage() {
         >
           <div className="flex items-center justify-between mb-4 pb-2 border-b">
             <div className="flex items-center gap-2">
-              <FolderPlus className="w-5 h-5 text-[#105D38]" />
+              <FolderPlus className="w-5 h-5 text-[#0B5D3B]" />
               <h2 className="font-black text-sm">
                 নতুন প্রধান বিভাগ যুক্ত করুন
               </h2>
@@ -243,7 +243,7 @@ export default function CategoryPage() {
               <input
                 {...register("name", { required: "বিভাগের নাম আবশ্যক" })}
                 placeholder="যেমন: কুরআন বিভাগ"
-                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
               />
               {errors.name && (
                 <p className="text-red-500 text-[11px] font-bold mt-1">
@@ -268,7 +268,7 @@ export default function CategoryPage() {
                   />
                 ) : (
                   <div className="flex flex-col items-center justify-center p-4 text-center">
-                    <Upload className="w-5 h-5 text-[#105D38] mb-1.5" />
+                    <Upload className="w-5 h-5 text-[#0B5D3B] mb-1.5" />
                       <p className="text-xs text-neutral-700">
                       ইমেজ সিলেক্ট করুন
                     </p>
@@ -292,13 +292,13 @@ export default function CategoryPage() {
                 {...register("description")}
                 rows={3}
                 placeholder="বিভাগ সম্পর্কিত সংক্ষিপ্ত তথ্য..."
-                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl p-3 text-xs font-bold outline-none focus:border-[#105D38] transition-all leading-relaxed"
+                className="w-full border border-neutral-200 bg-neutral-50/30 rounded-xl p-3 text-xs font-bold outline-none focus:border-[#0B5D3B] transition-all leading-relaxed"
               />
             </div>
 
             <button
               disabled={creating}
-              className="w-full bg-[#105D38] hover:bg-green-800 text-white py-3 rounded-xl text-xs md:text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 shadow-xs cursor-pointer"
+              className="w-full bg-[#0B5D3B] hover:bg-green-800 text-white py-3 rounded-xl text-xs md:text-sm flex items-center justify-center gap-2 transition-all active:scale-[0.98] disabled:opacity-50 shadow-xs cursor-pointer"
             >
               {creating ? (
                 <>
@@ -323,7 +323,7 @@ export default function CategoryPage() {
 
           {loading ? (
             <div className="bg-white border rounded-2xl p-12 text-center flex flex-col items-center justify-center gap-3 text-xs font-bold text-neutral-500">
-              <Loader2 className="w-8 h-8 animate-spin text-[#105D38]" /> ডাটা
+              <Loader2 className="w-8 h-8 animate-spin text-[#0B5D3B]" /> ডাটা
               লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
             </div>
           ) : categories.length === 0 ? (

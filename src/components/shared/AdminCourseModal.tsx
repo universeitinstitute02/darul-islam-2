@@ -135,7 +135,7 @@ export default function ProductModal({
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   placeholder="উদা: নূরানী হাফেজি কুরআন শরীফ"
-                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                 />
               </div>
 
@@ -151,7 +151,7 @@ export default function ProductModal({
                       value={price}
                       onChange={(e) => setPrice(e.target.value)}
                       placeholder="650"
-                      className="w-full p-2.5 pl-7 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                      className="w-full p-2.5 pl-7 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                     />
                     <span className="absolute left-2.5 top-3 text-neutral-400 font-bold">
                       ৳
@@ -169,7 +169,7 @@ export default function ProductModal({
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
                     placeholder="উদা: Religious Book"
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                   />
                 </div>
               </div>
@@ -182,7 +182,7 @@ export default function ProductModal({
                   <select
                     value={inStock}
                     onChange={(e) => setInStock(e.target.value)}
-                    className="w-full cursor-pointer p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full cursor-pointer p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                   >
                     <option value="true">In Stock</option>
                     <option value="false">Stock Out</option>
@@ -198,7 +198,7 @@ export default function ProductModal({
                     value={publisher}
                     onChange={(e) => setPublisher(e.target.value)}
                     placeholder="উদা: এমদাদিয়া লাইব্রেরী"
-                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                    className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                   />
                 </div>
               </div>
@@ -212,7 +212,7 @@ export default function ProductModal({
                   onChange={(e) => setDescription(e.target.value)}
                   placeholder="প্রোডাক্টের বিস্তারিত এখানে লিখুন..."
                   rows={3}
-                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all resize-none"
+                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all resize-none"
                 />
               </div>
 
@@ -228,7 +228,7 @@ export default function ProductModal({
                   value={features}
                   onChange={(e) => setFeatures(e.target.value)}
                   placeholder="সহজ পাঠ্য, আর্ট পেপার, মজবুত বাইন্ডিং"
-                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#105D38] focus:bg-white transition-all"
+                  className="w-full p-2.5 bg-neutral-50 border border-neutral-200 rounded-xl focus:outline-none focus:border-[#0B5D3B] focus:bg-white transition-all"
                 />
               </div>
 
@@ -274,7 +274,7 @@ export default function ProductModal({
                 <button
                   type="submit"
                   disabled={isPending}
-                  className="px-5 py-2 cursor-pointer bg-[#105D38] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
+                  className="px-5 py-2 cursor-pointer bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold rounded-xl transition-all shadow-sm flex items-center gap-1.5"
                 >
                   {isPending && <Loader2 className="animate-spin" />}
                   <span>{editingProduct ? "আপডেট করুন" : "যোগ করুন"}</span>

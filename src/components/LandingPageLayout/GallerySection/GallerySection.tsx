@@ -94,14 +94,14 @@ const GallerySection: React.FC = () => {
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         {/* 📜 হেডার অংশ */}
         <div className="flex flex-col items-center mb-12 text-center">
-          <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-[#105D38] rounded-full text-xs font-bold mb-4">
+          <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-[#0B5D3B] rounded-full text-xs font-bold mb-4">
             <ImageIcon className="w-4 h-4" />
             <span>আমাদের ক্যাম্পাস লাইফ</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
             ফটো গ্যালারি
           </h2>
-          <div className="w-20 h-1.5 bg-[#105D38] rounded-full"></div>
+          <div className="w-20 h-1.5 bg-[#0B5D3B] rounded-full"></div>
         </div>
 
         {/* 🔄 প্রথমবার পেজ লোড হওয়ার কন্ডিশন */}
@@ -145,7 +145,7 @@ const GallerySection: React.FC = () => {
                             {album.title}
                           </h3>
                         </div>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center text-[#105D38] scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 flex-shrink-0">
+                        <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center text-[#0B5D3B] scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 flex-shrink-0">
                           <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" />
                         </div>
                       </div>
@@ -164,7 +164,7 @@ const GallerySection: React.FC = () => {
             <div className="mt-14 mb-6 text-center">
               <Link
                 href="/gallery"
-                className="cursor-pointer px-12 py-5 bg-[#105D38] text-white font-black rounded-full mt-20"
+                className="cursor-pointer px-12 py-5 bg-[#0B5D3B] text-white font-black rounded-full mt-20"
               >
                 সম্পূর্ণ গ্যালারি দেখুন
               </Link>

@@ -52,7 +52,7 @@ export default function SubCategoryForm({
               setValueAs: (v) => v.trim(),
             })}
             placeholder="উপ-বিভাগের নাম (যেমন: তিলাওয়াত)"
-            className="w-full border border-neutral-200 bg-white rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] transition-all"
+            className="w-full border border-neutral-200 bg-white rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#0B5D3B] transition-all"
           />
         </div>
 
@@ -60,7 +60,7 @@ export default function SubCategoryForm({
         <div className="relative flex items-center">
           <select
             {...register("icon", { required: true })}
-            className="w-full border border-neutral-200 bg-white rounded-xl pl-9 pr-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] appearance-none cursor-pointer transition-all"
+            className="w-full border border-neutral-200 bg-white rounded-xl pl-9 pr-3 py-2.5 text-xs font-bold outline-none focus:border-[#0B5D3B] appearance-none cursor-pointer transition-all"
           >
             {Object.keys(AVAILABLE_ICONS).map((iconKey) => (
               <option key={iconKey} value={iconKey}>
@@ -85,7 +85,7 @@ export default function SubCategoryForm({
           <input
             {...register("description")}
             placeholder="সংক্ষিপ্ত বিবরণ (ঐচ্ছিক)"
-            className="w-full border border-neutral-200 bg-white rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#105D38] transition-all"
+            className="w-full border border-neutral-200 bg-white rounded-xl px-3 py-2.5 text-xs font-bold outline-none focus:border-[#0B5D3B] transition-all"
           />
         </div>
       </div>

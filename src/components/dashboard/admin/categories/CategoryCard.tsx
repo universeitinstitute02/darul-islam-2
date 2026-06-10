@@ -139,7 +139,7 @@ export default function CategoryCard({
               />
             ) : (
               <div
-                className="w-full h-full flex items-center justify-center bg-emerald-50 text-[#105D38]"
+                className="w-full h-full flex items-center justify-center bg-emerald-50 text-[#0B5D3B]"
                 aria-hidden="true"
               >
                 <Layers className="w-5 h-5" />
@@ -150,7 +150,7 @@ export default function CategoryCard({
           <div className="min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
               {category.courseCount !== undefined && (
-                <span className="px-2 py-0.5 bg-emerald-50 text-[#105D38] border border-emerald-100 rounded-md text-[10px] font-bold flex items-center gap-1">
+                <span className="px-2 py-0.5 bg-emerald-50 text-[#0B5D3B] border border-emerald-100 rounded-md text-[10px] font-bold flex items-center gap-1">
                   <CheckCircle size={10} aria-hidden="true" />{" "}
                   {category.courseCount}টি প্রকাশিত কোর্স
                 </span>

@@ -21,7 +21,7 @@ const TestimonialStudent: React.FC = () => {
         icon: "warning",
         title: "খালি রিভিউ!",
         text: "অনুগ্রহ করে আপনার মতামতটি লিখুন।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
       return;
     }
@@ -38,7 +38,7 @@ const TestimonialStudent: React.FC = () => {
           icon: "success",
           title: "রিভিউ সাবমিট হয়েছে!",
           text: "আপনার মতামতটি সফলভাবে জমা হয়েছে। অ্যাডমিন অ্যাপ্রুভ করার পর এটি ল্যান্ডিং পেজে শো করবে।",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
 
         // ফর্ম ক্লিয়ার করা
@@ -68,11 +68,11 @@ const TestimonialStudent: React.FC = () => {
       <div className="w-full max-w-xl mx-auto">
         {/* ✨ পেজ হেডার সেকশন */}
         <div className="text-center mb-8">
-          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-[10px] md:text-xs font-black text-[#105D38] mb-3 uppercase tracking-wider animate-pulse">
+          <div className="inline-flex items-center gap-2 px-3 py-1 bg-emerald-50 border border-emerald-100 rounded-full text-[10px] md:text-xs font-black text-[#0B5D3B] mb-3 uppercase tracking-wider animate-pulse">
             Student Feedback Panel
           </div>
           <h1 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight flex items-center justify-center gap-2">
-            আপনার <span className="text-[#105D38]">মূল্যবান রিভিউ</span> দিন
+            আপনার <span className="text-[#0B5D3B]">মূল্যবান রিভিউ</span> দিন
           </h1>
           <p className="text-xs text-gray-500 mt-2 max-w-sm mx-auto font-medium leading-relaxed">
             মাদরাসা বা কোর্সের কারিকুলাম ও ওস্তাদদের ক্লাস নিয়ে আপনার চমৎকার
@@ -127,7 +127,7 @@ const TestimonialStudent: React.FC = () => {
                   onChange={(e) => setText(e.target.value)}
                   placeholder="যেমন: আলহামদুলিল্লাহ, অনলাইন কিতাব বিভাগের ওস্তাদদের বোঝানোর স্টাইল এবং মাদরাসার কারিকুলামটি খুবই চমৎকার ও গোছানো..."
                   rows={6}
-                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-xs md:text-sm focus:outline-hidden focus:border-[#105D38] focus:bg-white font-medium transition-all duration-300 resize-none leading-relaxed shadow-inner"
+                  className="w-full px-4 py-4 bg-gray-50 border border-gray-200 rounded-2xl text-xs md:text-sm focus:outline-hidden focus:border-[#0B5D3B] focus:bg-white font-medium transition-all duration-300 resize-none leading-relaxed shadow-inner"
                   required
                 />
                 <div className="absolute bottom-3 right-4 text-[10px] font-bold text-gray-400 pointer-events-none">
@@ -140,7 +140,7 @@ const TestimonialStudent: React.FC = () => {
             <button
               type="submit"
               disabled={submitLoading}
-              className="w-full py-4 bg-[#105D38] text-white font-black rounded-2xl text-xs md:text-sm uppercase tracking-wider shadow-lg shadow-emerald-900/20 hover:bg-[#0c462a] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 group"
+              className="w-full py-4 bg-[#0B5D3B] text-white font-black rounded-2xl text-xs md:text-sm uppercase tracking-wider shadow-lg shadow-emerald-900/20 hover:bg-[#0c462a] active:scale-[0.98] transition-all duration-300 disabled:opacity-50 disabled:pointer-events-none flex items-center justify-center gap-2 group"
             >
               {submitLoading ? (
                 "সাবমিট হচ্ছে..."

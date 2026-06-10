@@ -96,7 +96,7 @@ const EducationPage = () => {
             className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-4 md:p-8 shadow-sm"
           >
             <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 border-2 border-neutral-100 rounded-xl shadow-sm z-10">
-              <h2 className="text-[#105D38] font-black text-sm md:text-lg whitespace-nowrap">
+              <h2 className="text-[#0B5D3B] font-black text-sm md:text-lg whitespace-nowrap">
                 {freeCoursesData.category}
               </h2>
             </div>
@@ -132,7 +132,7 @@ const EducationPage = () => {
                         <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-600 line-clamp-1 mb-2">
                           {course.title}
                         </h3>
-                        <p className="text-[#105D38] font-black text-sm md:text-lg">
+                        <p className="text-[#0B5D3B] font-black text-sm md:text-lg">
                           {course.label || "ফ্রি"}
                         </p>
                       </div>

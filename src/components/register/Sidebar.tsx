@@ -21,7 +21,7 @@ export const Sidebar = ({
       ];
 
   return (
-    <div className="hidden lg:flex lg:w-1/3 bg-[#105D38] p-10 flex-col justify-between">
+    <div className="hidden lg:flex lg:w-1/3 bg-[#0B5D3B] p-10 flex-col justify-between">
       <div>
         <h2 className="text-3xl font-black text-white mb-2">রেজিস্ট্রেশন</h2>
         <p className="text-white/60 text-sm font-medium">
@@ -34,7 +34,7 @@ export const Sidebar = ({
             <div
               className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs border-2 transition-all ${
                 step >= s.id
-                  ? "bg-[#C5A059] border-[#C5A059] text-white"
+                  ? "bg-[#C8A44D] border-[#C8A44D] text-white"
                   : "border-white/20 text-white/40"
               }`}
             >

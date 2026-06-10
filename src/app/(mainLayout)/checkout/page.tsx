@@ -126,9 +126,9 @@ const CheckoutContent = () => {
           title: "অর্ডার সফল হয়েছে!",
           text: response.data?.message || "আপনার অর্ডারটি আমরা পেয়েছি।",
           icon: "success",
-          iconColor: "#105D38",
+          iconColor: "#0B5D3B",
           confirmButtonText: "ঠিক আছে",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
           background: "#fff",
           customClass: {
             popup: "rounded-[2rem]",
@@ -148,7 +148,7 @@ const CheckoutContent = () => {
           error?.response?.data?.message ||
           "সার্ভারে সমস্যা হয়েছে, আবার চেষ্টা করুন।",
         icon: "error",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
     } finally {
       setLoading(false);
@@ -181,7 +181,7 @@ const CheckoutContent = () => {
           <div className="lg:col-span-5 order-1 lg:order-2">
             <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-xl shadow-green-900/5 border border-gray-50 lg:sticky lg:top-28">
               <h2 className="text-xl font-black text-gray-800 mb-6 flex items-center gap-2">
-                <ShoppingBag className="w-5 h-5 text-[#105D38]" /> অর্ডার সামারি
+                <ShoppingBag className="w-5 h-5 text-[#0B5D3B]" /> অর্ডার সামারি
               </h2>
 
               <div className="space-y-3 max-h-[240px] overflow-y-auto mb-6 pr-1 custom-scrollbar">
@@ -208,7 +208,7 @@ const CheckoutContent = () => {
                       <h3 className="font-bold text-gray-800 text-xs md:text-sm truncate leading-snug">
                         {item.name}
                       </h3>
-                      <p className="text-[#105D38] text-xs font-black mt-1">
+                      <p className="text-[#0B5D3B] text-xs font-black mt-1">
                         ৳ {item.price}{" "}
                         <span className="text-gray-400 font-normal">
                           × {item.quantity}
@@ -233,7 +233,7 @@ const CheckoutContent = () => {
                 <div className="h-px border-t border-dashed border-gray-200 my-4"></div>
                 <div className="flex justify-between items-center text-gray-900">
                   <span className="font-bold text-lg">সর্বমোট</span>
-                  <span className="font-black text-3xl text-[#105D38]">
+                  <span className="font-black text-3xl text-[#0B5D3B]">
                     ৳ {totalPrice}
                   </span>
                 </div>
@@ -243,7 +243,7 @@ const CheckoutContent = () => {
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full mt-8 hover:cursor-pointer py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
+                className="w-full mt-8 hover:cursor-pointer py-5 bg-[#0B5D3B] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all hidden lg:flex items-center justify-center gap-3 group"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />
@@ -263,7 +263,7 @@ const CheckoutContent = () => {
           <div className="lg:col-span-7 space-y-6 order-2 lg:order-1">
             <div className="bg-white p-6 md:p-8 rounded-[2.5rem] shadow-sm border border-gray-50">
               <div className="flex items-center gap-3 mb-8">
-                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#105D38]">
+                <div className="w-10 h-10 bg-green-50 rounded-xl flex items-center justify-center text-[#0B5D3B]">
                   <Truck className="w-5 h-5" />
                 </div>
                 <h2 className="text-xl font-black text-gray-800">
@@ -278,13 +278,13 @@ const CheckoutContent = () => {
                     আপনার নাম
                   </label>
                   <div className="relative">
-                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-[#105D38] transition-colors" />
+                    <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-[#0B5D3B] transition-colors" />
                     <input
                       type="text"
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       placeholder="পুরো নাম লিখুন"
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#105D38] outline-none transition-all text-gray-800 font-medium"
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#0B5D3B] outline-none transition-all text-gray-800 font-medium"
                     />
                   </div>
                 </div>
@@ -295,13 +295,13 @@ const CheckoutContent = () => {
                     ফোন নম্বর
                   </label>
                   <div className="relative">
-                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-[#105D38] transition-colors" />
+                    <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-300 group-focus-within:text-[#0B5D3B] transition-colors" />
                     <input
                       type="text"
                       value={phone}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder="উদা: 01823456789"
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#105D38] outline-none transition-all text-gray-800 font-medium"
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#0B5D3B] outline-none transition-all text-gray-800 font-medium"
                     />
                   </div>
                 </div>
@@ -316,7 +316,7 @@ const CheckoutContent = () => {
                     value={district}
                     onChange={(e) => setDistrict(e.target.value)}
                     placeholder="উদা: Feni / Rangpur"
-                    className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#105D38] outline-none transition-all text-gray-800 font-medium"
+                    className="w-full px-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#0B5D3B] outline-none transition-all text-gray-800 font-medium"
                   />
                 </div>
 
@@ -326,13 +326,13 @@ const CheckoutContent = () => {
                     পুরো ঠিকানা
                   </label>
                   <div className="relative">
-                    <MapPin className="absolute left-4 top-5 w-5 h-5 text-gray-300 group-focus-within:text-[#105D38] transition-colors" />
+                    <MapPin className="absolute left-4 top-5 w-5 h-5 text-gray-300 group-focus-within:text-[#0B5D3B] transition-colors" />
                     <textarea
                       rows={3}
                       value={address}
                       onChange={(e) => setAddress(e.target.value)}
                       placeholder="গ্রাম/রাস্তা, থানা, জেলা"
-                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#105D38] outline-none transition-all text-gray-800 font-medium resize-none"
+                      className="w-full pl-12 pr-4 py-4 bg-gray-50 border border-transparent rounded-2xl focus:bg-white focus:border-[#0B5D3B] outline-none transition-all text-gray-800 font-medium resize-none"
                     ></textarea>
                   </div>
                 </div>
@@ -357,7 +357,7 @@ const CheckoutContent = () => {
               <button
                 onClick={handleOrder}
                 disabled={loading}
-                className="w-full py-5 bg-[#105D38] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
+                className="w-full py-5 bg-[#0B5D3B] hover:bg-[#0b4127] text-white font-black rounded-2xl shadow-lg shadow-green-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all flex items-center justify-center gap-3 group"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />
@@ -382,7 +382,7 @@ const CheckoutPage = () => (
   <Suspense
     fallback={
       <div className="h-screen flex items-center justify-center bg-white">
-        <div className="w-10 h-10 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin"></div>
+        <div className="w-10 h-10 border-4 border-[#0B5D3B] border-t-transparent rounded-full animate-spin"></div>
       </div>
     }
   >

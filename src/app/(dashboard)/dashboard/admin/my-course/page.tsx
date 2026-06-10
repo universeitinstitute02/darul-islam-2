@@ -63,7 +63,7 @@ const MyCourses = () => {
       text: "একবার ডিলিট করলে এটি আর ফিরে পাবেন না!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#d33",
       confirmButtonText: "হ্যাঁ, ডিলিট করুন!",
       cancelButtonText: "বাতিল",
@@ -123,7 +123,7 @@ const MyCourses = () => {
           </p>
         </div>
         <Link href="/dashboard/admin/add-course">
-          <button className="bg-[#105D38] hover:bg-[#0c4a2d] text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg transition-all">
+          <button className="bg-[#0B5D3B] hover:bg-[#0c4a2d] text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg transition-all">
             <Plus size={18} /> নতুন কোর্স
           </button>
         </Link>

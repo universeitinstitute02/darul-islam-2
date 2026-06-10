@@ -253,7 +253,7 @@ export default function AdminBatchManagement() {
     <div className="min-h-screen bg-[#F5F0E8]/40 p-6 md:p-10 font-sans">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
         <div>
-          <h1 className="text-3xl font-black text-[#14281D] mt-2 flex items-center gap-2">
+          <h1 className="text-3xl font-black text-[#0B3D2E] mt-2 flex items-center gap-2">
             <Layers className="text-green-800" size={28} /> ব্যাচ ম্যানেজমেন্ট
             প্যানেল
           </h1>
@@ -351,7 +351,7 @@ export default function AdminBatchManagement() {
                   </span>
                 </div>
 
-                <h3 className="text-xl font-black text-[#14281D] line-clamp-1 mb-1">
+                <h3 className="text-xl font-black text-[#0B3D2E] line-clamp-1 mb-1">
                   {batch.batchName}
                 </h3>
 

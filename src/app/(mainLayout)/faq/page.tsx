@@ -31,17 +31,17 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#FFFCDC]">
+    <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
       {/* Hero Section */}
-      <section className="relative h-48 lg:h-64 bg-[#14281D] flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <section className="relative h-48 lg:h-64 bg-[#0B3D2E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex items-center gap-4">
-          <div className="w-16 h-16 bg-[#87F56] rounded-2xl flex items-center justify-center text-[#14281D] shadow-lg">
+          <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-[#0B3D2E] shadow-lg">
             <HelpCircle size={40} />
           </div>
           <div>
             <h1 className="text-2xl lg:text-4xl font-black">সাধারণ জিজ্ঞাসা</h1>
-            <p className="text-sm font-bold text-[#E2D4B9]/80 uppercase tracking-widest mt-1">সচরাচর জিজ্ঞাসিত প্রশ্নের উত্তর</p>
+            <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">সচরাচর জিজ্ঞাসিত প্রশ্নের উত্তর</p>
           </div>
         </div>
       </section>
@@ -54,13 +54,13 @@ export default function FAQPage() {
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.1 }}
-              className="bg-white rounded-3xl shadow-lg border border-[#14281D]/5 overflow-hidden"
+              className="bg-white rounded-3xl shadow-lg border border-[#0B3D2E]/5 overflow-hidden"
             >
               <button 
                 onClick={() => setOpenIndex(openIndex === i ? null : i)}
-                className="w-full flex items-center justify-between p-6 text-left hover:bg-[#14281D]/5 transition-colors"
+                className="w-full flex items-center justify-between p-6 text-left hover:bg-[#0B3D2E]/5 transition-colors"
               >
-                <span className="text-lg font-black text-[#14281D]">{faq.question}</span>
+                <span className="text-lg font-black text-[#0B3D2E]">{faq.question}</span>
                 <motion.div
                   animate={{ rotate: openIndex === i ? 180 : 0 }}
                 >
@@ -75,7 +75,7 @@ export default function FAQPage() {
                     exit={{ height: 0, opacity: 0 }}
                     className="overflow-hidden"
                   >
-                    <div className="p-6 pt-0 text-[#14281D]/70 font-medium leading-relaxed border-t-2 border-dashed border-[#14281D]/5">
+                    <div className="p-6 pt-0 text-[#0B3D2E]/70 font-medium leading-relaxed border-t-2 border-dashed border-[#0B3D2E]/5">
                       {faq.answer}
                     </div>
                   </motion.div>
@@ -87,21 +87,21 @@ export default function FAQPage() {
 
         {/* Contact CTA */}
         <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-          <div className="bg-[#14281D] p-8 rounded-[3rem] text-white space-y-4 flex flex-col items-center text-center">
-            <div className="w-16 h-16 bg-[#87F56] text-[#14281D] rounded-2xl flex items-center justify-center">
+          <div className="bg-[#0B3D2E] p-8 rounded-[3rem] text-white space-y-4 flex flex-col items-center text-center">
+            <div className="w-16 h-16 bg-[#8FE3A9] text-[#0B3D2E] rounded-2xl flex items-center justify-center">
               <MessageCircle size={32} />
             </div>
             <h3 className="text-xl font-black">আমাদের সাথে কথা বলুন</h3>
             <p className="opacity-70 text-sm">আপনার যদি আরও প্রশ্ন থাকে তবে আমাদের মেসেঞ্জারে যোগাযোগ করতে পারেন।</p>
-            <button className="bg-[#87F56] text-[#14281D] px-8 py-3 rounded-2xl font-bold hover:scale-105 transition-transform">লাইভ চ্যাট</button>
+            <button className="bg-[#8FE3A9] text-[#0B3D2E] px-8 py-3 rounded-2xl font-bold hover:scale-105 transition-transform">লাইভ চ্যাট</button>
           </div>
           <div className="bg-white p-8 rounded-[3rem] border-4 border-amber-100 space-y-4 flex flex-col items-center text-center shadow-xl">
             <div className="w-16 h-16 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
               <PhoneCall size={32} />
             </div>
-            <h3 className="text-xl font-black text-[#14281D]">হেল্পলাইন</h3>
-            <p className="text-[#14281D]/60 text-sm">সরাসরি কথা বলতে ফোন করুন আমাদের হেল্পলাইনে।</p>
-            <p className="text-3xl font-black text-[#14281D]">০১৭১২-৩৪৫৬৭৮</p>
+            <h3 className="text-xl font-black text-[#0B3D2E]">হেল্পলাইন</h3>
+            <p className="text-[#0B3D2E]/60 text-sm">সরাসরি কথা বলতে ফোন করুন আমাদের হেল্পলাইনে।</p>
+            <p className="text-3xl font-black text-[#0B3D2E]">০১৭১২-৩৪৫৬৭৮</p>
           </div>
         </section>
       </main>

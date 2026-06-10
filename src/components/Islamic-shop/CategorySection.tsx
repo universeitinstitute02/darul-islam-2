@@ -100,7 +100,7 @@ const CategorySection = () => {
   return (
     <section className="px-4 py-8 max-w-7xl mx-auto bg-white">
       <div className="mb-6 mt-10">
-        <h2 className="text-lg md:text-xl font-black text-[#105D38]">
+        <h2 className="text-lg md:text-xl font-black text-[#0B5D3B]">
           ক্যাটেগরি সমূহ
         </h2>
       </div>
@@ -114,7 +114,7 @@ const CategorySection = () => {
           >
             <div className="flex flex-col items-center gap-2">
               <div
-                className={`relative w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden border transition-all ${activeCategory === cat.slug ? "border-[#105D38] bg-green-50" : "border-gray-100 bg-[#F3F4F6]"}`}
+                className={`relative w-full aspect-square rounded-2xl md:rounded-[2rem] overflow-hidden border transition-all ${activeCategory === cat.slug ? "border-[#0B5D3B] bg-green-50" : "border-gray-100 bg-[#F3F4F6]"}`}
               >
                 <Image
                   src={cat.image}
@@ -124,7 +124,7 @@ const CategorySection = () => {
                 />
               </div>
               <span
-                className={`text-[10px] md:text-xs font-bold text-center line-clamp-1 ${activeCategory === cat.slug ? "text-[#105D38]" : "text-gray-600"}`}
+                className={`text-[10px] md:text-xs font-bold text-center line-clamp-1 ${activeCategory === cat.slug ? "text-[#0B5D3B]" : "text-gray-600"}`}
               >
                 {cat.name}
               </span>

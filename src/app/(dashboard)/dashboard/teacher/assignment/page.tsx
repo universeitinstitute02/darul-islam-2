@@ -126,7 +126,7 @@ const AssignmentManagement = () => {
       showCancelButton: true,
       confirmButtonText: "সাবমিট করুন",
       cancelButtonText: "বাতিল",
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#64748B",
       customClass: { popup: "rounded-[2rem] p-6" },
       preConfirm: () => {
@@ -224,7 +224,7 @@ const AssignmentManagement = () => {
       {/* Loading & Error States */}
       {isLoading && (
         <div className="text-center py-12 bg-white rounded-2xl border border-neutral-100">
-          <div className="w-8 h-8 border-4 border-[#105D38] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
+          <div className="w-8 h-8 border-4 border-[#0B5D3B] border-t-transparent rounded-full animate-spin mx-auto mb-2"></div>
           <p className="text-xs text-neutral-400 font-medium">
             অ্যাসাইনমেন্টগুলো লোড হচ্ছে...
           </p>
@@ -260,7 +260,7 @@ const AssignmentManagement = () => {
       )}
 
       {/* Quick Summary Floating Bar */}
-      <div className="bg-[#105D38] p-4 rounded-2xl flex items-center justify-between text-white shadow-lg">
+      <div className="bg-[#0B5D3B] p-4 rounded-2xl flex items-center justify-between text-white shadow-lg">
         <div className="flex items-center gap-3">
           <div className="bg-white/20 p-2 rounded-lg">
             <ClipboardList size={18} />

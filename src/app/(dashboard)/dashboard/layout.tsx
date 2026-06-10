@@ -48,8 +48,8 @@ function SidebarLinkGroup({
       isActive = pathname === "/";
     } else if (link.href === "/dashboard") {
       isActive = pathname === "/dashboard";
-    } else if (link.href === "/dashboard/teacher/teacher-dashboard") {
-      isActive = pathname === "/dashboard/teacher/teacher-dashboard";
+    } else if (link.href === "/dashboard/admin/admin-dashboard") {
+      isActive = pathname === "/dashboard/admin/admin-dashboard";
     } else {
       isActive = pathname === link.href;
     }
@@ -60,8 +60,8 @@ function SidebarLinkGroup({
         onClick={() => setSidebarOpen(false)}
         className={`flex items-center gap-3 p-3 rounded-xl font-medium transition-all ${
           isActive
-            ? "bg-[#C5A059] text-white shadow-lg" // অ্যাক্টিভ ক্লাস স্টাইল
-            : "text-green-100 hover:bg-green-800/50"
+            ? "bg-[#C8A44D] text-[#10231B] shadow-lg" // অ্যাক্টিভ ক্লাস স্টাইল
+            : "text-green-50/85 hover:bg-white/10 hover:text-white"
         }`}
       >
         <LinkIcon size={20} /> {link.name}
@@ -73,8 +73,8 @@ function SidebarLinkGroup({
     <div className="space-y-1">
       <button
         onClick={() => setIsOpen(!isOpen)}
-        className={`flex items-center justify-between w-full p-3 rounded-xl font-medium transition-all text-green-100 hover:bg-green-800/50 ${
-          hasActiveChild ? "bg-green-900/40 text-white" : ""
+        className={`flex items-center justify-between w-full p-3 rounded-xl font-medium transition-all text-green-50/85 hover:bg-white/10 hover:text-white ${
+          hasActiveChild ? "bg-white/10 text-white" : ""
         }`}
       >
         <div className="flex items-center gap-3">
@@ -99,8 +99,8 @@ function SidebarLinkGroup({
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center gap-3 p-2 rounded-lg text-sm font-medium transition-all ${
                   isChildActive
-                    ? "bg-[#C5A059] text-white shadow-md"
-                    : "text-green-200 hover:bg-green-800/30 hover:text-white"
+                    ? "bg-[#C8A44D] text-[#10231B] shadow-md"
+                    : "text-green-100/80 hover:bg-white/10 hover:text-white"
                 }`}
               >
                 <ChildIcon size={18} /> {child.name}
@@ -129,7 +129,7 @@ export default function DashboardLayout({
       text: "আপনি ড্যাশবোর্ড থেকে লগআউট করতে যাচ্ছেন!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B3D2E",
       cancelButtonColor: "#d33",
       confirmButtonText: "হ্যাঁ, লগআউট করুন",
       cancelButtonText: "বাতিল",
@@ -145,7 +145,7 @@ export default function DashboardLayout({
   // --- শিক্ষক (Teacher) এর মেনু লিংক সমূহ ---
   const teacherLinks = [
     { name: "হোম", href: "/", icon: House },
-    { name: "Dashboard", href: "/dashboard/teacher/teacher-dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "আমার কোর্সসমূহ", href: "/dashboard/teacher/my-course", icon: Library },
     { name: "ক্লাস লিঙ্ক", href: "/dashboard/teacher/class-link", icon: Video },
     { name: "অ্যাসাইনমেন্ট ও মূল্যায়ন", href: "/dashboard/teacher/assignment", icon: GraduationCap },
@@ -204,7 +204,7 @@ export default function DashboardLayout({
   const navLinks = role === "admin" ? adminLinks : role === "teacher" ? teacherLinks : [];
 
   return (
-    <div className="flex h-screen bg-neutral-100">
+    <div className="flex h-screen bg-[#F3F8F4]">
       {isSidebarOpen && (
         <div
           className="fixed inset-0 bg-black/50 z-40 md:hidden"
@@ -214,13 +214,13 @@ export default function DashboardLayout({
 
       <aside
         className={`
-          fixed inset-y-0 left-0 z-50 w-64 bg-[#105D38] text-white flex flex-col 
+          fixed inset-y-0 left-0 z-50 w-64 bg-[#0B3D2E] text-white flex flex-col
           transition-transform duration-300 transform md:relative md:translate-x-0
           ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
           rounded-tr-2xl shadow-xl overflow-hidden
         `}
       >
-        <div className="p-6 border-b border-green-800 flex items-center justify-between">
+        <div className="p-6 border-b border-white/10 flex items-center justify-between">
           <div className="flex items-center gap-3">
             <LayoutDashboard />
             <h2 className="text-xl font-bold">ড্যাশবোর্ড</h2>
@@ -244,7 +244,7 @@ export default function DashboardLayout({
           ))}
         </nav>
 
-        <div className="p-4 border-t border-green-800">
+        <div className="p-4 border-t border-white/10">
           <button
             onClick={handleLogout}
             className="flex items-center gap-3 w-full p-3 cursor-pointer bg-red-600 rounded-xl text-white font-medium transition"
@@ -257,7 +257,7 @@ export default function DashboardLayout({
       <main className="flex-1 flex flex-col min-w-0 h-full overflow-hidden">
         <header className="md:hidden bg-white p-4 border-b flex items-center justify-between">
           <div className="flex items-center gap-2">
-            <div className="w-8 h-8 bg-[#105D38] rounded-lg flex items-center justify-center text-white font-bold">
+            <div className="w-8 h-8 bg-[#0B3D2E] rounded-lg flex items-center justify-center text-white font-bold">
               DI
             </div>
             <span className="font-bold text-neutral-800 uppercase tracking-tight">
@@ -272,7 +272,7 @@ export default function DashboardLayout({
           </button>
         </header>
 
-        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-neutral-50">
+        <div className="flex-1 overflow-y-auto p-4 md:p-8 bg-[#F7FBF7]">
           {children}
         </div>
       </main>

@@ -96,7 +96,7 @@ export default function DonationManagementPage() {
       text: "টাকা সঠিকভাবে জমা হয়েছে কিনা তা নিশ্চিত হয়ে নিন।",
       icon: "question",
       showCancelButton: true,
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#64748b",
       confirmButtonText: "হ্যাঁ, ভেরিফাই করুন",
       cancelButtonText: "বাতিল",

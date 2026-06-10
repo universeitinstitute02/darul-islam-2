@@ -30,7 +30,7 @@ const stats = [
 ]
 
 const courses = [
-  { name: "হিফযুল কুরআন", progress: 75, detail: "১৫ টি সূরা সম্পন্ন", color: "bg-[#14281D]" },
+  { name: "হিফযুল কুরআন", progress: 75, detail: "১৫ টি সূরা সম্পন্ন", color: "bg-[#0B3D2E]" },
   { name: "আরবি ভাষা কোর্স", progress: 40, detail: "৮ টি পাঠ সম্পন্ন", color: "bg-amber-600" },
   { name: "তাজবীদ ও কিরাত", progress: 90, detail: "প্রায় সম্পন্ন", color: "bg-teal-600" },
 ]
@@ -61,17 +61,17 @@ export default function ProfilePage() {
           <div className="flex items-center gap-6">
             <motion.div 
                whileHover={{ scale: 1.05 }}
-               className="w-20 h-20 lg:w-24 lg:h-24 bg-white rounded-3xl flex items-center justify-center text-[#14281D] shadow-2xl relative group cursor-pointer"
+               className="w-20 h-20 lg:w-24 lg:h-24 bg-white rounded-3xl flex items-center justify-center text-[#0B3D2E] shadow-2xl relative group cursor-pointer"
             >
               <User size={48} />
-              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white border-4 border-[#14281D] group-hover:bg-amber-400 transition-colors">
+              <div className="absolute -bottom-2 -right-2 w-8 h-8 bg-amber-500 rounded-full flex items-center justify-center text-white border-4 border-[#0B3D2E] group-hover:bg-amber-400 transition-colors">
                 <Edit size={14} />
 
               </div>
             </motion.div>
             <div>
               <h1 className="text-xl lg:text-3xl font-black">মুহাম্মদ রহিম</h1>
-              <p className="text-xs lg:text-sm font-bold text-[#E2D4B9]/80 uppercase tracking-widest mt-1 flex items-center gap-2">
+              <p className="text-xs lg:text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1 flex items-center gap-2">
                 <University size={14} /> শিক্ষার্থী · দারুল ইসলাম ইনস্টিটিউট
               </p>
             </div>
@@ -80,9 +80,9 @@ export default function ProfilePage() {
           <div className="hidden lg:flex gap-4">
             <button className="bg-white/10 hover:bg-white/20 p-3 rounded-2xl transition-colors relative">
               <Bell size={24} />
-              <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-[#14281D]"></span>
+              <span className="absolute top-2 right-2 w-3 h-3 bg-red-500 rounded-full border-2 border-[#0B3D2E]"></span>
             </button>
-            <button className="bg-[#E2D4B9] text-[#14281D] px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-xl hover:scale-105 transition-transform">
+            <button className="bg-[#F5EFE1] text-[#0B3D2E] px-6 py-3 rounded-2xl font-black flex items-center gap-2 shadow-xl hover:scale-105 transition-transform">
               <Settings size={20} /> সেটিংস
             </button>
           </div>
@@ -92,7 +92,7 @@ export default function ProfilePage() {
       <main className="max-w-screen-xl mx-auto w-full px-4 py-12 gap-8 grid grid-cols-1 lg:grid-cols-12">
         {/* Sidebar */}
         <aside className="lg:col-span-3 space-y-4">
-          <div className="bg-white p-4 rounded-[2rem] shadow-xl border border-[#14281D]/5 space-y-1">
+          <div className="bg-white p-4 rounded-[2rem] shadow-xl border border-[#0B3D2E]/5 space-y-1">
             {[
               { id: "dashboard", label: "ড্যাশবোর্ড", icon: Shield },
               { id: "courses", label: "আমার কোর্স", icon: BookOpen },
@@ -104,8 +104,8 @@ export default function ProfilePage() {
                 onClick={() => setActiveTab(tab.id)}
                 className={`w-full flex items-center justify-between p-4 rounded-2xl font-black transition-all ${
                   activeTab === tab.id 
-                    ? "bg-[#14281D] text-[#E2D4B9] shadow-lg translate-x-2" 
-                    : "text-[#14281D]/60 hover:bg-[#14281D]/5"
+                    ? "bg-[#0B3D2E] text-[#F5EFE1] shadow-lg translate-x-2"
+                    : "text-[#0B3D2E]/60 hover:bg-[#0B3D2E]/5"
                 }`}
               >
                 <div className="flex items-center gap-3">
@@ -115,17 +115,17 @@ export default function ProfilePage() {
                 {activeTab === tab.id && <ChevronRight size={18} />}
               </button>
             ))}
-            <hr className="my-2 border-[#14281D]/5" />
+            <hr className="my-2 border-[#0B3D2E]/5" />
             <button className="w-full flex items-center gap-3 p-4 rounded-2xl font-black text-red-500 hover:bg-red-50 transition-all">
               <LogOut size={20} />
               <span>লগআউট</span>
             </button>
           </div>
 
-          <div className="bg-[#14281D] p-6 rounded-[2rem] text-[#E2D4B9] shadow-2xl space-y-4">
+          <div className="bg-[#0B3D2E] p-6 rounded-[2rem] text-[#F5EFE1] shadow-2xl space-y-4">
              <p className="text-[10px] font-black uppercase tracking-widest opacity-60">অ্যাপ সাপোর্ট</p>
              <h4 className="text-lg font-black leading-tight">আপনার কি কোনো সহযোগিতা প্রয়োজন?</h4>
-             <button className="w-full bg-[#E2D4B9] text-[#14281D] py-3 rounded-xl font-bold text-sm">যোগাযোগ করুন</button>
+             <button className="w-full bg-[#F5EFE1] text-[#0B3D2E] py-3 rounded-xl font-bold text-sm">যোগাযোগ করুন</button>
           </div>
         </aside>
 
@@ -139,14 +139,14 @@ export default function ProfilePage() {
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: i * 0.1 }}
-                className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-[#14281D]/5 text-center space-y-2 relative overflow-hidden group"
+                className="bg-white p-6 lg:p-8 rounded-[2.5rem] shadow-xl border border-[#0B3D2E]/5 text-center space-y-2 relative overflow-hidden group"
               >
                 <div className="relative z-10">
                   <div className={`w-12 h-12 lg:w-16 lg:h-16 ${stat.bg} ${stat.color} rounded-2xl flex items-center justify-center mx-auto mb-4 group-hover:scale-110 group-hover:rotate-6 transition-transform shadow-sm`}>
                     <stat.icon size={32} />
                   </div>
-                  <p className="text-2xl lg:text-4xl font-black text-[#14281D]">{stat.value}</p>
-                  <p className="text-[10px] lg:text-xs font-black text-[#14281D]/40 uppercase tracking-widest">{stat.label}</p>
+                  <p className="text-2xl lg:text-4xl font-black text-[#0B3D2E]">{stat.value}</p>
+                  <p className="text-[10px] lg:text-xs font-black text-[#0B3D2E]/40 uppercase tracking-widest">{stat.label}</p>
                 </div>
               </motion.div>
             ))}
@@ -156,9 +156,9 @@ export default function ProfilePage() {
             {/* Left Column: Progress & Activity */}
             <div className="lg:col-span-3 space-y-8">
               {/* Course Progress */}
-              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#14281D]/5 space-y-6">
+              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#0B3D2E]/5 space-y-6">
                 <div className="flex items-center justify-between">
-                   <h3 className="text-xl font-black text-[#14281D] flex items-center gap-3">
+                   <h3 className="text-xl font-black text-[#0B3D2E] flex items-center gap-3">
                      <BookOpen className="text-amber-600" /> কোর্সের অগ্রগতি
                    </h3>
                    <Link href="/courses" className="text-xs font-black text-amber-600 hover:underline">সকল কোর্স</Link>
@@ -168,12 +168,12 @@ export default function ProfilePage() {
                     <div key={i} className="space-y-3">
                       <div className="flex justify-between items-center px-1">
                         <div>
-                          <p className="font-black text-[#14281D]">{course.name}</p>
-                          <p className="text-[10px] font-bold text-[#14281D]/30 uppercase tracking-widest">{course.detail}</p>
+                          <p className="font-black text-[#0B3D2E]">{course.name}</p>
+                          <p className="text-[10px] font-bold text-[#0B3D2E]/30 uppercase tracking-widest">{course.detail}</p>
                         </div>
-                        <span className="text-sm font-black text-[#14281D]">{course.progress}%</span>
+                        <span className="text-sm font-black text-[#0B3D2E]">{course.progress}%</span>
                       </div>
-                      <div className="w-full h-3 bg-[#14281D]/5 rounded-full overflow-hidden">
+                      <div className="w-full h-3 bg-[#0B3D2E]/5 rounded-full overflow-hidden">
                         <motion.div 
                           initial={{ width: 0 }}
                           animate={{ width: `${course.progress}%` }}
@@ -187,8 +187,8 @@ export default function ProfilePage() {
               </section>
 
               {/* Badges */}
-              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#14281D]/5 space-y-6">
-                <h3 className="text-xl font-black text-[#14281D] flex items-center gap-3">
+              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#0B3D2E]/5 space-y-6">
+                <h3 className="text-xl font-black text-[#0B3D2E] flex items-center gap-3">
                   <Award className="text-amber-600" /> আমার ব্যাজসমূহ
                 </h3>
                 <div className="flex gap-4 overflow-x-auto no-scrollbar pb-2">
@@ -196,12 +196,12 @@ export default function ProfilePage() {
                     <motion.div 
                       key={i} 
                       whileHover={{ scale: 1.1, rotate: 5 }}
-                      className="bg-[#FFFCDC] p-6 rounded-[2rem] shadow-lg border border-amber-100 min-w-[120px] text-center space-y-3 shrink-0"
+                      className="bg-[#F7FBF7] p-6 rounded-[2rem] shadow-lg border border-amber-100 min-w-[120px] text-center space-y-3 shrink-0"
                     >
-                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mx-auto text-[#14281D] shadow-sm">
+                      <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center mx-auto text-[#0B3D2E] shadow-sm">
                         <badge.icon size={28} />
                       </div>
-                      <p className="text-xs font-black text-[#14281D]/60 uppercase tracking-widest">{badge.name}</p>
+                      <p className="text-xs font-black text-[#0B3D2E]/60 uppercase tracking-widest">{badge.name}</p>
                     </motion.div>
                   ))}
                 </div>
@@ -211,7 +211,7 @@ export default function ProfilePage() {
             {/* Right Column: Personal Info & Activity */}
             <div className="lg:col-span-2 space-y-8">
               {/* Personal Info */}
-              <section className="bg-[#14281D] p-8 rounded-[3rem] shadow-2xl text-[#E2D4B9] space-y-6 relative overflow-hidden">
+              <section className="bg-[#0B3D2E] p-8 rounded-[3rem] shadow-2xl text-[#F5EFE1] space-y-6 relative overflow-hidden">
                 <div className="absolute -top-10 -right-10 p-12 text-white/5 opacity-10">
                   <User size={180} />
                 </div>
@@ -239,23 +239,23 @@ export default function ProfilePage() {
                     </div>
                   </div>
                 </div>
-                <button className="w-full bg-[#E2D4B9] text-[#14281D] py-4 rounded-2xl font-black text-sm relative z-10">এডিট প্রোফাইল</button>
+                <button className="w-full bg-[#F5EFE1] text-[#0B3D2E] py-4 rounded-2xl font-black text-sm relative z-10">এডিট প্রোফাইল</button>
               </section>
 
               {/* Recent Activity */}
-              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#14281D]/5 space-y-6">
-                <h3 className="text-xl font-black text-[#14281D] flex items-center gap-3">
+              <section className="bg-white p-8 rounded-[3rem] shadow-xl border border-[#0B3D2E]/5 space-y-6">
+                <h3 className="text-xl font-black text-[#0B3D2E] flex items-center gap-3">
                   <Clock className="text-amber-600" /> সাম্প্রতিক কার্যক্রম
                 </h3>
                 <div className="space-y-4">
                   {activities.map((act, i) => (
                     <div key={i} className="flex gap-4 group">
-                      <div className="w-10 h-10 bg-[#14281D]/5 text-[#14281D] rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#14281D] group-hover:text-[#E2D4B9] transition-all">
+                      <div className="w-10 h-10 bg-[#0B3D2E]/5 text-[#0B3D2E] rounded-xl flex items-center justify-center shrink-0 group-hover:bg-[#0B3D2E] group-hover:text-[#F5EFE1] transition-all">
                         <act.icon size={18} />
                       </div>
                       <div>
-                        <p className="text-sm font-black text-[#14281D]">{act.action}</p>
-                        <p className="text-[10px] font-bold text-[#14281D]/30 uppercase tracking-widest">{act.time}</p>
+                        <p className="text-sm font-black text-[#0B3D2E]">{act.action}</p>
+                        <p className="text-[10px] font-bold text-[#0B3D2E]/30 uppercase tracking-widest">{act.time}</p>
                       </div>
                     </div>
                   ))}

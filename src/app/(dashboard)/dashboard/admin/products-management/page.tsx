@@ -116,7 +116,7 @@ export default function AdminProducts() {
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#d33",
-      cancelButtonColor: "#105D38",
+      cancelButtonColor: "#0B5D3B",
       confirmButtonText: "হ্যাঁ, ডিলিট করুন!",
       cancelButtonText: "বাতিল",
     }).then((result) => {
@@ -129,7 +129,7 @@ export default function AdminProducts() {
       {/* হেডার সেকশন */}
       <div className="max-w-6xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4 bg-white p-5 rounded-2xl border border-neutral-100 shadow-sm mb-6">
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 bg-emerald-50 text-[#105D38] rounded-xl flex items-center justify-center shadow-inner">
+          <div className="w-12 h-12 bg-emerald-50 text-[#0B5D3B] rounded-xl flex items-center justify-center shadow-inner">
             <Package size={24} />
           </div>
           <div>
@@ -146,7 +146,7 @@ export default function AdminProducts() {
             setEditingProduct(null);
             setIsModalOpen(true);
           }}
-          className="w-full cursor-pointer sm:w-auto px-4 py-2.5 bg-[#105D38] hover:bg-[#0c462a] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+          className="w-full cursor-pointer sm:w-auto px-4 py-2.5 bg-[#0B5D3B] hover:bg-[#0c462a] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
         >
           <Plus size={16} />
           <span>নতুন প্রোডাক্ট যোগ করুন</span>
@@ -275,7 +275,7 @@ export default function AdminProducts() {
                         onClick={() => setCurrentPage(page)}
                         className={`px-2.5 py-1 text-[11px] font-bold rounded-lg border transition-all ${
                           currentPage === page
-                            ? "bg-[#105D38] text-white border-[#105D38]"
+                            ? "bg-[#0B5D3B] text-white border-[#0B5D3B]"
                             : "bg-white text-neutral-600 border-neutral-200 hover:bg-neutral-50"
                         }`}
                       >

@@ -90,7 +90,7 @@ export default function HeroSection() {
           }`}
         >
           {/* Overlay */}
-          <div className="absolute inset-0 bg-gradient-to-r from-[#14281D]/90 via-[#14281D]/60 to-transparent z-10" />
+          <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D2E]/92 via-[#0B3D2E]/62 to-transparent z-10" />
 
           {/* Image */}
           <img
@@ -117,7 +117,7 @@ export default function HeroSection() {
 
                 {/* Subtitle */}
                 {slide.subtitle && (
-                  <p className="text-[10px] sm:text-xs lg:text-2xl font-medium leading-tight lg:leading-relaxed text-[#E2D4B9] opacity-90">
+                  <p className="text-[10px] sm:text-xs lg:text-2xl font-medium leading-tight lg:leading-relaxed text-[#F5EFE1] opacity-90">
                     {slide.subtitle}
                   </p>
                 )}
@@ -127,7 +127,7 @@ export default function HeroSection() {
                   {slide.primaryBtnText && (
                     <Link
                       href={slide.primaryBtnLink || "/admission"}
-                      className="bg-red-600 text-white px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all hover:translate-y-[-2px]"
+                      className="bg-[#0B5D3B] text-white px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all hover:bg-[#0B3D2E] hover:translate-y-[-2px]"
                     >
                       {slide.primaryBtnText} <PlayCircle size={16} />
                     </Link>
@@ -136,7 +136,7 @@ export default function HeroSection() {
                   {slide.secondaryBtnText && (
                     <Link
                       href={slide.secondaryBtnLink || "/courses"}
-                      className="bg-green-400 text-white border-2 border-white/20 px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all"
+                      className="bg-white/15 text-white border-2 border-white/30 px-3 py-1.5 lg:px-8 lg:py-4 rounded-md lg:rounded-xl font-bold flex items-center justify-center gap-1 lg:gap-2 text-[10px] lg:text-base transition-all hover:bg-white/25"
                     >
                       {slide.secondaryBtnText} <BookOpen size={16} />
                     </Link>

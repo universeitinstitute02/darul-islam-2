@@ -20,7 +20,7 @@ const EducationHero = ({ searchTerm, onSearchChange }: HeroProps) => {
   ];
 
   return (
-    <div className="relative w-full bg-[#105D38] overflow-hidden rounded-b-[2rem] lg:rounded-b-[3.5rem] mb-8">
+    <div className="relative w-full bg-[#0B5D3B] overflow-hidden rounded-b-[2rem] lg:rounded-b-[3.5rem] mb-8">
       {/* Background Decor */}
       <div className="absolute top-0 right-0 w-48 h-48 bg-white/5 rounded-full -mr-16 -mt-16 blur-3xl" />
       <div className="absolute bottom-0 left-0 w-64 h-64 bg-green-400/5 rounded-full -ml-16 -mb-16 blur-3xl" />
@@ -88,7 +88,7 @@ const EducationHero = ({ searchTerm, onSearchChange }: HeroProps) => {
                               onSearchChange(cat);
                               setIsFilterOpen(false);
                             }}
-                            className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-green-50 hover:text-[#105D38] transition-colors font-medium"
+                            className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-green-50 hover:text-[#0B5D3B] transition-colors font-medium"
                           >
                             {cat}
                           </button>
@@ -109,7 +109,7 @@ const EducationHero = ({ searchTerm, onSearchChange }: HeroProps) => {
                   </AnimatePresence>
                 </div>
 
-                <button className="flex-1 md:flex-none bg-[#105D38] hover:bg-black text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all">
+                <button className="flex-1 md:flex-none bg-[#0B5D3B] hover:bg-black text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all">
                   সার্চ
                 </button>
               </div>

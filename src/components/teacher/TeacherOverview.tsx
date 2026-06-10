@@ -34,16 +34,16 @@ const TeacherOverview = () => {
       label: "মোট শিক্ষার্থী",
       value: 84,
       icon: Users,
-      color: "text-blue-600",
-      bg: "bg-blue-50",
+      color: "text-teal-700",
+      bg: "bg-teal-50",
     },
     {
       id: 3,
       label: "নতুন প্রশ্ন",
       value: 12,
       icon: MessageSquare,
-      color: "text-orange-600",
-      bg: "bg-orange-50",
+      color: "text-[#9A7A24]",
+      bg: "bg-[#FFF8E5]",
     },
   ];
 
@@ -71,14 +71,14 @@ const TeacherOverview = () => {
   };
 
   return (
-    <div className="p-4 md:p-6 space-y-6 md:space-y-8 bg-[#F9FBFA] ">
+    <div className="p-4 md:p-6 space-y-6 md:space-y-8 bg-[#F7FBF7] ">
       {/* Course List */}
       <div className="space-y-4">
         <div className="flex items-center justify-between px-1">
           <h2 className="text-lg md:text-xl font-bold text-neutral-800">
             পরিচালিত কোর্স
           </h2>
-          <button className="text-[#105D38] text-xs md:text-sm font-semibold flex items-center gap-1">
+          <button className="text-[#0B5D3B] text-xs md:text-sm font-semibold flex items-center gap-1">
             সবগুলো <ChevronRight size={16} />
           </button>
         </div>
@@ -107,18 +107,18 @@ const TeacherOverview = () => {
                   </div>
                 </div>
                 <div className="p-2 bg-neutral-50 rounded-xl">
-                  <BookOpen size={18} className="text-[#C5A059]" />
+                  <BookOpen size={18} className="text-[#C8A44D]" />
                 </div>
               </div>
 
               <div className="flex items-center justify-between pt-3 border-t border-neutral-50 mt-2">
                 <div className="flex items-center gap-1.5 text-xs text-neutral-600 font-medium">
-                  <Calendar size={14} className="text-[#105D38]" />
+                  <Calendar size={14} className="text-[#0B5D3B]" />
                   <span>{course.time}</span>
                 </div>
                 <button
                   onClick={() => handleManageClick(course)}
-                  className="text-xs md:text-sm font-bold text-[#105D38] flex items-center"
+                  className="text-xs md:text-sm font-bold text-[#0B5D3B] flex items-center"
                 >
                   ম্যানেজ <ChevronRight size={14} />
                 </button>
@@ -147,31 +147,31 @@ const TeacherOverview = () => {
           <div className="space-y-4">
             <div>
               <label className="text-sm font-bold text-neutral-700 block mb-2 px-1 flex items-center gap-2">
-                <Clock size={16} className="text-[#C5A059]" /> নতুন সময় নির্ধারণ
+                <Clock size={16} className="text-[#C8A44D]" /> নতুন সময় নির্ধারণ
               </label>
               <input
                 type="text"
                 defaultValue={selectedCourse?.time}
                 placeholder="উদা: আজ রাত ৯:০০"
-                className="w-full px-4 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-neutral-800"
+                className="w-full px-4 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-neutral-800"
               />
             </div>
 
             <div>
               <label className="text-sm font-bold text-neutral-700 block mb-2 px-1 flex items-center gap-2">
-                <MessageSquare size={16} className="text-[#C5A059]" />{" "}
+                <MessageSquare size={16} className="text-[#C8A44D]" />{" "}
                 শিক্ষার্থীদের জন্য বার্তা (ঐচ্ছিক)
               </label>
               <textarea
                 rows={3}
                 placeholder="সময় পরিবর্তনের কারণ বা আজকের বিশেষ নির্দেশনা..."
-                className="w-full px-4 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-neutral-800"
+                className="w-full px-4 py-4 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-neutral-800"
               />
             </div>
           </div>
 
           <div className="flex flex-col gap-3 pt-2">
-            <button className="w-full py-4 bg-[#105D38] text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform">
+            <button className="w-full py-4 bg-[#0B5D3B] text-white rounded-2xl font-bold flex items-center justify-center gap-2 shadow-lg active:scale-[0.98] transition-transform">
               <CheckCircle2 size={20} /> আপডেট নিশ্চিত করুন
             </button>
             <button

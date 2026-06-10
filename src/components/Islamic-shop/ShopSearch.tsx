@@ -88,7 +88,7 @@ const ProductSearchSection = () => {
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
             placeholder="আপনার পছন্দের পণ্য বা বইটি এখানে সার্চ করুন..."
-            className="w-full pl-12 pr-10 py-3.5 bg-white border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
+            className="w-full pl-12 pr-10 py-3.5 bg-white border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
           />
           {searchQuery && (
             <button
@@ -108,7 +108,7 @@ const ProductSearchSection = () => {
           <select
             value={selectedCategory}
             onChange={(e) => setSelectedCategory(e.target.value)}
-            className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none appearance-none font-bold text-xs text-neutral-700 cursor-pointer"
+            className="w-full pl-11 pr-4 py-3.5 bg-white border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none appearance-none font-bold text-xs text-neutral-700 cursor-pointer"
           >
             {categories.map((cat, idx) => (
               <option key={idx} value={cat.id}>
@@ -137,7 +137,7 @@ const ProductSearchSection = () => {
           {/* 🛒 কার্ট বাটন */}
           <button
             onClick={() => router.push("/cart")}
-            className="w-full md:w-max p-3.5 bg-emerald-50 border border-emerald-100 text-[#105D38] hover:bg-emerald-100 transition-all rounded-2xl flex items-center justify-center cursor-pointer"
+            className="w-full md:w-max p-3.5 bg-emerald-50 border border-emerald-100 text-[#0B5D3B] hover:bg-emerald-100 transition-all rounded-2xl flex items-center justify-center cursor-pointer"
             title="কার্ট পেজে যান"
           >
             <ShoppingCart size={18} />
@@ -156,9 +156,9 @@ const ProductSearchSection = () => {
             >
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
                 <div>
-                  <h3 className="font-black text-[#105D38] text-sm md:text-base flex items-center gap-2">
+                  <h3 className="font-black text-[#0B5D3B] text-sm md:text-base flex items-center gap-2">
                     🔍 অনুসন্ধান ফলাফল
-                    <span className="text-xs bg-emerald-50 text-[#105D38] px-2.5 py-0.5 rounded-full font-bold">
+                    <span className="text-xs bg-emerald-50 text-[#0B5D3B] px-2.5 py-0.5 rounded-full font-bold">
                       {searchedProducts.length} টি পণ্য পাওয়া গেছে
                     </span>
                   </h3>

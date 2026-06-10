@@ -75,7 +75,7 @@ export default function AdminPendingOrders() {
         ? "আপনি কি অর্ডারটি কনফার্ম করতে চান?"
         : "আপনি কি অর্ডারটি বাতিল করতে চান?";
     const confirmButtonColor =
-      statusValue === "processing" ? "#105D38" : "#d33";
+      statusValue === "processing" ? "#0B5D3B" : "#d33";
 
     const result = await Swal.fire({
       title: "নিশ্চিত করুন",
@@ -107,7 +107,7 @@ export default function AdminPendingOrders() {
           title: "সফল হয়েছে!",
           text: response.data?.message || "অর্ডার স্ট্যাটাস আপডেট হয়েছে।",
           icon: "success",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
         refetch();
       }
@@ -146,7 +146,7 @@ export default function AdminPendingOrders() {
           title: "মুছে ফেলা হয়েছে!",
           text: response.data?.message || "অর্ডারটি সফলভাবে ডিলিট হয়েছে।",
           icon: "success",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
         refetch();
       }
@@ -267,22 +267,22 @@ export default function AdminPendingOrders() {
                 {/* Customer Info Box */}
                 <div className="space-y-2.5 mb-5 bg-neutral-50/60 p-3.5 rounded-2xl border border-neutral-100/50">
                   <div className="flex items-center gap-2.5 text-neutral-800">
-                    <User className="w-4 h-4 text-[#105D38] flex-shrink-0" />
+                    <User className="w-4 h-4 text-[#0B5D3B] flex-shrink-0" />
                     <span className="font-black text-sm">
                       {order.customerDetails.name}
                     </span>
                   </div>
                   <div className="flex items-center gap-2.5 text-neutral-600">
-                    <Phone className="w-4 h-4 text-[#105D38] flex-shrink-0" />
+                    <Phone className="w-4 h-4 text-[#0B5D3B] flex-shrink-0" />
                     <a
                       href={`tel:${order.customerDetails.phone}`}
-                      className="font-bold text-xs hover:underline hover:text-[#105D38]"
+                      className="font-bold text-xs hover:underline hover:text-[#0B5D3B]"
                     >
                       {order.customerDetails.phone}
                     </a>
                   </div>
                   <div className="flex items-start gap-2.5 text-neutral-500">
-                    <MapPin className="w-4 h-4 text-[#105D38] mt-0.5 flex-shrink-0" />
+                    <MapPin className="w-4 h-4 text-[#0B5D3B] mt-0.5 flex-shrink-0" />
                     <span className="font-medium text-xs leading-relaxed">
                       {order.customerDetails.address},{" "}
                       <b className="text-neutral-700">
@@ -354,7 +354,7 @@ export default function AdminPendingOrders() {
                     <span className="text-[10px] font-bold text-neutral-400 block">
                       সর্বমোট বিল
                     </span>
-                    <span className="text-lg font-black text-[#105D38]">
+                    <span className="text-lg font-black text-[#0B5D3B]">
                       ৳{order.totalAmount}
                     </span>
                   </div>
@@ -371,7 +371,7 @@ export default function AdminPendingOrders() {
                   {/* কনফার্ম বাটন -> স্ট্যাটাস processing */}
                   <button
                     onClick={() => handleUpdateStatus(order._id, "processing")}
-                    className="py-2.5 bg-[#105D38] hover:bg-[#0c4a2c] text-white text-xs font-black rounded-xl shadow-md shadow-green-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1"
+                    className="py-2.5 bg-[#0B5D3B] hover:bg-[#0c4a2c] text-white text-xs font-black rounded-xl shadow-md shadow-green-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1"
                   >
                     <Check className="w-3.5 h-3.5" />
                     অর্ডার কনফার্ম

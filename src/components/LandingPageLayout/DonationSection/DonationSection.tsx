@@ -1,5 +1,6 @@
 import React from "react";
 import { Heart, Droplets, ArrowRight } from "lucide-react";
+import Link from "next/link";
 
 const DonationSection = () => {
   const donationCards = [
@@ -63,12 +64,13 @@ const DonationSection = () => {
                   {card.description}
                 </p>
 
-                <button
-                  className={`inline-flex items-center gap-1 md:gap-2 px-3 py-2 md:px-8 md:py-3 rounded-lg md:xl text-white text-xs md:text-base font-semibold transition-all active:scale-95 ${card.btnColor}`}
+                <Link
+                  href="/donation"
+                  className={`inline-flex items-center cursor-pointer gap-1 md:gap-2 px-3 py-2 md:px-8 md:py-3 rounded-lg md:xl text-white text-xs md:text-base font-semibold transition-all active:scale-95 ${card.btnColor}`}
                 >
                   {card.btnText}
                   <ArrowRight size={14} className="hidden md:block" />
-                </button>
+                </Link>
               </div>
             </div>
           ))}

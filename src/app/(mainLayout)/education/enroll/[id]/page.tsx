@@ -151,7 +151,7 @@ export default function EnrollPage() {
           title: "আবেদন সফল হয়েছে!",
           text: "আপনার ট্রানজেকশন তথ্যটি সফলভাবে গৃহীত হয়েছে। অ্যাডমিন ভেরিফিকেশন সম্পন্ন হলে আপনার কোর্সটি আনলক হয়ে যাবে।",
           icon: "success",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
         router.push("/student-profile");
       }
@@ -173,13 +173,13 @@ export default function EnrollPage() {
   const activeChannel = CHANNEL_NUMBERS[paymentMethod];
 
   return (
-    <div className="min-h-screen bg-[#F4F7F4] pb-24 pt-20 md:pt-24 antialiased selection:bg-[#105D38]/10 selection:text-[#105D38]">
+    <div className="min-h-screen bg-[#F4F7F4] pb-24 pt-20 md:pt-24 antialiased selection:bg-[#0B5D3B]/10 selection:text-[#0B5D3B]">
       <header className="bg-white/80 border-b border-neutral-200/60 py-4 px-4">
         <div className="max-w-7xl px-4 mx-auto flex items-center justify-between">
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#105D38] transition-all hover:cursor-pointer group"
+            className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#0B5D3B] transition-all hover:cursor-pointer group"
             aria-label="পূর্ববর্তী পৃষ্ঠায় ফিরে যান"
           >
             <ArrowLeft
@@ -207,12 +207,12 @@ export default function EnrollPage() {
               role="region"
               aria-label="ইউজার প্রোফাইল তথ্য"
             >
-              <div className="w-12 h-12 bg-[#105D38]/10 rounded-2xl flex items-center justify-center text-[#105D38] shrink-0">
+              <div className="w-12 h-12 bg-[#0B5D3B]/10 rounded-2xl flex items-center justify-center text-[#0B5D3B] shrink-0">
                 <CheckCircle2 size={24} aria-hidden="true" />
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="text-[10px] font-black bg-[#105D38]/10 text-[#105D38] px-2 py-0.5 rounded-full uppercase tracking-wider">
+                  <span className="text-[10px] font-black bg-[#0B5D3B]/10 text-[#0B5D3B] px-2 py-0.5 rounded-full uppercase tracking-wider">
                     {role || "Student"}
                   </span>
                   <span className="text-xs font-medium text-neutral-400">
@@ -240,7 +240,7 @@ export default function EnrollPage() {
                     onClick={() => setPaymentMethod(m)}
                     className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 cursor-pointer ${
                       paymentMethod === m
-                        ? "border-[#105D38] bg-gray-50 text-[#105D38]"
+                        ? "border-[#0B5D3B] bg-gray-50 text-[#0B5D3B]"
                         : "border-gray-100 opacity-60 hover:opacity-80"
                     }`}
                     aria-pressed={paymentMethod === m}
@@ -379,7 +379,7 @@ export default function EnrollPage() {
               initial={{ opacity: 0, x: 15 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.1 }}
-              className="bg-[#105D38] text-white p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-[#105D38]/10"
+              className="bg-[#0B5D3B] text-white p-6 md:p-8 rounded-[2.5rem] shadow-xl border border-[#0B5D3B]/10"
             >
               <h3 className="text-lg font-bold mb-6 tracking-wide opacity-90">
                 অর্ডার সামারি
@@ -429,7 +429,7 @@ export default function EnrollPage() {
               <button
                 type="submit"
                 disabled={isSubmitting}
-                className="relative w-full cursor-pointer bg-white text-[#105D38] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center shadow-md text-base mt-6 active:scale-[0.98] disabled:opacity-60 overflow-hidden"
+                className="relative w-full cursor-pointer bg-white text-[#0B5D3B] font-black py-4 rounded-2xl hover:bg-neutral-50 transition-all flex items-center justify-center shadow-md text-base mt-6 active:scale-[0.98] disabled:opacity-60 overflow-hidden"
               >
                 {isSubmitting && (
                   <div className="absolute inset-0 flex items-center justify-center bg-white">

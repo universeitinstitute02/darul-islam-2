@@ -107,7 +107,7 @@ const ProfileSettings = () => {
           icon: "success",
           title: "প্রোফাইল আপডেট সফল!",
           text: "আপনার প্রোফাইলের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
       }
     } catch (err: any) {
@@ -157,7 +157,7 @@ const ProfileSettings = () => {
             onClick={() => setActiveTab("profile")}
             className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
               activeTab === "profile"
-                ? "bg-white text-[#105D38] shadow-sm"
+                ? "bg-white text-[#0B5D3B] shadow-sm"
                 : "text-neutral-500 hover:text-neutral-700"
             }`}
           >
@@ -167,7 +167,7 @@ const ProfileSettings = () => {
             onClick={() => setActiveTab("security")}
             className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
               activeTab === "security"
-                ? "bg-white text-[#105D38] shadow-sm"
+                ? "bg-white text-[#0B5D3B] shadow-sm"
                 : "text-neutral-500 hover:text-neutral-700"
             }`}
           >
@@ -186,7 +186,7 @@ const ProfileSettings = () => {
               {/* Avatar Upload */}
               <div className="flex flex-col items-center sm:flex-row gap-6 border-b border-neutral-50 pb-8">
                 <div className="relative group">
-                  <div className="w-24 h-24 rounded-3xl bg-emerald-50 flex items-center justify-center overflow-hidden border-2 border-dashed border-[#105D38]/30 relative">
+                  <div className="w-24 h-24 rounded-3xl bg-emerald-50 flex items-center justify-center overflow-hidden border-2 border-dashed border-[#0B5D3B]/30 relative">
                     {imagePreview ? (
                       <Image
                         src={imagePreview}
@@ -196,7 +196,7 @@ const ProfileSettings = () => {
                         unoptimized
                       />
                     ) : (
-                      <User size={40} className="text-[#105D38]" />
+                      <User size={40} className="text-[#0B5D3B]" />
                     )}
                   </div>
                   <input
@@ -208,7 +208,7 @@ const ProfileSettings = () => {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-2 -right-2 p-2 bg-[#105D38] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                    className="absolute -bottom-2 -right-2 p-2 bg-[#0B5D3B] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform"
                     type="button"
                   >
                     <Camera size={16} />
@@ -226,8 +226,8 @@ const ProfileSettings = () => {
 
               {/* 🌐 সাধারণ তথ্যসমূহ */}
               <div>
-                <h4 className="text-xs font-black text-[#105D38] uppercase tracking-wider mb-4 flex items-center gap-1">
-                  <span className="w-1.5 h-1.5 bg-[#105D38] rounded-full inline-block" />{" "}
+                <h4 className="text-xs font-black text-[#0B5D3B] uppercase tracking-wider mb-4 flex items-center gap-1">
+                  <span className="w-1.5 h-1.5 bg-[#0B5D3B] rounded-full inline-block" />{" "}
                   সাধারণ তথ্যসমূহ
                 </h4>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -244,7 +244,7 @@ const ProfileSettings = () => {
                         type="text"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
+                        className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
                       />
                     </div>
                   </div>
@@ -280,7 +280,7 @@ const ProfileSettings = () => {
                         type="text"
                         value={phone}
                         onChange={(e) => setPhone(e.target.value)}
-                        className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
+                        className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
                       />
                     </div>
                   </div>
@@ -294,7 +294,7 @@ const ProfileSettings = () => {
                         className="absolute left-4 top-3.5 text-neutral-400"
                         size={18}
                       />
-                      <select className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none appearance-none font-medium text-xs md:text-sm text-neutral-800">
+                      <select className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none appearance-none font-medium text-xs md:text-sm text-neutral-800">
                         <option>Dhaka (GMT+6)</option>
                         <option>Makkah (GMT+3)</option>
                       </select>
@@ -324,7 +324,7 @@ const ProfileSettings = () => {
                         value={studentNameBn}
                         onChange={(e) => setStudentNameBn(e.target.value)}
                         placeholder="বাংলায় আপনার নাম"
-                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                       />
                     </div>
                     <div className="space-y-2">
@@ -336,7 +336,7 @@ const ProfileSettings = () => {
                         value={classLevel}
                         onChange={(e) => setClassLevel(e.target.value)}
                         placeholder="উদাঃ Class 10"
-                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                       />
                     </div>
                   </div>
@@ -364,7 +364,7 @@ const ProfileSettings = () => {
                         value={teacherNameBn}
                         onChange={(e) => setTeacherNameBn(e.target.value)}
                         placeholder="উদাঃ আরিফুল ইসলাম"
-                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                       />
                     </div>
                     <div className="space-y-2">
@@ -376,7 +376,7 @@ const ProfileSettings = () => {
                         value={designation}
                         onChange={(e) => setDesignation(e.target.value)}
                         placeholder="উদাঃ Lecturer"
-                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                       />
                     </div>
                     <div className="space-y-2 md:col-span-2">
@@ -393,7 +393,7 @@ const ProfileSettings = () => {
                           value={department}
                           onChange={(e) => setDepartment(e.target.value)}
                           placeholder="উদাঃ দরসি কিতাব"
-                          className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
+                          className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                         />
                       </div>
                     </div>
@@ -422,7 +422,7 @@ const ProfileSettings = () => {
                   </label>
                   <input
                     type="password"
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all"
+                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all"
                   />
                 </div>
                 <div className="space-y-2">
@@ -431,7 +431,7 @@ const ProfileSettings = () => {
                   </label>
                   <input
                     type="password"
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#105D38] outline-none transition-all"
+                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all"
                   />
                 </div>
               </div>
@@ -442,7 +442,7 @@ const ProfileSettings = () => {
             <button
               onClick={handleProfileSubmit}
               disabled={loading}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#105D38] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 hover:bg-[#0d4d2e] transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed text-sm"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0B5D3B] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 hover:bg-[#0d4d2e] transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed text-sm"
               type="button"
             >
               <Save size={18} />{" "}

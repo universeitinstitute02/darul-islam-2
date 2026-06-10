@@ -224,7 +224,7 @@ export default function TeacherAssign() {
             {/* <span className="text-[10px] uppercase font-bold text-green-700 bg-green-50 px-3 py-1 rounded-md border border-green-200/50">
               Admin Control Only
             </span> */}
-            <h1 className="text-2xl md:text-3xl font-black text-[#14281D] tracking-tight flex items-center gap-2 mt-2">
+            <h1 className="text-2xl md:text-3xl font-black text-[#0B3D2E] tracking-tight flex items-center gap-2 mt-2">
               <GraduationCap className="w-8 h-8 text-green-800" /> রিভিউ মডারেশন
               প্যানেল
             </h1>

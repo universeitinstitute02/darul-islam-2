@@ -125,7 +125,7 @@ const TeacherList = () => {
         icon: "error",
         title: "ত্রুটি",
         text: "शिक्षকের প্রোফাইল আইডি খুঁজে পাওয়া যায়নি।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
       return;
     }
@@ -137,7 +137,7 @@ const TeacherList = () => {
       showCancelButton: true,
       confirmButtonText: "হ্যাঁ, অনুমোদন করুন",
       cancelButtonText: "না",
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#d33",
     }).then(async (result) => {
       if (result.isConfirmed) {
@@ -155,7 +155,7 @@ const TeacherList = () => {
               icon: "success",
               title: "সফল হয়েছে",
               text: "শিক্ষক প্রোফাইলটি সফলভাবে অনুমোদন করা হয়েছে।",
-              confirmButtonColor: "#105D38",
+              confirmButtonColor: "#0B5D3B",
             });
             fetchTeachers();
             if (
@@ -177,7 +177,7 @@ const TeacherList = () => {
             icon: "error",
             title: "ব্যর্থ হয়েছে",
             text: error.message || "অনুমোদন করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
-            confirmButtonColor: "#105D38",
+            confirmButtonColor: "#0B5D3B",
           });
         }
       }
@@ -211,7 +211,7 @@ const TeacherList = () => {
               icon: "success",
               title: "ডিলিট সম্পন্ন",
               text: "ব্যবহারকারীর অ্যাকাউন্টটি সফলভাবে মুছে ফেলা হয়েছে।",
-              confirmButtonColor: "#105D38",
+              confirmButtonColor: "#0B5D3B",
             });
             fetchTeachers();
           } else {
@@ -222,7 +222,7 @@ const TeacherList = () => {
             icon: "error",
             title: "ব্যর্থ হয়েছে",
             text: "অ্যাকাউন্টটি মুছে ফেলা সম্ভব হয়নি। আবার চেষ্টা করুন।",
-            confirmButtonColor: "#105D38",
+            confirmButtonColor: "#0B5D3B",
           });
         }
       }
@@ -242,7 +242,7 @@ const TeacherList = () => {
         icon: "error",
         title: "ইমেইল পাওয়া যায়নি",
         text: "দুঃখিত, এই শিক্ষকের ইমেইল এড্রেস পাওয়া যায়নি।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
       return;
     }
@@ -253,7 +253,7 @@ const TeacherList = () => {
       showCancelButton: true,
       confirmButtonText: "হ্যাঁ, মেইল করুন",
       cancelButtonText: "না",
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#d33",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -268,7 +268,7 @@ const TeacherList = () => {
         icon: "error",
         title: "নম্বর পাওয়া যায়নি",
         text: "দুঃখিত, এই শিক্ষকের মোবাইল নম্বর পাওয়া যায়নি।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
       return;
     }
@@ -279,7 +279,7 @@ const TeacherList = () => {
       showCancelButton: true,
       confirmButtonText: "হ্যাঁ, কল করুন",
       cancelButtonText: "না",
-      confirmButtonColor: "#105D38",
+      confirmButtonColor: "#0B5D3B",
       cancelButtonColor: "#d33",
     }).then((result) => {
       if (result.isConfirmed) {
@@ -350,7 +350,7 @@ const TeacherList = () => {
           icon: "success",
           title: "সম্পাদনা সফল হয়েছে",
           text: "তথ্যগুলো সফলভাবে আপডেট করা হয়েছে।",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
         fetchTeachers(); // Refresh table data
       } else {
@@ -362,7 +362,7 @@ const TeacherList = () => {
         icon: "error",
         title: "ত্রুটি",
         text: "তথ্য আপডেট করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
     }
   };
@@ -375,7 +375,7 @@ const TeacherList = () => {
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
             <h2 className="text-xl md:text-2xl font-black text-neutral-800 flex items-center gap-2">
-              <span className="p-2 bg-emerald-50 rounded-lg text-[#105D38]">
+              <span className="p-2 bg-emerald-50 rounded-lg text-[#0B5D3B]">
                 <UserCheck size={20} />
               </span>
               নিয়ন্ত্রিত শিক্ষকবৃন্দ
@@ -393,7 +393,7 @@ const TeacherList = () => {
                 onClick={() => setStatusFilter("")}
                 className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === ""
-                    ? "bg-white text-[#105D38] shadow-sm"
+                    ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"
                 }`}
               >
@@ -404,7 +404,7 @@ const TeacherList = () => {
                 onClick={() => setStatusFilter("approved")}
                 className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === "approved"
-                    ? "bg-white text-[#105D38] shadow-sm"
+                    ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"
                 }`}
               >
@@ -415,7 +415,7 @@ const TeacherList = () => {
                 onClick={() => setStatusFilter("pending")}
                 className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === "pending"
-                    ? "bg-white text-[#105D38] shadow-sm"
+                    ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"
                 }`}
               >
@@ -438,7 +438,7 @@ const TeacherList = () => {
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               placeholder="নাম বা ইমেইল খুঁজুন..."
-              className="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] focus:bg-white outline-none transition-all"
+              className="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
             />
           </div>
 
@@ -447,7 +447,7 @@ const TeacherList = () => {
             <select
               value={deptFilter}
               onChange={(e) => setDeptFilter(e.target.value)}
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none appearance-none cursor-pointer text-neutral-600"
+              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none appearance-none cursor-pointer text-neutral-600"
             >
               <option value="">সকল বিভাগ</option>
               {departments.map((dept) => (
@@ -466,7 +466,7 @@ const TeacherList = () => {
             <select
               value={expFilter}
               onChange={(e) => setExpFilter(e.target.value)}
-              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none appearance-none cursor-pointer text-neutral-600"
+              className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none appearance-none cursor-pointer text-neutral-600"
             >
               <option value="">অভিজ্ঞতা (সব)</option>
               <option value="১ বছর">১ বছর</option>
@@ -550,7 +550,7 @@ const TeacherList = () => {
                         <button
                           type="button"
                           onClick={() => openEditModal(teacher)}
-                          className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#105D38] rounded-xl transition-all duration-300 cursor-pointer border border-neutral-100"
+                          className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#0B5D3B] rounded-xl transition-all duration-300 cursor-pointer border border-neutral-100"
                           title="তথ্য পরিবর্তন করুন"
                         >
                           <Edit size={14} />
@@ -642,7 +642,7 @@ const TeacherList = () => {
                     <button
                       type="button"
                       onClick={() => openDetailsModal(teacher)}
-                      className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#105D38] hover:bg-[#105D38] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
+                      className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#0B5D3B] hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
                     >
                       <User size={14} /> ডিটেইলস
                     </button>
@@ -867,7 +867,7 @@ const TeacherList = () => {
             >
               <div className="flex items-center justify-between mb-6">
                 <h3 className="text-lg font-black text-neutral-800 flex items-center gap-2">
-                  <Edit size={18} className="text-[#105D38]" /> শিক্ষক তথ্য
+                  <Edit size={18} className="text-[#0B5D3B]" /> শিক্ষক তথ্য
                   পরিবর্তন
                 </h3>
                 <button
@@ -891,7 +891,7 @@ const TeacherList = () => {
                     onChange={(e) =>
                       setEditFormData({ ...editFormData, name: e.target.value })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none"
                   />
                 </div>
                 <div>
@@ -908,7 +908,7 @@ const TeacherList = () => {
                         designation: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none"
                   />
                 </div>
                 <div>
@@ -925,7 +925,7 @@ const TeacherList = () => {
                         experience: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none"
                   />
                 </div>
                 <div>
@@ -942,7 +942,7 @@ const TeacherList = () => {
                         phone: e.target.value,
                       })
                     }
-                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#105D38] outline-none"
+                    className="w-full px-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] outline-none"
                   />
                 </div>
 
@@ -956,7 +956,7 @@ const TeacherList = () => {
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 hover:cursor-pointer py-3 bg-[#105D38] text-white rounded-xl text-xs font-black hover:bg-[#0c462a] transition-all shadow-md"
+                    className="flex-1 hover:cursor-pointer py-3 bg-[#0B5D3B] text-white rounded-xl text-xs font-black hover:bg-[#0c462a] transition-all shadow-md"
                   >
                     হালনাগাদ করুন
                   </button>

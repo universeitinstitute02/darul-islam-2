@@ -68,12 +68,12 @@ const MyCoursesPage = () => {
       {/* 🟢 Premium Dark/Green Carbon Fiber Style Header */}
       <div className="bg-gradient-to-br from-[#0d4d2e] via-[#052214] to-black text-white p-6 pt-12 pb-24 rounded-b-[2rem] lg:rounded-b-[4rem] shadow-xl relative overflow-hidden">
         {/* Background Gradient Orbs */}
-        <div className="absolute top-[-20%] right-[-10%] w-72 h-72 bg-[#105D38]/20 rounded-full blur-3xl"></div>
+        <div className="absolute top-[-20%] right-[-10%] w-72 h-72 bg-[#0B5D3B]/20 rounded-full blur-3xl"></div>
         <div className="absolute bottom-[-20%] left-[-10%] w-72 h-72 bg-black/40 rounded-full blur-3xl"></div>
 
         <div className="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-start md:items-center gap-6 relative z-10">
           <div>
-            <div className="flex items-center gap-2 text-[#105D38] bg-white/90 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 w-fit shadow-sm">
+            <div className="flex items-center gap-2 text-[#0B5D3B] bg-white/90 px-3 py-1 rounded-full text-xs font-bold uppercase tracking-wider mb-2 w-fit shadow-sm">
               <span>স্টুডেন্ট ড্যাশবোর্ড</span>
             </div>
             <h1 className="text-2xl lg:text-4xl font-black tracking-tight flex items-center gap-2">
@@ -96,7 +96,7 @@ const MyCoursesPage = () => {
               placeholder="কোর্সের নাম দিয়ে খুঁজুন..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="w-full pl-9 pr-4 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-slate-400 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#105D38] transition-all"
+              className="w-full pl-9 pr-4 py-2.5 bg-white/10 backdrop-blur-md border border-white/20 rounded-xl text-white placeholder-slate-400 text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0B5D3B] transition-all"
             />
           </div>
         </div>
@@ -138,7 +138,7 @@ const MyCoursesPage = () => {
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                     />
                     {/* Enrolled Status Badge */}
-                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 bg-[#105D38] text-white font-bold text-[10px] rounded-lg shadow-md">
+                    <div className="absolute top-3 left-3 flex items-center gap-1 px-2.5 py-1 bg-[#0B5D3B] text-white font-bold text-[10px] rounded-lg shadow-md">
                       <CheckCircle size={11} />
                       <span>চলমান</span>
                     </div>
@@ -147,11 +147,11 @@ const MyCoursesPage = () => {
                   {/* Card Content Core */}
                   <div className="p-5 flex-1 flex flex-col justify-between gap-4">
                     <div className="space-y-2">
-                      <span className="text-xs font-bold text-[#105D38] bg-[#105D38]/5 px-2.5 py-1 rounded-md inline-block">
+                      <span className="text-xs font-bold text-[#0B5D3B] bg-[#0B5D3B]/5 px-2.5 py-1 rounded-md inline-block">
                         {course.details.batchInfo.split(" ")[0]}
                       </span>
 
-                      <h3 className="text-base font-black text-slate-800 line-clamp-2 group-hover:text-[#105D38] transition-colors leading-snug">
+                      <h3 className="text-base font-black text-slate-800 line-clamp-2 group-hover:text-[#0B5D3B] transition-colors leading-snug">
                         {course.details.fullTitle}
                       </h3>
                     </div>
@@ -182,7 +182,7 @@ const MyCoursesPage = () => {
                       </div>
                       <div className="w-full h-2 bg-slate-100 rounded-full overflow-hidden">
                         <div
-                          className="h-full bg-[#105D38] rounded-full transition-all duration-500"
+                          className="h-full bg-[#0B5D3B] rounded-full transition-all duration-500"
                           style={{ width: `${mockProgress}%` }}
                         ></div>
                       </div>
@@ -193,7 +193,7 @@ const MyCoursesPage = () => {
                   <div className="p-4 bg-slate-50/50 border-t border-neutral-100 shrink-0">
                     <Link
                       href={`/my-course/${course.id}`}
-                      className="w-full py-3 bg-slate-950 hover:bg-[#105D38] text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 group/btn"
+                      className="w-full py-3 bg-slate-950 hover:bg-[#0B5D3B] text-white font-bold text-xs rounded-xl shadow-sm transition-all flex items-center justify-center gap-2 group/btn"
                     >
                       <PlayCircle
                         size={15}

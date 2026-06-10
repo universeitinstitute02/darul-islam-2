@@ -29,7 +29,7 @@ const ShopPromoGrid = () => {
   return (
     <section className="px-4 py-4 md:py-6 max-w-7xl mx-auto space-y-6">
       {/* 📜 ১. ইসলামিক মোটিভেশনাল কোট বার (ব্র্যান্ড ভ্যালু তৈরি করবে) */}
-      <div className="relative bg-gradient-to-r from-[#105D38] to-[#0c462a] text-white p-5 md:p-6 rounded-[2rem] shadow-md overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
+      <div className="relative bg-gradient-to-r from-[#0B5D3B] to-[#0c462a] text-white p-5 md:p-6 rounded-[2rem] shadow-md overflow-hidden flex flex-col md:flex-row items-center justify-between gap-4 text-center md:text-left">
         {/* ব্যাকগ্রাউন্ড ওয়াটারমার্ক ডিজাইন */}
         <div className="absolute right-0 bottom-0 translate-x-10 translate-y-10 opacity-5 pointer-events-none">
           <Heart className="w-64 h-64" />
@@ -86,9 +86,9 @@ const ShopPromoGrid = () => {
             </div>
 
             {/* অ্যাকশন লিংক বাটন */}
-            <div className="mt-6 pt-4 border-t border-neutral-100/50 flex items-center justify-between text-xs font-black text-neutral-700 group-hover:text-[#105D38] transition-colors">
+            <div className="mt-6 pt-4 border-t border-neutral-100/50 flex items-center justify-between text-xs font-black text-neutral-700 group-hover:text-[#0B5D3B] transition-colors">
               <span>কালেকশন দেখুন</span>
-              <div className="w-7 h-7 bg-white group-hover:bg-[#105D38] border border-neutral-100 group-hover:border-[#105D38] text-neutral-400 group-hover:text-white rounded-lg flex items-center justify-center transition-all group-hover:rotate-45">
+              <div className="w-7 h-7 bg-white group-hover:bg-[#0B5D3B] border border-neutral-100 group-hover:border-[#0B5D3B] text-neutral-400 group-hover:text-white rounded-lg flex items-center justify-center transition-all group-hover:rotate-45">
                 <ArrowUpRight className="w-4 h-4" />
               </div>
             </div>

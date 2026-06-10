@@ -16,7 +16,7 @@ const TrustBadges = () => {
       icon: <Headset className="w-5 h-5 md:w-6 md:h-6" />,
       title: "Dedicated Support",
       subtitle: "24/7 Live assistance",
-      bgColor: "bg-emerald-50 text-[#105D38]",
+      bgColor: "bg-emerald-50 text-[#0B5D3B]",
     },
     {
       id: 3,

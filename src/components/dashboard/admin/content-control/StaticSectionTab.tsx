@@ -74,7 +74,7 @@ export default function StaticSectionTab({ pageName }: { pageName: string }) {
             onClick={() => setSelectedSection("about_summary")}
             className={`px-4 py-2 text-xs font-black rounded-xl border transition-all ${
               selectedSection === "about_summary"
-                ? "bg-[#C5A059] text-white border-transparent"
+                ? "bg-[#C8A44D] text-white border-transparent"
                 : "bg-white text-neutral-500 border-neutral-200"
             }`}
           >
@@ -84,7 +84,7 @@ export default function StaticSectionTab({ pageName }: { pageName: string }) {
             onClick={() => setSelectedSection("stats")}
             className={`px-4 py-2 text-xs font-black rounded-xl border transition-all ${
               selectedSection === "stats"
-                ? "bg-[#C5A059] text-white border-transparent"
+                ? "bg-[#C8A44D] text-white border-transparent"
                 : "bg-white text-neutral-500 border-neutral-200"
             }`}
           >
@@ -95,7 +95,7 @@ export default function StaticSectionTab({ pageName }: { pageName: string }) {
         <button
           onClick={handleSave}
           disabled={updateMutation.isPending}
-          className="flex items-center gap-2 px-5 py-2.5 bg-[#105D38] text-white font-black text-xs rounded-xl hover:bg-green-800 shadow transition-all ml-auto"
+          className="flex items-center gap-2 px-5 py-2.5 bg-[#0B5D3B] text-white font-black text-xs rounded-xl hover:bg-green-800 shadow transition-all ml-auto"
         >
           {updateMutation.isPending ? (
             <Loader2 className="animate-spin" size={16} />
@@ -114,13 +114,13 @@ export default function StaticSectionTab({ pageName }: { pageName: string }) {
           </label>
           {isLoading ? (
             <div className="h-64 flex justify-center items-center bg-neutral-50 rounded-2xl border">
-              <Loader2 className="animate-spin text-[#105D38]" size={28} />
+              <Loader2 className="animate-spin text-[#0B5D3B]" size={28} />
             </div>
           ) : (
             <textarea
               value={jsonInput}
               onChange={(e) => setJsonInput(e.target.value)}
-              className="w-full h-80 p-4 bg-neutral-900 text-green-400 font-mono text-sm rounded-2xl outline-none focus:ring-2 focus:ring-[#105D38] transition-all shadow-inner leading-relaxed"
+              className="w-full h-80 p-4 bg-neutral-900 text-green-400 font-mono text-sm rounded-2xl outline-none focus:ring-2 focus:ring-[#0B5D3B] transition-all shadow-inner leading-relaxed"
             />
           )}
         </div>

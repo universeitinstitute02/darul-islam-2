@@ -124,7 +124,7 @@ const TestimonialAdmin: React.FC = () => {
             Swal.fire({
               icon: "success",
               title: "সফলভাবে ডিলিট হয়েছে!",
-              confirmButtonColor: "#105D38",
+              confirmButtonColor: "#0B5D3B",
               timer: 2000,
             });
 
@@ -162,7 +162,7 @@ const TestimonialAdmin: React.FC = () => {
               <ShieldCheck className="w-3.5 h-3.5" /> Admin Control Only
             </div>
             <h1 className="text-2xl md:text-3xl font-black text-gray-900 flex items-center gap-2">
-              <MessageSquare className="w-7 h-7 text-[#105D38]" /> রিভিউ মডারেশন
+              <MessageSquare className="w-7 h-7 text-[#0B5D3B]" /> রিভিউ মডারেশন
               প্যানেল
             </h1>
             <p className="text-xs text-gray-500 mt-1 font-medium">
@@ -190,7 +190,7 @@ const TestimonialAdmin: React.FC = () => {
               onClick={() => setFilterTab("all")}
               className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "all"
-                  ? "bg-[#105D38] text-white"
+                  ? "bg-[#0B5D3B] text-white"
                   : "text-gray-600 hover:bg-gray-50"
               }`}
             >

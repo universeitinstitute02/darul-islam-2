@@ -122,7 +122,7 @@ export default function CourseDetailPage() {
         </div>
         <button
           onClick={() => router.back()}
-          className="bg-[#105D38] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-[#0d4d2e] transition-all cursor-pointer"
+          className="bg-[#0B5D3B] text-white px-6 py-3 rounded-xl flex items-center gap-2 font-bold hover:bg-[#0d4d2e] transition-all cursor-pointer"
         >
           <ArrowLeft size={20} /> পেছনে ফিরে যান
         </button>
@@ -142,10 +142,10 @@ export default function CourseDetailPage() {
         <div className="max-w-7xl mx-auto flex items-center justify-between">
           <button
             onClick={() => router.back()}
-            className="flex items-center hover:cursor-pointer gap-2 text-neutral-600 hover:text-[#105D38] transition-colors group"
+            className="flex items-center hover:cursor-pointer gap-2 text-neutral-600 hover:text-[#0B5D3B] transition-colors group"
             aria-label="পূর্ববর্তী পৃষ্ঠায় ফিরে যান"
           >
-            <div className="p-2 rounded-full group-hover:bg-[#105D38]/10 transition-colors ">
+            <div className="p-2 rounded-full group-hover:bg-[#0B5D3B]/10 transition-colors ">
               <ArrowLeft size={20} aria-hidden="true" />
             </div>
             <span className="font-bold text-sm hidden md:block">পেছনে যান</span>
@@ -161,14 +161,14 @@ export default function CourseDetailPage() {
             <div className="flex items-center gap-2 text-[10px] md:text-xs font-bold">
               <Link
                 href="/education"
-                className="text-neutral-400 hover:text-[#105D38]"
+                className="text-neutral-400 hover:text-[#0B5D3B]"
               >
                 এডুকেশন
               </Link>
               <span className="text-neutral-300" aria-hidden="true">
                 /
               </span>
-              <span className="text-[#105D38] line-clamp-1 max-w-[120px] md:max-w-none uppercase">
+              <span className="text-[#0B5D3B] line-clamp-1 max-w-[120px] md:max-w-none uppercase">
                 {title}
               </span>
             </div>
@@ -187,7 +187,7 @@ export default function CourseDetailPage() {
               className="space-y-4"
             >
               <div className="flex items-center gap-3">
-                <span className="inline-block bg-[#105D38] text-white px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
+                <span className="inline-block bg-[#0B5D3B] text-white px-4 py-1 rounded-lg text-[10px] font-black uppercase tracking-widest">
                   {category}
                 </span>
                 <div
@@ -255,7 +255,7 @@ export default function CourseDetailPage() {
                       exit={{ opacity: 0, y: -10 }}
                       className="bg-gradient-to-br from-[#0d4d2e] via-[#052214] to-black rounded-[2rem] p-6 sm:p-8 text-white relative overflow-hidden shadow-2xl border border-neutral-800"
                     >
-                      <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-[#105D38]/30 rounded-full blur-3xl pointer-events-none"></div>
+                      <div className="absolute top-[-20%] right-[-10%] w-64 h-64 bg-[#0B5D3B]/30 rounded-full blur-3xl pointer-events-none"></div>
                       <div className="relative z-10 space-y-4">
                         <div className="flex items-center gap-2">
                           <span className="flex h-2 w-2 relative">
@@ -296,7 +296,7 @@ export default function CourseDetailPage() {
                             href={liveSession.meetLink}
                             target="_blank"
                             rel="noreferrer"
-                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#105D38] hover:bg-[#0c462a] text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
+                            className="inline-flex items-center gap-2 px-6 py-3 bg-[#0B5D3B] hover:bg-[#0c462a] text-white font-bold text-xs rounded-xl shadow-md transition-all active:scale-95"
                           >
                             <Video size={16} aria-hidden="true" />
                             <span>গুগল মিট ক্লাসে জয়েন করুন</span>
@@ -339,12 +339,12 @@ export default function CourseDetailPage() {
                           <input
                             type="text"
                             placeholder="আপনার অ্যাসাইনমেন্ট ড্রাইভ লিংকটি এখানে দিন..."
-                            className="flex-1 px-4 py-2.5 bg-slate-50 border border-neutral-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#105D38] transition-all"
+                            className="flex-1 px-4 py-2.5 bg-slate-50 border border-neutral-200 rounded-xl text-xs font-medium focus:outline-none focus:ring-2 focus:ring-[#0B5D3B] transition-all"
                             aria-label="অ্যাসাইনমেন্ট ড্রাইভ লিংক ইনপুট"
                           />
                           <button
                             onClick={() => setAssignmentSubmitted(true)}
-                            className="px-5 py-2.5 bg-slate-950 hover:bg-[#105D38] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
+                            className="px-5 py-2.5 bg-slate-950 hover:bg-[#0B5D3B] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-1.5 whitespace-nowrap cursor-pointer"
                           >
                             <UploadCloud size={14} aria-hidden="true" />{" "}
                             অ্যাসাইনমেন্ট জমা দিন
@@ -438,7 +438,7 @@ export default function CourseDetailPage() {
                       ভর্তি ফি সর্বমোট
                     </p>
                     <div className="flex items-baseline gap-3">
-                      <span className="text-4xl md:text-5xl font-black text-[#105D38]">
+                      <span className="text-4xl md:text-5xl font-black text-[#0B5D3B]">
                         {details?.admissionFee === 0 ||
                         (!price && !details?.admissionFee)
                           ? "ফ্রি!"
@@ -455,7 +455,7 @@ export default function CourseDetailPage() {
                   <div className="space-y-3">
                     <button
                       onClick={handleEnrollAction}
-                      className="w-full bg-[#105D38] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#105D38]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full bg-[#0B5D3B] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#0B5D3B]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       এখনী ভর্তি হবো{" "}
                       <CheckCircle2 size={20} aria-hidden="true" />
@@ -547,7 +547,7 @@ export default function CourseDetailPage() {
                     !isEnrolled
                       ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "live" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                  } ${isEnrolled && activeTab === "live" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
                 >
                   <div
                     onClick={(e) =>
@@ -558,7 +558,7 @@ export default function CourseDetailPage() {
                     aria-checked={completedItems.includes("session-01")}
                   >
                     {completedItems.includes("session-01") ? (
-                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
                     ) : (
                       <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
                     )}
@@ -567,7 +567,7 @@ export default function CourseDetailPage() {
                     <h4 className="text-xs font-bold text-slate-800 leading-tight">
                       ০১. অরিয়েন্টেশন ও ড্যাশবোর্ড সেটআপ
                     </h4>
-                    <span className="text-[10px] text-[#105D38] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#105D38]/10">
+                    <span className="text-[10px] text-[#0B5D3B] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#0B5D3B]/10">
                       <Video size={10} aria-hidden="true" /> লাইভ ক্লাস - একটিভ
                     </span>
                   </div>
@@ -579,7 +579,7 @@ export default function CourseDetailPage() {
                     !isEnrolled
                       ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
                 >
                   <div
                     className="mt-0.5 shrink-0"
@@ -587,7 +587,7 @@ export default function CourseDetailPage() {
                     aria-checked={assignmentSubmitted}
                   >
                     {assignmentSubmitted ? (
-                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
                     ) : (
                       <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
                     )}
@@ -626,7 +626,7 @@ export default function CourseDetailPage() {
                     !isEnrolled
                       ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "live" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                  } ${isEnrolled && activeTab === "live" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
                 >
                   <div
                     onClick={(e) =>
@@ -635,7 +635,7 @@ export default function CourseDetailPage() {
                     className="mt-0.5 shrink-0"
                   >
                     {completedItems.includes("session-01") ? (
-                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
                     ) : (
                       <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
                     )}
@@ -644,7 +644,7 @@ export default function CourseDetailPage() {
                     <h4 className="text-xs font-bold text-slate-800 leading-tight">
                       ০১. অরিয়েন্টেশন ও ড্যাশবোর্ড সেটআপ
                     </h4>
-                    <span className="text-[10px] text-[#105D38] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#105D38]/10">
+                    <span className="text-[10px] text-[#0B5D3B] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#0B5D3B]/10">
                       <Video size={10} /> লাইভ ক্লাস - একটিভ
                     </span>
                   </div>
@@ -656,11 +656,11 @@ export default function CourseDetailPage() {
                     !isEnrolled
                       ? "cursor-not-allowed opacity-60"
                       : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#105D38]/5 border-[#105D38]" : "border-transparent hover:bg-slate-50"}`}
+                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
                 >
                   <div className="mt-0.5 shrink-0">
                     {assignmentSubmitted ? (
-                      <CheckCircle2 size={18} className="text-[#105D38]" />
+                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
                     ) : (
                       <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
                     )}

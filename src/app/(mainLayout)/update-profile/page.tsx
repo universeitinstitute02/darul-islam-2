@@ -83,10 +83,10 @@ const ProfilePage = () => {
       Swal.fire({
         icon: "success",
         title:
-          "<span style='font-family: inherit; font-weight: 900; color: #105D38;'>সফল হয়েছে!</span>",
+          "<span style='font-family: inherit; font-weight: 900; color: #0B5D3B;'>সফল হয়েছে!</span>",
         html: "<p style='font-family: inherit; font-size: 14px; color: #4b5563;'>আপনার প্রোফাইল সফলভাবে আপডেট হয়েছে! 🎉</p>",
         background: "#ffffff",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
         confirmButtonText: "ঠিক আছে",
         customClass: {
           popup:
@@ -161,14 +161,14 @@ const ProfilePage = () => {
         <div className="flex justify-start">
           <Link
             href="/student-profile"
-            className="inline-flex items-center gap-2 text-xs font-bold text-neutral-600 bg-white/80 backdrop-blur-md px-4 py-2 border border-neutral-200/60 rounded-full shadow-sm hover:text-[#105D38] hover:border-[#105D38]/30 transition-all active:scale-95"
+            className="inline-flex items-center gap-2 text-xs font-bold text-neutral-600 bg-white/80 backdrop-blur-md px-4 py-2 border border-neutral-200/60 rounded-full shadow-sm hover:text-[#0B5D3B] hover:border-[#0B5D3B]/30 transition-all active:scale-95"
           >
             <ArrowLeft size={14} /> ফিরে যান
           </Link>
         </div>
 
         <div className="bg-white rounded-[2rem] shadow-[0_20px_50px_rgba(16,93,56,0.05)] border border-neutral-100 overflow-hidden">
-          <div className="bg-[#105D38] p-8 lg:p-10 text-white text-center relative overflow-hidden">
+          <div className="bg-[#0B5D3B] p-8 lg:p-10 text-white text-center relative overflow-hidden">
             <div className="absolute -top-10 -left-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
             <div className="absolute -bottom-10 -right-10 w-32 h-32 bg-white/10 rounded-full blur-xl" />
 
@@ -189,7 +189,7 @@ const ProfilePage = () => {
             className="p-6 lg:p-10 space-y-8"
           >
             <div className="flex flex-col items-center justify-center group">
-              <div className="relative w-28 h-28 lg:w-32 lg:h-32 rounded-3xl overflow-hidden shadow-md border-4 border-white ring-4 ring-[#105D38]/5 transition-transform duration-300 group-hover:scale-105">
+              <div className="relative w-28 h-28 lg:w-32 lg:h-32 rounded-3xl overflow-hidden shadow-md border-4 border-white ring-4 ring-[#0B5D3B]/5 transition-transform duration-300 group-hover:scale-105">
                 {imagePreview ? (
                   <Image
                     src={imagePreview}
@@ -226,12 +226,12 @@ const ProfilePage = () => {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                  <User size={14} className="text-[#105D38]" /> নাম (ইংরেজি)
+                  <User size={14} className="text-[#0B5D3B]" /> নাম (ইংরেজি)
                 </label>
                 <input
                   type="text"
                   {...register("name", { required: "নাম দেওয়া আবশ্যক" })}
-                  className={`w-full px-4 py-3 bg-neutral-50/50 border rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38] ${
+                  className={`w-full px-4 py-3 bg-neutral-50/50 border rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B] ${
                     errors.name
                       ? "border-red-500 bg-red-50/10"
                       : "border-neutral-200"
@@ -247,14 +247,14 @@ const ProfilePage = () => {
 
               <div className="space-y-1.5">
                 <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                  <Phone size={14} className="text-[#105D38]" /> ফোন নম্বর
+                  <Phone size={14} className="text-[#0B5D3B]" /> ফোন নম্বর
                 </label>
                 <input
                   type="text"
                   {...register("phone", {
                     required: "ফোন নম্বর দেওয়া আবশ্যক",
                   })}
-                  className={`w-full px-4 py-3 bg-neutral-50/50 border rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38] ${
+                  className={`w-full px-4 py-3 bg-neutral-50/50 border rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B] ${
                     errors.phone
                       ? "border-red-500 bg-red-50/10"
                       : "border-neutral-200"
@@ -284,26 +284,26 @@ const ProfilePage = () => {
                 <>
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                      <Book size={14} className="text-[#105D38]" /> নাম
+                      <Book size={14} className="text-[#0B5D3B]" /> নাম
                       (বাংলায়)
                     </label>
                     <input
                       type="text"
                       {...register("studentNameBn")}
-                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38]"
+                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B]"
                       placeholder="যেমন: আরিফুল ইসলাম"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                      <Book size={14} className="text-[#105D38]" /> ক্লাস লেভেল
+                      <Book size={14} className="text-[#0B5D3B]" /> ক্লাস লেভেল
                       / বিভাগ
                     </label>
                     <input
                       type="text"
                       {...register("classLevel")}
-                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38]"
+                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B]"
                       placeholder="যেমন: Class 10 / Level 3"
                     />
                   </div>
@@ -314,26 +314,26 @@ const ProfilePage = () => {
                 <>
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                      <Briefcase size={14} className="text-[#105D38]" /> পদবী
+                      <Briefcase size={14} className="text-[#0B5D3B]" /> পদবী
                       (Designation)
                     </label>
                     <input
                       type="text"
                       {...register("designation")}
-                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38]"
+                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B]"
                       placeholder="যেমন: Senior Lecturer"
                     />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="text-xs font-bold text-neutral-700 flex items-center gap-1.5">
-                      <Briefcase size={14} className="text-[#105D38]" />{" "}
+                      <Briefcase size={14} className="text-[#0B5D3B]" />{" "}
                       ডিপার্টমেন্ট আইডি
                     </label>
                     <input
                       type="text"
                       {...register("department")}
-                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#105D38]/5 focus:border-[#105D38]"
+                      className="w-full px-4 py-3 bg-neutral-50/50 border border-neutral-200 rounded-xl text-sm font-medium transition-all focus:outline-none focus:bg-white focus:ring-4 focus:ring-[#0B5D3B]/5 focus:border-[#0B5D3B]"
                       placeholder="যেমন: CATEGORY_ID"
                     />
                   </div>
@@ -345,7 +345,7 @@ const ProfilePage = () => {
               <button
                 type="submit"
                 disabled={updateProfileMutation.isPending}
-                className="w-full sm:w-auto px-8 py-3.5 bg-[#105D38] text-white rounded-xl text-sm font-bold shadow-[0_10px_20px_rgba(16,93,56,0.15)] hover:bg-[#0d4b2d] hover:shadow-[0_10px_25px_rgba(16,93,56,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed select-none"
+                className="w-full sm:w-auto px-8 py-3.5 bg-[#0B5D3B] text-white rounded-xl text-sm font-bold shadow-[0_10px_20px_rgba(16,93,56,0.15)] hover:bg-[#0d4b2d] hover:shadow-[0_10px_25px_rgba(16,93,56,0.25)] active:scale-[0.98] transition-all flex items-center justify-center gap-2 disabled:opacity-75 disabled:cursor-not-allowed select-none"
               >
                 {updateProfileMutation.isPending ? (
                   <>

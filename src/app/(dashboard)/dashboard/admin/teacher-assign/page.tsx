@@ -227,7 +227,7 @@ export default function TeacherAssign() {
       <main className="max-w-7xl mx-auto">
         <header className="flex flex-row flex-wrap items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
           <div>
-            <h1 className="text-2xl md:text-3xl font-black text-[#14281D] tracking-tight flex items-center gap-2">
+            <h1 className="text-2xl md:text-3xl font-black text-[#0B3D2E] tracking-tight flex items-center gap-2">
               <GraduationCap
                 className="w-8 h-8 text-green-800"
                 aria-hidden="true"

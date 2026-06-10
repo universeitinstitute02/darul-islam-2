@@ -58,12 +58,12 @@ const Header = () => {
       text: "আপনি আপনার অ্যাকাউন্ট থেকে লগআউট করতে যাচ্ছেন!",
       icon: "warning",
       showCancelButton: true,
-      confirmButtonColor: "#14281D",
+      confirmButtonColor: "#0B3D2E",
       cancelButtonColor: "#d33",
       confirmButtonText: "হ্যাঁ, লগআউট করুন",
       cancelButtonText: "বাতিল",
-      background: "#E2D4B9",
-      color: "#14281D",
+      background: "#F5EFE1",
+      color: "#10231B",
     }).then(async (result) => {
       if (result.isConfirmed) {
         queryClient.clear();
@@ -75,8 +75,8 @@ const Header = () => {
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
-          background: "#E2D4B9",
-          color: "#14281D",
+          background: "#F5EFE1",
+          color: "#10231B",
         });
       }
     });
@@ -145,11 +145,11 @@ const Header = () => {
   ];
 
   return (
-    <nav className="fixed top-0 left-0 w-full z-50 bg-[#14281D] shadow-md border-b border-white/10">
+    <nav className="fixed top-0 left-0 w-full z-50 bg-[#0B3D2E] shadow-md border-b border-white/10">
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-            <span className="text-[#14281D] font-bold text-xl">DI</span>
+            <span className="text-[#0B3D2E] font-bold text-xl">DI</span>
           </div>
           <div className="flex flex-col text-left">
             <span className="text-white font-bold text-lg lg:text-2xl">
@@ -164,7 +164,7 @@ const Header = () => {
         <div className="flex items-center gap-4">
           <Link
             href="/notice"
-            className="text-white hover:text-yellow-400 transition"
+            className="text-white hover:text-[#C8A44D] transition"
           >
             <BellRing size={24} />
           </Link>
@@ -193,9 +193,9 @@ const Header = () => {
               animate={{ x: 0 }}
               exit={{ x: "100%" }}
               transition={{ type: "tween", duration: 0.3 }}
-              className="fixed top-0 right-0 h-full w-[85%] max-w-[320px] bg-[#E2D4B9] z-[80] shadow-2xl flex flex-col text-left"
+              className="fixed top-0 right-0 h-full w-[85%] max-w-[320px] bg-[#F5EFE1] z-[80] shadow-2xl flex flex-col text-left"
             >
-              <div className="bg-[#14281D] p-5 flex justify-between items-center shrink-0">
+              <div className="bg-[#0B3D2E] p-5 flex justify-between items-center shrink-0">
                 <span className="text-white font-bold text-lg">মেনু</span>
                 <button
                   onClick={() => setIsOpen(false)}
@@ -215,7 +215,7 @@ const Header = () => {
                           <>
                             <button
                               onClick={() => toggleSubmenu(item.name)}
-                              className="w-full flex justify-between items-center p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition text-left"
+                              className="w-full flex justify-between items-center p-3 bg-[#0B3D2E]/5 hover:bg-[#0B3D2E]/10 rounded-lg font-bold text-[#10231B] transition text-left"
                             >
                               <span>{item.name}</span>
                               <ChevronRight
@@ -231,7 +231,7 @@ const Header = () => {
                                   initial={{ height: 0, opacity: 0 }}
                                   animate={{ height: "auto", opacity: 1 }}
                                   exit={{ height: 0, opacity: 0 }}
-                                  className="pl-4 border-l-2 border-[#14281D]/20 mt-2 space-y-1 overflow-hidden"
+                                  className="pl-4 border-l-2 border-[#0B3D2E]/20 mt-2 space-y-1 overflow-hidden"
                                 >
                                   {item.submenu.map((sub) => {
                                     const SubIcon = sub.icon;
@@ -240,7 +240,7 @@ const Header = () => {
                                         <Link
                                           href={sub.href}
                                           onClick={() => setIsOpen(false)}
-                                          className="flex items-center gap-3 p-2.5 text-sm text-[#14281D]/80 hover:text-[#14281D] hover:bg-white/40 rounded-md transition"
+                                          className="flex items-center gap-3 p-2.5 text-sm text-[#10231B]/80 hover:text-[#0B3D2E] hover:bg-white/50 rounded-md transition"
                                         >
                                           <SubIcon size={16} />
                                           {sub.name}
@@ -256,7 +256,7 @@ const Header = () => {
                           <Link
                             href={item.href || "#"}
                             onClick={() => setIsOpen(false)}
-                            className="flex items-center gap-3 p-3 bg-[#14281D]/5 hover:bg-[#14281D]/10 rounded-lg font-bold text-[#14281D] transition"
+                            className="flex items-center gap-3 p-3 bg-[#0B3D2E]/5 hover:bg-[#0B3D2E]/10 rounded-lg font-bold text-[#10231B] transition"
                           >
                             {Icon && <Icon size={18} />}
                             {item.name}

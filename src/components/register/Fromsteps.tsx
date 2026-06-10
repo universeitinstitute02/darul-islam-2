@@ -28,7 +28,7 @@ export const Step1 = ({
     <div className="space-y-6">
       <div className="space-y-1">
         <h3 className="text-xl font-black text-neutral-800 flex items-center gap-2">
-          <User className="text-[#105D38]" size={24} /> নতুন অ্যাকাউন্ট
+          <User className="text-[#0B5D3B]" size={24} /> নতুন অ্যাকাউন্ট
         </h3>
         <p className="text-sm font-bold text-neutral-400 ml-8">
           ধাপে ধাপে আপনার তথ্য পূরণ করুন
@@ -41,7 +41,7 @@ export const Step1 = ({
         </label>
         <div className="flex gap-3">
           <label
-            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "student" ? "border-[#105D38] bg-green-50 text-[#105D38]" : "border-neutral-100 text-neutral-400"}`}
+            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "student" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
           >
             <input
               type="radio"
@@ -52,7 +52,7 @@ export const Step1 = ({
             ছাত্র (Student)
           </label>
           <label
-            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "teacher" ? "border-[#105D38] bg-green-50 text-[#105D38]" : "border-neutral-100 text-neutral-400"}`}
+            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "teacher" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
           >
             <input
               type="radio"
@@ -112,7 +112,7 @@ export const Step1 = ({
                   type="radio"
                   {...register("gender", { required: "লিঙ্গ নির্বাচন করুন" })}
                   value={g}
-                  className="accent-[#105D38]"
+                  className="accent-[#0B5D3B]"
                 />{" "}
                 {g === "male" ? "পুরুষ" : "মহিলা"}
               </label>
@@ -165,7 +165,7 @@ export const Step1 = ({
                   className={`w-full px-5 py-3 lg:py-4 bg-neutral-50/50 border rounded-2xl focus:ring-2 focus:bg-white outline-none transition-all font-bold text-sm appearance-none cursor-pointer ${
                     errors.department
                       ? "border-red-500 focus:ring-red-500/50"
-                      : "border-neutral-200 focus:ring-[#105D38]"
+                      : "border-neutral-200 focus:ring-[#0B5D3B]"
                   }`}
                 >
                   <option value="" disabled>
@@ -202,7 +202,7 @@ export const Step1 = ({
         </label>
         <div
           onClick={handleImageClick}
-          className="w-full p-4 lg:p-6 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-2xl flex items-center justify-center gap-4 cursor-pointer hover:border-[#105D38] transition-all group"
+          className="w-full p-4 lg:p-6 bg-neutral-50 border-2 border-dashed border-neutral-200 rounded-2xl flex items-center justify-center gap-4 cursor-pointer hover:border-[#0B5D3B] transition-all group"
         >
           <input
             type="file"
@@ -211,7 +211,7 @@ export const Step1 = ({
             accept="image/*"
             className="hidden"
           />
-          <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-neutral-400 group-hover:text-[#105D38]">
+          <div className="w-10 h-10 lg:w-12 lg:h-12 bg-white rounded-xl flex items-center justify-center shadow-sm text-neutral-400 group-hover:text-[#0B5D3B]">
             <UploadCloud size={24} />
           </div>
           <div className="text-left">
@@ -263,7 +263,7 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
               className={`w-full px-5 py-3 lg:py-4 bg-neutral-50/50 border rounded-2xl focus:ring-2 focus:bg-white outline-none transition-all font-bold text-sm appearance-none cursor-pointer ${
                 errors.department
                   ? "border-red-500 focus:ring-red-500/50"
-                  : "border-neutral-200 focus:ring-[#105D38]"
+                  : "border-neutral-200 focus:ring-[#0B5D3B]"
               }`}
             >
               <option value="" disabled>
@@ -307,7 +307,7 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
                 className={`w-full px-5 py-3 lg:py-4 bg-neutral-50/50 border rounded-2xl focus:ring-2 focus:bg-white outline-none transition-all font-bold text-sm appearance-none cursor-pointer ${
                   errors.experience
                     ? "border-red-500 focus:ring-red-500/50"
-                    : "border-neutral-200 focus:ring-[#105D38]"
+                    : "border-neutral-200 focus:ring-[#0B5D3B]"
                 }`}
               >
                 <option value="" disabled>
@@ -497,7 +497,7 @@ export const Step5 = ({ register, errors, watch }: any) => {
         <button
           type="button"
           onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#105D38] transition-colors"
+          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#0B5D3B] transition-colors"
         >
           {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
@@ -519,14 +519,14 @@ export const Step5 = ({ register, errors, watch }: any) => {
         <button
           type="button"
           onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#105D38] transition-colors"
+          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#0B5D3B] transition-colors"
         >
           {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
         </button>
       </div>
 
       <div className="bg-green-50 p-5 rounded-2xl border border-green-100 flex gap-4 mt-6">
-        <ShieldCheck className="text-[#105D38] shrink-0" size={24} />
+        <ShieldCheck className="text-[#0B5D3B] shrink-0" size={24} />
         <p className="text-[12px] font-bold text-neutral-600 leading-relaxed">
           আমি ঘোষণা করছি যে, উপরে প্রদত্ত সমস্ত তথ্য সঠিক এবং আমি প্রতিষ্ঠানের
           সকল নিয়মাবলী মেনে চলতে বাধ্য থাকব।

@@ -30,7 +30,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
     <div className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm">
       {/* ক্যাটাগরি লেবেল */}
       <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
-        <h2 className="text-[#105D38] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
+        <h2 className="text-[#0B5D3B] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
           {category}
         </h2>
       </div>
@@ -54,7 +54,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                       sizes="(max-width: 768px) 50vw, 25vw"
                     />
                   ) : (
-                    <div className="absolute inset-0 bg-[#105D38]/10 flex items-center justify-center text-[10px] text-neutral-400 font-medium px-2 text-center">
+                    <div className="absolute inset-0 bg-[#0B5D3B]/10 flex items-center justify-center text-[10px] text-neutral-400 font-medium px-2 text-center">
                       {course.title}
                     </div>
                   )}
@@ -65,7 +65,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                     {course.title}
                   </h3>
                   <div className="mt-auto flex items-center gap-2">
-                    <span className="text-[#105D38] font-black text-sm md:text-lg">
+                    <span className="text-[#0B5D3B] font-black text-sm md:text-lg">
                       ৳ {course.price || 0}
                     </span>
                     {course.oldPrice && (
@@ -80,7 +80,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
           </div>
 
           <div className="mt-10 flex justify-center">
-            <button className="px-10 py-2 border-2 border-[#105D38] text-[#105D38] font-black rounded-xl hover:bg-[#105D38] hover:text-white transition-all duration-300 text-sm md:text-base">
+            <button className="px-10 py-2 border-2 border-[#0B5D3B] text-[#0B5D3B] font-black rounded-xl hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 text-sm md:text-base">
               আরো দেখুন
             </button>
           </div>
@@ -99,7 +99,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
                 whileTap={{ scale: 0.95 }}
                 className="relative group cursor-pointer w-full aspect-square rounded-2xl overflow-hidden shadow-md transition-all duration-300"
               >
-                <div className="absolute inset-0 bg-[#105D38] bg-gradient-to-br from-[#105D38] via-[#0d4d2e] to-black opacity-95" />
+                <div className="absolute inset-0 bg-[#0B5D3B] bg-gradient-to-br from-[#0B5D3B] via-[#0d4d2e] to-black opacity-95" />
                 <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')]" />
                 <div className="relative h-full flex items-center justify-center p-3">
                   <p className="text-white text-[10px] md:text-[13px] font-black text-center leading-tight drop-shadow-md">

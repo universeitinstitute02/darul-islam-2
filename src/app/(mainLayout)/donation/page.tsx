@@ -21,14 +21,14 @@ export default function DonationPage() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#87F56] rounded-2xl flex items-center justify-center text-white shadow-lg">
+            <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-white shadow-lg">
               <HandHeart size={40} />
             </div>
             <div>
               <h1 className="text-2xl lg:text-4xl font-black">
                 আল্লাহর পথে দান করুন
               </h1>
-              <p className="text-sm font-bold text-[#E2D4B9]/80 uppercase tracking-widest mt-1">
+              <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">
                 সদাকাহ • যাকাত • লিল্লাহ
               </p>
             </div>
@@ -47,14 +47,14 @@ export default function DonationPage() {
         <div className="lg:col-span-12 space-y-12">
           {/* Causes Grid */}
           <div className="space-y-8 pt-12">
-            <h2 className="text-3xl font-black text-[#14281D] flex items-center gap-3">
+            <h2 className="text-3xl font-black text-[#0B3D2E] flex items-center gap-3">
               <HandHeart /> আপনার দান যেখানে যাবে
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {causes.map((cause, i) => (
                 <div
                   key={i}
-                  className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-[#14281D]/5 group"
+                  className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-[#0B3D2E]/5 group"
                 >
                   <div className="relative h-64">
                     <Image
@@ -66,7 +66,7 @@ export default function DonationPage() {
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
                     <div className="absolute bottom-6 right-6 flex items-end justify-between">
                       <div className="text-white text-right">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#87F56]">
+                        <p className="text-[10px] font-black uppercase tracking-widest text-[#8FE3A9]">
                           প্রয়োজন
                         </p>
                         <p className="text-xl font-black">{cause.goal}</p>
@@ -75,19 +75,19 @@ export default function DonationPage() {
                   </div>
                   <div className="p-8 space-y-6">
                     <div>
-                      <h4 className="text-xl font-black font-bold text-[#14281D]">
+                      <h4 className="text-xl font-black font-bold text-[#0B3D2E]">
                         {cause.title}
                       </h4>
-                      <p className="text-sm font-medium text-[#14281D]/60 mt-2 leading-relaxed">
+                      <p className="text-sm font-medium text-[#0B3D2E]/60 mt-2 leading-relaxed">
                         {cause.desc}
                       </p>
                     </div>
 
-                    {/* <div className="bg-[#14281D]/5 p-4 rounded-2xl flex items-center justify-between">
-                      <span className="text-xs font-black text-[#14281D]/40 uppercase tracking-widest">
+                    {/* <div className="bg-[#0B3D2E]/5 p-4 rounded-2xl flex items-center justify-between">
+                      <span className="text-xs font-black text-[#0B3D2E]/40 uppercase tracking-widest">
                         বর্তমানে সহায়তাপ্রাপ্ত
                       </span>
-                      <span className="font-black text-[#14281D]">
+                      <span className="font-black text-[#0B3D2E]">
                         {cause.count}
                       </span>
                     </div> */}

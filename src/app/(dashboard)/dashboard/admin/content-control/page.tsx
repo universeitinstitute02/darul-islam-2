@@ -17,7 +17,7 @@ export default function ContentControlPage() {
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-white p-6 rounded-2xl border border-neutral-100 shadow-sm">
         <div>
           <h1 className="text-2xl font-black text-neutral-800 flex items-center gap-2">
-            <Layers className="text-[#105D38]" size={28} /> কন্টেন্ট কন্ট্রোল
+            <Layers className="text-[#0B5D3B]" size={28} /> কন্টেন্ট কন্ট্রোল
             প্যানেল
           </h1>
           <p className="text-sm font-bold text-neutral-400 mt-1">
@@ -34,7 +34,7 @@ export default function ContentControlPage() {
               onClick={() => setActivePage(page)}
               className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
                 activePage === page
-                  ? "bg-[#105D38] text-white shadow-sm"
+                  ? "bg-[#0B5D3B] text-white shadow-sm"
                   : "text-neutral-500 hover:text-neutral-800"
               }`}
             >
@@ -54,7 +54,7 @@ export default function ContentControlPage() {
           onClick={() => setActiveTab("slider")}
           className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
             activeTab === "slider"
-              ? "border-[#105D38] text-[#105D38]"
+              ? "border-[#0B5D3B] text-[#0B5D3B]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >
@@ -64,7 +64,7 @@ export default function ContentControlPage() {
           onClick={() => setActiveTab("static")}
           className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
             activeTab === "static"
-              ? "border-[#105D38] text-[#105D38]"
+              ? "border-[#0B5D3B] text-[#0B5D3B]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
           }`}
         >

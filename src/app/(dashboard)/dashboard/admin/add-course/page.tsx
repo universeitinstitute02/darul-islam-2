@@ -180,7 +180,7 @@ const AddCoursePage = () => {
     <div className="min-h-screen bg-[#F1F5F9] pb-12 pt-8 px-4">
       <div className="max-w-5xl mx-auto">
         <header className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl font-black text-[#105D38]">
+          <h1 className="text-3xl font-black text-[#0B5D3B]">
             নতুন কোর্স তৈরি করুন
           </h1>
           <p className="text-gray-500 text-sm mt-1">
@@ -442,7 +442,7 @@ const AddCoursePage = () => {
                     type="number"
                     required
                     {...register("price", { required: true })}
-                    className="w-full bg-gray-50 border border-gray-100 p-4 pl-10 rounded-2xl outline-none text-lg font-bold text-[#105D38]"
+                    className="w-full bg-gray-50 border border-gray-100 p-4 pl-10 rounded-2xl outline-none text-lg font-bold text-[#0B5D3B]"
                     placeholder="0.00"
                   />
                 </div>
@@ -482,7 +482,7 @@ const AddCoursePage = () => {
               <button
                 type="submit"
                 disabled={loading}
-                className="w-full bg-[#105D38] cursor-pointer text-white py-5 rounded-[1.5rem] font-black text-lg shadow-xl shadow-emerald-900/10 hover:bg-[#0d4d2e] transition-all disabled:bg-gray-300 flex items-center justify-center gap-2"
+                className="w-full bg-[#0B5D3B] cursor-pointer text-white py-5 rounded-[1.5rem] font-black text-lg shadow-xl shadow-emerald-900/10 hover:bg-[#0d4d2e] transition-all disabled:bg-gray-300 flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />

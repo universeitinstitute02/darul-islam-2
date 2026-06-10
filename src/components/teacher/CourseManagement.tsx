@@ -40,7 +40,7 @@ const CourseManagement = () => {
             আপনার কোর্সের ম্যাটেরিয়াল ও ফাইল ম্যানেজ করুন
           </p>
         </div>
-        <button className="p-2 bg-[#105D38]/10 text-[#105D38] rounded-full hover:bg-[#105D38]/20 transition-colors">
+        <button className="p-2 bg-[#0B5D3B]/10 text-[#0B5D3B] rounded-full hover:bg-[#0B5D3B]/20 transition-colors">
           <FolderPlus size={22} />
         </button>
       </div>
@@ -62,7 +62,7 @@ const CourseManagement = () => {
             <div className="flex justify-between items-start relative z-10">
               <div className="space-y-3 w-full">
                 <div className="flex items-center justify-between">
-                  <h3 className="text-lg font-bold text-neutral-800 group-hover:text-[#105D38] transition-colors">
+                  <h3 className="text-lg font-bold text-neutral-800 group-hover:text-[#0B5D3B] transition-colors">
                     {item.courseName}
                   </h3>
                   <button className="text-neutral-400 hover:text-neutral-600">
@@ -81,7 +81,7 @@ const CourseManagement = () => {
                       initial={{ width: 0 }}
                       whileInView={{ width: `${item.progress}%` }}
                       transition={{ duration: 1, ease: "easeOut" }}
-                      className="h-full bg-[#C5A059] rounded-full"
+                      className="h-full bg-[#C8A44D] rounded-full"
                     />
                   </div>
                 </div>
@@ -90,7 +90,7 @@ const CourseManagement = () => {
                 <div className="flex items-center justify-between pt-2">
                   <div className="flex gap-4">
                     <div className="flex items-center gap-1.5">
-                      <div className="p-1.5 bg-blue-50 text-blue-600 rounded-lg">
+                      <div className="p-1.5 bg-emerald-50 text-emerald-700 rounded-lg">
                         <FileText size={14} />
                       </div>
                       <span className="text-xs font-semibold text-neutral-600">
@@ -98,7 +98,7 @@ const CourseManagement = () => {
                       </span>
                     </div>
                     <div className="flex items-center gap-1.5">
-                      <div className="p-1.5 bg-red-50 text-red-600 rounded-lg">
+                      <div className="p-1.5 bg-[#FFF8E5] text-[#9A7A24] rounded-lg">
                         <Video size={14} />
                       </div>
                       <span className="text-xs font-semibold text-neutral-600">
@@ -113,7 +113,7 @@ const CourseManagement = () => {
 
                 {/* Action Buttons: Mobile Friendly */}
                 <div className="grid grid-cols-2 gap-3 pt-4">
-                  <button className="flex items-center justify-center gap-2 py-2.5 bg-neutral-900 text-white text-xs font-bold rounded-xl active:scale-95 transition-transform">
+                  <button className="flex items-center justify-center gap-2 py-2.5 bg-[#0B3D2E] text-white text-xs font-bold rounded-xl active:scale-95 transition-transform hover:bg-[#0B5D3B]">
                     <Download size={14} /> ডাউনলোড
                   </button>
                   <button className="flex items-center justify-center gap-2 py-2.5 border border-neutral-200 text-neutral-700 text-xs font-bold rounded-xl active:scale-95 transition-transform hover:bg-neutral-50">

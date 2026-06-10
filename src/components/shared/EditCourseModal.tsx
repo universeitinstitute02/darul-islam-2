@@ -38,7 +38,7 @@ const EditCourseModal = ({ course, isOpen, onClose, onUpdate, token }: any) => {
           title: "সফল!",
           text: "কোর্সটি সফলভাবে আপডেট করা হয়েছে।",
           icon: "success",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
         });
         onUpdate();
         onClose();
@@ -163,7 +163,7 @@ const EditCourseModal = ({ course, isOpen, onClose, onUpdate, token }: any) => {
               <button
                 onClick={handleSubmit}
                 disabled={loading}
-                className="flex-1 py-3 bg-[#105D38] text-white font-bold rounded-2xl shadow-lg hover:bg-[#0c4a2d] transition-all flex items-center justify-center gap-2"
+                className="flex-1 py-3 bg-[#0B5D3B] text-white font-bold rounded-2xl shadow-lg hover:bg-[#0c4a2d] transition-all flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <Loader2 className="animate-spin" />

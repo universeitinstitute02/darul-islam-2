@@ -95,12 +95,12 @@ const Testimonials = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-[11px] font-black text-green-800 mb-3">
-              <MessageSquare className="w-3.5 h-3.5 text-[#105D38]" />{" "}
+              <MessageSquare className="w-3.5 h-3.5 text-[#0B5D3B]" />{" "}
               Testimonials Feedback
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
               অভিভাবক ও শিক্ষার্থীদের{" "}
-              <span className="text-[#105D38]">মতামত</span>
+              <span className="text-[#0B5D3B]">মতামত</span>
             </h2>
           </div>
 

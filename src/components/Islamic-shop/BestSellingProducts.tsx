@@ -36,10 +36,10 @@ const BestSellingProducts = () => {
       {/* হেডার সেকশন */}
       <div className="flex justify-between items-end mb-8">
         <div>
-          <h2 className="text-xl md:text-2xl font-black text-[#105D38]">
+          <h2 className="text-xl md:text-2xl font-black text-[#0B5D3B]">
             সেরা পণ্য সমূহ
           </h2>
-          <div className="w-16 h-1.5 bg-[#105D38] rounded-full mt-2"></div>
+          <div className="w-16 h-1.5 bg-[#0B5D3B] rounded-full mt-2"></div>
         </div>
       </div>
 
@@ -64,7 +64,7 @@ const BestSellingProducts = () => {
 
             <button
               onClick={handleLoadMore}
-              className="w-full md:w-max md:px-16 py-4 bg-[#105D38] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all active:scale-95 shadow-xl shadow-green-100 flex items-center justify-center gap-2"
+              className="w-full md:w-max md:px-16 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all active:scale-95 shadow-xl shadow-green-100 flex items-center justify-center gap-2"
             >
               আরও পণ্য দেখুন
             </button>

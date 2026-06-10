@@ -35,7 +35,7 @@ const AdmissionInfo: React.FC = () => {
       <div className="absolute top-0 left-0 w-32 h-32 bg-emerald-50 rounded-full -translate-x-1/2 -translate-y-1/2 blur-3xl" />
 
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl text-center relative z-10">
-        <h2 className="text-3xl md:text-4xl font-black text-[#105D38] mb-4">
+        <h2 className="text-3xl md:text-4xl font-black text-[#0B5D3B] mb-4">
           ভর্তি তথ্য ও প্রক্রিয়া
         </h2>
         <p className="text-gray-500 mb-12 max-w-lg mx-auto text-sm md:text-base">
@@ -55,7 +55,7 @@ const AdmissionInfo: React.FC = () => {
               </div>
 
               {/* Icon Container */}
-              <div className="relative w-16 h-16 mx-auto mb-6 bg-emerald-50 text-[#105D38] rounded-2xl flex items-center justify-center group-hover:bg-[#105D38] group-hover:text-white transition-all duration-300 transform group-hover:rotate-6">
+              <div className="relative w-16 h-16 mx-auto mb-6 bg-emerald-50 text-[#0B5D3B] rounded-2xl flex items-center justify-center group-hover:bg-[#0B5D3B] group-hover:text-white transition-all duration-300 transform group-hover:rotate-6">
                 {step.icon}
               </div>
 
@@ -71,7 +71,7 @@ const AdmissionInfo: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-          <button className="flex items-center gap-2 px-10 py-4 bg-[#105D38] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-lg hover:shadow-emerald-200 active:scale-95">
+          <button className="flex items-center gap-2 px-10 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-lg hover:shadow-emerald-200 active:scale-95">
             এখনই আবেদন করুন
             <ArrowRight className="w-5 h-5" />
           </button>

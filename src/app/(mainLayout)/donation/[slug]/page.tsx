@@ -184,7 +184,7 @@ export default function DonationPage() {
         title: "জাযাকাল্লাহ খাইর!",
         text: "আপনার তথ্যটি সফলভাবে গৃহীত হয়েছে।",
         icon: "success",
-        confirmButtonColor: "#14281D",
+        confirmButtonColor: "#0B3D2E",
       });
       setAmount("");
       reset();
@@ -224,7 +224,7 @@ export default function DonationPage() {
                 onClick={() => setAmount(p)}
                 className={`py-3 rounded-xl text-sm font-bold transition-all ${
                   amount === p
-                    ? "bg-[#14281D] text-white"
+                    ? "bg-[#0B3D2E] text-white"
                     : "bg-gray-100 text-gray-600"
                 }`}
               >
@@ -238,7 +238,7 @@ export default function DonationPage() {
             placeholder="টাকার পরিমাণ..."
             value={amount}
             onChange={(e) => setAmount(e.target.value)}
-            className="w-full p-4 bg-gray-50 rounded-2xl font-bold text-lg outline-none mb-6 border-2 border-transparent focus:border-[#14281D]/10"
+            className="w-full p-4 bg-gray-50 rounded-2xl font-bold text-lg outline-none mb-6 border-2 border-transparent focus:border-[#0B3D2E]/10"
           />
 
           {/* Payment method selector */}
@@ -250,7 +250,7 @@ export default function DonationPage() {
                 onClick={() => setMethod(m)}
                 className={`p-3 rounded-xl border-2 transition-all flex flex-col items-center gap-1.5 ${
                   method === m
-                    ? "border-[#14281D] bg-gray-50"
+                    ? "border-[#0B3D2E] bg-gray-50"
                     : "border-gray-100 opacity-60 hover:opacity-80"
                 }`}
               >

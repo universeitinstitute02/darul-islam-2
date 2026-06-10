@@ -59,7 +59,7 @@ const GalleryAdmin: React.FC = () => {
         icon: "warning",
         title: "অনুরোধ বুকড!",
         text: "অনুগ্রহ করে টাইটেল এবং কমপক্ষে একটি ছবি সিলেক্ট করুন।",
-        confirmButtonColor: "#105D38",
+        confirmButtonColor: "#0B5D3B",
       });
       return;
     }
@@ -87,7 +87,7 @@ const GalleryAdmin: React.FC = () => {
           icon: "success",
           title: "সফল হয়েছে!",
           text: "নতুন অ্যালবাম সফলভাবে গ্যালারিতে যোগ হয়েছে।",
-          confirmButtonColor: "#105D38",
+          confirmButtonColor: "#0B5D3B",
           timer: 2500,
         });
 
@@ -142,7 +142,7 @@ const GalleryAdmin: React.FC = () => {
               icon: "success",
               title: "রিমুভড!",
               text: "অ্যালবামটি সফলভাবে মুছে ফেলা হয়েছে।",
-              confirmButtonColor: "#105D38",
+              confirmButtonColor: "#0B5D3B",
               timer: 2000,
             });
 
@@ -183,7 +183,7 @@ const GalleryAdmin: React.FC = () => {
       {/* 👑 পেজ হেডার */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-8 border-b border-gray-200 pb-5">
         <div>
-          <h1 className="text-2xl md:text-3xl font-black text-[#105D38] flex items-center gap-2">
+          <h1 className="text-2xl md:text-3xl font-black text-[#0B5D3B] flex items-center gap-2">
             <ImageIcon className="w-7 h-7" /> গ্যালারি ম্যানেজমেন্ট প্যানেল
           </h1>
           <p className="text-xs text-gray-500 mt-1 font-medium">
@@ -206,7 +206,7 @@ const GalleryAdmin: React.FC = () => {
         {/* 📥 ফরম লেয়ার */}
         <div className="bg-white p-5 md:p-6 rounded-[2rem] border border-gray-100 shadow-xs h-fit">
           <h2 className="text-base font-black text-gray-800 mb-5 flex items-center gap-2 border-b border-gray-50 pb-3">
-            <Plus className="w-5 h-5 text-[#105D38]" /> নতুন অ্যালবাম তৈরি করুন
+            <Plus className="w-5 h-5 text-[#0B5D3B]" /> নতুন অ্যালবাম তৈরি করুন
           </h2>
 
           <form onSubmit={handleAddAlbum} className="space-y-4">
@@ -219,7 +219,7 @@ const GalleryAdmin: React.FC = () => {
                 value={title}
                 onChange={(e) => setTitle(e.target.value)}
                 placeholder="যেমন: সাংস্কৃতিক অনুষ্ঠান ২০২৬"
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:border-[#105D38] focus:bg-white font-medium transition-all"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:border-[#0B5D3B] focus:bg-white font-medium transition-all"
                 required
               />
             </div>
@@ -231,7 +231,7 @@ const GalleryAdmin: React.FC = () => {
               <select
                 value={event}
                 onChange={(e) => setEvent(e.target.value)}
-                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:border-[#105D38] focus:bg-white font-bold transition-all text-gray-700"
+                className="w-full px-4 py-3 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-hidden focus:border-[#0B5D3B] focus:bg-white font-bold transition-all text-gray-700"
               >
                 <option value="campus">ক্যাম্পাস (campus)</option>
                 <option value="cultural">সাংস্কৃতিক (cultural)</option>
@@ -253,7 +253,7 @@ const GalleryAdmin: React.FC = () => {
                   onChange={(e) => setSelectedFiles(e.target.files)}
                   className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
                 />
-                <Upload className="w-6 h-6 mx-auto text-gray-400 group-hover:text-[#105D38] mb-2 transition-colors" />
+                <Upload className="w-6 h-6 mx-auto text-gray-400 group-hover:text-[#0B5D3B] mb-2 transition-colors" />
                 <span className="text-xs font-bold text-gray-500 block">
                   {selectedFiles && selectedFiles.length > 0
                     ? `Selected: ${selectedFiles.length} টি ছবি`
@@ -265,7 +265,7 @@ const GalleryAdmin: React.FC = () => {
             <button
               type="submit"
               disabled={actionLoading || loading}
-              className="w-full py-3.5 bg-[#105D38] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-900/10 hover:bg-[#0c462a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+              className="w-full py-3.5 bg-[#0B5D3B] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-900/10 hover:bg-[#0c462a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
               {actionLoading ? "আপলোড হচ্ছে..." : "গ্যালারিতে পোস্ট করুন"}
             </button>

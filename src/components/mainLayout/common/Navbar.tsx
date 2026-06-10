@@ -85,8 +85,8 @@ export default function Navbar() {
         transition={{ type: "spring", stiffness: 260, damping: 30 }}
         className="fixed top-0 left-0 w-full z-40 will-change-transform shadow-md"
       >
-        <div className="bg-[#14281D] mt-16 lg:mt-18">
-          <nav className="bg-green-50 ">
+        <div className="bg-[#0B3D2E] mt-16 lg:mt-18">
+          <nav className="bg-[#F3F8F4] border-b border-[#DCEADE]">
             <div className="max-w-screen-xl mx-auto grid grid-cols-6 h-14">
               {navItems.map((item) => {
                 const Icon = item.icon;
@@ -100,8 +100,8 @@ export default function Navbar() {
                       flex flex-col items-center justify-center relative group transition-all
                       ${
                         active
-                          ? " text-green-700"
-                          : "text-[#14281D] hover:bg-green-200/50"
+                          ? " text-[#0B5D3B]"
+                          : "text-[#10231B] hover:bg-[#E0F2E7]"
                       }
                     `}
                   >
@@ -119,13 +119,13 @@ export default function Navbar() {
                       <Icon
                         size={20}
                         strokeWidth={active ? 2.8 : 2.5}
-                        className={active ? "text-green-700" : ""}
+                        className={active ? "text-[#0B5D3B]" : ""}
                       />
                     </motion.div>
 
                     <span
                       className={`text-[10px] sm:text-[11px] font-bold mt-1 ${
-                        active ? "text-green-700" : ""
+                        active ? "text-[#0B5D3B]" : ""
                       }`}
                     >
                       {item.name}
@@ -135,7 +135,7 @@ export default function Navbar() {
                     {active ? (
                       <motion.div
                         layoutId="active-bar"
-                        className="absolute bottom-0 left-0 w-full h-0.5 bg-green-700"
+                        className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0B5D3B]"
                         transition={{
                           type: "spring",
                           stiffness: 380,
@@ -143,7 +143,7 @@ export default function Navbar() {
                         }}
                       />
                     ) : (
-                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#14281D] scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
+                      <div className="absolute bottom-0 left-0 w-full h-0.5 bg-[#0B3D2E] scale-x-0 group-hover:scale-x-100 transition-transform duration-300" />
                     )}
                   </Link>
                 );
