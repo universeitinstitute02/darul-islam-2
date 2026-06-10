@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useCallback } from "react";
-import { BookOpen, Plus, Loader2 } from "lucide-react";
+import { BookOpen, Plus } from "lucide-react";
 import { useSession } from "next-auth/react";
 import Link from "next/link";
 import Swal from "sweetalert2";
@@ -10,17 +10,21 @@ import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface ICourse {
   _id: string;
+  title: string;
+  courseType: string;
+  price: string | number;
+  oldPrice?: string | number;
+  duration: string;
   [key: string]: any;
 }
 
 const MyCourses = () => {
   const { data: session, status } = useSession();
-  const token = session?.accessToken;
+  const token = session?.accessToken as string;
 
-  // const [courses, setCourses] = useState([]);
   const [courses, setCourses] = useState<ICourse[]>([]);
   const [loading, setLoading] = useState(true);
-  const [selectedCourse, setSelectedCourse] = useState<any>(null);
+  const [selectedCourse, setSelectedCourse] = useState<ICourse | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const fetchCourses = useCallback(async () => {
@@ -86,7 +90,7 @@ const MyCourses = () => {
           setCourses((prev) => prev.filter((c) => c._id !== courseId));
           Swal.fire(
             "ডিলিট হয়েছে!",
-            "কোর্সটি সফলভাবে মুছে ফেলা হয়েছে।",
+            "कোর্সটি সফলভাবে মুছে ফেলা হয়েছে।",
             "success",
           );
         } else {
@@ -116,24 +120,24 @@ const MyCourses = () => {
       <div className="flex justify-between items-center">
         <div>
           <h2 className="text-xl md:text-2xl font-bold text-neutral-800">
-            আমার কোর্সসমূহ
+            আমার курсসমূহ
           </h2>
           <p className="text-[10px] md:text-sm text-neutral-500">
             মোট {courses.length} টি কোর্স পরিচালনা করছেন
           </p>
         </div>
         <Link href="/dashboard/admin/add-course">
-          <button className="bg-[#0B5D3B] hover:bg-[#0c4a2d] text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg transition-all">
+          <button className="bg-[#0B5D3B] hover:cursor-pointer hover:bg-[#0c4a2d] text-white px-4 py-2 rounded-xl flex items-center gap-2 text-sm font-bold shadow-lg transition-all">
             <Plus size={18} /> নতুন কোর্স
           </button>
         </Link>
       </div>
 
       {courses.length > 0 ? (
-        <div className="grid grid-cols-2 md:grid-cols-2 gap-3 md:gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-6">
           {courses.map((course, idx) => (
             <CourseCard
-              key={course._id} // এখন এটি আর এরর দেবে না
+              key={course._id}
               course={course}
               idx={idx}
               onEdit={(c) => {
@@ -159,7 +163,6 @@ const MyCourses = () => {
         <EditCourseModal
           isOpen={isModalOpen}
           course={selectedCourse}
-          token={token}
           onClose={() => setIsModalOpen(false)}
           onUpdate={fetchCourses}
         />
