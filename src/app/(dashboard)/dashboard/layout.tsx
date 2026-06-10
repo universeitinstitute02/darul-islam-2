@@ -186,12 +186,19 @@ export default function DashboardLayout({
         { name: "Product Delivery", href: "/dashboard/admin/product-delivey", icon: UserCog },
       ],
     },
+       {
+      name: "অনুদান",
+      icon: ListOrdered,
+      children: [
+        { name: "অনুদানের তালিকা", href: "/dashboard/admin/donations", icon: Settings2 },
+        { name: "অনুদান পোস্ট", href: "/dashboard/admin/donate-post", icon: UserCog },
+      ],
+    },
     { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },
     { name: "গ্যালারি ম্যনেজমেন্ট", href: "/dashboard/admin/gallery", icon: FolderKanban },
     { name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট", href: "/dashboard/admin/testimonial", icon: FolderKanban },
     { name: "কন্টেন্ট কন্ট্রোল", href: "/dashboard/admin/content-control", icon: Settings2 },
-    { name: "অনুদান", href: "/dashboard/admin/donations", icon: Settings2 },
-    { name: "প্রোফাইল সেটিংস", href: "/dashboard/teacher/profile", icon: UserCog },
+    { name: "প্রোফাইল সেটিংস", href: "/dashboard/admin/profile", icon: UserCog },
   ];
 
   const navLinks = role === "admin" ? adminLinks : role === "teacher" ? teacherLinks : [];

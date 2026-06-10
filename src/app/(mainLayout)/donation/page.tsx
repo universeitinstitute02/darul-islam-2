@@ -1,4 +1,4 @@
-import { HandHeart, Building } from "lucide-react";
+import { HandHeart } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -10,7 +10,6 @@ const causes = [
     goal: "২৫,০০,০০০৳",
     image:
       "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
-    icon: Building,
   },
 ];
 
@@ -65,10 +64,7 @@ export default function DonationPage() {
                       className="object-cover group-hover:scale-105 transition-transform duration-700"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-6 left-6 right-6 flex items-end justify-between">
-                      <div className="bg-[#87F56] text-[#14281D] p-3 rounded-2xl shadow-lg">
-                        <cause.icon size={24} />
-                      </div>
+                    <div className="absolute bottom-6 right-6 flex items-end justify-between">
                       <div className="text-white text-right">
                         <p className="text-[10px] font-black uppercase tracking-widest text-[#87F56]">
                           প্রয়োজন
