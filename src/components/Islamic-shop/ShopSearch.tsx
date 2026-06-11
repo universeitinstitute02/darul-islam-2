@@ -1,6 +1,13 @@
 "use client";
 import React, { useState, useEffect, useRef } from "react";
-import { Search, Grid, RotateCcw, X, ShoppingCart } from "lucide-react";
+import {
+  Search,
+  Grid,
+  RotateCcw,
+  X,
+  ShoppingCart,
+  SearchCheck,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import ProductCard from "./ProductCard";
@@ -13,6 +20,9 @@ const ProductSearchSection = () => {
   const [searchedProducts, setSearchedProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
+
+  // কার্টের পণ্যের সংখ্যা রাখার জন্য স্টেট
+  const [cartLength, setCartLength] = useState(0);
 
   const resultSectionRef = useRef<HTMLDivElement>(null);
 
@@ -28,6 +38,12 @@ const ProductSearchSection = () => {
     { id: "Home Decor", name: "হোম ডেকোর" },
   ];
 
+  // localStorage থেকে কার্টের সংখ্যা লোড করার জন্য useEffect
+  useEffect(() => {
+    const items = JSON.parse(localStorage.getItem("cart") || "[]");
+    setCartLength(items.length);
+  }, []);
+
   useEffect(() => {
     if (!searchQuery.trim() && !selectedCategory) {
       setHasSearched(false);
@@ -39,7 +55,6 @@ const ProductSearchSection = () => {
     setLoading(true);
 
     const delayDebounceFn = setTimeout(() => {
-      // 🎯 ডকুমেন্টেশন অনুযায়ী ডাইনামিক URL প্যারামিটার বিল্ড করা হচ্ছে
       const queryParams = new URLSearchParams();
       if (searchQuery.trim()) queryParams.append("search", searchQuery.trim());
       if (selectedCategory) queryParams.append("category", selectedCategory);
@@ -119,7 +134,6 @@ const ProductSearchSection = () => {
           <div className="absolute right-4 top-5 pointer-events-none border-l-4 border-r-4 border-t-4 border-transparent border-t-neutral-500 w-0 h-0" />
         </div>
 
-        {/* অ্যাকশন বাটনসমূহ (রিসেট ও কার্ট আইকন) */}
         <div className="md:col-span-2 w-full flex items-center justify-end gap-2">
           <button
             onClick={handleClearSearch}
@@ -134,13 +148,20 @@ const ProductSearchSection = () => {
             <RotateCcw size={18} />
           </button>
 
-          {/* 🛒 কার্ট বাটন */}
+          {/* কার্ট বাটন - যেটিতে নোটিফিকেশন যুক্ত করা হয়েছে */}
           <button
             onClick={() => router.push("/cart")}
-            className="w-full md:w-max p-3.5 bg-emerald-50 border border-emerald-100 text-[#0B5D3B] hover:bg-emerald-100 transition-all rounded-2xl flex items-center justify-center cursor-pointer"
+            className="relative w-full md:w-max p-3.5 bg-emerald-50 border border-emerald-100 text-[#0B5D3B] hover:bg-emerald-100 transition-all rounded-2xl flex items-center justify-center cursor-pointer"
             title="কার্ট পেজে যান"
           >
             <ShoppingCart size={18} />
+
+            {/* যদি কার্টে ১ বা তার বেশি পণ্য থাকে তবেই ব্যাজটি দেখাবে */}
+            {cartLength > 0 && (
+              <span className="absolute -top-1.5 -right-1.5 min-w-[20px] h-5 bg-red-500 text-white font-sans text-[10px] font-bold rounded-full flex items-center justify-center px-1 shadow-md border border-white animate-pulse">
+                {cartLength}
+              </span>
+            )}
           </button>
         </div>
       </div>
@@ -157,7 +178,8 @@ const ProductSearchSection = () => {
               <div className="flex items-center justify-between mb-6 pb-4 border-b border-neutral-100">
                 <div>
                   <h3 className="font-black text-[#0B5D3B] text-sm md:text-base flex items-center gap-2">
-                    🔍 অনুসন্ধান ফলাফল
+                    <SearchCheck />
+                    অনুসন্ধান ফলাফল
                     <span className="text-xs bg-emerald-50 text-[#0B5D3B] px-2.5 py-0.5 rounded-full font-bold">
                       {searchedProducts.length} টি পণ্য পাওয়া গেছে
                     </span>

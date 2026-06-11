@@ -87,7 +87,7 @@ const ProductDetails = () => {
       showCancelButton: true,
       confirmButtonColor: "#0B5D3B", // আপনার থিম কালার গ্রিন
       cancelButtonColor: "#6b7280",
-      confirmButtonText: "🛒 কার্ট পেজে যান",
+      confirmButtonText: "কার্ট পেজে যান",
       cancelButtonText: "আরো শপিং করুন",
       background: "#ffffff",
       customClass: {
