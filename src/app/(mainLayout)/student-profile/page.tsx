@@ -123,7 +123,6 @@ const StudentDashboard = () => {
     );
   }
 
-  // রেন্ডারিং এর জন্য প্রথম ক্লাসের ইনস্ট্রাক্টরকে ডিফল্ট হিসেবে দেখানো হচ্ছে (যদি থাকে)
   const activeInstructor = classLinks[0]?.instructor || {
     name: "মাওলানা রফিকুল ইসলাম",
     profilePicture: "https://avatars.githubusercontent.com/u/198446517?v=4",
@@ -174,7 +173,6 @@ const StudentDashboard = () => {
         </div>
       </div>
 
-      {/* 🔵 Main Content Grid Area */}
       <div className="max-w-7xl mx-auto px-3 sm:px-4 -mt-12 lg:-mt-16 relative z-10 space-y-5 lg:space-y-6">
         {/* ১. ক্লাস শিডিউল ব্যানার */}
         <div className="bg-white p-4 sm:p-6 lg:p-10 rounded-[1.5rem] lg:rounded-[2rem] shadow-xl border border-neutral-100">
@@ -401,14 +399,20 @@ const StudentDashboard = () => {
             </div>
             <div className="flex flex-col sm:flex-row gap-1.5">
               <a
-                href="tel:01812345678"
+                href="tel:01792297764"
                 className="w-full flex items-center justify-center gap-1 py-2 bg-neutral-50 rounded-lg text-neutral-600 text-[9px] sm:text-[10px] font-bold border border-neutral-100 hover:bg-neutral-100 transition-colors"
               >
                 <Phone size={11} />{" "}
                 <span className="hidden sm:inline">কল করুন</span>
               </a>
-              <button className="w-full flex items-center justify-center gap-1 py-2 bg-[#0B5D3B] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-sm active:scale-95 transition-all hover:bg-[#0c462a]">
-                <MessageCircle size={11} /> <span>মেসেজ</span>
+              <button
+                onClick={() =>
+                  window.open("https://wa.me/8801792297764", "_blank")
+                }
+                className="w-full flex items-center hover:cursor-pointer justify-center gap-1 py-2 bg-[#0B5D3B] text-white rounded-lg text-[9px] sm:text-[10px] font-bold shadow-sm active:scale-95 transition-all hover:bg-[#0c462a]"
+              >
+                <MessageCircle size={11} />
+                <span>হোয়াটসঅ্যাপ</span>
               </button>
             </div>
           </div>
@@ -428,12 +432,11 @@ const StudentDashboard = () => {
               </p>
             </div>
 
-            {/* 📞 ও 📧 অ্যাকশন বাটন গ্রুপ */}
             <div className="flex flex-col sm:flex-row gap-2 w-full">
               {/* কল বাটন */}
               <button
                 onClick={() => {
-                  const supportNumber = "+8801700000000"; // 👈 আপনার সাপোর্ট নাম্বার এখানে দিন
+                  const supportNumber = "+8801792297764";
                   Swal.fire({
                     title: "হেল্পলাইনে কল করুন",
                     text: "আপনি কি আমাদের অফিসিয়াল সাপোর্ট নাম্বারে কল করতে চান?",
@@ -457,7 +460,7 @@ const StudentDashboard = () => {
               {/* ইমেইল বাটন */}
               <button
                 onClick={() => {
-                  const supportEmail = "support@darulislam.com"; // 👈 আপনার সাপোর্ট মেইল এখানে দিন
+                  const supportEmail = "darulislaminstituteofficial@gmail.com";
                   Swal.fire({
                     title: "মেইল পাঠান",
                     text: "আপনার সমস্যাটি বিস্তারিত জানাতে মেইল ওপেন করতে চান?",
@@ -485,8 +488,8 @@ const StudentDashboard = () => {
       <EvaluationModal
         isOpen={isModalOpen}
         onClose={() => setIsModalOpen(false)}
-        submissionId="YOUR_SUBMISSION_ID_HERE"
-        token="YOUR_STUDENT_TOKEN_HERE"
+        submissionId=""
+        token=""
       />
     </div>
   );

@@ -18,13 +18,6 @@ const ProductCard = ({ product }: { product: any }) => {
           fill
           className="object-contain p-2 transition-transform duration-500 group-hover:scale-110"
         />
-
-        {/* কুইক অ্যাকশন বাটন (অপশনাল, শুধু আইকন হিসেবে থাকবে) */}
-        <div className="absolute top-2 right-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-          <button className="p-2 bg-white/80 backdrop-blur-md rounded-full shadow-sm text-red-500">
-            <Heart className="w-4 h-4" />
-          </button>
-        </div>
       </div>
 
       {/* টেক্সট */}
