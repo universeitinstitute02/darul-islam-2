@@ -336,44 +336,10 @@ const StudentDashboard = () => {
           </div>
         </div>
 
-        {/* ২. Bento Grid Content: নোটিশ, শিক্ষক এবং সহায়তা প্যানেল */}
+        {/* ২. Bento Grid Content: শিক্ষক এবং সহায়তা প্যানেল */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-3 sm:gap-4 lg:gap-6">
-          {/* সাম্প্রতিক নোটিশ বোর্ড */}
-          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4">
-            <div>
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="font-black text-neutral-800 text-xs sm:text-sm lg:text-base italic">
-                  সাম্প্রতিক নোটিশ
-                </h3>
-                <button className="text-[10px] font-bold text-[#0B5D3B] hover:underline">
-                  সব দেখুন
-                </button>
-              </div>
-              <div className="space-y-3">
-                {notices.map((notice, idx) => (
-                  <div
-                    key={idx}
-                    className="flex items-start justify-between pb-2.5 border-b border-neutral-50 last:border-0 last:pb-0 gap-2"
-                  >
-                    <div className="flex items-start gap-2">
-                      <div className="w-6 h-6 bg-orange-50 text-orange-500 rounded-md flex items-center justify-center shrink-0 mt-0.5">
-                        <Megaphone size={12} />
-                      </div>
-                      <p className="text-[10px] sm:text-[11px] font-bold text-neutral-700 leading-tight line-clamp-2">
-                        {notice.text}
-                      </p>
-                    </div>
-                    <span className="text-[8px] sm:text-[9px] font-bold text-neutral-400 shrink-0 whitespace-nowrap">
-                      {notice.date}
-                    </span>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-
           {/* শিক্ষক প্রোফাইল */}
-          <div className="lg:col-span-4 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
+          <div className="lg:col-span-6 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
             <div>
               <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
                 শিক্ষক
@@ -418,7 +384,7 @@ const StudentDashboard = () => {
           </div>
 
           {/* কুইক সাপোর্ট ও সাহায্য কেন্দ্র */}
-          <div className="lg:col-span-4 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4 font-sans">
+          <div className="lg:col-span-6 bg-white p-4 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-4 font-sans">
             <div className="space-y-2">
               <div className="flex items-center gap-2 text-neutral-800">
                 <HelpCircle size={20} className="text-[#0B5D3B]" />
@@ -440,7 +406,7 @@ const StudentDashboard = () => {
                   Swal.fire({
                     title: "হেল্পলাইনে কল করুন",
                     text: "আপনি কি আমাদের অফিসিয়াল সাপোর্ট নাম্বারে কল করতে চান?",
-                    icon: "question", // 👈 "phone"-এর জায়গায় "question" অথবা "info" টাইপ দেওয়া হলো
+                    icon: "question",
                     showCancelButton: true,
                     confirmButtonText: "হ্যাঁ, কল দিন",
                     cancelButtonText: "বাতিল",
