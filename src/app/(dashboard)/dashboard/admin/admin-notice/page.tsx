@@ -146,7 +146,7 @@ export default function AdminGeneralNotices() {
             setEditingNotice(null);
             setIsModalOpen(true);
           }}
-          className="w-full sm:w-auto px-4 py-2.5 bg-[#0B5D3B] hover:bg-[#0c462a] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
+          className="w-full sm:w-auto hover:cursor-pointer px-4 py-2.5 bg-[#0B5D3B] hover:bg-[#0c462a] text-white text-xs font-bold rounded-xl transition-all shadow-sm flex items-center justify-center gap-2"
         >
           <Plus size={16} />
           <span>নতুন নোটিশ তৈরি করুন</span>
@@ -260,13 +260,13 @@ export default function AdminGeneralNotices() {
                                 setEditingNotice(notice);
                                 setIsModalOpen(true);
                               }}
-                              className="p-1.5 hover:bg-blue-50 text-blue-600 rounded-lg transition-all"
+                              className="p-1.5 hover:cursor-pointer hover:bg-blue-50 text-blue-600 rounded-lg transition-all"
                             >
                               <Edit3 size={15} />
                             </button>
                             <button
                               onClick={() => handleDelete(notice._id)}
-                              className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg transition-all"
+                              className="p-1.5 hover:cursor-pointer hover:bg-red-50 text-red-500 rounded-lg transition-all"
                             >
                               <Trash2 size={15} />
                             </button>

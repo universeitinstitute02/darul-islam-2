@@ -195,7 +195,7 @@ export default function AdminPendingOrders() {
           <button
             onClick={() => refetch()}
             disabled={isLoading || isFetching}
-            className="flex items-center gap-2 px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 active:scale-95 text-neutral-600 rounded-xl text-xs font-bold border border-neutral-200/60 transition-all disabled:opacity-50"
+            className="flex hover:cursor-pointer items-center gap-2 px-4 py-2.5 bg-neutral-50 hover:bg-neutral-100 active:scale-95 text-neutral-600 rounded-xl text-xs font-bold border border-neutral-200/60 transition-all disabled:opacity-50"
           >
             <RefreshCw
               className={`w-4 h-4 ${isFetching ? "animate-spin" : ""}`}
@@ -257,7 +257,7 @@ export default function AdminPendingOrders() {
                   </div>
                   <button
                     onClick={() => handleDeleteOrder(order._id)}
-                    className="p-1.5 text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                    className="p-1.5 hover:cursor-pointer text-neutral-300 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
                     title="রেকর্ড ডিলিট করুন"
                   >
                     <Trash2 className="w-4 h-4" />
@@ -363,7 +363,7 @@ export default function AdminPendingOrders() {
                 <div className="grid grid-cols-2 gap-3">
                   <button
                     onClick={() => handleUpdateStatus(order._id, "cancelled")}
-                    className="py-2.5 border border-red-100 hover:bg-red-50 text-red-600 text-xs font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-1"
+                    className="py-2.5 hover:cursor-pointer border border-red-100 hover:bg-red-50 text-red-600 text-xs font-bold rounded-xl transition-all active:scale-[0.98] flex items-center justify-center gap-1"
                   >
                     <X className="w-3.5 h-3.5" />
                     অর্ডার বাতিল
@@ -371,7 +371,7 @@ export default function AdminPendingOrders() {
                   {/* কনফার্ম বাটন -> স্ট্যাটাস processing */}
                   <button
                     onClick={() => handleUpdateStatus(order._id, "processing")}
-                    className="py-2.5 bg-[#0B5D3B] hover:bg-[#0c4a2c] text-white text-xs font-black rounded-xl shadow-md shadow-green-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1"
+                    className="py-2.5 hover:cursor-pointer bg-[#0B5D3B] hover:bg-[#0c4a2c] text-white text-xs font-black rounded-xl shadow-md shadow-green-100 transition-all active:scale-[0.98] flex items-center justify-center gap-1"
                   >
                     <Check className="w-3.5 h-3.5" />
                     অর্ডার কনফার্ম

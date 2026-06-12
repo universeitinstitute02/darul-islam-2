@@ -1,11 +1,6 @@
 "use client";
 import Link from "next/link";
-import {
-  ChevronRight,
-  Search,
-  NotebookText,
-  NotebookPen,
-} from "lucide-react";
+import { ChevronRight, Search, NotebookText, NotebookPen } from "lucide-react";
 import { PiMosqueDuotone } from "react-icons/pi";
 import {
   FaBook,
@@ -324,25 +319,6 @@ export default function ContentSections() {
             ))}
           </div>
         </section>
-
-        {/* ── FLOAT SEARCH ── */}
-        <motion.button
-          initial={{ scale: 0 }}
-          animate={{ scale: 1 }}
-          transition={{
-            type: "spring",
-            stiffness: 260,
-            damping: 20,
-            delay: 0.5,
-          }}
-          whileHover={{ scale: 1.1, rotate: 5 }}
-          whileTap={{ scale: 0.9 }}
-          className="fixed bottom-10 right-10 w-16 h-16 bg-[#1a4731] text-white rounded-2xl shadow-2xl flex items-center justify-center z-50 group overflow-hidden"
-          style={{ boxShadow: "0 15px 40px rgba(26,71,49,0.3)" }}
-        >
-          <div className="absolute inset-0 bg-white/10 opacity-0 group-hover:opacity-100 transition-opacity" />
-          <Search size={28} className="relative z-10" />
-        </motion.button>
       </div>
     </div>
   );
