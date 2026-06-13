@@ -4,7 +4,16 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import Swal from "sweetalert2";
-import { Loader2, Megaphone, Pin, Trash2, Plus, Filter } from "lucide-react";
+import {
+  Loader2,
+  Megaphone,
+  Pin,
+  Trash2,
+  Plus,
+  Filter,
+  ChevronLeft,
+  ChevronRight,
+} from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import PostNoticeModal from "@/src/components/shared/NoticeModal";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
@@ -85,6 +94,9 @@ export default function NoticePage() {
   const [selectedType, setSelectedType] = useState<NoticeType | "all">("all");
   const [selectedCourse, setSelectedCourse] = useState<string>("all");
 
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 5;
+
   // Fetch Stats and Notices
   const { data: serverData, isLoading } = useQuery<ApiResponse>({
     queryKey: ["teacherNotices"],
@@ -94,7 +106,6 @@ export default function NoticePage() {
     },
   });
 
-  // Fetch Filter Courses Options
   const { data: filterCourses } = useQuery<ApiCourse[]>({
     queryKey: ["teacherFilterCourses"],
     queryFn: async () => {
@@ -103,7 +114,6 @@ export default function NoticePage() {
     },
   });
 
-  // Pin Status Mutation
   const pinMutation = useMutation({
     mutationFn: async ({ id, pinned }: { id: string; pinned: boolean }) => {
       return await axiosSecure.put(`/notices/teacher/${id}`, { pinned });
@@ -116,7 +126,7 @@ export default function NoticePage() {
   const handleDelete = async (id: string) => {
     Swal.fire({
       title: "আপনি কি নিশ্চিত?",
-      text: "ডিলিট করার পর নোটিশটি আর ফিরে পাওয়া যাবে না!",
+      text: "ডিলিট করার পর নোটিশটি আর ফিরে পাওয়া যাবে না!",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#dc2626",
@@ -130,12 +140,12 @@ export default function NoticePage() {
           await axiosSecure.delete(`/notices/teacher/delete-notice/${id}`);
           queryClient.invalidateQueries({ queryKey: ["teacherNotices"] });
           Swal.fire(
-            "ডিলিট হয়েছে!",
-            "নোটিশটি সফলভাবে মুছে ফেলা হয়েছে।",
+            "ডিলিট হয়েছে!",
+            "নোটিশটি সফলভাবে মুছে ফেলা হয়েছে।",
             "success",
           );
         } catch (error) {
-          Swal.fire("দুঃখিত", "নোটিশটি ডিলিট করা যায়নি।", "error");
+          Swal.fire("দুঃখিত", "নোটিশটি ডিলিট করা যায়নি।", "error");
         }
       }
     });
@@ -160,6 +170,29 @@ export default function NoticePage() {
       selectedCourse === "all" || notice.course?._id === selectedCourse;
     return matchType && matchCourse;
   });
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentNotices = filteredNotices.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleTypeChange = (type: NoticeType | "all") => {
+    setSelectedType(type);
+    setCurrentPage(1);
+  };
+
+  const handleCourseChange = (courseId: string) => {
+    setSelectedCourse(courseId);
+    setCurrentPage(1);
+  };
 
   if (isLoading) {
     return (
@@ -248,7 +281,7 @@ export default function NoticePage() {
             {(["all", "urgent", "important", "general"] as const).map((t) => (
               <button
                 key={t}
-                onClick={() => setSelectedType(t)}
+                onClick={() => handleTypeChange(t)}
                 className={`px-3 py-1.5 rounded-lg text-xs font-bold transition-all whitespace-nowrap
                   ${selectedType === t ? "bg-slate-900 text-white shadow-sm" : "text-slate-500 hover:text-slate-800"}`}
               >
@@ -256,28 +289,12 @@ export default function NoticePage() {
               </button>
             ))}
           </div>
-
-          <div className="flex items-center gap-2 bg-slate-50 sm:bg-white px-2.5 py-1.5 sm:p-0 rounded-xl sm:rounded-none">
-            <Filter size={13} className="text-slate-400 shrink-0" />
-            <select
-              value={selectedCourse}
-              onChange={(e) => setSelectedCourse(e.target.value)}
-              className="w-full sm:w-auto bg-transparent sm:bg-slate-50 border border-transparent sm:border-slate-200 rounded-xl px-2 py-1 text-xs font-bold text-slate-600 outline-none focus:ring-2 focus:ring-emerald-500/10 cursor-pointer"
-            >
-              <option value="all">সব কোর্স ফিল্টার</option>
-              {filterCourses?.map((c) => (
-                <option key={c._id} value={c._id}>
-                  {c.name}
-                </option>
-              ))}
-            </select>
-          </div>
         </div>
 
         {/* Notices Cards List Area with Framer Motion Layout Transitions */}
         <motion.div layout className="space-y-3">
           <AnimatePresence mode="popLayout">
-            {filteredNotices.length === 0 ? (
+            {currentNotices.length === 0 ? (
               <motion.div
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
@@ -286,11 +303,11 @@ export default function NoticePage() {
               >
                 <Megaphone size={32} className="mx-auto text-slate-300 mb-2" />
                 <p className="text-xs sm:text-sm font-bold text-slate-400">
-                  কোনো নোটিশ পাওয়া যায়নি
+                  কোনো নোটিশ পাওয়া যায়নি
                 </p>
               </motion.div>
             ) : (
-              filteredNotices.map((notice) => {
+              currentNotices.map((notice) => {
                 const cfg = TYPE_CONFIG[notice.type];
                 return (
                   <motion.div
@@ -373,7 +390,7 @@ export default function NoticePage() {
 
                     {/* Views & Timestamp Metrics */}
                     <div className="mt-3 pt-2.5 border-t border-slate-50 flex items-center justify-between text-[10px] font-semibold text-slate-400">
-                      <span>দেখা হয়েছে: {notice.viewsCount || 0} বার</span>
+                      <span>দেখা হয়েছে: {notice.viewsCount || 0} বার</span>
                       {notice.createdAt && (
                         <span>
                           {new Date(notice.createdAt).toLocaleDateString(
@@ -389,6 +406,44 @@ export default function NoticePage() {
             )}
           </AnimatePresence>
         </motion.div>
+
+        {/* Pagination Controls UI */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-4 bg-white p-4 rounded-2xl border border-slate-100 shadow-sm">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              <ChevronLeft size={16} />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const pageNum = index + 1;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-9 h-9 rounded-xl text-xs font-bold transition-all ${
+                    currentPage === pageNum
+                      ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
+                      : "border border-slate-200 text-slate-600 hover:bg-slate-50"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-xl border border-slate-200 text-slate-600 hover:bg-slate-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              <ChevronRight size={16} />
+            </button>
+          </div>
+        )}
 
         {/* Isolated Modal Render with Framer Motion Exit Capabilities */}
         <AnimatePresence>

@@ -53,62 +53,11 @@ const EducationHero = ({ searchTerm, onSearchChange }: HeroProps) => {
                   value={searchTerm}
                   onChange={(e) => onSearchChange(e.target.value)}
                   placeholder="সার্চ করুন..."
-                  className="w-full pl-10 pr-3 py-2.5 rounded-lg focus:outline-none text-sm text-gray-700 bg-gray-50 border-transparent focus:bg-white focus:border-green-100 border-2 transition-all"
+                  className="w-full pl-10 pr-3 py-2.5 rounded-lg focus:outline-none text-sm text-gray-700 bg-gray-50 border-transparent focus:bg-white focus:border-green-100  transition-all"
                 />
               </div>
 
               <div className="flex w-full md:w-auto gap-1.5">
-                {/* Filter Button with Dropdown */}
-                <div className="relative flex-1 md:flex-none">
-                  <button
-                    onClick={() => setIsFilterOpen(!isFilterOpen)}
-                    className="w-full flex items-center justify-center gap-1.5 bg-gray-100 hover:bg-gray-200 text-gray-700 px-4 py-2.5 rounded-lg font-bold text-sm transition-all"
-                  >
-                    <Filter size={16} />
-                    ফিল্টার
-                    <ChevronDown
-                      size={14}
-                      className={`transition-transform ${isFilterOpen ? "rotate-180" : ""}`}
-                    />
-                  </button>
-
-                  {/* Dropdown Menu */}
-                  <AnimatePresence>
-                    {isFilterOpen && (
-                      <motion.div
-                        initial={{ opacity: 0, y: 10 }}
-                        animate={{ opacity: 1, y: 0 }}
-                        exit={{ opacity: 0, y: 10 }}
-                        className="absolute right-0 mt-2 w-56 bg-white rounded-xl shadow-2xl border border-gray-100 z-50 py-2 overflow-hidden"
-                      >
-                        {categories.map((cat) => (
-                          <button
-                            key={cat}
-                            onClick={() => {
-                              onSearchChange(cat);
-                              setIsFilterOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2.5 text-sm text-gray-600 hover:bg-green-50 hover:text-[#0B5D3B] transition-colors font-medium"
-                          >
-                            {cat}
-                          </button>
-                        ))}
-                        <div className="border-t border-gray-100 mt-1">
-                          <button
-                            onClick={() => {
-                              onSearchChange("");
-                              setIsFilterOpen(false);
-                            }}
-                            className="w-full text-left px-4 py-2 text-xs text-red-500 hover:bg-red-50 font-bold"
-                          >
-                            ফিল্টার মুছুন
-                          </button>
-                        </div>
-                      </motion.div>
-                    )}
-                  </AnimatePresence>
-                </div>
-
                 <button className="flex-1 md:flex-none bg-[#0B5D3B] hover:bg-black text-white px-6 py-2.5 rounded-lg font-bold text-sm transition-all">
                   সার্চ
                 </button>

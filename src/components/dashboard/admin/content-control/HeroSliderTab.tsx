@@ -231,7 +231,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             <input
               name="secondaryBtnLink"
               defaultValue={
-                editingSlide ? editingSlide.secondaryBtnLink : "/courses"
+                editingSlide ? editingSlide.secondaryBtnLink : "/education"
               }
               className="w-full p-3 bg-white border border-neutral-200 rounded-xl text-sm outline-none font-bold"
             />

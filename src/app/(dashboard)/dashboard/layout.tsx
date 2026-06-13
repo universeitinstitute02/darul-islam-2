@@ -35,7 +35,9 @@ function SidebarLinkGroup({
   pathname: string;
   setSidebarOpen: (open: boolean) => void;
 }) {
-  const hasActiveChild = link.children?.some((child: any) => pathname === child.href);
+  const hasActiveChild = link.children?.some(
+    (child: any) => pathname === child.href,
+  );
   const [isOpen, setIsOpen] = useState(hasActiveChild);
 
   const LinkIcon = link.icon;
@@ -146,12 +148,32 @@ export default function DashboardLayout({
   const teacherLinks = [
     { name: "হোম", href: "/", icon: House },
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-    { name: "আমার কোর্সসমূহ", href: "/dashboard/teacher/my-course", icon: Library },
+    {
+      name: "আমার কোর্সসমূহ",
+      href: "/dashboard/teacher/my-course",
+      icon: Library,
+    },
     { name: "ক্লাস লিঙ্ক", href: "/dashboard/teacher/class-link", icon: Video },
-    { name: "অ্যাসাইনমেন্ট ও মূল্যায়ন", href: "/dashboard/teacher/assignment", icon: GraduationCap },
-    { name: "নোটিশ বোর্ড (টিচার)", href: "/dashboard/teacher/notice-board", icon: Bell },
-    { name: "সকল সদস্যবৃন্দ", href: "/dashboard/teacher/all-users", icon: Users },
-    { name: "প্রোফাইল সেটিংস", href: "/dashboard/teacher/profile", icon: UserCog },
+    {
+      name: "অ্যাসাইনমেন্ট ও মূল্যায়ন",
+      href: "/dashboard/teacher/assignment",
+      icon: GraduationCap,
+    },
+    {
+      name: "নোটিশ বোর্ড (টিচার)",
+      href: "/dashboard/teacher/notice-board",
+      icon: Bell,
+    },
+    {
+      name: "সকল সদস্যবৃন্দ",
+      href: "/dashboard/teacher/all-users",
+      icon: Users,
+    },
+    {
+      name: "প্রোফাইল সেটিংস",
+      href: "/dashboard/teacher/profile",
+      icon: UserCog,
+    },
   ];
 
   // --- অ্যাডমিন (Admin) এর মেনু লিংক সমূহ ---
@@ -162,46 +184,117 @@ export default function DashboardLayout({
       name: "কোর্স ম্যানেজমেন্ট",
       icon: ListOrdered,
       children: [
-        { name: "কোর্সসমূহ", href: "/dashboard/admin/my-course", icon: Library },
-        { name: "কোর্স যুক্ত করুন", href: "/dashboard/admin/add-course", icon: PlusSquare },
-        { name: "ব্যাচ নিযুক্ত", href: "/dashboard/admin/batch-assign", icon: PlusSquare },
-        { name: "ব্যাচ ম্যানেজমেন্ট", href: "/dashboard/admin/manage-batch", icon: PlusSquare },
-        { name: "ক্যাটাগরি", href: "/dashboard/admin/categories", icon: PlusSquare },
+        {
+          name: "কোর্সসমূহ",
+          href: "/dashboard/admin/my-course",
+          icon: Library,
+        },
+        {
+          name: "কোর্স যুক্ত করুন",
+          href: "/dashboard/admin/add-course",
+          icon: PlusSquare,
+        },
+        {
+          name: "ব্যাচ নিযুক্ত",
+          href: "/dashboard/admin/batch-assign",
+          icon: PlusSquare,
+        },
+        {
+          name: "ব্যাচ ম্যানেজমেন্ট",
+          href: "/dashboard/admin/manage-batch",
+          icon: PlusSquare,
+        },
+        {
+          name: "ক্যাটাগরি",
+          href: "/dashboard/admin/categories",
+          icon: PlusSquare,
+        },
       ],
     },
     {
       name: "ব্যবহারকারী ও শিক্ষক",
       icon: Users,
       children: [
-        { name: "শিক্ষকবৃন্দ", href: "/dashboard/admin/teacher-list", icon: Users },
-        { name: "শিক্ষার্থীবৃন্দ", href: "/dashboard/admin/students-list", icon: UserCog },
+        {
+          name: "শিক্ষকবৃন্দ",
+          href: "/dashboard/admin/teacher-list",
+          icon: Users,
+        },
+        {
+          name: "শিক্ষার্থীবৃন্দ",
+          href: "/dashboard/admin/students-list",
+          icon: UserCog,
+        },
       ],
     },
     {
       name: "শপ ম্যানেজমেন্ট",
       icon: ListOrdered,
       children: [
-        { name: "Product Management", href: "/dashboard/admin/products-management", icon: UserCog },
-        { name: "Order Management", href: "/dashboard/admin/order-management", icon: ListOrdered },
-        { name: "Product Delivery", href: "/dashboard/admin/product-delivey", icon: UserCog },
+        {
+          name: "Product Management",
+          href: "/dashboard/admin/products-management",
+          icon: UserCog,
+        },
+        {
+          name: "Order Management",
+          href: "/dashboard/admin/order-management",
+          icon: ListOrdered,
+        },
+        {
+          name: "Product Delivery",
+          href: "/dashboard/admin/product-delivey",
+          icon: UserCog,
+        },
       ],
     },
-       {
+    {
       name: "অনুদান",
       icon: ListOrdered,
       children: [
-        { name: "অনুদানের তালিকা", href: "/dashboard/admin/donations", icon: Settings2 },
-        { name: "অনুদান পোস্ট", href: "/dashboard/admin/donate-post", icon: UserCog },
+        {
+          name: "অনুদানের তালিকা",
+          href: "/dashboard/admin/donations",
+          icon: Settings2,
+        },
+        {
+          name: "অনুদান পোস্ট",
+          href: "/dashboard/admin/donate-post",
+          icon: UserCog,
+        },
       ],
     },
     { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },
-    { name: "গ্যালারি ম্যনেজমেন্ট", href: "/dashboard/admin/gallery", icon: FolderKanban },
-    { name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট", href: "/dashboard/admin/testimonial", icon: FolderKanban },
-    { name: "কন্টেন্ট কন্ট্রোল", href: "/dashboard/admin/content-control", icon: Settings2 },
-    { name: "প্রোফাইল সেটিংস", href: "/dashboard/admin/profile", icon: UserCog },
+    {
+      name: "গ্যালারি ম্যনেজমেন্ট",
+      href: "/dashboard/admin/gallery",
+      icon: FolderKanban,
+    },
+    {
+      name: "টেস্টিমোনিয়াল পোস্ট",
+      href: "/dashboard/admin/add-testimonials",
+      icon: FolderKanban,
+    },
+    {
+      name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
+      href: "/dashboard/admin/testimonial",
+      icon: FolderKanban,
+    },
+
+    {
+      name: "কন্টেন্ট কন্ট্রোল",
+      href: "/dashboard/admin/content-control",
+      icon: Settings2,
+    },
+    {
+      name: "প্রোফাইল সেটিংস",
+      href: "/dashboard/admin/profile",
+      icon: UserCog,
+    },
   ];
 
-  const navLinks = role === "admin" ? adminLinks : role === "teacher" ? teacherLinks : [];
+  const navLinks =
+    role === "admin" ? adminLinks : role === "teacher" ? teacherLinks : [];
 
   return (
     <div className="flex h-screen bg-[#F3F8F4]">

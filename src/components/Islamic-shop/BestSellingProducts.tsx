@@ -64,7 +64,7 @@ const BestSellingProducts = () => {
 
             <button
               onClick={handleLoadMore}
-              className="w-full md:w-max md:px-16 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all active:scale-95 shadow-xl shadow-green-100 flex items-center justify-center gap-2"
+              className="w-full hover:cursor-pointer md:w-max md:px-16 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all active:scale-95 shadow-xl shadow-green-100 flex items-center justify-center gap-2"
             >
               আরও পণ্য দেখুন
             </button>

@@ -187,7 +187,7 @@ const ProductSearchSection = () => {
                 </div>
                 <button
                   onClick={handleClearSearch}
-                  className="text-[10px] font-bold text-neutral-500 bg-white px-4 py-1.5 rounded-full border border-neutral-200 hover:bg-neutral-50 transition-colors shadow-xs"
+                  className="text-[10px] hover:cursor-pointer font-bold text-neutral-500 bg-white px-4 py-1.5 rounded-full border border-neutral-200 hover:bg-neutral-50 transition-colors shadow-xs"
                 >
                   ফলাফল বন্ধ করুন
                 </button>
