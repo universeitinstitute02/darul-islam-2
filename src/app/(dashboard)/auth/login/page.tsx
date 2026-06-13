@@ -49,10 +49,6 @@ const LoginPage = () => {
     }
   };
 
-  const handleGoogleSignIn = () => {
-    signIn("google", { callbackUrl: "/dashboard" });
-  };
-
   return (
     <div className="min-h-screen lg:h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden font-sans">
       {/* 1. Top Section / Hero Banner */}
