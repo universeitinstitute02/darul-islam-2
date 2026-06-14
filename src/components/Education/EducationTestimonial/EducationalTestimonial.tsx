@@ -3,7 +3,6 @@
 import React, { useEffect, useState } from "react";
 import { MessageSquare } from "lucide-react";
 
-// এপিআই-এর অরিজিনাল রেসপন্স অনুযায়ী ইন্টারফেস আপডেট করা হয়েছে
 interface Testimonial {
   _id: string;
   user: {
@@ -17,7 +16,6 @@ interface Testimonial {
   updatedAt: string;
 }
 
-// রেটিং স্টার কম্পোনেন্ট
 const StarIcon = ({ active }: { active: boolean }) => (
   <svg
     className={`w-3.5 h-3.5 ${active ? "fill-amber-400 text-amber-400" : "fill-gray-200 text-gray-200"}`}
@@ -41,10 +39,8 @@ export default function TestimonialsSection() {
         if (!res.ok) throw new Error("Failed to fetch data");
         const result = await res.json();
 
-        // সেফটি চেক: ডেটা সরাসরি অ্যারে নাকি অবজেক্টের ডট ডেটা প্রোপার্টিতে আছে
         const data = Array.isArray(result) ? result : result.data || [];
 
-        // শুধুমাত্র Approved করা মতামতগুলো ফিল্টার করে শো করানোর লজিক
         const approvedData = data.filter(
           (item: Testimonial) => item.isApproved === true,
         );
@@ -72,7 +68,7 @@ export default function TestimonialsSection() {
   }
 
   if (error || testimonials.length === 0) {
-    return null; // কোনো ডেটা বা এরর থাকলে সেকশনটি রেন্ডার হবে না
+    return null;
   }
 
   return (
@@ -86,7 +82,6 @@ export default function TestimonialsSection() {
           <div className="w-16 h-1 bg-[#0B5D3B] mx-auto rounded-full mt-3"></div>
         </div>
 
-        {/* ৩-কলাম গ্রিড লেআউট (image_455f06.png এর আইডিয়া অনুযায়ী) */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {testimonials.map((item) => {
             const studentName = item.user?.name || "অজানা শিক্ষার্থী";

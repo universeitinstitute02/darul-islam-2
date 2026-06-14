@@ -307,7 +307,7 @@ export default function CourseTabsSection() {
   return (
     <section className="w-full mt-12 md:mt-20 border-t border-slate-100 pt-10 font-sans antialiased text-slate-800 my-10">
       {/* স্টিকি বাটন ট্যাব নেভিগেশন বার */}
-      <div className="sticky top-16 md:top-20 z-20 bg-white/95 backdrop-blur-md border border-amber-200 shadow-sm rounded-2xl max-w-5xl mx-auto mb-8">
+      <div className="top-16 md:top-20 z-20 bg-white/95 backdrop-blur-md border border-amber-200 shadow-sm rounded-2xl max-w-5xl mx-auto mb-8">
         <div className="px-4 overflow-x-auto scrollbar-none">
           <div className="flex justify-start md:justify-center items-center gap-1.5 py-3 whitespace-nowrap">
             {Object.values(tabsData).map((tab) => {
