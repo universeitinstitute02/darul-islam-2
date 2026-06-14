@@ -179,7 +179,7 @@ export default function DashboardLayout({
   // --- অ্যাডমিন (Admin) এর মেনু লিংক সমূহ ---
   const adminLinks = [
     { name: "হোম", href: "/", icon: House },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard/admin", icon: LayoutDashboard },
     {
       name: "কোর্স ম্যানেজমেন্ট",
       icon: ListOrdered,
@@ -252,16 +252,9 @@ export default function DashboardLayout({
       name: "অনুদান",
       icon: ListOrdered,
       children: [
-        {
-          name: "অনুদানের তালিকা",
-          href: "/dashboard/admin/donations",
-          icon: Settings2,
-        },
-        {
-          name: "অনুদান পোস্ট",
-          href: "/dashboard/admin/donate-post",
-          icon: UserCog,
-        },
+        { name: "দান প্রকল্প", href: "/dashboard/admin/get-donation", icon: Settings2 },
+        { name: "অনুদানের তালিকা", href: "/dashboard/admin/donations", icon: Settings2 },
+        { name: "অনুদান পোস্ট", href: "/dashboard/admin/donate-post", icon: UserCog },
       ],
     },
     { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },

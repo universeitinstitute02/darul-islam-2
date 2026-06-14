@@ -233,13 +233,13 @@ export default function AdminProducts() {
                               setEditingProduct(product);
                               setIsModalOpen(true);
                             }}
-                            className="p-1.5 hover:bg-blue-50 hover:cursor-pointer text-blue-600 rounded-lg"
+                            className="p-1.5 cursor-pointer hover:bg-blue-50 text-blue-600 rounded-lg"
                           >
                             <Edit3 size={15} />
                           </button>
                           <button
                             onClick={() => handleDelete(product._id)}
-                            className="p-1.5 hover:bg-red-50 text-red-500 rounded-lg hover:cursor-pointer"
+                            className="p-1.5 cursor-pointer hover:bg-red-50 text-red-500 rounded-lg"
                           >
                             <Trash2 size={15} />
                           </button>

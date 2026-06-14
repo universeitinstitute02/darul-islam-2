@@ -14,10 +14,7 @@ import {
   RefreshCw,
   Trash2,
   Layers,
-  User,
-  CreditCard,
   Calendar,
-  XCircle,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
@@ -265,7 +262,7 @@ export default function TeacherAssign() {
             <button
               key={tab}
               onClick={() => setStatusFilter(tab)}
-              className={`flex-1 py-2.5 rounded-xl text-xs font-black capitalize transition-all ${
+              className={`flex-1 cursor-pointer py-2.5 rounded-xl text-xs font-black capitalize transition-all ${
                 statusFilter === tab
                   ? "bg-green-800 text-white shadow-sm"
                   : "text-gray-500 hover:text-gray-800"
@@ -408,13 +405,13 @@ export default function TeacherAssign() {
                     <div className="flex items-center gap-2">
                       <button
                         onClick={() => handleRejectRequest(item._id)}
-                        className="inline-flex items-center gap-1 px-3 py-2 bg-white hover:bg-red-50 border border-gray-200 text-red-600 font-bold text-xs rounded-xl transition-all active:scale-95"
+                        className="inline-flex items-center gap-1 px-3 py-2 cursor-pointer bg-white hover:bg-red-50 border border-gray-200 text-red-600 font-bold text-xs rounded-xl transition-all active:scale-95"
                       >
                         <Trash2 className="w-3.5 h-3.5" /> Reject
                       </button>
                       <button
                         onClick={() => openAssignModal(item)}
-                        className="inline-flex items-center gap-1.5 px-4 py-2 bg-green-800 hover:bg-green-900 text-white font-black text-xs rounded-xl shadow-sm transition-all active:scale-95"
+                        className="inline-flex items-center cursor-pointer gap-1.5 px-4 py-2 bg-green-800 hover:bg-green-900 text-white font-black text-xs rounded-xl shadow-sm transition-all active:scale-95"
                       >
                         <UserPlus className="w-3.5 h-3.5" /> Approve & Assign
                       </button>
@@ -454,7 +451,7 @@ export default function TeacherAssign() {
                 </div>
                 <button
                   onClick={() => setSelectedRequest(null)}
-                  className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
+                  className="p-2 cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -528,14 +525,14 @@ export default function TeacherAssign() {
                     <button
                       type="button"
                       onClick={() => setSelectedRequest(null)}
-                      className="w-1/3 py-3.5 border border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition-all text-xs"
+                      className="w-1/3 cursor-pointer py-3.5 border border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition-all text-xs"
                     >
                       বাতিল (Cancel)
                     </button>
                     <button
                       type="submit"
                       disabled={approveMutation.isPending}
-                      className="w-2/3 py-3.5 bg-green-800 hover:bg-green-900 text-white font-black rounded-xl transition-all shadow-md text-xs flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-60"
+                      className="w-2/3 cursor-pointer py-3.5 bg-green-800 hover:bg-green-900 text-white font-black rounded-xl transition-all shadow-md text-xs flex items-center justify-center gap-1.5 active:scale-95 disabled:opacity-60"
                     >
                       {approveMutation.isPending ? (
                         <RefreshCw className="animate-spin" size={14} />

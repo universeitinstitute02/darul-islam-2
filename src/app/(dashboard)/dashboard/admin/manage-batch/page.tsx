@@ -266,7 +266,7 @@ export default function AdminBatchManagement() {
         <div className="flex items-center gap-2 w-full md:w-auto">
           <button
             onClick={() => refetchBatches()}
-            className="p-3 bg-white hover:bg-gray-50 text-gray-600 rounded-xl border border-gray-200 active:scale-95 transition-all"
+            className="p-3 bg-white hover:bg-gray-50 text-gray-600 rounded-xl border border-gray-200 cursor-pointer active:scale-95 transition-all"
             disabled={batchesFetching}
           >
             <RefreshCw
@@ -276,7 +276,7 @@ export default function AdminBatchManagement() {
           </button>
           <button
             onClick={handleOpenCreateModal}
-            className="flex-1 md:flex-initial flex items-center justify-center gap-2 bg-green-800 hover:bg-green-900 text-white font-black px-5 py-3 rounded-xl shadow-md transition-all active:scale-95 text-sm"
+            className="flex-1 md:flex-initial flex items-center justify-center gap-2 cursor-pointer bg-green-800 hover:bg-green-900 text-white font-black px-5 py-3 rounded-xl shadow-md transition-all active:scale-95 text-sm"
           >
             <Plus size={18} /> নতুন ব্যাচ তৈরি করুন
           </button>
@@ -291,7 +291,7 @@ export default function AdminBatchManagement() {
           <select
             value={filterCourse}
             onChange={(e) => setFilterCourse(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-700 outline-none"
+            className="w-full cursor-pointer bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-700 outline-none"
           >
             <option value="">সর্বমোট কোর্স</option>
             {courses.map((c) => (
@@ -308,7 +308,7 @@ export default function AdminBatchManagement() {
           <select
             value={filterStatus}
             onChange={(e) => setFilterStatus(e.target.value)}
-            className="w-full bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-700 outline-none"
+            className="w-full cursor-pointer bg-gray-50 border border-gray-200 rounded-xl p-3 text-sm font-bold text-gray-700 outline-none"
           >
             <option value="">সর্বমোট স্ট্যাটাস</option>
             <option value="upcoming">আসন্ন (Upcoming)</option>
@@ -406,13 +406,13 @@ export default function AdminBatchManagement() {
                 <div className="flex items-center gap-1">
                   <button
                     onClick={() => handleOpenEditModal(batch)}
-                    className="p-2.5 bg-white hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-200 shadow-sm transition-all active:scale-95"
+                    className="p-2.5 cursor-pointer bg-white hover:bg-gray-100 text-gray-600 rounded-xl border border-gray-200 shadow-sm transition-all active:scale-95"
                   >
                     <Edit2 size={14} />
                   </button>
                   <button
                     onClick={() => handleDeleteBatch(batch._id)}
-                    className="p-2.5 bg-white hover:bg-red-50 text-red-600 rounded-xl border border-gray-200 shadow-sm transition-all active:scale-95"
+                    className="p-2.5 cursor-pointer bg-white hover:bg-red-50 text-red-600 rounded-xl border border-gray-200 shadow-sm transition-all active:scale-95"
                   >
                     <Trash2 size={14} />
                   </button>
@@ -546,14 +546,14 @@ export default function AdminBatchManagement() {
                 <button
                   type="button"
                   onClick={() => setModalOpen(false)}
-                  className="w-1/3 py-3.5 border border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition-all text-sm active:scale-95"
+                  className="w-1/3 py-3.5 border border-gray-200 text-gray-500 font-bold cursor-pointer rounded-xl hover:bg-gray-50 transition-all text-sm active:scale-95"
                 >
                   বাতিল
                 </button>
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-2/3 py-3.5 bg-green-800 hover:bg-green-900 text-white font-black rounded-xl transition-all shadow-md text-sm active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
+                  className="w-2/3 py-3.5 bg-green-800 hover:bg-green-900 cursor-pointer text-white font-black rounded-xl transition-all shadow-md text-sm active:scale-95 disabled:opacity-60 flex items-center justify-center gap-2"
                 >
                   {isSubmitting ? (
                     <RefreshCw className="animate-spin" size={16} />

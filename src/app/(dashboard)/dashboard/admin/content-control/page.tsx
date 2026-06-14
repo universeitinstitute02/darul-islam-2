@@ -32,7 +32,7 @@ export default function ContentControlPage() {
             <button
               key={page}
               onClick={() => setActivePage(page)}
-              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all ${
+              className={`px-4 py-2 rounded-lg text-xs font-black uppercase tracking-wider transition-all cursor-pointer ${
                 activePage === page
                   ? "bg-[#0B5D3B] text-white shadow-sm"
                   : "text-neutral-500 hover:text-neutral-800"
@@ -52,7 +52,7 @@ export default function ContentControlPage() {
       <div className="flex border-b border-neutral-200 gap-6">
         <button
           onClick={() => setActiveTab("slider")}
-          className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             activeTab === "slider"
               ? "border-[#0B5D3B] text-[#0B5D3B]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
@@ -62,7 +62,7 @@ export default function ContentControlPage() {
         </button>
         <button
           onClick={() => setActiveTab("static")}
-          className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all ${
+          className={`pb-3 text-sm font-black flex items-center gap-2 border-b-2 transition-all cursor-pointer ${
             activeTab === "static"
               ? "border-[#0B5D3B] text-[#0B5D3B]"
               : "border-transparent text-neutral-400 hover:text-neutral-600"
