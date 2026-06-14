@@ -4,7 +4,7 @@ import CourseSection from "@/src/components/shared/EducationSectionShare";
 import Image from "next/image";
 import Link from "next/link";
 import { motion } from "framer-motion";
-import EducationHero from "@/src/components/EducationHero/EducationHero";
+import EducationHero from "@/src/components/Education/EducationHero/EducationHero";
 import EduCategories from "@/src/components/mainLayout/Educations/EduCategories";
 import { getAllCourses } from "@/src/lib/data";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";

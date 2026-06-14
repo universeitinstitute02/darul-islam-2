@@ -18,6 +18,7 @@ import {
   ChevronUp,
   X,
 } from "lucide-react";
+import Link from "next/link";
 
 // ইমেজ অনুযায়ী সঠিক আইকন ম্যাপিং
 const iconMap = {
@@ -295,8 +296,8 @@ export default function EduCategories() {
           দ্বীনী শিক্ষার একটি সুবিন্যস্ত এবং আধুনিক রূপরেখা
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-2xl mx-auto">
-          বিভাগ অনুযায়ী আমাদের সকল কোর্সসমূহ এমনভাবে সাজানো হয়েছে যা একজন
-          শিক্ষার্থীকে আদর্শ ও নৈতিক শিক্ষায় উন্নত করবে।
+          বিভাগ অনুযায়ী আমাদের সকল কোর্সসমূহ এমনভাবে সাজানো হয়েছে যা একজন
+          শিক্ষার্থীকে আদেশ ও নৈতিক শিক্ষায় উন্নত করবে।
         </p>
       </div>
 
@@ -315,7 +316,7 @@ export default function EduCategories() {
               className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 overflow-hidden"
             >
               <div>
-                {/* কার্ড ব্যানার ইমেজ (Overlay কালার দিয়ে Eye-catching করা হয়েছে) */}
+                {/* কার্ড ব্যানার ইমেজ (Overlay কালার দিয়ে Eye-catching করা হয়েছে) */}
                 <div className="h-44 w-full relative overflow-hidden bg-gradient-to-t from-[#064e3b] to-emerald-950/80">
                   <img
                     src={section.image}
@@ -356,31 +357,26 @@ export default function EduCategories() {
                 </div>
               </div>
 
-              {/* "আরো দেখুন" / "কম দেখান" সেকশন */}
-              {hasMore && (
-                <div className="px-6 pb-6 pt-0 text-center">
-                  <button
-                    onClick={() => toggleExpand(section.id)}
-                    className="inline-flex items-center gap-1 text-xs font-bold text-emerald-600 hover:text-emerald-700 bg-emerald-50 hover:bg-emerald-100/70 px-4 py-2 rounded-full transition-colors cursor-pointer"
-                  >
-                    {isExpanded ? (
-                      <>
-                        কম দেখান <ChevronUp className="w-3.5 h-3.5" />
-                      </>
-                    ) : (
-                      <>
-                        আরো দেখুন <ChevronDown className="w-3.5 h-3.5" />
-                      </>
-                    )}
-                  </button>
-                </div>
-              )}
+              {/* কার্ড ফুটার সেকশন: বিস্তারিত এবং আরো দেখুন বাটন */}
+              {/* কার্ড ফুটার সেকশন: বিস্তারিত এবং আরো দেখুন বাটন */}
+              <div className="px-6 pb-6 pt-0 flex flex-col gap-3">
+                {/* বিস্তারিত দেখুন বাটন (প্রত্যেক কার্ডের জন্য) */}
+                <Link
+                  href={{
+                    pathname: "/education-details",
+                    query: { data: JSON.stringify(section) }, // পুরো section অবজেক্টকে stringify করে পাঠানো হচ্ছে
+                  }}
+                  className="w-full text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all duration-150 cursor-pointer active:scale-98"
+                >
+                  বিস্তারিত দেখুন
+                </Link>
+              </div>
             </div>
           );
         })}
       </div>
 
-      {/* প্রিমিয়াম ব্লার-এফেক্ট মোডাল (Popup) */}
+      {/* প্রিমিয়াম ব্লার-এফেক্ট মোডাল (Popup) */}
       {activeItem && (
         <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-md z-50 flex items-center justify-center p-4 transition-all">
           <div className="bg-white rounded-2xl max-w-md w-full p-6 shadow-2xl border border-emerald-50 transform transition-all animate-in fade-in zoom-in-95 duration-200 relative overflow-hidden">
