@@ -1,6 +1,7 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect, useCallback } from "react";
+import { useSession } from "next-auth/react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Eye,
@@ -13,8 +14,9 @@ import {
   Phone,
   AlertCircle,
 } from "lucide-react";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+import Swal from "sweetalert2";
 
-// ডামি ডাটা
 type Order = {
   id: string;
   customer: string;
@@ -23,76 +25,134 @@ type Order = {
   product: string;
   price: string;
   status: "pending" | "successful";
+  rawItems: any[];
 };
-const initialOrders: Order[] = [
-  {
-    id: "ORD-001",
-    customer: "Rahim Ahmed",
-    phone: "01711223344",
-    address: "House 12, Road 5, Dhanmondi, Dhaka",
-    product: "Wireless Headphone",
-    price: "৳২,৫০০",
-    status: "pending",
-  },
-  {
-    id: "ORD-002",
-    customer: "Karim Ali",
-    phone: "01911556677",
-    address: "Sector 4, Uttara, Dhaka",
-    product: "Mechanical Keyboard",
-    price: "৳৪,২০০",
-    status: "successful",
-  },
-  {
-    id: "ORD-003",
-    customer: "Sumaiya Khan",
-    phone: "01511889900",
-    address: "Mirpur 10, Block C, Dhaka",
-    product: "Smart Watch",
-    price: "৳৩,৫০০",
-    status: "pending",
-  },
-  {
-    id: "ORD-004",
-    customer: "Asif Iqbal",
-    phone: "01811224455",
-    address: "Chittagong GEC Circle",
-    product: "Gaming Mouse",
-    price: "৳১,৮০০",
-    status: "successful",
-  },
-];
 
 export default function DeliveryDashboard() {
-  const [orders, setOrders] = useState(initialOrders);
+  const { data: session } = useSession();
+  const token = session?.accessToken;
+
+  const [orders, setOrders] = useState<Order[]>([]);
   const [activeTab, setActiveTab] = useState("pending");
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  // ডেলিভারি স্ট্যাটাস চেঞ্জ করার ফাংশন
-  const handleDeliverySuccess = (id: string) => {
-    setOrders((prevOrders) =>
-      prevOrders.map((order) =>
-        order.id === id ? { ...order, status: "successful" } : order,
-      ),
-    );
+  const fetchOrders = useCallback(async () => {
+    if (!token) return;
+    setLoading(true);
+    try {
+      const res = await fetch(
+        `${process.env.NEXT_PUBLIC_API_URL}/orders/admin/all`,
+        {
+          headers: { Authorization: `Bearer ${token}` },
+        },
+      );
+      const result = await res.json();
+
+      if (result.success && Array.isArray(result.data)) {
+        const mappedOrders: Order[] = result.data.map((ord: any) => {
+          const productNames =
+            ord.items
+              ?.map((i: any) => i.product?.name || "Product")
+              .join(", ") || "No Product";
+
+          return {
+            id: ord._id,
+            customer: ord.customerDetails?.name || "Unknown Customer",
+            phone: ord.customerDetails?.phone || "N/A",
+            address: ord.customerDetails?.address || "N/A",
+            product: productNames,
+            price: `৳${ord.totalAmount?.toLocaleString("bn-BD")}`,
+            status: ord.orderStatus === "delivered" ? "successful" : "pending",
+            rawItems: ord.items || [],
+          };
+        });
+        setOrders(mappedOrders);
+      }
+    } catch (error) {
+      console.error("Order fetch failed:", error);
+    } finally {
+      setLoading(false);
+    }
+  }, [token]);
+
+  useEffect(() => {
+    fetchOrders();
+  }, [fetchOrders]);
+
+  const handleDeliverySuccess = async (id: string) => {
+    if (!token) return;
+
+    Swal.fire({
+      icon: "warning",
+      title: "ডেলিভারি নিশ্চিতকরণ",
+      text: "আপনি কি নিশ্চিত যে এই অর্ডারটি সফলভাবে ডেলিভারি করা হয়েছে?",
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, সম্পন্ন হয়েছে",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#0B5D3B",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/orders/admin/${id}/status`,
+            {
+              method: "PUT",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ orderStatus: "delivered" }),
+            },
+          );
+
+          if (res.ok) {
+            Swal.fire({
+              icon: "success",
+              title: "সফল হয়েছে",
+              text: "অর্ডার স্ট্যাটাস 'delivered' এ আপডেট করা হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            fetchOrders();
+            setSelectedOrder(null);
+          } else {
+            throw new Error("Status update failed");
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "ত্রুটি",
+            text: "স্ট্যাটাস আপডেট করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+            confirmButtonColor: "#0B5D3B",
+          });
+        }
+      }
+    });
   };
 
-  // একটিভ ট্যাব অনুযায়ী ডাটা ফিল্টার করা
   const filteredOrders = orders.filter((order) => order.status === activeTab);
 
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center gap-4">
+        <LoadingSpinner />
+      </div>
+    );
+  }
+
   return (
-    <div className="p-6 max-w-6xl mx-auto bg-slate-50 min-h-screen">
-      <h2 className="text-2xl font-bold mb-6 text-slate-800 flex items-center gap-2">
-        <Package className="text-indigo-600" /> Delivery Dashboard
+    <div className="p-6 max-w-6xl mx-auto bg-slate-50 min-h-screen font-sans">
+      <h2 className="text-2xl font-black mb-6 text-slate-800 flex items-center gap-2">
+        <Package className="text-emerald-600" /> Delivery Dashboard
       </h2>
 
-      {/* ট্যাব সিলেকশন এরিয়া */}
       <div className="flex border-b border-slate-200 mb-6 bg-white p-1.5 rounded-xl shadow-sm max-w-md">
         <button
           onClick={() => setActiveTab("pending")}
-          className={`flex items-center justify-center gap-2 w-1/2 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex items-center justify-center gap-2 w-1/2 py-2.5 text-sm font-bold rounded-lg transition-all cursor-pointer ${
             activeTab === "pending"
-              ? "bg-amber-500 text-white shadow-sm"
+              ? "bg-[#0B5D3B] text-white shadow-sm"
               : "text-slate-600 hover:bg-slate-100"
           }`}
         >
@@ -101,9 +161,9 @@ export default function DeliveryDashboard() {
         </button>
         <button
           onClick={() => setActiveTab("successful")}
-          className={`flex items-center justify-center gap-2 w-1/2 py-2.5 text-sm font-semibold rounded-lg transition-all ${
+          className={`flex items-center justify-center gap-2 w-1/2 py-2.5 text-sm font-bold rounded-lg transition-all cursor-pointer ${
             activeTab === "successful"
-              ? "bg-emerald-600 text-white shadow-sm"
+              ? "bg-[#0B5D3B] text-white shadow-sm"
               : "text-slate-600 hover:bg-slate-100"
           }`}
         >
@@ -112,13 +172,12 @@ export default function DeliveryDashboard() {
         </button>
       </div>
 
-      {/* ডাটা টেবিল */}
-      <div className="bg-white rounded-xl shadow-md overflow-hidden border border-slate-200">
+      <div className="bg-white rounded-[2rem] shadow-sm overflow-hidden border border-slate-200">
         <div className="overflow-x-auto">
           {filteredOrders.length > 0 ? (
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="bg-slate-100 border-b border-slate-200 text-slate-600 font-semibold text-sm">
+                <tr className="bg-slate-50 border-b border-slate-200 text-slate-600 font-bold text-xs uppercase tracking-wider">
                   <th className="p-4">Order ID</th>
                   <th className="p-4">Customer</th>
                   <th className="p-4">Product</th>
@@ -127,21 +186,27 @@ export default function DeliveryDashboard() {
                   <th className="p-4 text-center">Actions</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-slate-100 text-slate-700">
+              <tbody className="divide-y divide-slate-100 text-slate-700 text-xs font-bold">
                 {filteredOrders.map((order) => (
                   <tr
                     key={order.id}
                     className="hover:bg-slate-50/70 transition-colors"
                   >
-                    <td className="p-4 font-medium text-indigo-600">
+                    <td className="p-4 font-mono text-[#0B5D3B] select-all truncate max-w-[120px]">
                       {order.id}
                     </td>
-                    <td className="p-4">{order.customer}</td>
-                    <td className="p-4">{order.product}</td>
-                    <td className="p-4">{order.price}</td>
+                    <td className="p-4 text-slate-800 font-black">
+                      {order.customer}
+                    </td>
+                    <td className="p-4 text-slate-500 font-medium truncate max-w-[200px]">
+                      {order.product}
+                    </td>
+                    <td className="p-4 text-slate-800 font-black">
+                      {order.price}
+                    </td>
                     <td className="p-4">
                       <span
-                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-xs font-medium ${
+                        className={`inline-flex items-center gap-1 px-3 py-1 rounded-full text-[10px] font-black uppercase ${
                           order.status === "successful"
                             ? "bg-green-100 text-green-700"
                             : "bg-amber-100 text-amber-700"
@@ -149,31 +214,29 @@ export default function DeliveryDashboard() {
                       >
                         {order.status === "successful" ? (
                           <>
-                            <CheckCircle size={14} /> Successful
+                            <CheckCircle size={12} /> Successful
                           </>
                         ) : (
                           <>
-                            <Clock size={14} /> Pending
+                            <Clock size={12} /> Pending
                           </>
                         )}
                       </span>
                     </td>
                     <td className="p-4 flex justify-center gap-2">
-                      {/* View Button */}
                       <button
                         onClick={() => setSelectedOrder(order)}
-                        className="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-sm font-medium transition-colors"
+                        className="flex items-center gap-1 bg-slate-100 hover:bg-slate-200 text-slate-700 px-3 py-1.5 rounded-lg text-xs font-bold transition-colors cursor-pointer"
                       >
-                        <Eye size={16} /> View
+                        <Eye size={14} /> View
                       </button>
 
-                      {/* Delivery Button (শুধুমাত্র pending ট্যাবেই দৃশ্যমান থাকবে) */}
                       {order.status === "pending" && (
                         <button
                           onClick={() => handleDeliverySuccess(order.id)}
-                          className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-sm font-medium transition-colors shadow-sm"
+                          className="flex items-center gap-1 bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-1.5 rounded-lg text-xs font-black transition-colors shadow-sm cursor-pointer"
                         >
-                          <CheckCircle size={16} /> Delivery
+                          <CheckCircle size={14} /> Delivery
                         </button>
                       )}
                     </td>
@@ -182,16 +245,14 @@ export default function DeliveryDashboard() {
               </tbody>
             </table>
           ) : (
-            /* খালি থাকলে যা দেখাবে */
             <div className="p-12 text-center text-slate-400 flex flex-col items-center justify-center gap-2">
               <AlertCircle size={40} className="text-slate-300" />
-              <p className="font-medium text-lg">No {activeTab} orders found</p>
+              <p className="font-bold text-base">No {activeTab} orders found</p>
             </div>
           )}
         </div>
       </div>
 
-      {/* Details Popup (Modal) using Framer Motion */}
       <AnimatePresence>
         {selectedOrder && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/40 backdrop-blur-sm">
@@ -200,63 +261,65 @@ export default function DeliveryDashboard() {
               onClick={() => setSelectedOrder(null)}
             />
 
-            {/* Modal Card */}
             <motion.div
               initial={{ opacity: 0, scale: 0.95, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               transition={{ duration: 0.2 }}
-              className="relative bg-white rounded-2xl shadow-xl max-w-md w-full overflow-hidden border border-slate-100 z-10"
+              className="relative bg-white rounded-[2rem] shadow-xl max-w-md w-full overflow-hidden border border-slate-100 z-10"
             >
-              {/* Modal Header */}
-              <div className="bg-slate-900 p-4 text-white flex justify-between items-center">
+              <div className="bg-[#0B5D3B] p-5 text-white flex justify-between items-center">
                 <div>
-                  <p className="text-xs text-slate-400 font-medium">
+                  <p className="text-[10px] text-emerald-200 font-bold uppercase tracking-wider">
                     Order Details
                   </p>
-                  <h3 className="text-lg font-bold">{selectedOrder.id}</h3>
+                  <h3 className="text-base font-mono font-bold">
+                    {selectedOrder.id}
+                  </h3>
                 </div>
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="p-1 rounded-full hover:bg-slate-800 transition-colors text-slate-400 hover:text-white"
+                  className="p-1.5 rounded-full bg-white/10 hover:bg-white/20 transition-colors text-white cursor-pointer"
                 >
-                  <X size={20} />
+                  <X size={16} />
                 </button>
               </div>
 
-              {/* Modal Body */}
-              <div className="p-6 space-y-4">
+              <div className="p-6 space-y-4 text-xs font-bold">
                 <div className="flex items-start gap-3">
-                  <User className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <User className="text-slate-400 mt-0.5 shrink-0" size={16} />
                   <div>
-                    <p className="text-xs text-slate-400 uppercase font-semibold tracking-wider">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">
                       Customer Name
                     </p>
-                    <p className="text-slate-800 font-medium">
+                    <p className="text-slate-800 font-black text-sm">
                       {selectedOrder.customer}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <Phone className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <Phone className="text-slate-400 mt-0.5 shrink-0" size={16} />
                   <div>
-                    <p className="text-xs text-slate-400 uppercase font-semibold tracking-wider">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">
                       Phone Number
                     </p>
-                    <p className="text-slate-800 font-medium">
+                    <p className="text-slate-800 text-sm">
                       {selectedOrder.phone}
                     </p>
                   </div>
                 </div>
 
                 <div className="flex items-start gap-3">
-                  <MapPin className="text-slate-400 mt-1 shrink-0" size={18} />
+                  <MapPin
+                    className="text-slate-400 mt-0.5 shrink-0"
+                    size={16}
+                  />
                   <div>
-                    <p className="text-xs text-slate-400 uppercase font-semibold tracking-wider">
+                    <p className="text-[10px] text-slate-400 uppercase tracking-wider">
                       Delivery Address
                     </p>
-                    <p className="text-slate-800 font-medium text-sm leading-relaxed">
+                    <p className="text-slate-800 text-xs leading-relaxed font-medium">
                       {selectedOrder.address}
                     </p>
                   </div>
@@ -264,34 +327,43 @@ export default function DeliveryDashboard() {
 
                 <hr className="border-slate-100" />
 
-                <div className="flex items-start gap-3">
-                  <Package className="text-slate-400 mt-1 shrink-0" size={18} />
-                  <div>
-                    <p className="text-xs text-slate-400 uppercase font-semibold tracking-wider">
-                      Product Info
-                    </p>
-                    <p className="text-slate-800 font-medium">
-                      {selectedOrder.product} ({selectedOrder.price})
-                    </p>
+                <div className="space-y-2">
+                  <p className="text-[10px] text-slate-400 uppercase tracking-wider flex items-center gap-1">
+                    <Package size={14} /> Itemized Invoice
+                  </p>
+                  <div className="bg-neutral-50 rounded-xl p-3 border border-neutral-100 divide-y divide-neutral-200/60">
+                    {selectedOrder.rawItems.map((item: any, idx: number) => (
+                      <div
+                        key={idx}
+                        className="flex justify-between items-center py-2 first:pt-0 last:pb-0 text-neutral-700"
+                      >
+                        <span className="truncate max-w-[220px] font-medium">
+                          {item.product?.name || "Product"}
+                        </span>
+                        <span className="shrink-0 text-neutral-500 font-medium">
+                          {item.quantity} x ৳{item.priceAtPurchase}
+                        </span>
+                      </div>
+                    ))}
+                    <div className="flex justify-between items-center pt-2 mt-1 text-[#0B5D3B] font-black">
+                      <span>Total Invoice</span>
+                      <span>{selectedOrder.price}</span>
+                    </div>
                   </div>
                 </div>
               </div>
 
-              {/* Modal Footer */}
               <div className="p-4 bg-slate-50 border-t border-slate-100 flex justify-end gap-2">
                 <button
                   onClick={() => setSelectedOrder(null)}
-                  className="px-4 py-2 text-sm bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-lg font-medium transition-colors"
+                  className="px-4 py-2 text-xs bg-slate-200 hover:bg-slate-300 text-slate-700 rounded-xl font-bold transition-colors cursor-pointer"
                 >
                   Close
                 </button>
                 {selectedOrder.status === "pending" && (
                   <button
-                    onClick={() => {
-                      handleDeliverySuccess(selectedOrder.id);
-                      setSelectedOrder(null); // ডেলিভারি করার পর পপআপ বন্ধ হয়ে যাবে
-                    }}
-                    className="px-4 py-2 text-sm bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg font-medium shadow-sm transition-colors"
+                    onClick={() => handleDeliverySuccess(selectedOrder.id)}
+                    className="px-4 py-2 text-xs bg-emerald-600 hover:bg-emerald-700 text-white rounded-xl font-black shadow-sm transition-colors cursor-pointer"
                   >
                     Complete Delivery
                   </button>
