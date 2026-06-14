@@ -11,6 +11,8 @@ import {
   Loader2,
   AlertCircle,
   Pin,
+  ChevronLeft,
+  ChevronRight,
 } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
@@ -20,6 +22,9 @@ export default function NoticeBoard() {
   const axiosSecure = useAxiosSecure();
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCourseIds, setSelectedCourseIds] = useState("");
+
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const itemsPerPage = 5;
 
   const {
     data: noticesResponse,
@@ -40,11 +45,30 @@ export default function NoticeBoard() {
   const noticesData = noticesResponse?.data || [];
   const totalCount = noticesResponse?.totalCount || 0;
 
+  // সার্চ ফিল্টারিং
   const filteredNotices = noticesData.filter(
     (notice: any) =>
       notice.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
       notice.description.toLowerCase().includes(searchTerm.toLowerCase()),
   );
+
+  // Pagination Logic
+  const totalPages = Math.ceil(filteredNotices.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentNotices = filteredNotices.slice(
+    indexOfFirstItem,
+    indexOfLastItem,
+  );
+
+  const handlePageChange = (pageNumber: number) => {
+    setCurrentPage(pageNumber);
+  };
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSearchTerm(e.target.value);
+    setCurrentPage(1);
+  };
 
   return (
     <div className="min-h-screen bg-[#F4F7F5] pb-12">
@@ -73,7 +97,7 @@ export default function NoticeBoard() {
             <input
               type="text"
               value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
+              onChange={handleSearchChange}
               placeholder="নোটিশ খুঁজুন..."
               className="w-full pl-9 pr-4 py-2 bg-white/10 border border-white/20 rounded-xl text-white placeholder-white/50 text-xs focus:outline-none focus:bg-white focus:text-neutral-800 focus:placeholder-neutral-400 transition-all"
             />
@@ -112,14 +136,14 @@ export default function NoticeBoard() {
             <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl border border-red-100 text-red-500 gap-2 text-center px-4">
               <AlertCircle size={24} />
               <p className="text-xs font-bold">
-                নোটিশ ডাটা লোড করতে সমস্যা হয়েছে।
+                নোটিশ ডাটা লোড করতে সমস্যা হয়েছে।
               </p>
               <p className="text-[10px] text-red-400">
                 {(error as any)?.message || "সার্ভার এরর"}
               </p>
             </div>
-          ) : filteredNotices.length > 0 ? (
-            filteredNotices.map((notice: any) => {
+          ) : currentNotices.length > 0 ? (
+            currentNotices.map((notice: any) => {
               const isUrgent = notice.type === "urgent";
               const isPinned = notice.pinned === true;
 
@@ -186,7 +210,7 @@ export default function NoticeBoard() {
                                     year: "numeric",
                                   },
                                 )
-                              : "তারিখ পাওয়া যায়নি"}
+                              : "তারিখ পাওয়া যায়নি"}
                           </span>
                         </div>
                       </div>
@@ -228,11 +252,49 @@ export default function NoticeBoard() {
             <div className="flex flex-col items-center justify-center py-12 bg-white rounded-xl border border-neutral-100 gap-2 text-center px-4">
               <Megaphone className="text-neutral-300" size={28} />
               <p className="text-xs font-black text-neutral-500">
-                এই মুহূর্তে কোনো নোটিশ বা ঘোষণা পাওয়া যায়নি।
+                এই মুহূর্তে কোনো নোটিশ বা ঘোষণা পাওয়া যায়নি।
               </p>
             </div>
           )}
         </div>
+
+        {/* 🟢 Pagination UI Controls */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-2 pt-2 bg-white p-4 rounded-xl border border-neutral-100 shadow-sm">
+            <button
+              onClick={() => handlePageChange(currentPage - 1)}
+              disabled={currentPage === 1}
+              className="p-2 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              <ChevronLeft size={14} />
+            </button>
+
+            {Array.from({ length: totalPages }, (_, index) => {
+              const pageNum = index + 1;
+              return (
+                <button
+                  key={pageNum}
+                  onClick={() => handlePageChange(pageNum)}
+                  className={`w-8 h-8 rounded-lg text-xs font-bold transition-all ${
+                    currentPage === pageNum
+                      ? "bg-[#0B5D3B] text-white shadow-md"
+                      : "border border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                  }`}
+                >
+                  {pageNum}
+                </button>
+              );
+            })}
+
+            <button
+              onClick={() => handlePageChange(currentPage + 1)}
+              disabled={currentPage === totalPages}
+              className="p-2 rounded-lg border border-neutral-200 text-neutral-600 hover:bg-neutral-50 disabled:opacity-40 disabled:hover:bg-transparent transition-all"
+            >
+              <ChevronRight size={14} />
+            </button>
+          </div>
+        )}
 
         {/* ফুটার হেল্প ডেক্স পার্ট */}
         <div className="bg-white rounded-2xl p-5 border border-neutral-100 shadow-sm flex flex-col sm:flex-row items-center justify-between gap-4 text-center sm:text-left">
@@ -245,8 +307,7 @@ export default function NoticeBoard() {
                 কোনো কিছু বুঝতে সমস্যা হচ্ছে?
               </h4>
               <p className="text-[10px] text-neutral-400 font-medium mt-0.5">
-                বিস্তারিত জানতে সরাসরি আপনার মেন্টর বা সাপোর্ট রুমে যোগাযোগ
-                করুন।
+                বিস্তৃত জানতে সরাসরি আপনার মেন্টর বা সাপোর্ট রুমে যোগাযোগ করুন।
               </p>
             </div>
           </div>

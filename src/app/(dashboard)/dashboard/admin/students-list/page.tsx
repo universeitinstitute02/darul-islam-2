@@ -255,7 +255,7 @@ export default function StudentManagement() {
                   <div className="mt-5 pt-4 border-t border-slate-100">
                     <button
                       onClick={() => setSelectedStudent(student)}
-                      className="w-full bg-slate-50 hover:bg-emerald-600 hover:text-white text-slate-700 transition-all font-semibold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-200 hover:border-emerald-600 shadow-sm"
+                      className="w-full bg-slate-50 hover:cursor-pointer hover:bg-emerald-600 hover:text-white text-slate-700 transition-all font-semibold py-2.5 px-4 rounded-xl text-xs flex items-center justify-center gap-2 border border-slate-200 hover:border-emerald-600 shadow-sm"
                     >
                       <Eye className="h-4 w-4" /> বিস্তারিত প্রোফাইল দেখুন
                     </button>
@@ -366,7 +366,7 @@ export default function StudentManagement() {
                 </h2>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="p-1.5 hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
+                  className="p-1.5 hover:cursor-pointer hover:bg-slate-100 rounded-lg text-slate-400 hover:text-slate-600 transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
