@@ -33,7 +33,7 @@ export default function Navbar() {
   const getProfileHref = () => {
     if (isStudent) return "/student-profile";
     if (isTeacher) return "/dashboard/teacher";
-    if (isAdmin) return "/dashboard";
+    if (isAdmin) return "/dashboard/admin";
     return "/auth/login";
   };
 

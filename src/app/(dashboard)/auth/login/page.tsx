@@ -6,8 +6,6 @@ import { motion } from "framer-motion";
 import {
   Mail,
   Lock,
-  Chrome,
-  Facebook,
   ShieldCheck,
   Eye,
   EyeOff,
@@ -17,11 +15,9 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
 import { signIn } from "next-auth/react";
-
 import login1 from "../../../../../public/images/login1.png";
-import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+import useUserRole from "@/src/app/hooks/useUserRole";
 
 const LoginPage = () => {
   const {
@@ -31,7 +27,8 @@ const LoginPage = () => {
   } = useForm<any>();
   const [showPassword, setShowPassword] = useState(false);
   const [globalError, setGlobalError] = useState("");
-  const router = useRouter();
+
+  const { role } = useUserRole();
 
   const onSubmit: SubmitHandler<any> = async (data) => {
     setGlobalError("");
@@ -44,8 +41,17 @@ const LoginPage = () => {
 
     if (res?.error) {
       setGlobalError("লগইন ব্যর্থ হয়েছে। আপনার তথ্য সঠিক কিনা যাচাই করুন।");
+      return;
+    }
+
+    if (role === "admin") {
+      window.location.href = "/dashboard/admin";
+    } else if (role === "teacher") {
+      window.location.href = "/dashboard/teacher";
+    } else if (role === "student") {
+      window.location.href = "/student-profile";
     } else {
-      window.location.href = "/dashboard";
+      window.location.href = "/";
     }
   };
 
