@@ -62,7 +62,7 @@ function SidebarLinkGroup({
         onClick={() => setSidebarOpen(false)}
         className={`flex items-center gap-3 p-3 rounded-xl font-medium transition-all ${
           isActive
-            ? "bg-[#C8A44D] text-[#10231B] shadow-lg" // অ্যাক্টিভ ক্লাস স্টাইল
+            ? "bg-[#C8A44D] text-[#10231B] shadow-lg"
             : "text-green-50/85 hover:bg-white/10 hover:text-white"
         }`}
       >
@@ -147,7 +147,7 @@ export default function DashboardLayout({
   // --- শিক্ষক (Teacher) এর মেনু লিংক সমূহ ---
   const teacherLinks = [
     { name: "হোম", href: "/", icon: House },
-    { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
+    { name: "Dashboard", href: "/dashboard/teacher", icon: LayoutDashboard },
     {
       name: "আমার কোর্সসমূহ",
       href: "/dashboard/teacher/my-course",
