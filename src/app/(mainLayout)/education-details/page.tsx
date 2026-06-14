@@ -5,6 +5,7 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { ArrowLeft, Calendar, FileText, CheckCircle2 } from "lucide-react";
 import CourseTabsDashboard from "@/src/components/Education/EducationDetails/page";
 import TestimonialsSection from "@/src/components/Education/EducationTestimonial/EducationalTestimonial";
+import Image from "next/image";
 
 const seoData = {
   title: "৭ বছরে আলেম / আলেমা কোর্স | ইকরা অনলাইন মাদ্রাসা",
@@ -12,13 +13,11 @@ const seoData = {
     "জেনারেল শিক্ষিত ভাই ও বোনদের দ্বীনি ইলমের তৃষ্ণা মেটাতে ইকরা অনলাইন মাদ্রাসা নিয়ে এসেছে ৭ বছরের পূর্ণাঙ্গ আলেম/আলেমা কোর্স।",
 };
 
-// ১. মেইন লজিক্যাল কন্টেন্ট কম্পোনেন্ট যেখানে useSearchParams আছে
 function CourseDetailsContent() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const [courseTitle, setCourseTitle] = useState("৭ বছরে আলেম / আলেমা");
 
-  // আগের পেজের ক্লিক করা বাটন বা সেকশন থেকে টাইটেল রিসিভ করার লজিক
   useEffect(() => {
     const dataParam = searchParams.get("data");
     if (dataParam) {
@@ -33,7 +32,6 @@ function CourseDetailsContent() {
     }
   }, [searchParams]);
 
-  // স্ট্যাটিক ডেমো ডেটা
   const courseData = {
     subtitle: "কোর্স সম্পর্কে",
     description:
@@ -98,10 +96,13 @@ function CourseDetailsContent() {
 
               {/* ব্যানার কার্ড */}
               <div className="relative rounded-2xl overflow-hidden h-52 sm:h-64 md:h-72 shadow-xs bg-gradient-to-r from-emerald-900 to-teal-950 group">
-                <img
+                <Image
                   src={courseData.bannerImage}
                   alt={courseTitle}
-                  className="w-full h-full object-cover opacity-25 mix-blend-overlay transition-transform duration-700 group-hover:scale-105"
+                  fill
+                  sizes="(max-w-7xl) 100vw, 1200px"
+                  priority={true} // ব্যানার ইমেজ দ্রুত লোড হওয়ার জন্য priority ব্যবহার করা ভালো
+                  className="object-cover opacity-25 mix-blend-overlay transition-transform duration-700 group-hover:scale-105"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-slate-950/40 to-transparent"></div>
 

@@ -360,11 +360,11 @@ export default function EduCategories() {
               {/* কার্ড ফুটার সেকশন: বিস্তারিত এবং আরো দেখুন বাটন */}
               {/* কার্ড ফুটার সেকশন: বিস্তারিত এবং আরো দেখুন বাটন */}
               <div className="px-6 pb-6 pt-0 flex flex-col gap-3">
-                {/* বিস্তারিত দেখুন বাটন (প্রত্যেক কার্ডের জন্য) */}
+                {/* বিস্তারিত দেখুন বাটন (এখন এটি নতুন তৈরি করা মধ্যবর্তী লিস্টিং পেজে নিয়ে যাবে) */}
                 <Link
                   href={{
-                    pathname: "/education-details",
-                    query: { data: JSON.stringify(section) }, // পুরো section অবজেক্টকে stringify করে পাঠানো হচ্ছে
+                    pathname: "/course-directory", // আমরা এই পাথটি নতুন পেজের জন্য সেট করেছি
+                    query: { data: JSON.stringify(section) }, // পুরো section অবজেক্টটি আগের মতোই পাস হচ্ছে
                   }}
                   className="w-full text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all duration-150 cursor-pointer active:scale-98"
                 >
