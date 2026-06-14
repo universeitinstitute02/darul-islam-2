@@ -3,7 +3,6 @@ import React, { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import {
   Search,
-  Filter,
   Mail,
   MessageCircle,
   UserCheck,
@@ -391,7 +390,7 @@ const TeacherList = () => {
               <button
                 type="button"
                 onClick={() => setStatusFilter("")}
-                className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === ""
                     ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"
@@ -402,7 +401,7 @@ const TeacherList = () => {
               <button
                 type="button"
                 onClick={() => setStatusFilter("approved")}
-                className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === "approved"
                     ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"
@@ -413,7 +412,7 @@ const TeacherList = () => {
               <button
                 type="button"
                 onClick={() => setStatusFilter("pending")}
-                className={`px-5 py-2 text-xs font-bold rounded-xl transition-all duration-300 ${
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
                   statusFilter === "pending"
                     ? "bg-white text-[#0B5D3B] shadow-sm"
                     : "text-neutral-500 hover:text-neutral-800"

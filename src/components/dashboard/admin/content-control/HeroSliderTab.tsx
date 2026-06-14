@@ -133,7 +133,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             if (isOpenForm) closeFormHandler();
             else setIsOpenForm(true);
           }}
-          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-black rounded-xl shadow-md transition-all ${
+          className={`flex items-center gap-2 px-4 py-2.5 text-xs font-black rounded-xl shadow-md transition-all cursor-pointer ${
             isOpenForm
               ? "bg-red-800 hover:bg-red-700 text-white"
               : "bg-[#0B5D3B] hover:bg-green-800 text-white"
@@ -259,7 +259,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
           <button
             type="submit"
             disabled={createMutation.isPending || updateMutation.isPending}
-            className="md:col-span-2 p-3.5 bg-[#C8A44D] text-white font-black text-sm rounded-xl hover:bg-amber-700 shadow transition-all flex justify-center items-center gap-2"
+            className="md:col-span-2 p-3.5 cursor-pointer bg-[#C8A44D] text-white font-black text-sm rounded-xl hover:bg-amber-700 shadow transition-all flex justify-center items-center gap-2"
           >
             {(createMutation.isPending || updateMutation.isPending) && (
               <Loader2 className="animate-spin" size={18} />
@@ -303,13 +303,13 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
                   <td className="p-4 flex gap-3">
                     <button
                       onClick={() => handleEditClick(slide)}
-                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg"
+                      className="p-2 text-blue-600 hover:bg-blue-50 rounded-lg cursor-pointer"
                     >
                       <Edit size={18} />
                     </button>
                     <button
                       onClick={() => handleDelete(slide._id)}
-                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                      className="p-2 text-red-500 hover:bg-red-50 rounded-lg cursor-pointer"
                     >
                       <Trash2 size={18} />
                     </button>

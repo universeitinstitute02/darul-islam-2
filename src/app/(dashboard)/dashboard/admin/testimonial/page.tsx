@@ -174,7 +174,7 @@ const TestimonialAdmin: React.FC = () => {
           <button
             onClick={fetchTestimonials}
             disabled={loading}
-            className="flex items-center justify-center gap-2 px-4 py-2.5 bg-white border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-black text-gray-700 hover:bg-gray-50 transition-all shadow-xs active:scale-95 w-full md:w-auto"
+            className="flex items-center justify-center gap-2 px-4 py-2.5 cursor-pointer bg-white border border-gray-200 hover:border-gray-300 rounded-xl text-xs font-black text-gray-700 hover:bg-gray-50 transition-all shadow-xs active:scale-95 w-full md:w-auto"
           >
             <RefreshCw
               className={`w-3.5 h-3.5 ${loading ? "animate-spin" : ""}`}
@@ -188,7 +188,7 @@ const TestimonialAdmin: React.FC = () => {
           <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
             <button
               onClick={() => setFilterTab("all")}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
+              className={`px-4 py-2 cursor-pointer rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "all"
                   ? "bg-[#0B5D3B] text-white"
                   : "text-gray-600 hover:bg-gray-50"
@@ -198,7 +198,7 @@ const TestimonialAdmin: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterTab("pending")}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
+              className={`px-4 py-2 cursor-pointer rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "pending"
                   ? "bg-amber-500 text-white shadow-md shadow-amber-500/10"
                   : "text-gray-600 hover:bg-amber-50 text-amber-700"
@@ -208,7 +208,7 @@ const TestimonialAdmin: React.FC = () => {
             </button>
             <button
               onClick={() => setFilterTab("approved")}
-              className={`px-4 py-2 rounded-xl text-xs font-black transition-all whitespace-nowrap ${
+              className={`px-4 py-2 cursor-pointer rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "approved"
                   ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
                   : "text-gray-600 hover:bg-emerald-50 text-emerald-700"
@@ -297,8 +297,8 @@ const TestimonialAdmin: React.FC = () => {
                     disabled={actionLoading}
                     className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black transition-all shadow-xs ${
                       item.isApproved
-                        ? "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-900/10 border border-transparent"
+                        ? "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 cursor-pointer"
+                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-900/10 border border-transparent cursor-pointer"
                     }`}
                   >
                     {item.isApproved ? (
@@ -317,7 +317,7 @@ const TestimonialAdmin: React.FC = () => {
                   <button
                     onClick={() => handleDeleteTestimonial(item._id)}
                     disabled={actionLoading}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 rounded-xl border border-transparent hover:border-red-100 transition-all"
+                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 cursor-pointer rounded-xl border border-transparent hover:border-red-100 transition-all"
                     title="রিভিউ ডিলিট করুন"
                   >
                     <Trash2 className="w-4 h-4" />
