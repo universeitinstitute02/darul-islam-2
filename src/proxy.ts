@@ -40,17 +40,26 @@ export async function proxy(req: NextRequest) {
     return NextResponse.redirect(new URL("/", req.url));
   }
 
-  // 6. Admin Route Protection: Block non-admins from specific administrative pathways
-  const isAdminPath =
-    pathname.includes("/dashboard/teacher/teacher-list") ||
-    pathname.includes("/dashboard/teacher/all-users");
-
-  if (isAdminPath && role !== "admin") {
-    return NextResponse.redirect(
-      new URL("/dashboard/teacher/teacher-dashboard", req.url),
-    );
+  // Admin only routes
+  if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
+    return NextResponse.redirect(new URL("/", req.url));
   }
 
+  // Teacher routes protection
+  if (pathname.startsWith("/dashboard/admin") && role !== "admin") {
+    if (role === "teacher") {
+      return NextResponse.redirect(new URL("/dashboard/teacher", req.url));
+    }
+
+    return NextResponse.redirect(new URL("/", req.url));
+  }
+  if (
+    pathname.startsWith("/dashboard/teacher") &&
+    role !== "teacher" &&
+    role !== "admin"
+  ) {
+    return NextResponse.redirect(new URL("/", req.url));
+  }
   return NextResponse.next();
 }
 
