@@ -60,23 +60,23 @@ export default function Home() {
 
           <StatsCards />
 
-          {/* <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
+          <div className="grid grid-cols-1 xl:grid-cols-3 gap-5">
             <div className="xl:col-span-2">
               <RevenueChart />
             </div>
             <CoursePieChart />
           </div>
 
-          <WeeklyBar /> */}
+          {/* <WeeklyBar /> */}
 
-          <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
+          {/* <div className="grid grid-cols-1 xl:grid-cols-5 gap-5">
             <div className="xl:col-span-2">
               <TopCourses />
             </div>
             <div className="xl:col-span-3">
               <RecentOrders />
             </div>
-          </div>
+          </div> */}
         </main>
       </div>
     </div>
