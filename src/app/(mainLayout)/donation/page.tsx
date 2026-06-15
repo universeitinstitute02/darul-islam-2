@@ -1,19 +1,52 @@
-import { HandHeart } from "lucide-react";
+"use client";
+
+import React, { useEffect, useState } from "react";
+import { HandHeart, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
-const causes = [
-  {
-    title: "দারুল ইসলাম ইনস্টিটিউটে দান করুন",
-    slug: "darulislam-donate",
-    desc: "সদগায়ে জারিয়া হিসেবে দারুল ইসলাম ইনস্টিটিউটে আত্ম উন্নয়নমূলক কাজে সহযোগিতা করুন । আপনার সহযোগিতা দারুন ইসলাম ইনস্টিটিউটের পথ চলা কে সহজ করে",
-    goal: "২৫,০০,০০০৳",
-    image:
-      "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop",
-  },
-];
+interface Campaign {
+  _id: string;
+  title: string;
+  slug: string;
+  description: string;
+  image: string;
+  goalAmount: number;
+  raisedAmount: number;
+  isActive: boolean;
+}
 
 export default function DonationPage() {
+  const [campaigns, setCampaigns] = useState<Campaign[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(false);
+
+  useEffect(() => {
+    const fetchPublicCampaigns = async () => {
+      try {
+        setLoading(true);
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_API_URL}/donations/campaigns`,
+        );
+        const result = await res.json();
+
+        if (result.success && Array.isArray(result.data)) {
+          setCampaigns(result.data);
+        } else {
+          setError(true);
+        }
+      } catch (err) {
+        console.error("Failed to load donation campaigns:", err);
+        setError(true);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchPublicCampaigns();
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen mt-16 lg:mt-18">
       {/* Hero Section */}
@@ -21,7 +54,7 @@ export default function DonationPage() {
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
           <div className="flex items-center gap-4">
-            <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-white shadow-lg">
+            <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-white shadow-lg shrink-0">
               <HandHeart size={40} />
             </div>
             <div>
@@ -43,65 +76,105 @@ export default function DonationPage() {
       </div>
 
       <div className="max-w-screen-xl mx-auto w-full px-4 py-12 grid grid-cols-1 lg:grid-cols-12 gap-12">
-        {/* Left Column: Form & Info */}
         <div className="lg:col-span-12 space-y-12">
           {/* Causes Grid */}
           <div className="space-y-8 pt-12">
             <h2 className="text-3xl font-black text-[#0B3D2E] flex items-center gap-3">
               <HandHeart /> আপনার দান যেখানে যাবে
             </h2>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-              {causes.map((cause, i) => (
-                <div
-                  key={i}
-                  className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-[#0B3D2E]/5 group"
-                >
-                  <div className="relative h-64">
-                    <Image
-                      src={cause.image}
-                      alt={cause.title}
-                      fill
-                      className="object-cover group-hover:scale-105 transition-transform duration-700"
-                    />
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                    <div className="absolute bottom-6 right-6 flex items-end justify-between">
-                      <div className="text-white text-right">
-                        <p className="text-[10px] font-black uppercase tracking-widest text-[#8FE3A9]">
-                          প্রয়োজন
+
+            {loading ? (
+              // লোডিং স্টেট (স্কেলিটন প্লেসহোল্ডার)
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {[1, 2, 3].map((n) => (
+                  <div
+                    key={n}
+                    className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-neutral-100 animate-pulse"
+                  >
+                    <div className="h-64 bg-neutral-200" />
+                    <div className="p-8 space-y-4">
+                      <div className="h-6 bg-neutral-200 rounded-md w-3/4" />
+                      <div className="h-4 bg-neutral-200 rounded-md w-full" />
+                      <div className="h-4 bg-neutral-200 rounded-md w-5/6" />
+                      <div className="h-12 bg-neutral-200 rounded-2xl w-full pt-2" />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : error ? (
+              // এরর রেসপন্স এরিয়া
+              <div className="text-center py-16 bg-red-50/50 border border-red-100 rounded-[2.5rem] p-8 flex flex-col items-center justify-center gap-2">
+                <AlertCircle className="text-red-500 h-10 w-10" />
+                <p className="text-neutral-600 font-bold">
+                  দান প্রকল্পসমূহ লোড করা সম্ভব হয়নি।
+                </p>
+                <p className="text-neutral-400 text-xs font-medium">
+                  অনুগ্রহ করে কিছু সময় পর পৃষ্ঠাটি রিফ্রেশ করে আবার চেষ্টা করুন।
+                </p>
+              </div>
+            ) : campaigns.length === 0 ? (
+              // এম্পটি ক্যাম্পেইন হ্যান্ডলার
+              <div className="text-center py-20 bg-neutral-50 rounded-[2.5rem] border border-dashed border-neutral-200">
+                <p className="text-neutral-400 font-bold">
+                  বর্তমানে কোনো সক্রিয় দান প্রকল্প চালু নেই।
+                </p>
+              </div>
+            ) : (
+              // একচুয়াল ডাটা রেন্ডারিং
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                {campaigns.map((cause) => (
+                  <div
+                    key={cause._id}
+                    className="bg-white rounded-[2.5rem] overflow-hidden shadow-xl border border-[#0B3D2E]/5 group flex flex-col justify-between"
+                  >
+                    <div>
+                      <div className="relative h-64 w-full">
+                        <Image
+                          src={
+                            cause.image ||
+                            "https://images.unsplash.com/photo-1542810634-71277d95dcbb?q=80&w=2070&auto=format&fit=crop"
+                          }
+                          alt={cause.title}
+                          fill
+                          sizes="(max-w-768px) 100vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-700"
+                          unoptimized
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                        <div className="absolute bottom-6 right-6 flex items-end justify-between">
+                          <div className="text-white text-right">
+                            <p className="text-[10px] font-black uppercase tracking-widest text-[#8FE3A9]">
+                              প্রয়োজন
+                            </p>
+                            <p className="text-xl font-black">
+                              {cause.goalAmount?.toLocaleString("bn-BD")}৳
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="p-8 space-y-4">
+                        <h4 className="text-xl font-black text-[#0B3D2E] truncate">
+                          {cause.title}
+                        </h4>
+                        <p className="text-sm font-medium text-[#0B3D2E]/60 leading-relaxed line-clamp-3 min-h-[60px]">
+                          {cause.description}
                         </p>
-                        <p className="text-xl font-black">{cause.goal}</p>
                       </div>
                     </div>
-                  </div>
-                  <div className="p-8 space-y-6">
-                    <div>
-                      <h4 className="text-xl font-black font-bold text-[#0B3D2E]">
-                        {cause.title}
-                      </h4>
-                      <p className="text-sm font-medium text-[#0B3D2E]/60 mt-2 leading-relaxed">
-                        {cause.desc}
-                      </p>
+
+                    <div className="p-8 pt-0">
+                      <Link
+                        href={`/donation/${cause.slug}`}
+                        className="w-full flex items-center justify-center py-4 rounded-2xl font-black bg-green-800 text-white transition-all duration-300 hover:bg-green-900 active:scale-[0.99] text-center shadow-sm"
+                      >
+                        অনুদান প্রদান করুন
+                      </Link>
                     </div>
-
-                    {/* <div className="bg-[#0B3D2E]/5 p-4 rounded-2xl flex items-center justify-between">
-                      <span className="text-xs font-black text-[#0B3D2E]/40 uppercase tracking-widest">
-                        বর্তমানে সহায়তাপ্রাপ্ত
-                      </span>
-                      <span className="font-black text-[#0B3D2E]">
-                        {cause.count}
-                      </span>
-                    </div> */}
-
-                    <Link
-                      href={`/donation/${cause.slug}`}
-                      className="w-full flex items-center justify-center  py-4 rounded-2xl font-black bg-green-800 text-white transition-all duration-300"
-                    >
-                      অনুদান প্রদান করুন
-                    </Link>
                   </div>
-                </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         </div>
       </div>
