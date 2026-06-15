@@ -252,25 +252,43 @@ export default function DashboardLayout({
       name: "অনুদান",
       icon: ListOrdered,
       children: [
-        { name: "দান প্রকল্প", href: "/dashboard/admin/get-donation", icon: Settings2 },
-        { name: "অনুদানের তালিকা", href: "/dashboard/admin/donations", icon: Settings2 },
-        { name: "অনুদান পোস্ট", href: "/dashboard/admin/donate-post", icon: UserCog },
+        {
+          name: "দান প্রকল্প",
+          href: "/dashboard/admin/get-donation",
+          icon: Settings2,
+        },
+        {
+          name: "অনুদানের তালিকা",
+          href: "/dashboard/admin/donations",
+          icon: Settings2,
+        },
+        {
+          name: "অনুদান পোস্ট",
+          href: "/dashboard/admin/donate-post",
+          icon: UserCog,
+        },
+      ],
+    },
+    {
+      name: "টেস্টিমোনিয়াল",
+      icon: ListOrdered,
+      children: [
+        {
+          name: "টেস্টিমোনিয়াল পোস্ট",
+          href: "/dashboard/admin/add-testimonials",
+          icon: FolderKanban,
+        },
+        {
+          name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
+          href: "/dashboard/admin/testimonial",
+          icon: FolderKanban,
+        },
       ],
     },
     { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },
     {
       name: "গ্যালারি ম্যনেজমেন্ট",
       href: "/dashboard/admin/gallery",
-      icon: FolderKanban,
-    },
-    {
-      name: "টেস্টিমোনিয়াল পোস্ট",
-      href: "/dashboard/admin/add-testimonials",
-      icon: FolderKanban,
-    },
-    {
-      name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
-      href: "/dashboard/admin/testimonial",
       icon: FolderKanban,
     },
 

@@ -3,6 +3,7 @@
 import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import Link from "next/link";
 
 const AboutHome = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -51,16 +52,19 @@ const AboutHome = () => {
 
             {/* CTA Buttons */}
             <div className="mb-8 flex flex-wrap items-center gap-4">
-              <button className="rounded-full bg-green-700 px-7 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-800">
+              <Link
+                href="/about/history"
+                className="rounded-full cursor-pointer bg-green-700 px-7 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-800"
+              >
                 আরো পড়ুন
-              </button>
-              <a
-                href="#"
+              </Link>
+              <Link
+                href="/contact"
                 className="flex items-center gap-1.5 text-sm font-medium text-green-700 transition-colors hover:text-green-900"
               >
                 যোগাযোগ করুন
                 <span className="text-base">→</span>
-              </a>
+              </Link>
             </div>
 
             {/* Stats Row */}

@@ -1,11 +1,11 @@
 "use client";
 
-import CoursePieChart from "@/src/components/AdminDashboard/CoursePieChart";
-import RecentOrders from "@/src/components/AdminDashboard/RecentOrders";
-import RevenueChart from "@/src/components/AdminDashboard/RevenueChart";
-import StatsCards from "@/src/components/AdminDashboard/StatsCards";
-import TopCourses from "@/src/components/AdminDashboard/TopCourses";
-import WeeklyBar from "@/src/components/AdminDashboard/WeeklyBar";
+import CoursePieChart from "@/src/components/dashboard/admin/AdminDashboard/CoursePieChart";
+import RecentOrders from "@/src/components/dashboard/admin/AdminDashboard/RecentOrders";
+import RevenueChart from "@/src/components/dashboard/admin/AdminDashboard/RevenueChart";
+import StatsCards from "@/src/components/dashboard/admin/AdminDashboard/StatsCards";
+import TopCourses from "@/src/components/dashboard/admin/AdminDashboard/TopCourses";
+import WeeklyBar from "@/src/components/dashboard/admin/AdminDashboard/WeeklyBar";
 
 export default function Home() {
   return (

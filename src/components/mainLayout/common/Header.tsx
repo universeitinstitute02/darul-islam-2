@@ -170,7 +170,7 @@ const Header = () => {
           </Link>
           <button
             onClick={() => setIsOpen(true)}
-            className="text-white bg-white/10 p-2 rounded-lg hover:bg-white/20 transition active:scale-95"
+            className="text-white bg-white/10 p-2 rounded-lg hover:bg-white/20 transition active:scale-95 cursor-pointer"
           >
             <Menu size={24} />
           </button>
@@ -199,7 +199,7 @@ const Header = () => {
                 <span className="text-white font-bold text-lg">মেনু</span>
                 <button
                   onClick={() => setIsOpen(false)}
-                  className="p-1 hover:bg-white/10 rounded-full transition"
+                  className="p-1 cursor-pointer hover:bg-white/10 rounded-full transition"
                 >
                   <X className="text-white" />
                 </button>

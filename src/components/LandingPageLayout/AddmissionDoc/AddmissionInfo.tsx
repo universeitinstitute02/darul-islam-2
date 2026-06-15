@@ -1,6 +1,7 @@
 "use client";
 import React from "react";
 import { ArrowRight, ClipboardCheck, FileText, PenTool } from "lucide-react";
+import Link from "next/link";
 
 // ১. ইন্টারফেস ডিফাইন করা (TS এর জন্য)
 interface AdmissionStep {
@@ -71,14 +72,14 @@ const AdmissionInfo: React.FC = () => {
 
         {/* Buttons */}
         <div className="flex flex-col md:flex-row items-center justify-center gap-4">
-          <button className="flex items-center gap-2 px-10 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-lg hover:shadow-emerald-200 active:scale-95">
+          <Link href="/admission" className="flex items-center gap-2 px-10 py-4 bg-[#0B5D3B] text-white font-black rounded-2xl hover:bg-[#0d4d2e] transition-all shadow-lg hover:shadow-emerald-200 active:scale-95">
             এখনই আবেদন করুন
             <ArrowRight className="w-5 h-5" />
-          </button>
+          </Link>
 
-          <button className="px-10 py-4 border-2 border-emerald-100 text-gray-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all">
+          <Link href="/contact" className="px-10 py-4 border-2 border-emerald-100 text-gray-600 font-bold rounded-2xl hover:bg-emerald-50 transition-all">
             হেল্পলাইন যোগাযোগ
-          </button>
+          </Link>
         </div>
       </div>
     </div>

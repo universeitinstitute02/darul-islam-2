@@ -107,13 +107,13 @@ const Testimonials = () => {
           <div className="flex items-center justify-center gap-2.5">
             <button
               onClick={() => scrollSlider("left")}
-              className="w-11 h-11 bg-white border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
+              className="w-11 h-11 bg-white cursor-pointer border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
             >
               <ChevronLeft className="w-5 h-5" />
             </button>
             <button
               onClick={() => scrollSlider("right")}
-              className="w-11 h-11 bg-white border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
+              className="w-11 h-11 cursor-pointer bg-white border border-gray-200 text-gray-700 rounded-xl flex items-center justify-center hover:bg-gray-50 active:scale-95 transition-all shadow-xs"
             >
               <ChevronRight className="w-5 h-5" />
             </button>
