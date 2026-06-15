@@ -265,7 +265,7 @@ const GalleryAdmin: React.FC = () => {
             <button
               type="submit"
               disabled={actionLoading || loading}
-              className="w-full py-3.5 bg-[#0B5D3B] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-900/10 hover:bg-[#0c462a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
+              className="w-full py-3.5 cursor-pointer bg-[#0B5D3B] text-white font-black rounded-xl text-xs uppercase tracking-wider shadow-md shadow-emerald-900/10 hover:bg-[#0c462a] active:scale-[0.98] transition-all disabled:opacity-50 disabled:pointer-events-none"
             >
               {actionLoading ? "আপলোড হচ্ছে..." : "গ্যালারিতে পোস্ট করুন"}
             </button>

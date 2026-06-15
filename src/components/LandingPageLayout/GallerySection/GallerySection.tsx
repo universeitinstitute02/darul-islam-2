@@ -214,7 +214,7 @@ const GallerySection: React.FC = () => {
             {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute top-6 right-6 text-white hover:text-red-400 transition"
+              className="absolute cursor-pointer top-6 right-6 text-white hover:text-red-400 transition"
             >
               <X size={36} />
             </button>
