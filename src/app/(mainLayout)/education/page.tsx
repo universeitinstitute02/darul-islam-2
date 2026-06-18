@@ -68,7 +68,7 @@ const EducationPage = () => {
   } as const;
 
   return (
-    <div className="min-h-screen bg-slate-50/50 antialiased font-sans">
+    <div className="min-h-screen bg-slate-50/50 antialiased">
       <EducationHero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <EduCategories />

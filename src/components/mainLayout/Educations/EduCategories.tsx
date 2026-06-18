@@ -81,10 +81,13 @@ export default function EduCategories() {
     return (
       <div className="py-12 flex items-center justify-center gap-2 text-xs font-bold text-neutral-500">
         <Loader2 className="w-5 h-5 animate-spin text-[#0B5D3B]" /> ডাটা লোড
-        হচ্ছে...
+        הচ্ছে...
       </div>
     );
   }
+
+  // 🔹 সেফটি গার্ড: নিশ্চিত হওয়া যে categories সবসময় একটি অ্যারে
+  const safeCategories = Array.isArray(categories) ? categories : [];
 
   return (
     <div className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] py-12 px-4 sm:px-6 lg:px-8 selection:bg-emerald-100 selection:text-emerald-950">
@@ -97,70 +100,77 @@ export default function EduCategories() {
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-2xl mx-auto">
           বিভাগ অনুযায়ী আমাদের সকল কোর্সসমূহ এমনভাবে সাজানো হয়েছে যা একজন
-          শিক্ষার্থীকে আদর্শ ও নৈতিক শিক্ষায় উন্নত করবে।
+          শিক্ষার্থীকে আদেশ ও নৈতিক শিক্ষায় উন্নত করবে।
         </p>
       </div>
 
       <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-        {categories.map((section) => (
-          <div
-            key={section._id}
-            className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 overflow-hidden"
-          >
-            <div>
-              <div className="h-44 w-full relative overflow-hidden bg-gradient-to-t from-[#064e3b] to-emerald-950/80">
-                <img
-                  src={
-                    section.image ||
-                    "https://images.unsplash.com/photo-1609599006353-e629f1d50218?q=80&w=800&auto=format&fit=crop"
-                  }
-                  alt={section.name}
-                  className="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500 mix-blend-overlay"
-                />
-                <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
+        {safeCategories.map((section) => {
+          // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: subCategories ফিল্ডটি আসলেই অ্যারে কি না তা ১০০% ভেরিফাই করা (Vercel ক্র্যাশ সমাধান)
+          const cleanSubCategories = Array.isArray(section?.subCategories)
+            ? section.subCategories
+            : [];
+
+          return (
+            <div
+              key={section._id}
+              className="bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-xl transition-all duration-300 flex flex-col justify-between group hover:-translate-y-1 overflow-hidden"
+            >
+              <div>
+                <div className="h-44 w-full relative overflow-hidden bg-gradient-to-t from-[#064e3b] to-emerald-950/80">
+                  <img
+                    src={
+                      section.image ||
+                      "https://images.unsplash.com/photo-1609599006353-e629f1d50218?q=80&w=800&auto=format&fit=crop"
+                    }
+                    alt={section.name}
+                    className="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500 mix-blend-overlay"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
+                </div>
+
+                <div className="text-center -mt-6 relative z-10 px-4">
+                  <span className="bg-white text-[#115e59] font-bold px-6 py-2.5 rounded-xl shadow-md border border-emerald-50 text-base sm:text-lg inline-block tracking-wide">
+                    {section.name}
+                  </span>
+                </div>
+
+                <div className="p-5 sm:p-6 grid grid-cols-2 gap-3.5 mt-3">
+                  {cleanSubCategories.slice(0, 4).map((item) => {
+                    const IconComponent = iconMap[item?.icon] || BookOpen;
+                    return (
+                      <button
+                        key={item._id}
+                        type="button"
+                        onClick={() => setActiveItem(item)}
+                        className="flex flex-col sm:flex-row items-center sm:items-start gap-3 p-3 rounded-xl border bg-slate-50/60 border-green-200 hover:border-green-500 text-center sm:text-left transition-all duration-200 group/item cursor-pointer active:scale-95"
+                      >
+                        <div className="p-2 rounded-lg bg-white border border-slate-200/60 text-slate-600 group-hover/item:border-emerald-200 group-hover/item:text-emerald-600 shadow-xs transition-colors shrink-0">
+                          <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
+                        </div>
+                        <span className="text-xs sm:text-sm font-semibold text-slate-700 group-hover/item:text-emerald-900 leading-tight line-clamp-2">
+                          {item.name}
+                        </span>
+                      </button>
+                    );
+                  })}
+                </div>
               </div>
 
-              <div className="text-center -mt-6 relative z-10 px-4">
-                <span className="bg-white text-[#115e59] font-bold px-6 py-2.5 rounded-xl shadow-md border border-emerald-50 text-base sm:text-lg inline-block tracking-wide">
-                  {section.name}
-                </span>
-              </div>
-
-              <div className="p-5 sm:p-6 grid grid-cols-2 gap-3.5 mt-3">
-                {section.subCategories?.slice(0, 4).map((item) => {
-                  const IconComponent = iconMap[item.icon] || BookOpen;
-                  return (
-                    <button
-                      key={item._id}
-                      type="button"
-                      onClick={() => setActiveItem(item)}
-                      className="flex flex-col sm:flex-row items-center sm:items-start gap-3 p-3 rounded-xl border bg-slate-50/60 border-green-200 hover:border-green-500 text-center sm:text-left transition-all duration-200 group/item cursor-pointer active:scale-95"
-                    >
-                      <div className="p-2 rounded-lg bg-white border border-slate-200/60 text-slate-600 group-hover/item:border-emerald-200 group-hover/item:text-emerald-600 shadow-xs transition-colors shrink-0">
-                        <IconComponent className="w-4 h-4 sm:w-5 sm:h-5" />
-                      </div>
-                      <span className="text-xs sm:text-sm font-semibold text-slate-700 group-hover/item:text-emerald-900 leading-tight line-clamp-2">
-                        {item.name}
-                      </span>
-                    </button>
-                  );
-                })}
+              <div className="px-6 pb-6 pt-0 flex flex-col gap-3">
+                <Link
+                  href={{
+                    pathname: `/course-directory/${section._id}`,
+                    query: { name: section.name },
+                  }}
+                  className="w-full text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all duration-150 cursor-pointer active:scale-98"
+                >
+                  বিস্তারিত দেখুন
+                </Link>
               </div>
             </div>
-
-            <div className="px-6 pb-6 pt-0 flex flex-col gap-3">
-              <Link
-                href={{
-                  pathname: `/course-directory/${section._id}`,
-                  query: { name: section.name },
-                }}
-                className="w-full text-center bg-gradient-to-r from-emerald-600 to-teal-700 hover:from-emerald-700 hover:to-teal-800 text-white text-xs sm:text-sm font-semibold py-2.5 px-4 rounded-xl shadow-sm transition-all duration-150 cursor-pointer active:scale-98"
-              >
-                বিস্তারিত দেখুন
-              </Link>
-            </div>
-          </div>
-        ))}
+          );
+        })}
       </div>
 
       {activeItem && (
@@ -211,7 +221,7 @@ export default function EduCategories() {
               <button
                 type="button"
                 onClick={() => setActiveItem(null)}
-                className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all"
+                className="bg-linear-to-r from-emerald-600 to-teal-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all"
               >
                 ঠিক আছে, বন্ধ করুন
               </button>
