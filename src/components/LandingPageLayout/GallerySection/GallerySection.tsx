@@ -39,7 +39,11 @@ const getImageUrl = (imgUrl: string) => {
   if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
     return imgUrl;
   }
-  return `${BASE_URL.replace("/api", "")}/${imgUrl}`;
+  // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: BASE_URL এর সম্ভাব্য undefined ভ্যালু এবং এরর হ্যান্ডেল করা হয়েছে
+  const cleanBaseUrl = BASE_URL
+    ? BASE_URL.replace("/api", "")
+    : "https://darulislam-server-v2.vercel.app";
+  return `${cleanBaseUrl}/${imgUrl}`;
 };
 
 // 💀 কঙ্কাল (Skeleton) লোডার কম্পোনেন্ট ফিক্সড
@@ -62,7 +66,7 @@ const GallerySkeleton = () => {
 };
 
 const GallerySection: React.FC = () => {
-  // 🔹 সব প্রয়োজনীয় স্টেট এখানে ডিফাইন করা হয়েছে
+  // 🔹 সব প্রয়োজনীয় স্টেট এখানে ডিফাইন করা হয়েছে
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -73,8 +77,9 @@ const GallerySection: React.FC = () => {
   const [selectedAlbum, setSelectedAlbum] = useState<GalleryAlbum | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 🔹 API থেকে ডাটা ফেচ করার জন্য useEffect আলাদা করা হয়েছে
+  // 🔹 API থেকে ডাটা ফেচ করার জন্য useEffect আলাদা করা হয়েছে
   useEffect(() => {
+    if (!BASE_URL) return;
     setLoading(true);
     fetch(`${BASE_URL}/gallery?page=${page}&limit=${LIMIT}`)
       .then((res) => res.json())
