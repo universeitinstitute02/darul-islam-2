@@ -62,14 +62,26 @@ export default function CourseDetailPage() {
     const fetchCourseData = async () => {
       try {
         setLoading(true);
-        const data = await getAllCourses();
-        if (!data || !Array.isArray(data)) return;
+        const res = await getAllCourses();
+
+        // 🔹 ফিক্স ১: রেসপন্স অবজেক্ট থেকে কোর্স সেকশন অ্যারেটি রিড করা
+        const sections = res?.courseSections || [];
+        if (!Array.isArray(sections)) return;
 
         let foundCourse = null;
-        for (const section of data) {
-          const match = section.courses.find((c: any) => String(c.id) === id);
+        for (const section of sections) {
+          // 🔹 ফিক্স ২: c.id এবং c._id দুটো ফরম্যাটই সুরক্ষিতভাবে ম্যাপ করা
+          const match = section.courses.find(
+            (c: any) =>
+              String(c.id) === String(id) || String(c._id) === String(id),
+          );
+
           if (match) {
-            foundCourse = { ...match, category: section.category };
+            // 🔹 ফিক্স ৩: categoryName প্রোপার্টি অ্যাসাইন করা
+            foundCourse = {
+              ...match,
+              category: section.categoryName || section.category,
+            };
             break;
           }
         }
@@ -80,7 +92,9 @@ export default function CourseDetailPage() {
         setLoading(false);
       }
     };
-    fetchCourseData();
+    if (id) {
+      fetchCourseData();
+    }
   }, [id]);
 
   const toggleItemComplete = (itemId: string, e: React.MouseEvent) => {
@@ -117,7 +131,7 @@ export default function CourseDetailPage() {
             কোর্সটি পাওয়া যায়নি!
           </h2>
           <p className="text-neutral-500">
-            সম্ভবত লিংকটি ভুল অথবা курсটি বর্তমানে উপলব্ধ নেই।
+            সম্ভবত লিংকটি ভুল অথবা কোর্সটি বর্তমানে উপলব্ধ নেই।
           </p>
         </div>
         <button
@@ -133,7 +147,7 @@ export default function CourseDetailPage() {
   const { details, image, category, title, price } = course;
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 font-sans antialiased">
+    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 antialiased">
       {/* Navigation Sub-header Bar */}
       <nav
         className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3"
@@ -434,7 +448,7 @@ export default function CourseDetailPage() {
               {!isEnrolled ? (
                 <>
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black text-neutral-400 uppercase tracking-widest">
+                    <p className="text-xs font-black">
                       ভর্তি ফি সর্বমোট
                     </p>
                     <div className="flex items-baseline gap-3">

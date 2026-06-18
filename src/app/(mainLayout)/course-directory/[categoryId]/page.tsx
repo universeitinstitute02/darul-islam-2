@@ -1,7 +1,7 @@
 "use client";
 
 import React, { Suspense, useState, useEffect } from "react";
-import { useSearchParams, useRouter } from "next/navigation";
+import { useSearchParams, useRouter, useParams } from "next/navigation";
 import {
   ArrowLeft,
   Clock,
@@ -16,6 +16,7 @@ import {
   Home,
 } from "lucide-react";
 import Image from "next/image";
+import { getAllCourses } from "@/src/lib/data";
 
 interface CourseHighlight {
   label: string;
@@ -36,7 +37,6 @@ interface CourseDetails {
 
 interface CourseItem {
   id: string;
-  sectionId: number;
   title: string;
   price: number;
   oldPrice: number;
@@ -46,47 +46,76 @@ interface CourseItem {
 
 function CourseDirectoryContent() {
   const searchParams = useSearchParams();
+  const params = useParams();
   const router = useRouter();
 
   const [courses, setCourses] = useState<CourseItem[]>([]);
+  const [pageTitle, setPageTitle] = useState<string>(
+    "বিভাগীয় কোর্স সমূহের তালিকা",
+  );
   const [searchQuery, setSearchQuery] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
 
-  const rawData = searchParams.get("data");
-  let sectionData: any = null;
+  const categoryId = params?.categoryId as string;
+  const urlCategoryName = searchParams.get("name");
 
-  try {
-    if (rawData) {
-      sectionData = JSON.parse(rawData);
+  useEffect(() => {
+    if (urlCategoryName) {
+      setPageTitle(urlCategoryName);
     }
-  } catch (err) {
-    console.error("Error parsing section data:", err);
-  }
+  }, [urlCategoryName]);
 
-  const targetSectionId = sectionData?.id || 1;
-  const pageTitle = sectionData?.title || "বিভাগীয় কোর্স সমূহের তালিকা";
-
-  //  SEO Fixed, ei page ta ekhon SEO Friendly Mohymin bhai
   useEffect(() => {
     if (pageTitle) {
       document.title = `${pageTitle} | আমাদের অনলাইন মাদ্রাসা`;
     }
   }, [pageTitle]);
 
-  // public/courses.json থেকে ডাটা ফেচ করা
   useEffect(() => {
     const fetchCourses = async () => {
       try {
         setLoading(true);
-        const response = await fetch("/courses.json");
+        const res = await getAllCourses();
 
-        if (!response.ok) {
-          throw new Error("কোর্স ডাটা লোড করতে ব্যর্থ হয়েছে!");
+        if (res && Array.isArray(res.dynamicCategories)) {
+          const currentCategory = res.dynamicCategories.find(
+            (cat: any) => cat._id === categoryId,
+          );
+
+          if (currentCategory) {
+            setPageTitle(currentCategory.name);
+
+            if (Array.isArray(currentCategory.subCategories)) {
+              const transformSubCategories = currentCategory.subCategories.map(
+                (sub: any) => ({
+                  id: sub._id,
+                  title: sub.name,
+                  price: sub.admissionFee || 0,
+                  oldPrice: sub.oldAdmissionFee || 0,
+                  // 🔹 ফিক্স: সাব-ক্যাটাগরির নিজস্ব ইমেজ থাকলে সেটি দেখাবে, না থাকলে প্যারেন্ট ক্যাটাগরির ইমেজ ব্যবহার করবে
+                  image:
+                    sub.image && sub.image.trim() !== ""
+                      ? sub.image
+                      : currentCategory.image || "",
+                  details: {
+                    fullTitle: sub.fullTitle || sub.name,
+                    description: sub.description || "",
+                    admissionFee: sub.admissionFee || 0,
+                    oldAdmissionFee: sub.oldAdmissionFee || 0,
+                    monthlyFee: sub.monthlyFee || null,
+                    discount: sub.discount || 0,
+                    coupon: sub.coupon || "",
+                    batchInfo:
+                      sub.classSchedule || "নতুন ব্যাচ শীঘ্রই শুরু হবে",
+                    highlights: sub.highlights || [],
+                  },
+                }),
+              );
+              setCourses(transformSubCategories);
+            }
+          }
         }
-
-        const data = await response.json();
-        setCourses(data);
       } catch (err: any) {
         setError(err.message || "কিছু একটা ভুল হয়েছে");
       } finally {
@@ -94,14 +123,12 @@ function CourseDirectoryContent() {
       }
     };
 
-    fetchCourses();
-  }, []);
+    if (categoryId) {
+      fetchCourses();
+    }
+  }, [categoryId]);
 
-  const sectionCourses = courses.filter(
-    (course) => course.sectionId === Number(targetSectionId),
-  );
-
-  const filteredCourses = sectionCourses.filter(
+  const filteredCourses = courses.filter(
     (course) =>
       course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
       course.details?.description
@@ -111,7 +138,7 @@ function CourseDirectoryContent() {
   );
 
   return (
-    <main className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] min-h-screen pt-28 sm:pt-36 pb-12 px-2 sm:px-6 lg:px-8 font-sans">
+    <main className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] min-h-screen pt-28 sm:pt-36 pb-12 px-2 sm:px-6 lg:px-8">
       <div className="max-w-7xl mx-auto">
         <div className="mb-6 px-2 sm:px-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 border-b border-slate-100 pb-4">
           <div className="flex items-center gap-2 text-xs text-slate-500">
@@ -127,7 +154,7 @@ function CourseDirectoryContent() {
               onClick={() => router.push("/education")}
               className="hover:text-emerald-600 transition-colors cursor-pointer"
             >
-              কোর্স ক্যাটাগরি
+              کোর্স ক্যাটাগরি
             </button>
             <ChevronRight className="w-3 h-3 text-slate-300" />
             <span className="text-emerald-600 font-medium truncate max-w-[150px] sm:max-w-none">
@@ -135,7 +162,6 @@ function CourseDirectoryContent() {
             </span>
           </div>
 
-          {/* প্রধান ব্যাক বাটন */}
           <button
             onClick={() => router.back()}
             className="inline-flex items-center justify-center gap-2 text-xs font-bold text-slate-700 bg-white hover:text-emerald-600 hover:border-emerald-200 border border-slate-200 px-4 py-2 rounded-xl transition-all shadow-xs cursor-pointer active:scale-95 self-start sm:self-auto"
@@ -146,7 +172,6 @@ function CourseDirectoryContent() {
           </button>
         </div>
 
-        {/* সেকশন হেডার কন্টেন্ট */}
         <div className="mb-8 px-2 sm:px-0">
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
@@ -154,16 +179,15 @@ function CourseDirectoryContent() {
                 {pageTitle}
               </h1>
               <p className="mt-1 text-xs sm:text-base text-slate-500 max-w-3xl">
-                নিচে এই বিভাগের সকল অ্যাক্টিভ ও চলমান কোর্স দেওয়া হলো। আপনার
+                নিচে এই বিভাগের সকল অ্যাক্টিভ ও চলমান কোর্স দেওয়া হলো। আপনার
                 পছন্দের কোর্সটিতে আজই যুক্ত হোন।
               </p>
             </div>
 
-            {/* রিয়েল-টাইম মিনি স্ট্যাটস বাটন */}
             <div className="flex gap-3 text-xs font-medium text-slate-600">
               <div className="bg-white border border-slate-100 shadow-xs px-3 py-2 rounded-xl flex items-center gap-1.5">
                 <GraduationCap className="w-4 h-4 text-emerald-500" />
-                <span>মোট কোর্স: {sectionCourses.length}টি</span>
+                <span>মোট কোর্স: {courses.length}টি</span>
               </div>
               <div className="bg-white border border-slate-100 shadow-xs px-3 py-2 rounded-xl flex items-center gap-1.5">
                 <Award className="w-4 h-4 text-amber-500" />
@@ -173,8 +197,7 @@ function CourseDirectoryContent() {
           </div>
         </div>
 
-        {/* সার্চ বার সেকশন */}
-        {sectionCourses.length > 0 && (
+        {courses.length > 0 && (
           <div className="mb-8 px-2 sm:px-0 max-w-md">
             <div className="relative">
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -189,7 +212,6 @@ function CourseDirectoryContent() {
           </div>
         )}
 
-        {/* কন্ডিশনাল রেন্ডারিং: লোডিং, এরর এবং মেইন কন্টেন্ট */}
         {loading ? (
           <div className="text-center py-24 flex flex-col items-center justify-center text-emerald-600 font-bold gap-3">
             <Loader2 className="w-10 h-10 animate-spin" />
@@ -202,12 +224,15 @@ function CourseDirectoryContent() {
             <p className="font-semibold">{error}</p>
           </div>
         ) : filteredCourses.length > 0 ? (
-          /* রেসপন্সিভ গ্রিড: মোবাইলে ২টি (grid-cols-2), ল্যাপটপে ৩টি (lg:grid-cols-3) */
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
             {filteredCourses.map((course) => {
               const duration =
-                course.details?.highlights?.find((h) => h.label === "সময়")
-                  ?.value || "নির্ধারিত নয়";
+                course.details?.highlights?.find(
+                  (h) =>
+                    h.label === "কোর্সের মেয়াদ" ||
+                    h.label === "সময়" ||
+                    h.label === "মেয়াদ",
+                )?.value || "নির্ধারিত নয়";
 
               return (
                 <article
@@ -215,26 +240,27 @@ function CourseDirectoryContent() {
                   className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-xs hover:shadow-xl hover:-translate-y-0.5 transition-all duration-300 flex flex-col justify-between overflow-hidden group"
                 >
                   <div>
-                    {/* ইমেজ ও ব্যাজ সেকশন */}
                     <div className="h-28 sm:h-48 w-full relative overflow-hidden bg-slate-50">
-                      <Image
-                        src={course.image}
-                        alt={course.title}
-                        fill
-                        sizes="(max-w-768px) 100vw, (max-w-1200px) 50vw, 33vw"
-                        className="object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                      <div className="absolute top-2 left-2 sm:top-4 sm:left-4 bg-slate-900/80 backdrop-blur-xs text-white text-[9px] sm:text-xs font-medium px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg shadow-xs">
-                        ID: {course.id}
-                      </div>
+                      {course.image ? (
+                        <Image
+                          src={course.image}
+                          alt={course.title}
+                          fill
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        />
+                      ) : (
+                        <div className="absolute inset-0 bg-[#0B5D3B]/10 flex items-center justify-center text-xs text-neutral-400 font-bold">
+                          {course.title}
+                        </div>
+                      )}
                       {course.details?.discount > 0 && (
                         <div className="absolute top-2 right-2 sm:top-4 sm:right-4 bg-rose-500 text-white text-[9px] sm:text-xs font-bold px-1.5 py-0.5 sm:px-2.5 sm:py-1 rounded-md sm:rounded-lg shadow-xs">
-                          {course.details.discount}% ছাড়
+                          {course.details.discount}% ছাড়
                         </div>
                       )}
                     </div>
 
-                    {/* টেক্সট কন্টেন্ট সেকশন */}
                     <div className="p-3 sm:p-6">
                       <h3 className="text-sm sm:text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors line-clamp-1 mb-1 sm:mb-2">
                         {course.title}
@@ -243,11 +269,10 @@ function CourseDirectoryContent() {
                         {course.details?.description}
                       </p>
 
-                      {/* ইনফো হাইলাইটস */}
                       <div className="space-y-1.5 sm:space-y-2 border-t border-slate-100 pt-3 mb-1 text-[10px] sm:text-xs text-slate-500">
                         <div className="flex items-center gap-1.5">
                           <Clock className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                          <span className="truncate">মেয়াদ: {duration}</span>
+                          <span className="truncate">মেয়াদ: {duration}</span>
                         </div>
                         <div className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
@@ -270,7 +295,6 @@ function CourseDirectoryContent() {
                     </div>
                   </div>
 
-                  {/* ফুটার - প্রাইস এবং বিস্তারিত বাটন */}
                   <div className="p-3 sm:p-6 pt-0 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mt-auto border-t border-slate-50/50">
                     <div>
                       <div className="flex items-baseline gap-1">
@@ -289,10 +313,7 @@ function CourseDirectoryContent() {
                       onClick={() => {
                         router.push(
                           `/education-details?data=${encodeURIComponent(
-                            JSON.stringify({
-                              ...sectionData,
-                              title: course.details?.fullTitle || course.title,
-                            }),
+                            JSON.stringify(course),
                           )}`,
                         );
                       }}
@@ -310,7 +331,7 @@ function CourseDirectoryContent() {
             <BookOpen className="w-12 h-12 text-slate-300 mx-auto mb-3" />
             <p className="text-slate-500 font-medium text-sm sm:text-base">
               {searchQuery
-                ? "আপনার অনুসন্ধানকৃত মেলানো কোনো কোর্স পাওয়া যায়নি।"
+                ? "আপনার অনুসন্ধানকৃত মেলানো কোনো কোর্স পাওয়া যায়নি।"
                 : "এই বিভাগের অধীনে এই মুহূর্তে কোনো কোর্স এভেইলেবল নেই।"}
             </p>
             {searchQuery && (

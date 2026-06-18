@@ -34,7 +34,7 @@ export default function TestimonialsSection() {
     const fetchTestimonials = async () => {
       try {
         const res = await fetch(
-          "https://darulislam-server-v2.vercel.app/api/testimonials",
+          `${process.env.NEXT_PUBLIC_API_URL}/testimonials`,
         );
         if (!res.ok) throw new Error("Failed to fetch data");
         const result = await res.json();

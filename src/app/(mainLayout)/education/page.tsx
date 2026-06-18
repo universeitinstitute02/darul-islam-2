@@ -10,7 +10,7 @@ import { getAllCourses } from "@/src/lib/data";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const EducationPage = () => {
-  const [data, setData] = useState<any[] | null>(null);
+  const [data, setData] = useState<any>(null);
   const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
@@ -27,15 +27,18 @@ const EducationPage = () => {
 
   if (!data) return <LoadingSpinner fullScreen />;
 
-  const educationData2 = data.slice(1, 3);
+  // 🔹 এপিআই রেসপন্সের অবজেক্ট থেকে কোর্স সেকশনগুলো আলাদা করা হলো
+  const courseSections = data?.courseSections || [];
 
-  const freeCoursesData = data.find((item) =>
-    item.category.includes("ফ্রি কোর্স"),
+  const remainingSections = courseSections.filter(
+    (item: any) =>
+      !(item.categoryName && item.categoryName.includes("ফ্রি কোর্স")),
   );
 
-  // const bundleCoursesData = data.find((item) =>
-  //   item.category.includes("বান্ডেল কোর্স"),
-  // );
+  const freeCoursesData = courseSections.find(
+    (item: any) =>
+      item.categoryName && item.categoryName.includes("ফ্রি কোর্স"),
+  );
 
   const filterBySearch = (sections: any[]) => {
     if (!sections) return [];
@@ -49,7 +52,7 @@ const EducationPage = () => {
       .filter((section) => section.courses.length > 0);
   };
 
-  const filteredEducationData2 = filterBySearch(educationData2);
+  const filteredEducationData2 = filterBySearch(remainingSections);
 
   const fadeInVariant = {
     initial: { opacity: 0, y: 20 },
@@ -62,24 +65,8 @@ const EducationPage = () => {
     <div className="min-h-screen bg-[#f8fafc]">
       <EducationHero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
-      <EduCategories></EduCategories>
-      {/* Section: Bundle Courses (প্রিমিয়াম কোর্সের ঠিক উপরে) */}
-      {/* {bundleCoursesData && (
-        <div className="max-w-6xl mx-auto px-4 pt-20">
-          <motion.div {...fadeInVariant}>
-            <CourseSection
-              section={{
-                ...bundleCoursesData,
-                courses: bundleCoursesData.courses.filter((c: any) =>
-                  c.title.toLowerCase().includes(searchTerm.toLowerCase()),
-                ),
-              }}
-            />
-          </motion.div>
-        </div>
-      )} */}
+      <EduCategories />
 
-      {/* Section 2: Other Course Sections (Includes Premium) */}
       <div className="max-w-6xl mx-auto px-4 pt-10 pb-12 lg:pt-16 space-y-20">
         {filteredEducationData2.map((section, idx) => (
           <motion.div key={idx} {...fadeInVariant}>
@@ -88,7 +75,6 @@ const EducationPage = () => {
         ))}
       </div>
 
-      {/* Section 3: Free Courses Section */}
       {freeCoursesData && (
         <section className="max-w-6xl mx-auto px-4 py-12">
           <motion.div
@@ -97,7 +83,7 @@ const EducationPage = () => {
           >
             <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 border-2 border-neutral-100 rounded-xl shadow-sm z-10">
               <h2 className="text-[#0B5D3B] font-black text-sm md:text-lg whitespace-nowrap">
-                {freeCoursesData.category}
+                {freeCoursesData.categoryName}
               </h2>
             </div>
 

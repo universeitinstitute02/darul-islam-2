@@ -56,7 +56,7 @@ const Testimonials = () => {
     const getApprovedFeedback = async () => {
       try {
         const res = await axios.get(
-          "https://darulislam-server-v2.vercel.app/api/testimonials",
+          `${process.env.NEXT_PUBLIC_API_URL}/testimonials`,
         );
         if (res.data) {
           setTestimonials(res.data);

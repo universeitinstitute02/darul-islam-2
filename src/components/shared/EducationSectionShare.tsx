@@ -2,7 +2,7 @@
 import React from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { motion } from "framer-motion"; // অ্যানিমেশনের জন্য যোগ করা হয়েছে
+import { motion } from "framer-motion";
 
 interface Course {
   id: number | string;
@@ -15,7 +15,7 @@ interface Course {
 
 interface SectionProps {
   section: {
-    category: string;
+    categoryName: string; // 🔹 ক্যাটাগরির লাইভ নেম টাইপ ম্যাপিং
     type?: string;
     courses: Course[];
   };
@@ -24,14 +24,14 @@ interface SectionProps {
 const EducationSectionShare = ({ section }: SectionProps) => {
   if (!section || !section.courses || section.courses.length === 0) return null;
 
-  const { category, courses, type } = section;
+  const { categoryName, courses, type } = section;
 
   return (
     <div className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-6 md:p-10 shadow-sm">
-      {/* ক্যাটাগরি লেবেল */}
+      {/* 🔹 ফিক্স ৪: category এর জায়গায় জেনুইন categoryName ভ্যালু প্রিন্ট করা */}
       <div className="absolute -top-6 left-1/2 -translate-x-1/2 bg-white px-8 py-2.5 border-2 border-neutral-50 rounded-2xl shadow-sm z-20">
         <h2 className="text-[#0B5D3B] font-black text-xs md:text-base whitespace-nowrap uppercase tracking-wider">
-          {category}
+          {categoryName}
         </h2>
       </div>
 
@@ -86,7 +86,7 @@ const EducationSectionShare = ({ section }: SectionProps) => {
           </div>
         </>
       ) : (
-        /* গ্রিড স্টাইল সেকশন (Iconic Grid) */
+        /* গ্রিড স্টাইল সেকশন (Iconic Grid for Quran or Special categories) */
         <div className="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-3 md:gap-6 lg:gap-8 justify-items-center mt-2">
           {courses.map((course, cIdx) => (
             <Link

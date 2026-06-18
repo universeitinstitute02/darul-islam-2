@@ -18,7 +18,7 @@ interface GalleryAlbum {
   createdAt: string;
 }
 
-const BASE_URL = "https://darulislam-server-v2.vercel.app/api";
+const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
 const LIMIT = 5;
 
 // গ্রিডের সাইজ নির্ধারণের কমন ফাংশন
