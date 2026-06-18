@@ -7,6 +7,15 @@ const api = axios.create({
 });
 
 export const getAllCourses = async () => {
-  const { data } = await api.get("/courses/education");
-  return data;
+  try {
+    const { data } = await api.get("/courses/education", {
+      params: {
+        t: Date.now(),
+      },
+    });
+    return data;
+  } catch (error) {
+    console.error("Error propagating education directory payload:", error);
+    throw error;
+  }
 };

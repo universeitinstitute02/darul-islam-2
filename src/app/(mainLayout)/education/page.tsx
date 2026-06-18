@@ -28,47 +28,53 @@ const EducationPage = () => {
 
   if (!data) return <LoadingSpinner fullScreen />;
 
-  // 🔹 এপিআই রেসপন্সের অবজেক্ট থেকে কোর্স সেকশনগুলো আলাদা করা হলো
-  const courseSections = data?.courseSections || [];
+  // 🔹 সেফ ফলব্যাক রুলস: রেসপন্স অবজেক্ট থেকে সেকশন আলাদা করা
+  const courseSections = Array.isArray(data?.courseSections) ? data.courseSections : [];
 
   const remainingSections = courseSections.filter(
     (item: any) =>
-      !(item.categoryName && item.categoryName.includes("ফ্রি কোর্স")),
+      !(item?.categoryName && item.categoryName.includes("ফ্রি কোর্স")),
   );
 
   const freeCoursesData = courseSections.find(
     (item: any) =>
-      item.categoryName && item.categoryName.includes("ফ্রি কোর্স"),
+      item?.categoryName && item.categoryName.includes("ফ্রি কোর্স"),
   );
 
+  // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: সার্চ ফিল্টারিং মেথডের ভেতর কাস্টম সেফটি লেয়ার যুক্ত (No more Vercel Crash)
   const filterBySearch = (sections: any[]) => {
-    if (!sections) return [];
+    if (!sections || !Array.isArray(sections)) return []; 
     return sections
-      .map((section) => ({
-        ...section,
-        courses: section.courses.filter((course: any) =>
-          course.title.toLowerCase().includes(searchTerm.toLowerCase()),
-        ),
-      }))
-      .filter((section) => section.courses.length > 0);
+      .map((section) => {
+        // নিশ্চিত হওয়া যে সেকশনের ভেতর 'courses' একটি নিখুঁত অ্যারে
+        const sectionCourses = Array.isArray(section?.courses) ? section.courses : [];
+        return {
+          ...section,
+          courses: sectionCourses.filter((course: any) =>
+            course?.title?.toLowerCase().includes(searchTerm.toLowerCase()),
+          ),
+        };
+      })
+      .filter((section) => section.courses && section.courses.length > 0);
   };
 
   const filteredEducationData2 = filterBySearch(remainingSections);
 
   const fadeInVariant = {
-    initial: { opacity: 0, y: 20 },
+    initial: { opacity: 0, y: 15 },
     whileInView: { opacity: 1, y: 0 },
     viewport: { once: true },
-    transition: { duration: 0.5 },
-  };
+    transition: { duration: 0.4, ease: "easeOut" },
+  } as const;
 
   return (
-    <div className="min-h-screen bg-[#f8fafc]">
+    <div className="min-h-screen bg-slate-50/50 antialiased font-sans">
       <EducationHero searchTerm={searchTerm} onSearchChange={setSearchTerm} />
 
       <EduCategories />
 
-      <div className="max-w-6xl mx-auto px-4 pt-10 pb-12 lg:pt-16 space-y-20">
+      {/* মেইন ক্যাটাগরি কোর্স সেকশন সমূহ */}
+      <div className="max-w-6xl mx-auto px-4 pt-10 pb-12 lg:pt-16 space-y-16">
         {filteredEducationData2.map((section, idx) => (
           <motion.div key={idx} {...fadeInVariant}>
             <CourseSection section={section} />
@@ -76,30 +82,31 @@ const EducationPage = () => {
         ))}
       </div>
 
-      {freeCoursesData && (
+      {/* ফ্রি কোর্স সমূহ মডিউল */}
+      {freeCoursesData && Array.isArray(freeCoursesData.courses) && (
         <section className="max-w-6xl mx-auto px-4 py-12">
           <motion.div
             {...fadeInVariant}
-            className="relative border-2 border-neutral-100 bg-white rounded-[2rem] p-4 md:p-8 shadow-sm"
+            className="relative border border-neutral-200/50 bg-white rounded-[2rem] p-5 md:p-8 shadow-2xs"
           >
-            <div className="absolute -top-5 left-1/2 -translate-x-1/2 bg-white px-6 py-2 border-2 border-neutral-100 rounded-xl shadow-sm z-10">
-              <h2 className="text-[#0B5D3B] font-black text-sm md:text-lg whitespace-nowrap">
+            <div className="absolute -top-4.5 left-1/2 -translate-x-1/2 bg-white px-5 py-1.5 border border-neutral-200/50 rounded-xl shadow-3xs z-10">
+              <h2 className="text-[#0B5D3B] font-black text-xs md:text-sm whitespace-nowrap uppercase tracking-wider">
                 {freeCoursesData.categoryName}
               </h2>
             </div>
 
-            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-6 mt-6">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-3.5 md:gap-5 mt-6">
               {freeCoursesData.courses
-                ?.filter((c: any) =>
-                  c.title.toLowerCase().includes(searchTerm.toLowerCase()),
+                .filter((c: any) =>
+                  c?.title?.toLowerCase().includes(searchTerm.toLowerCase()),
                 )
                 .map((course: any) => (
                   <Link href={`/education/${course.id}`} key={course.id}>
                     <motion.div
-                      whileHover={{ y: -5 }}
-                      className="bg-[#F8F9FA] border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-lg transition-all duration-300 h-full"
+                      whileHover={{ y: -4 }}
+                      className="bg-slate-50/50 border border-neutral-100 rounded-2xl overflow-hidden hover:shadow-md hover:border-neutral-200/50 transition-all duration-300 h-full flex flex-col justify-between"
                     >
-                      <div className="relative aspect-video w-full bg-neutral-200">
+                      <div className="relative aspect-video w-full bg-neutral-100 border-b border-neutral-100">
                         {course.image ? (
                           <Image
                             src={course.image}
@@ -109,17 +116,17 @@ const EducationPage = () => {
                             sizes="(max-width: 768px) 50vw, 25vw"
                           />
                         ) : (
-                          <div className="absolute inset-0 flex items-center justify-center text-[10px] text-neutral-500 italic px-2 text-center">
-                            {course.title} (No Image)
+                          <div className="absolute inset-0 flex items-center justify-center text-[10px] text-neutral-400 font-bold px-2 text-center">
+                            {course.title}
                           </div>
                         )}
                       </div>
 
-                      <div className="p-3 md:p-4 text-center">
-                        <h3 className="text-[11px] md:text-[13px] font-bold text-neutral-600 line-clamp-1 mb-2">
+                      <div className="p-3.5 text-center bg-white mt-auto">
+                        <h3 className="text-xs font-bold text-neutral-700 line-clamp-1 mb-1.5">
                           {course.title}
                         </h3>
-                        <p className="text-[#0B5D3B] font-black text-sm md:text-lg">
+                        <p className="text-[#0B5D3B] font-black text-sm md:text-base">
                           {course.label || "ফ্রি"}
                         </p>
                       </div>

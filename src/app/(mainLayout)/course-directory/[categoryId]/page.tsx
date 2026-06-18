@@ -86,33 +86,57 @@ function CourseDirectoryContent() {
           if (currentCategory) {
             setPageTitle(currentCategory.name);
 
-            if (Array.isArray(currentCategory.subCategories)) {
-              const transformSubCategories = currentCategory.subCategories.map(
-                (sub: any) => ({
-                  id: sub._id,
-                  title: sub.name,
-                  price: sub.admissionFee || 0,
-                  oldPrice: sub.oldAdmissionFee || 0,
-                  // 🔹 ফিক্স: সাব-ক্যাটাগরির নিজস্ব ইমেজ থাকলে সেটি দেখাবে, না থাকলে প্যারেন্ট ক্যাটাগরির ইমেজ ব্যবহার করবে
-                  image:
-                    sub.image && sub.image.trim() !== ""
-                      ? sub.image
-                      : currentCategory.image || "",
-                  details: {
-                    fullTitle: sub.fullTitle || sub.name,
-                    description: sub.description || "",
-                    admissionFee: sub.admissionFee || 0,
-                    oldAdmissionFee: sub.oldAdmissionFee || 0,
-                    monthlyFee: sub.monthlyFee || null,
-                    discount: sub.discount || 0,
-                    coupon: sub.coupon || "",
-                    batchInfo:
-                      sub.classSchedule || "নতুন ব্যাচ শীঘ্রই শুরু হবে",
-                    highlights: sub.highlights || [],
-                  },
-                }),
-              );
-              setCourses(transformSubCategories);
+            if (currentCategory) {
+              setPageTitle(currentCategory.name);
+
+              // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: ডাটা অবজেক্ট স্ট্রাকচার ১০০% ভেরিফাই করা হচ্ছে
+              const rawSubCategories = currentCategory.subCategories;
+
+              if (
+                rawSubCategories &&
+                (Array.isArray(rawSubCategories) ||
+                  typeof rawSubCategories === "object")
+              ) {
+                // যদি কোনো কারণে ব্যাকঅ্যান্ড থেকে রড অবজেক্ট আসে, সেটিকে অ্যারেতে রূপান্তর করার সেফটি গার্ড
+                const cleanSubArray = Array.isArray(rawSubCategories)
+                  ? rawSubCategories
+                  : Object.values(rawSubCategories);
+
+                // নিশ্চিত হওয়া যে এটি এখন একটি নিখুঁত অ্যারে এবং এর ওপর .map / .slice চালানো সম্ভব
+                if (cleanSubArray && typeof cleanSubArray.map === "function") {
+                  const transformSubCategories = cleanSubArray.map(
+                    (sub: any) => ({
+                      id: sub?._id || String(Math.random()),
+                      title: sub?.name || "কোর্স টাইটেল",
+                      price: sub?.admissionFee || 0,
+                      oldPrice: sub?.oldAdmissionFee || 0,
+                      image:
+                        sub?.image && sub.image.trim() !== ""
+                          ? sub.image
+                          : currentCategory.image || "",
+                      details: {
+                        fullTitle: sub?.fullTitle || sub?.name || "",
+                        description: sub?.description || "",
+                        admissionFee: sub?.admissionFee || 0,
+                        oldAdmissionFee: sub?.oldAdmissionFee || 0,
+                        monthlyFee: sub?.monthlyFee || null,
+                        discount: sub?.discount || 0,
+                        coupon: sub?.coupon || "",
+                        batchInfo:
+                          sub?.classSchedule || "নতুন ব্যাচ শীঘ্রই শুরু হবে",
+                        highlights: Array.isArray(sub?.highlights)
+                          ? sub.highlights
+                          : [],
+                      },
+                    }),
+                  );
+                  setCourses(transformSubCategories);
+                } else {
+                  setCourses([]);
+                }
+              } else {
+                setCourses([]); 
+              }
             }
           }
         }
