@@ -1,4 +1,5 @@
 "use client";
+
 import React, { useEffect, useState } from "react";
 import CourseSection from "@/src/components/shared/EducationSectionShare";
 import Image from "next/image";

@@ -87,7 +87,7 @@ export default function EduCategories() {
   }
 
   return (
-    <div className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] py-12 px-4 sm:px-6 lg:px-8 font-sans selection:bg-emerald-100 selection:text-emerald-950">
+    <div className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] py-12 px-4 sm:px-6 lg:px-8 selection:bg-emerald-100 selection:text-emerald-950">
       <div className="max-w-7xl mx-auto text-center mb-16 relative">
         <div className="inline-flex items-center gap-3 px-5 py-2.5 rounded-full bg-emerald-50 border border-emerald-100 text-[#0f5132] font-semibold text-sm sm:text-base shadow-sm mb-4">
           📖 আমাদের একাডেমিক শিক্ষা ব্যবস্থা
