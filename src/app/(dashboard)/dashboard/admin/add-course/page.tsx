@@ -211,13 +211,13 @@ const AddCoursePage = () => {
                     কোর্সের ধরণ (Course Category Type)
                   </label>
                   <div className="grid grid-cols-2 gap-4 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-xs font-black transition-all ${selectedCategoryType === "general" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
+                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "general" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
                       <input type="radio" value="general" {...register("courseCategoryType")} className="hidden" />
-                      সাধারণ কোর্স (General Course)
+                      সাধারণ কোর্স
                     </label>
-                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-xs font-black transition-all ${selectedCategoryType === "academic" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
+                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "academic" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
                       <input type="radio" value="academic" {...register("courseCategoryType")} className="hidden" />
-                      <GraduationCap size={16} /> একাডেমিক সাবজেক্ট (Academic)
+                      <GraduationCap size={16} /> একাডেমিক সাবজেক্ট
                     </label>
                   </div>
                 </div>
@@ -316,16 +316,16 @@ const AddCoursePage = () => {
               </div>
               <div className="space-y-3">
                 {highlightFields.map((field, i) => (
-                  <div key={field.id} className="flex gap-3 items-center">
+                  <div key={field.id} className="block space-y-3 md:space-y-0 md:flex gap-3 items-center">
                     <input
                       placeholder="লেবেল (সময়)"
                       {...register(`highlights.${i}.label` as const)}
-                      className="flex-1 bg-gray-50 border border-gray-200 p-3 rounded-xl text-xs font-bold outline-none"
+                      className="flex-1 bg-gray-50 border border-gray-200 p-3 rounded-xl text-xs font-bold outline-none w-full"
                     />
                     <input
                       placeholder="মান (৩ মাস)"
                       {...register(`highlights.${i}.value` as const)}
-                      className="flex-1 bg-gray-50 border border-gray-200 p-3 rounded-xl text-xs font-bold outline-none"
+                      className="flex-1 bg-gray-50 border border-gray-200 p-3 rounded-xl text-xs font-bold outline-none w-full"
                     />
                     {highlightFields.length > 1 && (
                       <button

@@ -5,7 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import Swal from "sweetalert2";
 import {
-  BookOpen, 
+  BookOpen,
   GraduationCap,
   UserPlus,
   X,
@@ -71,6 +71,7 @@ export default function TeacherAssign() {
   const [selectedBatchId, setSelectedBatchId] = useState<string>("");
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("");
 
+  // 🔹 ১. মেইন লিস্ট এপিআই কুয়েরি: কারেন্ট ফিল্টার ট্যাবের ডাটা নিখুঁতভাবে রিলোড করবে
   const {
     data: enrollments = [],
     isLoading: enrollmentsLoading,
@@ -82,9 +83,61 @@ export default function TeacherAssign() {
       const response = await axiosSecure.get(
         `/enrollments/admin/all?status=${statusFilter}`,
       );
-      return response.data.data as EnrollmentRequest[];
+      return (response.data.data || response.data || []) as EnrollmentRequest[];
     },
   });
+
+  // 🔹 ২. প্রফেশনাল কাউন্টার আর্কিটেকচার: ৩টি এপিআই কল প্যারালালি ব্যাকগ্রাউন্ডে হ্যান্ডেল করা হলো (No more status=all bug)
+  const { data: pendingCountData = [], refetch: refetchPending } = useQuery({
+    queryKey: ["countPending"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/enrollments/admin/all?status=pending`,
+      );
+      return (res.data.data || res.data || []) as EnrollmentRequest[];
+    },
+  });
+
+  const { data: approvedCountData = [], refetch: refetchApproved } = useQuery({
+    queryKey: ["countApproved"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/enrollments/admin/all?status=approved`,
+      );
+      return (res.data.data || res.data || []) as EnrollmentRequest[];
+    },
+  });
+
+  const { data: rejectedCountData = [], refetch: refetchRejected } = useQuery({
+    queryKey: ["countRejected"],
+    queryFn: async () => {
+      const res = await axiosSecure.get(
+        `/enrollments/admin/all?status=rejected`,
+      );
+      return (res.data.data || res.data || []) as EnrollmentRequest[];
+    },
+  });
+
+  // 🔹 সার্চ কুয়েরির ওপর ভিত্তি করে লাইভ ফিল্টার্ড কাউন্ট ক্যালকুলেশন মেথড
+  const getTabCount = (tabStatus: "pending" | "approved" | "rejected") => {
+    const targetData =
+      tabStatus === "pending"
+        ? pendingCountData
+        : tabStatus === "approved"
+          ? approvedCountData
+          : rejectedCountData;
+
+    if (!Array.isArray(targetData)) return 0;
+
+    return targetData.filter(
+      (item) =>
+        item.course?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.student?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        item.paymentDetails?.transactionId
+          ?.toLowerCase()
+          .includes(searchQuery.toLowerCase()),
+    ).length;
+  };
 
   const { data: batches = [] } = useQuery({
     queryKey: ["courseBatches", selectedRequest?.course?._id],
@@ -101,7 +154,9 @@ export default function TeacherAssign() {
   const { data: teachers = [] } = useQuery({
     queryKey: ["teachersList"],
     queryFn: async (): Promise<Teacher[]> => {
-      const response = await axiosSecure.get("/users/admin/all-users?role=teacher");
+      const response = await axiosSecure.get(
+        "/users/admin/all-users?role=teacher",
+      );
       return response.data.data as Teacher[];
     },
     enabled: !!selectedRequest,
@@ -115,6 +170,14 @@ export default function TeacherAssign() {
     }
   }, [batches, selectedRequest]);
 
+  // 🔹 গ্লোবাল রিফ্রেশার মেথড
+  const refreshAllStates = () => {
+    refetchEnrollments();
+    refetchPending();
+    refetchApproved();
+    refetchRejected();
+  };
+
   const approveMutation = useMutation({
     mutationFn: (payload: {
       id: string;
@@ -127,9 +190,10 @@ export default function TeacherAssign() {
       }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEnrollments"] });
+      refreshAllStates();
       Swal.fire(
         "অনুমোদিত",
-        "এনরোলমেন্ট সফলভাবে অনুমোদিত হয়েছে এবং আসন বরাদ্দ করা হয়েছে।",
+        "এনরোলমেন্ট সফলভাবে অনুমোদিত হয়েছে এবং আসন বরাদ্দ করা হয়েছে।",
         "success",
       );
       setSelectedRequest(null);
@@ -150,9 +214,10 @@ export default function TeacherAssign() {
       axiosSecure.put(`/enrollments/admin/reject/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEnrollments"] });
+      refreshAllStates();
       Swal.fire(
         "বাতিলকৃত",
-        "এনরোলমেন্ট রিকোয়েস্টটি বাতিল করা হয়েছে।",
+        "এনরোলমেন্ট রিকোয়েস্টটি বাতিল করা হয়েছে।",
         "success",
       );
     },
@@ -175,7 +240,7 @@ export default function TeacherAssign() {
     if (!selectedBatchId) {
       return Swal.fire(
         "নির্দেশনা",
-        "দয়া করে একটি নির্দিষ্ট ব্যাচ সিলেক্ট করুন।",
+        "দয়া করে একটি নির্দিষ্ট ব্যাচ সিলেক্ট করুন।",
         "warning",
       );
     }
@@ -190,7 +255,7 @@ export default function TeacherAssign() {
   const handleRejectRequest = async (id: string) => {
     const result = await Swal.fire({
       title: "আপনি কি নিশ্চিত?",
-      text: "এই এনরোলমেন্ট পেমেন্ট রিকোয়েস্টটি বাতিল করতে চান?",
+      text: "এই এনরোলমেন্ট পেমেন্ট রিকোয়েস্টটি বাতিল করতে চান?",
       icon: "warning",
       showCancelButton: true,
       confirmButtonColor: "#991b1b",
@@ -204,7 +269,9 @@ export default function TeacherAssign() {
     }
   };
 
-  const filteredRequests = enrollments.filter(
+  const filteredRequests = (
+    Array.isArray(enrollments) ? enrollments : []
+  ).filter(
     (item) =>
       item.course?.title?.toLowerCase().includes(searchQuery.toLowerCase()) ||
       item.student?.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -214,13 +281,10 @@ export default function TeacherAssign() {
   );
 
   return (
-    <div className="w-full rounded-2xl min-h-screen bg-[#F5F0E8]/40 p-4 md:p-10 font-sans antialiased text-slate-800">
+    <div className="w-full rounded-2xl min-h-screen bg-[#F5F0E8]/40 p-4 md:p-10 antialiased text-slate-800">
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
           <div>
-            {/* <span className="text-[10px] uppercase font-bold text-green-700 bg-green-50 px-3 py-1 rounded-md border border-green-200/50">
-              Admin Control Only
-            </span> */}
             <h1 className="text-2xl md:text-3xl font-black text-[#0B3D2E] tracking-tight flex items-center gap-2 mt-2">
               <GraduationCap className="w-8 h-8 text-green-800" /> রিভিউ মডারেশন
               প্যানেল
@@ -236,16 +300,16 @@ export default function TeacherAssign() {
               <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 text-slate-400 w-4 h-4" />
               <input
                 type="text"
-                placeholder="কোর্স, নাম অথবা TxnID দিয়ে খুঁজুন..."
+                placeholder="কোর্স, নাম অথবা TxnID দিয়ে খুঁজুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none transition-all shadow-xs"
               />
             </div>
             <button
-              onClick={() => refetchEnrollments()}
+              onClick={refreshAllStates}
               disabled={enrollmentsFetching}
-              className="p-3 bg-white border border-gray-200 text-gray-600 rounded-xl active:scale-95 transition-all shadow-xs w-full sm:w-auto flex items-center justify-center"
+              className="p-3 cursor-pointer bg-white border border-gray-200 text-gray-600 rounded-xl active:scale-95 transition-all shadow-xs w-full sm:w-auto flex items-center justify-center"
             >
               <RefreshCw
                 className={
@@ -257,6 +321,35 @@ export default function TeacherAssign() {
           </div>
         </div>
 
+        {/* 🔹 প্রফেশনাল মিনি কাউন্টার ড্যাশবোর্ড উইজেট - (১00% ইন্ডিপেনডেন্ট ও রিয়েল ডাটা সিনক্রোনাইজড) */}
+        <div className="grid grid-cols-3 gap-4 mb-6 max-w-xl">
+          <div className="bg-white px-4 py-3 rounded-2xl border border-black/5 shadow-3xs flex flex-col justify-center">
+            <span className="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-wider">
+              পেন্ডিং মোট
+            </span>
+            <span className="text-base md:text-lg font-black text-amber-700 mt-0.5">
+              {getTabCount("pending")}টি
+            </span>
+          </div>
+          <div className="bg-white px-4 py-3 rounded-2xl border border-black/5 shadow-3xs flex flex-col justify-center">
+            <span className="text-[10px] md:text-xs font-bold text-green-600 uppercase tracking-wider">
+              অনুমোদিত মোট
+            </span>
+            <span className="text-base md:text-lg font-black text-green-800 mt-0.5">
+              {getTabCount("approved")}টি
+            </span>
+          </div>
+          <div className="bg-white px-4 py-3 rounded-2xl border border-black/5 shadow-3xs flex flex-col justify-center">
+            <span className="text-[10px] md:text-xs font-bold text-red-600 uppercase tracking-wider">
+              বাতিলকৃত মোট
+            </span>
+            <span className="text-base md:text-lg font-black text-red-800 mt-0.5">
+              {getTabCount("rejected")}টি
+            </span>
+          </div>
+        </div>
+
+        {/* 🔹 পিওর ক্লিন ট্যাব বাটন সেকশন */}
         <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-black/5 shadow-sm mb-6 max-w-md">
           {(["pending", "approved", "rejected"] as const).map((tab) => (
             <button
@@ -269,7 +362,7 @@ export default function TeacherAssign() {
               }`}
             >
               {tab === "pending"
-                ? `পেন্ডিং (${filteredRequests.length})`
+                ? "পেন্ডিং"
                 : tab === "approved"
                   ? "অনুমোদিত"
                   : "বাতিলকৃত"}
@@ -288,10 +381,10 @@ export default function TeacherAssign() {
           <div className="text-center py-20 bg-white rounded-[2rem] border border-black/5 shadow-sm">
             <Layers className="mx-auto text-gray-300 mb-3" size={48} />
             <h3 className="text-base font-bold text-gray-700">
-              কোনো রেকর্ড খুঁজে পাওয়া যায়নি
+              কোনো রেকর্ড খুঁজে পাওয়া যায়নি
             </h3>
             <p className="text-xs text-gray-400 max-w-xs mx-auto mt-1">
-              বর্তমানে মডারেশনের জন্য কোনো ট্রানজেকশন ডাটা পাওয়া যায়নি।
+              বর্তমানে মডারেশনের জন্য কোনো ট্রানজেকশন ডাটা পাওয়া যায়নি।
             </p>
           </div>
         ) : (
@@ -510,7 +603,7 @@ export default function TeacherAssign() {
                       className="w-full bg-gray-50 border border-transparent focus:border-gray-200 text-gray-800 rounded-xl px-4 py-3 text-sm font-bold outline-none transition-all cursor-pointer"
                     >
                       <option value="">
-                        শিক্ষক নিযুক্ত ছাড়া রাখুন / ব্যাচের ডিফল্ট
+                        শিক্ষক নিযুক্ত ছাড়া রাখুন / ব্যাচের ডিফল্ট
                       </option>
                       {teachers.map((teacher) => (
                         <option key={teacher._id} value={teacher._id}>

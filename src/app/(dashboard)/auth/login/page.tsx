@@ -44,19 +44,29 @@ const LoginPage = () => {
       return;
     }
 
-    if (role === "admin") {
-      window.location.href = "/dashboard/admin";
-    } else if (role === "teacher") {
-      window.location.href = "/dashboard/teacher";
-    } else if (role === "student") {
-      window.location.href = "/student-profile";
-    } else {
+    try {
+      // 🔹 প্রো-লেভেল ফিক্স: কন্ডিশনাল রেস কন্ডিশন এড়াতে সেশন এপিআই থেকে সরাসরি রিয়েল-টাইম রোল এক্সট্র্যাক্ট করা
+      const sessionRes = await fetch("/api/auth/session");
+      const sessionData = await sessionRes.json();
+
+      const userRole = sessionData?.user?.role || sessionData?.role || role;
+
+      if (String(userRole).toLowerCase() === "admin") {
+        window.location.href = "/dashboard/admin";
+      } else if (String(userRole).toLowerCase() === "teacher") {
+        window.location.href = "/dashboard/teacher";
+      } else if (String(userRole).toLowerCase() === "student") {
+        window.location.href = "/student-profile";
+      } else {
+        window.location.href = "/";
+      }
+    } catch (err) {
       window.location.href = "/";
     }
   };
 
   return (
-    <div className="min-h-screen lg:h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden font-sans">
+    <div className="min-h-screen lg:h-screen bg-[#f8fafc] flex flex-col lg:flex-row lg:overflow-hidden">
       {/* 1. Top Section / Hero Banner */}
       <div className="relative h-[45vh] lg:h-full lg:w-[55%] bg-[#0B5D3B] overflow-hidden shrink-0">
         <Image
@@ -221,30 +231,6 @@ const LoginPage = () => {
               )}
             </button>
           </form>
-
-          {/* <div className="relative my-12">
-            <div className="absolute inset-0 flex items-center">
-              <span className="w-full border-t border-neutral-100"></span>
-            </div>
-            <div className="relative flex justify-center text-[10px] uppercase">
-              <span className="bg-white px-8 text-neutral-300 font-black tracking-[0.4em]">
-                অথবা সামাজিক যোগাযোগ
-              </span>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <button
-              onClick={handleGoogleSignIn}
-              type="button"
-              className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm"
-            >
-              <Chrome size={20} className="text-red-500" /> Google
-            </button>
-            <button className="flex items-center justify-center gap-3 py-4 border-2 border-neutral-100 rounded-2xl hover:bg-neutral-50 hover:border-neutral-200 transition-all font-bold text-neutral-700 text-sm shadow-sm">
-              <Facebook size={20} className="text-blue-600" /> Facebook
-            </button>
-          </div> */}
 
           <div className="mt-10 flex items-center gap-4 p-5 bg-[#0B5D3B]/5 rounded-[2rem] border border-[#0B5D3B]/10">
             <div className="p-3 bg-white rounded-2xl text-[#0B5D3B] shadow-sm">

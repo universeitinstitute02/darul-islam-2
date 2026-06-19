@@ -175,7 +175,7 @@ const RegisterPage: React.FC = () => {
   };
 
   return (
-    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 lg:p-8 font-sans">
+    <div className="min-h-screen bg-[#f8fafc] flex items-center justify-center p-4 lg:p-8">
       <div className="w-full max-w-4xl bg-white rounded-[2.5rem] shadow-2xl flex flex-col lg:flex-row overflow-hidden border border-neutral-100">
         <Sidebar step={step} isTeacher={isTeacher} />
 

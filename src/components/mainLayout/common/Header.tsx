@@ -71,7 +71,7 @@ const Header = () => {
 
         Swal.fire({
           title: "লগআউট সফল!",
-          text: "আপনার সেশনটি সফলভাবে শেষ হয়েছে।",
+          text: "আপনার সেশনটি সফলভাবে শেষ হয়েছে।",
           icon: "success",
           timer: 2000,
           showConfirmButton: false,
@@ -84,6 +84,12 @@ const Header = () => {
 
   const toggleSubmenu = (name: string) => {
     setOpenSubmenu(openSubmenu === name ? null : name);
+  };
+
+  // 🔹 রোল-ভিত্তিক ডাইনামিক ড্যাশবোর্ড পাথ হ্যান্ডলার
+  const getDashboardHref = () => {
+    if (role === "admin") return "/dashboard/admin";
+    return "/dashboard/teacher";
   };
 
   const drawerMenuItems: MenuItem[] = [
@@ -129,7 +135,7 @@ const Header = () => {
               ? [
                   {
                     name: "ড্যাশবোর্ড",
-                    href: "/dashboard",
+                    href: getDashboardHref(), // 🎯 ফিক্স: রোল অনুযায়ী কন্ডিশনাল ড্যাশবোর্ড পাথ ডিসপ্যাচ করা হচ্ছে
                     icon: LayoutDashboard,
                   },
                 ]

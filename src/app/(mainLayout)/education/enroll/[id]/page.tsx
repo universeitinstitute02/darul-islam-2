@@ -25,12 +25,19 @@ import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 import useUserRole from "@/src/app/hooks/useUserRole";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import axios from "axios";
+
+const publicApi = axios.create({
+  baseURL:
+    process.env.NEXT_PUBLIC_API_URL ||
+    "https://darulislam-server-v2.vercel.app/api",
+});
 
 interface EnrollFormValues {
   senderName: string;
   accountNumber: string;
   transactionId: string;
-  selectedAcademicCourse?: string; // 🔹 একাডেমিক কোর্স আইডি ট্র্যাকিং ফিল্ড
+  selectedAcademicCourse?: string;
 }
 
 const CHANNEL_NUMBERS: Record<
@@ -42,7 +49,7 @@ const CHANNEL_NUMBERS: Record<
     number: "01788002255",
     bg: "bg-pink-50",
     border: "border-pink-400",
-    logo: "https://freelogopng.com/images/all_img/1656234841bkash-icon-png.png",
+    logo: "https://static.vecteezy.com/system/resources/previews/068/764/270/non_2x/bkash-logo-mobile-banking-app-icon-transparent-background-free-png.png",
   },
   nagad: {
     label: "নগদ (পার্সোনাল)",
@@ -70,19 +77,17 @@ export default function EnrollPage() {
   const [copied, setCopied] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isAcademicMode, setIsAcademicMode] = useState(false);
-  const [academicCourses, setAcademicCourses] = useState<any[]>([]); // 🔹 একাডেমিক কোর্সের তালিকা
+  const [academicCourses, setAcademicCourses] = useState<any[]>([]);
 
   const { register, handleSubmit, setValue } = useForm<EnrollFormValues>();
   const { user, isLoading: isUserLoading, role } = useUserRole();
 
-  // 🔹 হাইব্রিড ডেটা ফেচিং আর্কিটেকচার
   const { data: currentSource = null, isLoading: courseLoading } = useQuery({
     queryKey: ["course", id],
     queryFn: async () => {
       if (!id) return null;
       const res = await getAllCourses();
 
-      // ১. রেগুলার ৪৩টি মেইন কোর্স ভেরিফিকেশন
       const sections = res?.courseSections || [];
       for (const section of sections) {
         const match = section.courses.find(
@@ -98,7 +103,6 @@ export default function EnrollPage() {
         }
       }
 
-      // ২. একাডেমিক সাব-ক্যাটাগরি মোড ডিটেকশন
       const categories = res?.dynamicCategories || [];
       for (const cat of categories) {
         if (Array.isArray(cat.subCategories)) {
@@ -128,28 +132,36 @@ export default function EnrollPage() {
     enabled: !!id,
   });
 
-  // 🔹 সাব-ক্যাটাগরির অধীনে থাকা ডাইনামিক 'Academic Courses' লোড করার লজিক (নো ব্যাচ, নো ওস্তাদ টেক্সট)
   useEffect(() => {
     const fetchSubCategoryCourses = async () => {
-      if (isAcademicMode && id) {
-        try {
-          const response = await axiosSecure.get(`/courses?subCategory=${id}`);
-          if (response.data && Array.isArray(response.data.data)) {
-            setAcademicCourses(response.data.data);
-            if (response.data.data.length > 0) {
-              setValue("selectedAcademicCourse", response.data.data[0]._id);
-            }
+      if (!id) return;
+
+      try {
+        const response = await publicApi.get("/courses", {
+          params: {
+            subCategory: String(id),
+            t: Date.now(),
+          },
+        });
+
+        if (response.data && Array.isArray(response.data.data)) {
+          setAcademicCourses(response.data.data);
+          if (response.data.data.length > 0) {
+            setValue("selectedAcademicCourse", response.data.data[0]._id);
           }
-        } catch (error) {
-          console.error(
-            "Failed to query live subcategory academic courses:",
-            error,
-          );
         }
+      } catch (error) {
+        console.error(
+          "Failed to query live subcategory academic courses:",
+          error,
+        );
       }
     };
-    fetchSubCategoryCourses();
-  }, [isAcademicMode, id, axiosSecure, setValue]);
+
+    if (id && currentSource) {
+      fetchSubCategoryCourses();
+    }
+  }, [id, currentSource, setValue]);
 
   const handleCopyClipboard = async (text: string) => {
     try {
@@ -200,7 +212,7 @@ export default function EnrollPage() {
       currentSource?.details?.admissionFee || currentSource?.price || 0;
 
     const requestPayload = {
-      courseId: isAcademicMode ? data.selectedAcademicCourse : id, // একাডেমিক হলে ড্রপডাউন থেকে সিলেক্ট করা মেইন কোর্স আইডি যাবে
+      courseId: isAcademicMode ? data.selectedAcademicCourse : id,
       subCategoryId: isAcademicMode ? id : undefined,
       method: paymentMethod,
       senderName: data.senderName.trim(),
@@ -282,7 +294,7 @@ export default function EnrollPage() {
                   </span>
                 </div>
                 <h2 className="text-base font-bold text-neutral-800 mt-0.5">
-                  {user?.name || "ইউজারের নাম পাওয়া যায়নি"}
+                  {user?.name || "ইউজারের নাম পাওয়া যায়নি"}
                 </h2>
                 <p className="text-xs text-neutral-500 font-medium">
                   {user?.email}
@@ -290,7 +302,6 @@ export default function EnrollPage() {
               </div>
             </div>
 
-            {/* 🔹 ডাইনামিক কোর্স ড্রপডাউন উইজেট (শুধুমাত্র সাব-ক্যাটাগরি মোডে কাজ করবে, কোনো ব্যাচ কন্টেন্ট নেই) */}
             {isAcademicMode && (
               <div className="space-y-2 p-5 bg-emerald-50/50 border border-emerald-100 rounded-2xl">
                 <label
@@ -317,7 +328,7 @@ export default function EnrollPage() {
                 ) : (
                   <div className="text-xs font-bold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-100">
                     ⚠️ এই সাব-ক্যাটাগরির অধীনে এই মুহূর্তে কোনো অ্যাক্টিভ কোর্স
-                    পাওয়া যায়নি।
+                    পাওয়া যায়নি।
                   </div>
                 )}
               </div>
