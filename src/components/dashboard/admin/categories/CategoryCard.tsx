@@ -12,6 +12,7 @@ import {
   ChevronDown,
   ChevronUp,
   FolderKanban,
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import Swal from "sweetalert2";
@@ -39,6 +40,7 @@ type TCategory = {
   image: string;
   description?: string;
   isActive: boolean;
+  isFeatured: boolean;
   subCategories: TSubCategory[];
   courseCount?: number;
 };
@@ -58,15 +60,56 @@ export default function CategoryCard({
 }: CategoryCardProps) {
   const axiosSecure = useAxiosSecure();
 
-  // 🔹 ডাইনামিক অ্যাকর্ডিয়ন কলাপ্স প্যানেল স্টেট (Initial Closed)
   const [isExpanded, setIsExpanded] = useState(false);
-
   const [isSubModalOpen, setIsSubModalOpen] = useState(false);
   const [editingSub, setEditingSub] = useState<TSubCategory | null>(null);
   const [subImageFile, setSubImageFile] = useState<File | null>(null);
   const [subPreviewUrl, setSubPreviewUrl] = useState<string | null>(null);
   const [subEditLoading, setSubEditLoading] = useState(false);
   const subModalFileRef = useRef<HTMLInputElement>(null);
+
+  const isFeatured = category.isFeatured === true;
+
+  const handleToggleFeatured = async () => {
+    const nextStatus = !isFeatured;
+    Swal.fire({
+      icon: "question",
+      title: nextStatus ? "হোমপেজে প্রদর্শন" : "হোমপেজ থেকে অপসারণ",
+      text: nextStatus
+        ? `আপনি কি "${category.name}" ক্যাটাগরিটিকে মূল হোমপেজে ফিচার্ড হিসেবে প্রদর্শন করতে চান?`
+        : `আপনি কি "${category.name}" ক্যাটাগরিটিকে মূল হোমপেজের ফিচার্ড তালিকা থেকে বাদ দিতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: nextStatus ? "হ্যাঁ, ফিচার্ড করুন" : "হ্যাঁ, বাদ দিন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#0B5D3B",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosSecure.patch(
+            `/categories/featured/${category._id}`,
+            { isFeatured: nextStatus },
+          );
+          if (res.status === 200) {
+            Swal.fire({
+              icon: "success",
+              title: "সফল হয়েছে",
+              text: nextStatus
+                ? "ক্যাটাগরি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।"
+                : "ফিচার্ড স্ট্যাটাস বাতিল করা হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            refresh();
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "স্ট্যাটাস আপডেট করা সম্ভব হয়নি।",
+          });
+        }
+      }
+    });
+  };
 
   const handleAddSubCategory = async (subData: any, file: File | null) => {
     try {
@@ -116,8 +159,6 @@ export default function CategoryCard({
     if (!editingSub) return;
 
     try {
-      setSubEditLoading(true);
-
       const fullTitle = (
         document.getElementById("modal-sub-title") as HTMLInputElement
       ).value;
@@ -222,45 +263,61 @@ export default function CategoryCard({
   };
 
   return (
-    <article className="bg-white border border-neutral-200/50 rounded-2xl shadow-2xs overflow-hidden transition-all duration-300 hover:shadow-xs">
-      {/* 🔹 মেইন ক্যাটাগরি ভিউ (Initial Clean State) */}
+    <article className="bg-white border border-neutral-200/50 rounded-2xl shadow-2xs overflow-hidden transition-all duration-300 hover:shadow-xs w-full">
       <div className="p-4 sm:p-5 flex items-center justify-between gap-4 bg-white">
         <div className="flex gap-4 items-center min-w-0">
-          <div className="relative w-14 h-12 rounded-xl overflow-hidden border border-neutral-100 shrink-0 bg-neutral-50 shadow-2xs">
+          {/* 🎯 ইমেজ এবং স্টারের সমন্বিত কন্টেইনার */}
+          <div className="relative w-14 h-12 rounded-xl shrink-0 bg-neutral-50 shadow-2xs">
             {category.image && (
               <Image
                 src={category.image}
                 alt=""
                 fill
-                className="object-cover"
+                className="object-cover rounded-xl border border-neutral-100"
               />
             )}
+
+            {/* ⭐ টপ-লেফট কর্নারে প্রফেশনাল মিনিমাল ফিচার্ড স্টার বাটন */}
+            <button
+              type="button"
+              onClick={handleToggleFeatured}
+              className={`absolute -top-1.5 -left-1.5 p-1 rounded-full border shadow-sm transition-all active:scale-95 cursor-pointer z-20 ${
+                isFeatured
+                  ? "bg-amber-500 border-amber-600 text-white"
+                  : "bg-white border-slate-200 text-slate-400 hover:text-amber-500"
+              }`}
+              title={
+                isFeatured ? "হোমপেজে সচল (ক্লিক করে বাদ দিন)" : "হোমপেজে দেখান"
+              }
+            >
+              <Star size={10} className={isFeatured ? "fill-white" : ""} />
+            </button>
           </div>
+
           <div className="min-w-0">
             <h2 className="font-black text-sm md:text-base text-neutral-800 truncate">
               {category.name}
             </h2>
             {category.description && (
-              <p className="text-[11px] font-semibold text-neutral-400 truncate max-w-[280px] mt-0.5">
+              <p className="text-[11px] font-semibold text-neutral-400 truncate max-w-[280px] sm:max-w-[400px] mt-0.5">
                 {category.description}
               </p>
             )}
           </div>
         </div>
 
-        {/* কন্ট্রিবিউশন কন্ট্রোল বোতাম এবং প্যানেল কলাপ্স বাটন টগল */}
         <div className="flex items-center gap-3 shrink-0">
           <div className="flex items-center gap-1 bg-neutral-50 p-1 rounded-xl border border-neutral-100">
             <button
               onClick={onEdit}
-              className="p-1.5 text-neutral-400 hover:text-blue-600 hover:bg-white rounded-lg transition-all"
+              className="p-1.5 text-neutral-400 hover:text-blue-600 hover:bg-white rounded-lg transition-all cursor-pointer"
               title="এডিট"
             >
               <Edit3 className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => onDelete(category._id)}
-              className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-white rounded-lg transition-all"
+              className="p-1.5 text-neutral-400 hover:text-red-500 hover:bg-white rounded-lg transition-all cursor-pointer"
               title="মুছে ফেলুন"
             >
               <Trash2 className="w-3.5 h-3.5" />
@@ -271,7 +328,7 @@ export default function CategoryCard({
             onClick={() => setIsExpanded(!isExpanded)}
             className={`flex items-center gap-1.5 px-3 py-1.5 border border-neutral-200/60 hover:border-neutral-300 rounded-xl text-[11px] font-black tracking-wide transition-all select-none cursor-pointer ${
               isExpanded
-                ? "bg-[#0B5D3B] border-[#0B5D3B] text-white"
+                ? "bg-neutral-900 border-neutral-900 text-white"
                 : "bg-white text-neutral-700 hover:bg-neutral-50"
             }`}
           >
@@ -282,7 +339,6 @@ export default function CategoryCard({
         </div>
       </div>
 
-      {/* 🔹 সিনিয়র কলাপ্সিবল সেকশন (স্মুথ এনিমেশন কার্যাবলী) */}
       <AnimatePresence initial={false}>
         {isExpanded && (
           <motion.div
@@ -293,7 +349,6 @@ export default function CategoryCard({
             className="overflow-hidden border-t border-neutral-100 bg-neutral-50/20"
           >
             <div className="p-5 space-y-5 bg-white">
-              {/* উপ-বিভাগ গ্রিড ভিউ */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                 {category.subCategories && category.subCategories.length > 0 ? (
                   category.subCategories.map((sub) => (
@@ -331,14 +386,14 @@ export default function CategoryCard({
                         <button
                           type="button"
                           onClick={() => openSubEditModal(sub)}
-                          className="text-neutral-400 hover:text-blue-600 p-1 rounded-md"
+                          className="text-neutral-400 hover:text-blue-600 p-1 rounded-md cursor-pointer"
                         >
                           <Settings2 className="w-3.5 h-3.5" />
                         </button>
                         <button
                           type="button"
                           onClick={() => handleDeleteSubCategory(sub._id)}
-                          className="text-neutral-300 hover:text-red-500 p-1 rounded-md"
+                          className="text-neutral-300 hover:text-red-500 p-1 rounded-md cursor-pointer"
                         >
                           <X className="w-3.5 h-3.5" />
                         </button>
@@ -352,7 +407,6 @@ export default function CategoryCard({
                 )}
               </div>
 
-              {/* নতুন সাব-ক্যাটাগরি ফর্ম */}
               <SubCategoryForm
                 categoryName={category.name}
                 onAddSub={handleAddSubCategory}
@@ -362,10 +416,9 @@ export default function CategoryCard({
         )}
       </AnimatePresence>
 
-      {/* Modern Subcategory Edit Modal Window */}
       <AnimatePresence>
         {isSubModalOpen && editingSub && (
-          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4 animate-in fade-in duration-200">
+          <div className="fixed inset-0 bg-black/40 backdrop-blur-xs z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0, scale: 0.97 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -375,7 +428,7 @@ export default function CategoryCard({
               <button
                 type="button"
                 onClick={() => setIsSubModalOpen(false)}
-                className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-lg text-neutral-400"
+                className="absolute top-4 right-4 p-1 hover:bg-neutral-100 rounded-lg text-neutral-400 cursor-pointer"
               >
                 <X size={16} />
               </button>
@@ -451,7 +504,7 @@ export default function CategoryCard({
 
                 <div className="grid grid-cols-2 gap-3">
                   <div className="space-y-1">
-                    <label className="text-xs font-bold text-neutral-600">
+                    <label className="grid text-xs font-bold text-neutral-600">
                       ভর্তি ফি (৳)
                     </label>
                     <input
@@ -502,14 +555,14 @@ export default function CategoryCard({
                   <button
                     type="button"
                     onClick={() => setIsSubModalOpen(false)}
-                    className="px-4 py-2 bg-neutral-50 hover:bg-neutral-100 text-neutral-600 text-xs font-bold rounded-xl transition-colors"
+                    className="px-4 py-2 bg-neutral-50 hover:bg-neutral-100 text-neutral-600 text-xs font-bold rounded-xl transition-colors cursor-pointer"
                   >
                     বাতিল
                   </button>
                   <button
                     type="submit"
                     disabled={subEditLoading}
-                    className="px-5 py-2 bg-neutral-900 text-white text-xs font-black rounded-xl shadow-xs transition-colors"
+                    className="px-5 py-2 bg-neutral-900 text-white text-xs font-black rounded-xl shadow-xs transition-colors cursor-pointer"
                   >
                     {subEditLoading ? "সংরক্ষণ হচ্ছে..." : "আপডেট করুন"}
                   </button>

@@ -25,6 +25,7 @@ import {
   Trash2,
   CheckCircle2,
   IdCard,
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
@@ -40,6 +41,7 @@ interface StudentProfile {
   district?: string;
   address?: string;
   enrolledCourses?: string[];
+  isFeatured?: boolean;
 }
 
 interface Student {
@@ -92,6 +94,54 @@ export default function StudentManagement() {
     enabled: !!isAdmin,
     staleTime: 3 * 60 * 1000,
   });
+
+  // 🔹 সিনিয়র লেভেল স্টুডেন্ট ফিচার্ড টগল মেথড (বাংলা অ্যালার্ট ও লাইভ এপিআই সিঙ্ক)
+  const handleToggleStudentFeatured = async (studentProfileId: string, currentStatus: boolean, studentName: string) => {
+    if (!studentProfileId) return;
+
+    const nextStatus = !currentStatus;
+
+    Swal.fire({
+      icon: "question",
+      title: nextStatus ? "হোমপেজে প্রদর্শন" : "হোমপেজ থেকে অপসারণ",
+      text: nextStatus 
+        ? `আপনি কি শিক্ষার্থী ${studentName}-কে মূল হোমপেজে ফিচার্ড হিসেবে প্রদর্শন করতে চান?`
+        : `আপনি কি শিক্ষার্থী ${studentName}-কে মূল হোমপেজের ফিচার্ড তালিকা থেকে বাদ দিতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: nextStatus ? "হ্যাঁ, ফিচার্ড করুন" : "হ্যাঁ, বাদ দিন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#0B5D3B",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosSecure.patch(`/students/featured/${studentProfileId}`, {
+            isFeatured: nextStatus,
+          });
+
+          if (res.status === 200 || res.data?.success) {
+            Swal.fire({
+              icon: "success",
+              title: "সফল হয়েছে",
+              text: nextStatus 
+                ? "শিক্ষার্থী প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।" 
+                : "ফিচার্ড স্ট্যাটাস সফলভাবে বাতিল করা হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            refetch();
+            setSelectedStudent(null);
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "ব্যর্থ হয়েছে",
+            text: "স্ট্যাটাস আপডেট করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+            confirmButtonColor: "#0B5D3B",
+          });
+        }
+      }
+    });
+  };
 
   const handleDeleteUser = async (userID: string, name: string) => {
     Swal.fire({
@@ -247,7 +297,7 @@ export default function StudentManagement() {
         <meta name="robots" content="noindex, nofollow" />
       </Head>
 
-      <main className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 bg-slate-50/50 min-h-screen selection:bg-emerald-500 selection:text-white font-sans">
+      <main className="p-4 md:p-8 max-w-7xl mx-auto space-y-6 bg-slate-50/50 min-h-screen selection:bg-emerald-500 selection:text-white">
         <section className="flex flex-col md:flex-row md:items-center md:justify-between gap-4 border-b border-slate-200 pb-5">
           <div>
             <h1 className="text-2xl md:text-3xl font-black text-slate-800 tracking-tight flex items-center gap-3">
@@ -305,7 +355,7 @@ export default function StudentManagement() {
             <div className="bg-white border border-dashed border-slate-300 rounded-[3rem] p-12 text-center">
               <ShieldAlert className="h-12 w-12 text-amber-500 mx-auto mb-3" />
               <p className="text-slate-600 font-bold">
-                কোঁন শিক্ষার্থীর তথ্য পাওয়া যায়নি!
+                কোন শিক্ষার্থীর তথ্য পাওয়া যায়নি!
               </p>
               <p className="text-slate-400 text-xs mt-1 font-medium">
                 অনুগ্রহ করে সঠিক বানানে বা অন্য কি-ওয়ার্ড দিয়ে চেষ্টা করুন।
@@ -314,11 +364,12 @@ export default function StudentManagement() {
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {currentStudents.map((student) => {
-                const studentName =
-                  student.profileData?.studentNameBn || student.name;
+                const profile = student.profileData || {};
+                const studentName = profile.studentNameBn || student.name;
                 const studentImage =
                   student.profileImage ||
                   `https://api.dicebear.com/7.x/initials/svg?seed=${student.name}`;
+                const isFeatured = profile?.isFeatured === true;
 
                 return (
                   <article
@@ -351,17 +402,33 @@ export default function StudentManagement() {
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => {
-                            setSelectedStudent(student);
-                            openEditModal(student);
-                          }}
-                          className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#0B5D3B] rounded-xl transition-all border border-neutral-100 cursor-pointer"
-                          title="তথ্য পরিবর্তন করুন"
-                        >
-                          <Edit size={14} />
-                        </button>
+                        <div className="flex gap-1.5 items-center">
+                          {/* 🔹 প্রফেশনাল কন্ডিশনাল ফিচার্ড টগল বোতাম (বাংলা টেক্সট) */}
+                          <button
+                            type="button"
+                            onClick={() => handleToggleStudentFeatured(profile._id || student._id, isFeatured, studentName)}
+                            className={`p-2 rounded-xl border transition-all flex items-center justify-center cursor-pointer ${
+                              isFeatured 
+                                ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600" 
+                                : "bg-neutral-50 border-neutral-100 text-neutral-400 hover:text-amber-500 hover:bg-amber-50/50"
+                            }`}
+                            title={isFeatured ? "হোমপেজে প্রদর্শিত" : "হোমপেজে দেখান"}
+                          >
+                            <Star size={13} className={isFeatured ? "fill-white" : ""} />
+                          </button>
+
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setSelectedStudent(student);
+                              openEditModal(student);
+                            }}
+                            className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#0B5D3B] rounded-xl transition-all border border-neutral-100 cursor-pointer"
+                            title="তথ্য পরিবর্তন করুন"
+                          >
+                            <Edit size={14} />
+                          </button>
+                        </div>
                       </div>
 
                       <div className="mt-5 pt-4 border-t border-slate-100 space-y-2.5 text-sm text-slate-600">
@@ -381,8 +448,8 @@ export default function StudentManagement() {
                         )}
                         <div className="flex items-center gap-2.5">
                           <GraduationCap className="h-4 w-4 text-slate-400 flex-shrink-0" />
-                          <span className="text-[10px] font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md uppercase tracking-wider">
-                            {student.profileData?.classLevel || "N/A"}
+                          <span className="text-xs font-black text-emerald-700 bg-emerald-50 px-2.5 py-0.5 rounded-md uppercase tracking-wider">
+                            {profile.classLevel || "N/A"}
                           </span>
                         </div>
                       </div>
@@ -478,7 +545,7 @@ export default function StudentManagement() {
           </nav>
         )}
 
-        {/* DETAILS VIEW MODAL (Redesigned with professional Emerald/White layout matching image_2ced7d.jpg) */}
+        {/* DETAILS VIEW MODAL */}
         <AnimatePresence>
           {selectedStudent && !isEditModalOpen && (
             <div
@@ -516,7 +583,7 @@ export default function StudentManagement() {
                 </div>
 
                 <div className="overflow-y-auto p-6 space-y-6">
-                  <div className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left">
+                  <div className="p-5 bg-neutral-50/50 border border-neutral-100 rounded-2xl flex flex-col sm:flex-row items-center sm:items-start gap-5 text-center sm:text-left relative">
                     <div className="relative h-20 w-20 rounded-2xl overflow-hidden bg-white border border-neutral-200 shrink-0 shadow-sm">
                       <Image
                         src={
@@ -571,7 +638,7 @@ export default function StudentManagement() {
                         </div>
                         <div className="flex items-start gap-2">
                           <span className="text-neutral-400 shrink-0 w-20 flex items-center gap-1">
-                            <Calendar size={12} /> ভর্তি সময়:
+                            <Calendar size={12} /> ভর্তি সময়:
                           </span>
                           <span className="text-neutral-700 font-medium">
                             {selectedStudent.createdAt
@@ -635,7 +702,7 @@ export default function StudentManagement() {
 
                   <div className="space-y-4">
                     <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
-                      अধ্যয়নরত কোর্সসমূহ (
+                      અধ্যয়নরত কোর্সসমূহ (
                       {selectedStudent.profileData?.enrolledCourses?.length ||
                         0}
                       )
@@ -666,6 +733,20 @@ export default function StudentManagement() {
                       Student DB_ID: {selectedStudent._id}
                     </div>
                     <div className="flex items-center gap-2">
+                      {/* 🔹 মোডাল বডির ভেতরের ডাইনামিক ফিচার্ড বোতাম ফিক্স */}
+                      <button
+                        type="button"
+                        onClick={() => handleToggleStudentFeatured(selectedStudent.profileData?._id || selectedStudent._id, selectedStudent.profileData?.isFeatured === true, selectedStudent.profileData?.studentNameBn || selectedStudent.name)}
+                        className={`px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 transition-all cursor-pointer border ${
+                          selectedStudent.profileData?.isFeatured
+                            ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600"
+                            : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50"
+                        }`}
+                      >
+                        <Star size={13} className={selectedStudent.profileData?.isFeatured ? "fill-white" : ""} />
+                        {selectedStudent.profileData?.isFeatured ? "হোমপেজে সচল" : "হোমপেজে দেখান"}
+                      </button>
+
                       <button
                         type="button"
                         onClick={() => openEditModal(selectedStudent)}
@@ -752,7 +833,7 @@ export default function StudentManagement() {
                     </div>
                     <div>
                       <label className="block text-xs font-bold text-neutral-500 mb-1.5">
-                        শিক্ষার্থীর নাম (বাংলা)
+                        শিক্ষার নাম (বাংলা)
                       </label>
                       <input
                         type="text"
@@ -762,8 +843,8 @@ export default function StudentManagement() {
                           setEditFormData({
                             ...editFormData,
                             studentNameBn: e.target.value,
-                          })
-                        }
+                        })
+                      }
                         placeholder="उदा: স্টুয়ার্ট হপকিন্স"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />

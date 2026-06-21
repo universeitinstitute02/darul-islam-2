@@ -178,7 +178,7 @@ function CourseDirectoryContent() {
               onClick={() => router.push("/education")}
               className="hover:text-emerald-600 transition-colors cursor-pointer"
             >
-              کোর্স ক্যাটাগরি
+              কোর্স ক্যাটাগরি
             </button>
             <ChevronRight className="w-3 h-3 text-slate-300" />
             <span className="text-emerald-600 font-medium truncate max-w-[150px] sm:max-w-none">

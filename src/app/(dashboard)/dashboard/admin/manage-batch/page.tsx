@@ -250,7 +250,7 @@ export default function AdminBatchManagement() {
   const isSubmitting = createMutation.isPending || updateMutation.isPending;
 
   return (
-    <div className="min-h-screen bg-[#F5F0E8]/40 p-6 md:p-10 font-sans">
+    <div className="min-h-screen bg-[#F5F0E8]/40 p-6 md:p-10">
       <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-4 border-b border-gray-200 pb-6 mb-8">
         <div>
           <h1 className="text-3xl font-black text-[#0B3D2E] mt-2 flex items-center gap-2">
@@ -285,7 +285,7 @@ export default function AdminBatchManagement() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-black/5 shadow-sm mb-6">
         <div>
-          <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+          <label className="text-[10px] md:text-xs font-medium text-gray-500 uppercase mb-1 block">
             কোর্স অনুযায়ী ফিল্টার
           </label>
           <select
@@ -302,7 +302,7 @@ export default function AdminBatchManagement() {
           </select>
         </div>
         <div>
-          <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+          <label className="text-[10px] md:text-xs font-medium text-gray-500 uppercase mb-1 block">
             অবস্থা (Status) ফিল্টার
           </label>
           <select

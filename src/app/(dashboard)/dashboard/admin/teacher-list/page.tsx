@@ -22,6 +22,7 @@ import {
   GraduationCap,
   Calendar,
   IdCard,
+  Star,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import { useSession } from "next-auth/react";
@@ -112,6 +113,63 @@ const TeacherList = () => {
     fetchTeachers();
     setCurrentPage(1);
   }, [fetchTeachers]);
+
+  // 🔹 সিনিয়র লেভেল ফিচার্ড টগল মেথড (বাংলা অ্যালার্ট ও লাইভ এপিআই সিঙ্ক)
+  const handleToggleFeatured = async (teacherProfileId: string, currentStatus: boolean, teacherName: string) => {
+    if (!token || !teacherProfileId) return;
+
+    const nextStatus = !currentStatus;
+
+    Swal.fire({
+      icon: "question",
+      title: nextStatus ? "হোমপেজে প্রদর্শন" : "হোমপেজ থেকে অপসারণ",
+      text: nextStatus 
+        ? `আপনি কি শিক্ষক ${teacherName}-কে মূল হোমপেজে ফিচার্ড হিসেবে প্রদর্শন করতে চান?`
+        : `আপনি কি শিক্ষক ${teacherName}-কে মূল হোমপেজের ফিচার্ড তালিকা থেকে বাদ দিতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: nextStatus ? "হ্যাঁ, ফিচার্ড করুন" : "হ্যাঁ, বাদ দিন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#0B5D3B",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await fetch(
+            `${process.env.NEXT_PUBLIC_API_URL}/teachers/featured/${teacherProfileId}`,
+            {
+              method: "PATCH",
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ isFeatured: nextStatus }),
+            }
+          );
+
+          if (res.ok) {
+            Swal.fire({
+              icon: "success",
+              title: "সফল হয়েছে",
+              text: nextStatus 
+                ? "শিক্ষক প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।" 
+                : "ফিচার্ড স্ট্যাটাস সফলভাবে বাতিল করা হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            fetchTeachers();
+          } else {
+            throw new Error("Featured update query sequence halting");
+          }
+        } catch (error) {
+          Swal.fire({
+            icon: "error",
+            title: "ব্যর্থ হয়েছে",
+            text: "স্ট্যাটাস আপডেট করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+            confirmButtonColor: "#0B5D3B",
+          });
+        }
+      }
+    });
+  };
 
   const handleApproveTeacher = async (
     teacherProfileId: string,
@@ -357,7 +415,7 @@ const TeacherList = () => {
   );
 
   return (
-    <div className="mt-4 md:mt-8 space-y-6 pb-12 px-2 md:px-0 font-sans">
+    <div className="mt-4 md:mt-8 space-y-6 pb-12 px-2 md:px-0">
       <div className="flex flex-col gap-6 bg-white p-6 rounded-[2.5rem] border border-neutral-100 shadow-sm">
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -489,6 +547,7 @@ const TeacherList = () => {
                 userContext.profileImage ||
                 `https://api.dicebear.com/7.x/avataaars/svg?seed=${teacherName}`;
               const isApproved = profile?.isApproved === true;
+              const isFeatured = profile?.isFeatured === true;
 
               return (
                 <motion.div
@@ -593,20 +652,38 @@ const TeacherList = () => {
                           {isApproved ? "Approved" : "Pending Verification"}
                         </span>
 
-                        {!isApproved && (
-                          <button
-                            type="button"
-                            onClick={() =>
-                              handleApproveTeacher(
-                                profile._id || teacher._id,
-                                teacherName,
-                              )
-                            }
-                            className="text-[11px] font-black text-white bg-amber-600 hover:bg-emerald-700 px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-all"
-                          >
-                            <UserPlus size={12} /> Approve Now
-                          </button>
-                        )}
+                        <div className="flex items-center gap-1.5">
+                          {/* 🔹 প্রফেশনাল কন্ডিশনাল ফিচার্ড টগল বোতাম (বাংলা টেক্সট) */}
+                          {isApproved && (
+                            <button
+                              type="button"
+                              onClick={() => handleToggleFeatured(profile._id || teacher._id, isFeatured, teacherName)}
+                              className={`text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-all flex items-center gap-1 shadow-2xs cursor-pointer ${
+                                isFeatured 
+                                  ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600" 
+                                  : "bg-white border-neutral-200 text-neutral-500 hover:bg-neutral-50"
+                              }`}
+                            >
+                              <Star size={11} className={isFeatured ? "fill-white" : ""} />
+                              {isFeatured ? "হোমপেজে সচল" : "হোমপেজে দেখান"}
+                            </button>
+                          )}
+
+                          {!isApproved && (
+                            <button
+                              type="button"
+                              onClick={() =>
+                                handleApproveTeacher(
+                                  profile._id || teacher._id,
+                                  teacherName,
+                                )
+                              }
+                              className="text-[11px] font-black text-white bg-amber-600 hover:bg-emerald-700 px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-all"
+                            >
+                              <UserPlus size={12} /> Approve Now
+                            </button>
+                          )}
+                        </div>
                       </div>
                     </div>
                   </div>
@@ -617,7 +694,7 @@ const TeacherList = () => {
                       onClick={() => openDetailsModal(teacher)}
                       className="flex-1 py-3 bg-white border border-neutral-100 rounded-2xl text-[#0B5D3B] hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 text-xs font-black flex items-center justify-center gap-2 cursor-pointer"
                     >
-                      <User size={14} /> ডিটেইলস
+                      <User size={14} /> বিস্তারিত
                     </button>
                     <button
                       type="button"
@@ -668,7 +745,7 @@ const TeacherList = () => {
         </div>
       )}
 
-      {/* DETAILED VIEW MODAL COMPONENT (Structured matching image_2ced7d.jpg format with professional emerald highlights) */}
+      {/* DETAILED VIEW MODAL COMPONENT */}
       <AnimatePresence>
         {isModalOpen && selectedTeacher && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -686,18 +763,17 @@ const TeacherList = () => {
               exit={{ opacity: 0, scale: 0.95, y: 20 }}
               className="bg-white rounded-[2rem] w-full max-w-3xl overflow-hidden shadow-2xl border border-neutral-100 relative z-10 max-h-[95vh] flex flex-col font-sans"
             >
-              {/* Top Title Action Header Ribbon */}
               <div className="p-5 px-6 border-b border-neutral-100 flex items-center justify-between bg-neutral-50/50">
                 <div className="flex items-center gap-2 text-neutral-800 font-black text-sm md:text-base">
                   <span className="p-1.5 bg-emerald-50 rounded-md text-[#0B5D3B]">
                     <UserCheck size={16} />
                   </span>
-                  শিক্ষক বৃত্তান্ত ও বিস্তারিত তথ্য
+                   can বৃত্তামূলক ও বিস্তারিত তথ্য
                 </div>
                 <button
                   type="button"
                   onClick={() => setIsModalOpen(false)}
-                  className="p-1.5 hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-neutral-600 transition-colors"
+                  className="p-1.5 cursor-pointer hover:bg-neutral-200 rounded-full text-neutral-400 hover:text-neutral-600 transition-colors"
                 >
                   <X size={16} />
                 </button>
@@ -709,7 +785,6 @@ const TeacherList = () => {
                 </div>
               ) : (
                 <div className="overflow-y-auto p-6 space-y-6">
-                  {/* Identity Header Plate Block */}
                   {(() => {
                     const profile =
                       selectedTeacher.profileData || selectedTeacher;
@@ -775,9 +850,7 @@ const TeacherList = () => {
                           </div>
                         </div>
 
-                        {/* Parameter Column Matrices */}
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-x-8 gap-y-6 pt-2">
-                          {/* Left Column Section: Communication Tracks */}
                           <div className="space-y-4">
                             <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
                               যোগাযোগের মাধ্যম
@@ -806,7 +879,7 @@ const TeacherList = () => {
                               </div>
                               <div className="flex items-start gap-2 text-xs font-bold">
                                 <span className="text-neutral-400 shrink-0 w-20 flex items-center gap-1">
-                                  <Calendar size={12} /> তৈরি সময়:
+                                  <Calendar size={12} /> তৈরি সময়:
                                 </span>
                                 <span className="text-neutral-700 font-medium">
                                   {selectedTeacher.createdAt
@@ -819,7 +892,6 @@ const TeacherList = () => {
                             </div>
                           </div>
 
-                          {/* Right Column Section: Professional Institutional Data */}
                           <div className="space-y-4">
                             <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
                               প্রাতিষ্ঠানিক ও শিক্ষাগত তথ্য
@@ -853,7 +925,6 @@ const TeacherList = () => {
                           </div>
                         </div>
 
-                        {/* Bottom Row Management Action Footer Strip within Modal Context */}
                         <div className="pt-6 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-3 bg-neutral-50/30 p-4 -mx-6 -mb-6">
                           <div className="text-[10px] font-mono text-neutral-400">
                             Teacher DB_ID:{" "}
@@ -936,7 +1007,7 @@ const TeacherList = () => {
                 <button
                   type="button"
                   onClick={() => setIsEditModalOpen(false)}
-                  className="absolute right-5 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors"
+                  className="absolute right-5 top-1/2 -translate-y-1/2 p-2 bg-white/10 hover:bg-white/20 rounded-full text-white transition-colors cursor-pointer"
                 >
                   <X size={16} />
                 </button>
@@ -1109,13 +1180,13 @@ const TeacherList = () => {
                   <button
                     type="button"
                     onClick={() => setIsEditModalOpen(false)}
-                    className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all text-center"
+                    className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all text-center cursor-pointer"
                   >
                     বাতিল
                   </button>
                   <button
                     type="submit"
-                    className="flex-1 py-3 bg-[#0B5D3B] text-white rounded-xl text-xs font-black hover:bg-[#0c462a] transition-all shadow-md flex items-center justify-center gap-2"
+                    className="flex-1 py-3 bg-[#0B5D3B] text-white rounded-xl text-xs font-black hover:bg-[#0c462a] transition-all shadow-md flex items-center justify-center gap-2 cursor-pointer"
                   >
                     <CheckCircle2 size={14} /> তথ্য সংরক্ষণ করুন
                   </button>

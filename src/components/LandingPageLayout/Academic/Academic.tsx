@@ -1,31 +1,73 @@
 "use client";
+
 import React from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Swiper, SwiperSlide } from "swiper/react";
 import { Navigation, Pagination } from "swiper/modules";
-import {
-  ChevronLeft,
-  ChevronRight,
-  BookOpen,
-  BookMarked,
-  PenTool,
-  GraduationCap,
-  Library,
-  Languages,
-  UserCheck,
-  HeartHandshake,
-} from "lucide-react";
+import { ChevronLeft, ChevronRight, BookOpen, ShieldAlert } from "lucide-react";
+import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
+import { RenderIcon } from "@/src/config/icons";
+
+import "swiper/css";
+import "swiper/css/pagination";
+import "swiper/css/navigation";
+
+const AcademicSkeleton = () => (
+  <div className="flex flex-col items-center text-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] h-full animate-pulse w-full">
+    <div className="w-14 h-14 md:w-16 md:h-16 rounded-xl bg-slate-100 shrink-0" />
+    <div className="space-y-2 w-full flex flex-col items-center">
+      <div className="h-4 bg-slate-200 rounded w-3/4" />
+      <div className="h-3 bg-slate-100 rounded w-1/2" />
+    </div>
+  </div>
+);
+
+interface ICategory {
+  _id: string;
+  name: string;
+  image: string;
+  description?: string;
+  isActive: boolean;
+  subCategories: any[];
+  icon?: string;
+}
 
 const Academic = () => {
-  const departments = [
-    { icon: <BookOpen />, title: "নূরানী বিভাগ", sub: "প্রাথমিক শিক্ষা" },
-    { icon: <BookMarked />, title: "হিফজ বিভাগ", sub: "কুরআন মুখস্থ" },
-    { icon: <PenTool />, title: "কিতাব বিভাগ", sub: "উচ্চতর শিক্ষা" },
-    { icon: <GraduationCap />, title: "সাধারণ বিভাগ", sub: "আধুনিক শিক্ষা" },
-    { icon: <Library />, title: "মক্তব বিভাগ", sub: "বুনিয়াদী তালীম" },
-    { icon: <Languages />, title: "ভাষা শিক্ষা", sub: "আরবি ও ইংরেজি" },
-    { icon: <UserCheck />, title: "বয়স্ক শিক্ষা", sub: "দ্বীনি কোর্স" },
-    { icon: <HeartHandshake />, title: "খিদমত শাখা", sub: "সমাজ সেবা" },
-  ];
+  const axiosSecure = useAxiosSecure();
+
+  const {
+    data: categories = [],
+    isLoading,
+    isError,
+  } = useQuery<ICategory[]>({
+    queryKey: ["homeAcademicCategoriesList"],
+    queryFn: async () => {
+      const response = await axiosSecure.get("/categories");
+      const fetchedData = response.data?.data || response.data || [];
+      return fetchedData.filter((cat: ICategory) => cat.isActive !== false);
+    },
+    staleTime: 15 * 60 * 1000,
+    gcTime: 45 * 60 * 1000,
+  });
+
+  const getSubTitleFallback = (cat: ICategory) => {
+    if (cat.description && cat.description.trim() !== "") {
+      const words = cat.description.trim().split(/\s+/);
+      if (words.length <= 4) return cat.description;
+      return words.slice(0, 4).join(" ") + "...";
+    }
+    return `${cat.subCategories?.length || 0}টি উপ-বিভাগ`;
+  };
+
+  if (isError) {
+    return (
+      <div className="max-w-7xl mx-auto px-5 py-4" role="alert">
+        <div className="bg-rose-50/60 border border-rose-100 rounded-2xl p-5 text-center text-rose-700 font-bold text-sm flex items-center justify-center gap-2 max-w-md mx-auto">
+          <ShieldAlert size={16} /> একাডেমিক বিভাগ মডিউল লোড করা সম্ভব হয়নি।
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="px-5">
@@ -38,74 +80,109 @@ const Academic = () => {
         </div>
 
         <div className="relative px-2 md:px-10">
-          <Swiper
-            modules={[Navigation, Pagination]}
-            loop={false}
-            navigation={{
-              nextEl: ".next-btn-academic",
-              prevEl: ".prev-btn-academic",
-            }}
-            pagination={{
-              clickable: true,
-              el: ".academic-pagination",
-            }}
-            breakpoints={{
-              320: { slidesPerView: 2, spaceBetween: 12 },
-              480: { slidesPerView: 2, spaceBetween: 14 },
-              640: { slidesPerView: 2, spaceBetween: 18 },
-              1024: { slidesPerView: 5, spaceBetween: 20 },
-              1280: { slidesPerView: 6, spaceBetween: 20 },
-            }}
-            className="!p-4 !-m-4"
-          >
-            {departments.map((d, i) => (
-              <SwiperSlide key={i} className="h-auto !py-4">
-                {" "}
-                {/* কার্ডের চারপাশের স্পেস যাতে শ্যাডো দেখা যায় */}
-                <div className="flex flex-col items-center text-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(22,163,74,0.12)] hover:border-green-200 transition-all duration-500 h-full">
-                  <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl bg-green-50 text-green-700 transition-colors duration-500 group-hover:bg-green-600 group-hover:text-white">
-                    {React.cloneElement(d.icon, { size: 28 })}
-                  </div>
-                  <div>
-                    <p className="text-sm md:text-base font-bold text-gray-800 leading-tight">
-                      {d.title}
-                    </p>
-                    <p className="text-[10px] md:text-xs text-gray-500 mt-1 font-medium">
-                      {d.sub}
-                    </p>
-                  </div>
+          {/* 🎯 সিনিয়র আলটিমেট ফিক্স: লোডিং টাইমে প্রথম মিলি-সেকেন্ডের বিগ কার্ড জাম্প এরর এড়াতে CSS রেস্পনসিভ গ্রিড কন্ট্রোল ইনজেক্ট করা হলো */}
+          {isLoading ? (
+            <div className="grid grid-cols-2 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 xl:grid-cols-6 gap-4 p-4">
+              {[...Array(6)].map((_, idx) => (
+                <div key={idx} className="w-full h-auto">
+                  <AcademicSkeleton />
                 </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+              ))}
+            </div>
+          ) : categories && categories.length > 0 ? (
+            <Swiper
+              modules={[Navigation, Pagination]}
+              loop={categories.length > 4}
+              navigation={{
+                nextEl: ".next-btn-academic",
+                prevEl: ".prev-btn-academic",
+              }}
+              pagination={{
+                clickable: true,
+                el: ".academic-pagination",
+              }}
+              breakpoints={{
+                320: { slidesPerView: 2, spaceBetween: 12 },
+                480: { slidesPerView: 2, spaceBetween: 14 },
+                640: { slidesPerView: 2, spaceBetween: 18 },
+                1024: { slidesPerView: 5, spaceBetween: 20 },
+                1280: { slidesPerView: 6, spaceBetween: 20 },
+              }}
+              className="!p-4 !-m-4"
+            >
+              {categories.map((cat: ICategory) => (
+                <SwiperSlide key={cat._id} className="h-auto !py-4">
+                  <div className="flex flex-col items-center text-center gap-4 p-5 bg-white rounded-2xl border border-gray-100 shadow-[0_4px_20px_rgba(0,0,0,0.05)] hover:shadow-[0_8px_30px_rgba(22,163,74,0.12)] hover:border-green-200 transition-all duration-500 h-full group/item">
+                    <div className="flex items-center justify-center w-14 h-14 md:w-16 md:h-16 rounded-xl bg-green-50 text-green-700 transition-colors duration-500 group-hover/item:bg-green-600 group-hover/item:text-white overflow-hidden relative">
+                      {cat.image && cat.image.trim() !== "" && !cat.icon ? (
+                        <img
+                          src={cat.image}
+                          alt={cat.name}
+                          className="w-full h-full object-cover rounded-xl"
+                        />
+                      ) : (
+                        <RenderIcon
+                          name={cat.icon || "BookOpen"}
+                          className="w-7 h-7"
+                        />
+                      )}
+                    </div>
+
+                    <div>
+                      <p className="text-sm md:text-base font-bold text-gray-800 leading-tight truncate max-w-[120px] md:max-w-[150px]">
+                        {cat.name}
+                      </p>
+                      <p className="text-[10px] md:text-xs text-gray-500 mt-1 font-medium line-clamp-1">
+                        {getSubTitleFallback(cat)}
+                      </p>
+                    </div>
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          ) : (
+            <div className="bg-white rounded-2xl p-8 text-center border border-dashed border-slate-200">
+              <p className="text-xs text-slate-400 italic">
+                কোনো একাডেমিক বিভাগ সচল পাওয়া যায়নি।
+              </p>
+            </div>
+          )}
 
           {/* Navigation Buttons */}
-          <button className="prev-btn-academic absolute top-1/2 -left-2 md:-left-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20">
+          <button className="prev-btn-academic absolute top-1/2 -left-2 md:-left-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20 cursor-pointer active:scale-95">
             <ChevronLeft size={22} />
           </button>
-          <button className="next-btn-academic absolute top-1/2 -right-2 md:-right-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20">
+          <button className="next-btn-academic absolute top-1/2 -right-2 md:-right-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20 cursor-pointer active:scale-95">
             <ChevronRight size={22} />
           </button>
         </div>
 
         {/* Pagination Dot Container - Center aligned */}
-        <div className="academic-pagination !flex justify-center items-center gap-1 mt-8 !static"></div>
+        <div className="w-full flex justify-center mt-8">
+          <div className="academic-pagination flex justify-center items-center gap-1"></div>
+        </div>
+
         <style jsx global>{`
           .academic-pagination {
-            width: 100% !important;
-            display: flex !important;
-            justify-content: center !important;
+            width: auto !important;
+            display: inline-flex !important;
+            position: relative !important;
+            inset: unset !important;
+            transform: none !important;
+            margin: 0 auto !important;
           }
           .academic-pagination .swiper-pagination-bullet {
             margin: 0 4px !important;
             background: #d1d5db;
             opacity: 1;
+            width: 8px;
+            height: 8px;
+            transition: all 0.3s ease;
           }
           .academic-pagination .swiper-pagination-bullet-active {
             background: #16a34a !important;
             width: 24px !important;
             border-radius: 12px !important;
-            transition: all 0.3s ease;
           }
         `}</style>
       </div>
