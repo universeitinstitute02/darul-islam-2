@@ -22,7 +22,7 @@ import {
 
 export default function Dashboard() {
   return (
-    <div className="min-h-screen bg-gray-50 p-4 md:p-6 font-sans text-gray-800 antialiased selection:bg-emerald-100">
+    <div className="min-h-screen bg-gray-50 p-4 md:p-6 text-gray-800 antialiased selection:bg-emerald-100">
       <div className="max-w-4xl mx-auto space-y-6">
         {/* --- Profile Section --- */}
         <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100 relative overflow-hidden">

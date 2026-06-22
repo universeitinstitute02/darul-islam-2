@@ -165,8 +165,8 @@ export default function DashboardLayout({
       icon: Bell,
     },
     {
-      name: "সকল সদস্যবৃন্দ",
-      href: "/dashboard/teacher/all-users",
+      name: "আমার শিক্ষার্থী",
+      href: "/dashboard/teacher/my-students",
       icon: Users,
     },
     {

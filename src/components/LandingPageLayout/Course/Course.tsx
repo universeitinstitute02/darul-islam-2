@@ -241,10 +241,10 @@ export default function HomeFeaturedCourses() {
               })}
             </Swiper>
 
-            <button className="prev-btn-courses absolute top-1/2 -left-2 md:-left-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-[#0B5D3B] rounded-full shadow-md hover:bg-[#0B5D3B] hover:text-white transition-all disabled:opacity-20 cursor-pointer">
+            <button className="prev-btn-courses absolute top-1/2 -left-2 md:-left-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20 cursor-pointer">
               <ChevronLeft size={22} />
             </button>
-            <button className="next-btn-courses absolute top-1/2 -right-2 md:-right-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-[#0B5D3B] rounded-full shadow-md hover:bg-[#0B5D3B] hover:text-white transition-all disabled:opacity-20 cursor-pointer">
+            <button className="next-btn-courses absolute top-1/2 -right-2 md:-right-4 -translate-y-10 z-10 w-10 h-10 flex items-center justify-center bg-white border border-green-100 text-green-600 rounded-full shadow-md hover:bg-green-600 hover:text-white transition-all disabled:opacity-20 cursor-pointer">
               <ChevronRight size={22} />
             </button>
 
@@ -302,7 +302,7 @@ export default function HomeFeaturedCourses() {
           transition: all 0.3s ease;
         }
         .course-swiper-pagination .swiper-pagination-bullet-active {
-          background: #0b5d3b !important;
+          background: #4EA44B !important;
           width: 24px !important;
           border-radius: 12px !important;
         }

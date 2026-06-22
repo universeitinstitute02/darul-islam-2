@@ -48,7 +48,7 @@ interface EnrollmentRequest {
   _id: string;
   student: Student;
   course: Course;
-  batch: Batch;
+  batch: Batch | null; // 🎯 টাইপ ফিক্স: ব্যাচ নাল হতে পারে
   paymentDetails: {
     senderName: string;
     bkashNumber: string;
@@ -71,7 +71,7 @@ export default function TeacherAssign() {
   const [selectedBatchId, setSelectedBatchId] = useState<string>("");
   const [selectedTeacherId, setSelectedTeacherId] = useState<string>("");
 
-  // 🔹 ১. মেইন লিস্ট এপিআই কুয়েরি: কারেন্ট ফিল্টার ট্যাবের ডাটা নিখুঁতভাবে রিলোড করবে
+  // 🔹 ১. মেইন লিস্ট এপিআই কুয়েরি
   const {
     data: enrollments = [],
     isLoading: enrollmentsLoading,
@@ -87,7 +87,7 @@ export default function TeacherAssign() {
     },
   });
 
-  // 🔹 ২. প্রফেশনাল কাউন্টার আর্কিটেকচার: ৩টি এপিআই কল প্যারালালি ব্যাকগ্রাউন্ডে হ্যান্ডেল করা হলো (No more status=all bug)
+  // 🔹 ২. কাউন্টার ড্যাশবোর্ড কুয়েরিসমূহ
   const { data: pendingCountData = [], refetch: refetchPending } = useQuery({
     queryKey: ["countPending"],
     queryFn: async () => {
@@ -118,7 +118,6 @@ export default function TeacherAssign() {
     },
   });
 
-  // 🔹 সার্চ কুয়েরির ওপর ভিত্তি করে লাইভ ফিল্টার্ড কাউন্ট ক্যালকুলেশন মেথড
   const getTabCount = (tabStatus: "pending" | "approved" | "rejected") => {
     const targetData =
       tabStatus === "pending"
@@ -139,6 +138,7 @@ export default function TeacherAssign() {
     ).length;
   };
 
+  // 🔹 ৩. ডাইনামিক ব্যাচ কুয়েরি
   const { data: batches = [] } = useQuery({
     queryKey: ["courseBatches", selectedRequest?.course?._id],
     queryFn: async (): Promise<Batch[]> => {
@@ -148,9 +148,10 @@ export default function TeacherAssign() {
       );
       return response.data.data as Batch[];
     },
-    enabled: !!selectedRequest?.course?._id,
+    enabled: !!selectedRequest && !!selectedRequest?.course?._id,
   });
 
+  // 🔹 ৪. টিচার লিস্ট কুয়েরি
   const { data: teachers = [] } = useQuery({
     queryKey: ["teachersList"],
     queryFn: async (): Promise<Teacher[]> => {
@@ -162,15 +163,24 @@ export default function TeacherAssign() {
     enabled: !!selectedRequest,
   });
 
+  // 🎯 মেগা ফিক্স লক: ডিফেন্সিভ চেইনিং প্রটেকশন (যদি ওল্ড রিকোয়েস্টে ব্যাচ নাল বা আনডিফাইন্ড থাকে)
   useEffect(() => {
-    if (batches.length > 0) {
-      setSelectedBatchId(batches[0]._id);
-    } else if (selectedRequest?.batch?._id) {
-      setSelectedBatchId(selectedRequest.batch._id);
+    if (selectedRequest) {
+      if (batches && batches.length > 0) {
+        setSelectedBatchId(batches[0]._id);
+      } else if (
+        selectedRequest?.batch &&
+        typeof selectedRequest.batch === "object" &&
+        "_id" in selectedRequest.batch &&
+        selectedRequest.batch._id
+      ) {
+        setSelectedBatchId(selectedRequest.batch._id);
+      } else {
+        setSelectedBatchId("");
+      }
     }
   }, [batches, selectedRequest]);
 
-  // 🔹 গ্লোবাল রিফ্রেশার মেথড
   const refreshAllStates = () => {
     refetchEnrollments();
     refetchPending();
@@ -191,14 +201,13 @@ export default function TeacherAssign() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEnrollments"] });
       refreshAllStates();
-      Swal.fire(
-        "অনুমোদিত",
-        "এনরোলমেন্ট সফলভাবে অনুমোদিত হয়েছে এবং আসন বরাদ্দ করা হয়েছে।",
-        "success",
-      );
-      setSelectedRequest(null);
-      setSelectedTeacherId("");
-      setSelectedBatchId("");
+      Swal.fire({
+        icon: "success",
+        title: "অনুমোদিত হয়েছে!",
+        text: "এনরোলমেন্ট সফলভাবে অনুমোদিত হয়েছে এবং আসন বরাদ্দ করা হয়েছে।",
+        confirmButtonColor: "#0B5D3B",
+      });
+      closeModalHandler();
     },
     onError: (error: any) => {
       Swal.fire(
@@ -215,11 +224,12 @@ export default function TeacherAssign() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminEnrollments"] });
       refreshAllStates();
-      Swal.fire(
-        "বাতিলকৃত",
-        "এনরোলমেন্ট রিকোয়েস্টটি বাতিল করা হয়েছে।",
-        "success",
-      );
+      Swal.fire({
+        icon: "success",
+        title: "বাতিলকৃত!",
+        text: "এনরোলমেন্ট রিকোয়েস্টটি বাতিল করা হয়েছে।",
+        confirmButtonColor: "#0B5D3B",
+      });
     },
     onError: (error: any) => {
       Swal.fire(
@@ -232,11 +242,20 @@ export default function TeacherAssign() {
 
   const openAssignModal = (request: EnrollmentRequest) => {
     setSelectedRequest(request);
+    setSelectedBatchId("");
+    setSelectedTeacherId("");
+  };
+
+  const closeModalHandler = () => {
+    setSelectedRequest(null);
+    setSelectedTeacherId("");
+    setSelectedBatchId("");
   };
 
   const handleSaveAssign = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!selectedRequest) return;
+    if (!selectedRequest || !selectedRequest.course?._id) return;
+
     if (!selectedBatchId) {
       return Swal.fire(
         "নির্দেশনা",
@@ -303,13 +322,13 @@ export default function TeacherAssign() {
                 placeholder="কোর্স, নাম অথবা TxnID দিয়ে খুঁজুন..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none transition-all shadow-xs"
+                className="w-full h-11 pl-10 pr-4 py-2.5 bg-white border border-gray-200 rounded-xl text-xs font-bold text-gray-700 outline-none transition-all shadow-xs"
               />
             </div>
             <button
               onClick={refreshAllStates}
               disabled={enrollmentsFetching}
-              className="p-3 cursor-pointer bg-white border border-gray-200 text-gray-600 rounded-xl active:scale-95 transition-all shadow-xs w-full sm:w-auto flex items-center justify-center"
+              className="p-3 cursor-pointer bg-white border border-gray-200 text-gray-600 rounded-xl active:scale-95 transition-all shadow-xs w-full sm:w-auto flex items-center justify-center h-11"
             >
               <RefreshCw
                 className={
@@ -321,7 +340,7 @@ export default function TeacherAssign() {
           </div>
         </div>
 
-        {/* 🔹 প্রফেশনাল মিনি কাউন্টার ড্যাশবোর্ড উইজেট - (১00% ইন্ডিপেনডেন্ট ও রিয়েল ডাটা সিনক্রোনাইজড) */}
+        {/* Counter Dashboard */}
         <div className="grid grid-cols-3 gap-4 mb-6 max-w-xl">
           <div className="bg-white px-4 py-3 rounded-2xl border border-black/5 shadow-3xs flex flex-col justify-center">
             <span className="text-[10px] md:text-xs font-bold text-amber-600 uppercase tracking-wider">
@@ -349,7 +368,7 @@ export default function TeacherAssign() {
           </div>
         </div>
 
-        {/* 🔹 পিওর ক্লিন ট্যাব বাটন সেকশন */}
+        {/* Tab section */}
         <div className="flex items-center gap-2 bg-white p-2 rounded-2xl border border-black/5 shadow-sm mb-6 max-w-md">
           {(["pending", "approved", "rejected"] as const).map((tab) => (
             <button
@@ -440,7 +459,7 @@ export default function TeacherAssign() {
                           কোর্স
                         </p>
                         <p className="text-xs font-black text-gray-700 mt-0.5 line-clamp-1">
-                          {item.course?.title}
+                          {item.course?.title || "Unknown Course"}
                         </p>
                       </div>
                     </div>
@@ -454,7 +473,7 @@ export default function TeacherAssign() {
                           টার্গেট ব্যাচ
                         </p>
                         <p className="text-xs font-black text-gray-700 mt-0.5 line-clamp-1">
-                          {item.batch?.batchName || "Not Assigned"}
+                          {item.batch?.batchName || "Not Assigned Yet"}
                         </p>
                       </div>
                     </div>
@@ -464,25 +483,25 @@ export default function TeacherAssign() {
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-gray-400">প্রেরক (Sender):</span>
                       <span className="text-gray-700">
-                        {item.paymentDetails.senderName}
+                        {item.paymentDetails?.senderName || "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-gray-400">বিকাশ নম্বর:</span>
                       <span className="text-gray-700">
-                        {item.paymentDetails.bkashNumber}
+                        {item.paymentDetails?.bkashNumber || "N/A"}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs font-bold">
                       <span className="text-gray-400">TxnID:</span>
                       <span className="text-green-800 font-mono tracking-wide uppercase">
-                        {item.paymentDetails.transactionId}
+                        {item.paymentDetails?.transactionId}
                       </span>
                     </div>
                     <div className="flex justify-between text-xs font-bold bg-green-50/40 p-2 rounded-xl">
                       <span className="text-gray-500">পরিশোধিত অংক:</span>
                       <span className="text-green-900 font-black">
-                        {item.paymentDetails.amountPaid} ৳
+                        {item.paymentDetails?.amountPaid} ৳
                       </span>
                     </div>
                   </div>
@@ -517,14 +536,15 @@ export default function TeacherAssign() {
         )}
       </div>
 
+      {/* 🎯 মডাল সাবমিশন ভিউ (১00% সিকিউর অবজেক্ট ফলব্যাক গার্ড) */}
       <AnimatePresence>
-        {selectedRequest && (
+        {selectedRequest && selectedRequest.course && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               exit={{ opacity: 0 }}
-              onClick={() => setSelectedRequest(null)}
+              onClick={closeModalHandler}
               className="absolute inset-0 bg-black/50 backdrop-blur-sm"
             />
 
@@ -543,7 +563,7 @@ export default function TeacherAssign() {
                   </p>
                 </div>
                 <button
-                  onClick={() => setSelectedRequest(null)}
+                  onClick={closeModalHandler}
                   className="p-2 cursor-pointer bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
                 >
                   <X className="w-4 h-4" />
@@ -553,18 +573,21 @@ export default function TeacherAssign() {
               <div className="p-6 space-y-4">
                 <div className="bg-gray-50 p-4 rounded-3xl border border-slate-100 space-y-1.5 text-xs font-bold text-gray-600">
                   <p>
+                    {" "}
                     শিক্ষার্থী:{" "}
                     <span className="text-gray-800 font-black">
-                      {selectedRequest.student?.name}
+                      {selectedRequest.student?.name || "Unknown"}
                     </span>
                   </p>
                   <p>
+                    {" "}
                     কোর্স:{" "}
                     <span className="text-gray-800 font-black">
-                      {selectedRequest.course?.title}
+                      {selectedRequest.course?.title || "Unknown"}
                     </span>
                   </p>
                   <p>
+                    {" "}
                     পেমেন্ট পরিমাণ:{" "}
                     <span className="text-green-800 font-black">
                       ৳{selectedRequest.paymentDetails?.amountPaid}
@@ -584,18 +607,20 @@ export default function TeacherAssign() {
                       required
                     >
                       <option value="">কোনো ব্যাচ সিলেক্ট করা নেই</option>
-                      {batches.map((batch) => (
-                        <option key={batch._id} value={batch._id}>
-                          {batch.batchName} — (আসন:{" "}
-                          {batch.enrolledStudents?.length}/{batch.maxSeats})
-                        </option>
-                      ))}
+                      {batches &&
+                        batches.map((batch) => (
+                          <option key={batch._id} value={batch._id}>
+                            {batch.batchName} — (আসন:{" "}
+                            {batch.enrolledStudents?.length || 0}/
+                            {batch.maxSeats})
+                          </option>
+                        ))}
                     </select>
                   </div>
 
                   <div>
                     <label className="block text-[10px] font-bold text-gray-400 uppercase mb-1">
-                      শিক্ষক নির্বাচন করুন (Select Instructor)
+                      शिक्षक নির্বাচন করুন (Select Instructor)
                     </label>
                     <select
                       value={selectedTeacherId}
@@ -605,19 +630,22 @@ export default function TeacherAssign() {
                       <option value="">
                         শিক্ষক নিযুক্ত ছাড়া রাখুন / ব্যাচের ডিফল্ট
                       </option>
-                      {teachers.map((teacher) => (
-                        <option key={teacher._id} value={teacher._id}>
-                          {teacher.name}{" "}
-                          {teacher.expertise ? `— (${teacher.expertise})` : ""}
-                        </option>
-                      ))}
+                      {teachers &&
+                        teachers.map((teacher) => (
+                          <option key={teacher._id} value={teacher._id}>
+                            {teacher.name}{" "}
+                            {teacher.expertise
+                              ? `— (${teacher.expertise})`
+                              : ""}
+                          </option>
+                        ))}
                     </select>
                   </div>
 
                   <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-6">
                     <button
                       type="button"
-                      onClick={() => setSelectedRequest(null)}
+                      onClick={closeModalHandler}
                       className="w-1/3 cursor-pointer py-3.5 border border-gray-200 text-gray-500 font-bold rounded-xl hover:bg-gray-50 transition-all text-xs"
                     >
                       বাতিল (Cancel)

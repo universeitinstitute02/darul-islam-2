@@ -9,13 +9,16 @@ import {
   Camera,
   Save,
   ShieldCheck,
-  Globe,
   BookOpen,
   Briefcase,
   GraduationCap,
+  Lock,
+  Eye,
+  EyeOff,
   Sparkles,
 } from "lucide-react";
 import { motion } from "framer-motion";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import useUserRole from "@/src/app/hooks/useUserRole";
@@ -23,6 +26,7 @@ import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 const ProfileSettings = () => {
   const axiosSecure = useAxiosSecure();
+  const queryClient = useQueryClient();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const { user, role, isLoading: isUserLoading } = useUserRole();
@@ -30,34 +34,50 @@ const ProfileSettings = () => {
   const [activeTab, setActiveTab] = useState("profile");
   const [loading, setLoading] = useState<boolean>(false);
 
+  // 🌐 সাধারণ তথ্যসমূহ স্টেট
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [imagePreview, setImagePreview] = useState<string>("");
 
+  // 🎓 রোল-ভিত্তিক তথ্যসমূহ স্টেট
   const [studentNameBn, setStudentNameBn] = useState("");
   const [classLevel, setClassLevel] = useState("");
   const [teacherNameBn, setTeacherNameBn] = useState("");
   const [designation, setDesignation] = useState("");
-  const [department, setDepartment] = useState("");
+  const [biography, setBiography] = useState("");
+  const [experience, setExperience] = useState("");
 
+  // 🔒 পাসওয়ার্ড পরিবর্তন স্টেটসমূহ
+  const [oldPassword, setOldPassword] = useState("");
+  const [newPassword, setNewPassword] = useState("");
+  const [confirmPassword, setConfirmPassword] = useState("");
+  const [showOldPassword, setShowOldPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [passwordLoading, setPasswordLoading] = useState(false);
+
+  // 🎯 আলটিমেট ফিক্স: ডাইনামিক চেইন ভ্যালু ফলব্যাক (যদি ডাটা সরাসরি প্রোফাইলে বা সাব-প্রোফাইলে থাকে)
   useEffect(() => {
     if (user) {
       setName(user.name || "");
       setPhone(user.phone || "");
-      setImagePreview(user.profileImage || "");
+      setImagePreview(user.profileImage || user.profile?.profileImage || "");
 
+      // ১. স্টুডেন্ট ডাটা প্রি-ফিল
       if (role === "student") {
-        setStudentNameBn(user.profile?.studentNameBn || "");
-        setClassLevel(user.profile?.classLevel || "");
-      } else if (role === "teacher") {
-        setTeacherNameBn(user.profile?.teacherNameBn || "");
-        setDesignation(user.profile?.designation || "");
+        const studentData = user.profile?.profile || user.profile || user;
+        setStudentNameBn(studentData.studentNameBn || "");
+        setClassLevel(studentData.classLevel || "");
+      }
+      // ২. টিচার ডাটা প্রি-ফিল (মাল্টি-লেয়ার চেইনিং ফলব্যাক লক)
+      else if (role === "teacher") {
+        const teacherData = user.profile?.profile || user.profile || user;
 
-        const deptData = user.profile?.department;
-        setDepartment(
-          typeof deptData === "object" ? deptData?.name : deptData || "",
-        );
+        setTeacherNameBn(teacherData.teacherNameBn || user.teacherNameBn || "");
+        setDesignation(teacherData.designation || user.designation || "");
+        setBiography(teacherData.biography || user.biography || "");
+        setExperience(teacherData.experience || user.experience || "");
       }
     }
   }, [user, role]);
@@ -78,7 +98,15 @@ const ProfileSettings = () => {
     }
   };
 
+  // 🔹 প্রোফাইল তথ্য সংরক্ষণ হ্যান্ডলার
   const handleProfileSubmit = async () => {
+    if (!name.trim() || !phone.trim()) {
+      return Swal.fire({
+        icon: "warning",
+        title: "নাম এবং ফোন নম্বর দেওয়া আবশ্যক",
+      });
+    }
+
     setLoading(true);
     try {
       const formData = new FormData();
@@ -93,7 +121,7 @@ const ProfileSettings = () => {
       if (role === "student") {
         profileDetails = { studentNameBn, classLevel };
       } else if (role === "teacher") {
-        profileDetails = { teacherNameBn, designation, department };
+        profileDetails = { teacherNameBn, designation, biography, experience };
       }
 
       formData.append("profileData", JSON.stringify(profileDetails));
@@ -109,6 +137,9 @@ const ProfileSettings = () => {
           text: "আপনার প্রোফাইলের তথ্য সফলভাবে সংরক্ষণ করা হয়েছে।",
           confirmButtonColor: "#0B5D3B",
         });
+        // 🎯 তানস্ট্যাক কুয়েরি ক্যাশ রিফ্রেশ
+        queryClient.invalidateQueries({ queryKey: ["userRoleProfile"] });
+        queryClient.invalidateQueries({ queryKey: ["userProfile"] });
       }
     } catch (err: any) {
       console.error("Profile update error:", err);
@@ -122,6 +153,65 @@ const ProfileSettings = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  // 🔹 পাসওয়ার্ড পরিবর্তন হ্যান্ডলার
+  const handlePasswordSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+
+    if (!oldPassword || !newPassword || !confirmPassword) {
+      return Swal.fire({
+        icon: "warning",
+        title: "ত্রুটি",
+        text: "সবগুলো পাসওয়ার্ড ফিল্ড পূরণ করুন।",
+      });
+    }
+
+    if (newPassword.length < 6) {
+      return Swal.fire({
+        icon: "warning",
+        title: "ত্রুটি",
+        text: "নতুন পাসওয়ার্ডটি সর্বনিম্ন ৬ অক্ষরের হতে হবে।",
+      });
+    }
+
+    if (newPassword !== confirmPassword) {
+      return Swal.fire({
+        icon: "error",
+        title: "ত্রুটি",
+        text: "নতুন পাসওয়ার্ড দুটি মিলছে না।",
+      });
+    }
+
+    setPasswordLoading(true);
+    try {
+      const res = await axiosSecure.put("/auth/change-password", {
+        oldPassword,
+        newPassword,
+      });
+
+      if (res.status === 200) {
+        Swal.fire({
+          icon: "success",
+          title: "পাসওয়ার্ড পরিবর্তিত হয়েছে!",
+          text: "আপনার অ্যাকাউন্টের নিরাপত্তা পাসওয়ার্ড সফলভাবে আপডেট হয়েছে।",
+          confirmButtonColor: "#0B5D3B",
+        });
+        setOldPassword("");
+        setNewPassword("");
+        setConfirmPassword("");
+      }
+    } catch (err: any) {
+      Swal.fire({
+        icon: "error",
+        title: "পাসওয়ার্ড পরিবর্তন ব্যর্থ!",
+        text:
+          err.response?.data?.message || "আপনার বর্তমান পাসওয়ার্ডটি সঠিক নয়।",
+        confirmButtonColor: "#d33",
+      });
+    } finally {
+      setPasswordLoading(false);
     }
   };
 
@@ -151,11 +241,11 @@ const ProfileSettings = () => {
           </p>
         </div>
 
-        {/* Settings Tabs - Full Responsive */}
+        {/* Settings Tabs */}
         <div className="flex gap-2 p-1 bg-neutral-100 rounded-2xl mb-8 w-full sm:w-fit overflow-x-auto">
           <button
             onClick={() => setActiveTab("profile")}
-            className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
+            className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "profile"
                 ? "bg-white text-[#0B5D3B] shadow-sm"
                 : "text-neutral-500 hover:text-neutral-700"
@@ -165,7 +255,7 @@ const ProfileSettings = () => {
           </button>
           <button
             onClick={() => setActiveTab("security")}
-            className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap ${
+            className={`flex-1 sm:flex-none px-4 md:px-6 py-2.5 rounded-xl text-xs md:text-sm font-bold transition-all whitespace-nowrap cursor-pointer ${
               activeTab === "security"
                 ? "bg-white text-[#0B5D3B] shadow-sm"
                 : "text-neutral-500 hover:text-neutral-700"
@@ -188,12 +278,10 @@ const ProfileSettings = () => {
                 <div className="relative group">
                   <div className="w-24 h-24 rounded-3xl bg-emerald-50 flex items-center justify-center overflow-hidden border-2 border-dashed border-[#0B5D3B]/30 relative">
                     {imagePreview ? (
-                      <Image
+                      <img
                         src={imagePreview}
                         alt="ইউজার প্রোফাইল পিকচার"
-                        fill
-                        className="object-cover"
-                        unoptimized
+                        className="w-full h-full object-cover"
                       />
                     ) : (
                       <User size={40} className="text-[#0B5D3B]" />
@@ -208,7 +296,7 @@ const ProfileSettings = () => {
                   />
                   <button
                     onClick={() => fileInputRef.current?.click()}
-                    className="absolute -bottom-2 -right-2 p-2 bg-[#0B5D3B] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform"
+                    className="absolute -bottom-2 -right-2 p-2 bg-[#0B5D3B] text-white rounded-xl shadow-lg border-2 border-white hover:scale-110 transition-transform cursor-pointer"
                     type="button"
                   >
                     <Camera size={16} />
@@ -267,7 +355,7 @@ const ProfileSettings = () => {
                     </div>
                   </div>
 
-                  <div className="space-y-2">
+                  <div className="space-y-2 md:col-span-2">
                     <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
                       ফোন নম্বর
                     </label>
@@ -282,22 +370,6 @@ const ProfileSettings = () => {
                         onChange={(e) => setPhone(e.target.value)}
                         className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-xs md:text-sm text-neutral-800"
                       />
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                      সময় অঞ্চল (Timezone)
-                    </label>
-                    <div className="relative">
-                      <Globe
-                        className="absolute left-4 top-3.5 text-neutral-400"
-                        size={18}
-                      />
-                      <select className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none appearance-none font-medium text-xs md:text-sm text-neutral-800">
-                        <option>Dhaka (GMT+6)</option>
-                        <option>Makkah (GMT+3)</option>
-                      </select>
                     </div>
                   </div>
                 </div>
@@ -317,7 +389,7 @@ const ProfileSettings = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                        শিক্ষার্থীর নাম (বাংলায়)
+                        শিক্ষार्थियों নাম (বাংলায়)
                       </label>
                       <input
                         type="text"
@@ -357,7 +429,7 @@ const ProfileSettings = () => {
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                        शिक्षকের নাম (বাংলায়)
+                        শিক্ষকের নাম (বাংলায়)
                       </label>
                       <input
                         type="text"
@@ -369,7 +441,7 @@ const ProfileSettings = () => {
                     </div>
                     <div className="space-y-2">
                       <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                        পদবী (Designation)
+                        পদবী
                       </label>
                       <input
                         type="text"
@@ -379,76 +451,174 @@ const ProfileSettings = () => {
                         className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
                       />
                     </div>
+
+                    <div className="space-y-2 md:col-span-2">
+                      <label className="text-xs font-bold text-neutral-600 uppercase ml-1 flex items-center gap-1">
+                        শিক্ষক বায়োগ্রাফি
+                      </label>
+                      <textarea
+                        value={biography}
+                        onChange={(e) => setBiography(e.target.value)}
+                        placeholder="আপনার সংক্ষিপ্ত পরিচিতি এবং ইসলামি শিক্ষার পটভূমি এখানে লিখুন..."
+                        rows={4}
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium resize-none leading-relaxed"
+                      />
+                    </div>
+
                     <div className="space-y-2 md:col-span-2">
                       <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
-                        বিভাগ (Department)
+                        শিক্ষাদান অভিজ্ঞতা
                       </label>
-                      <div className="relative">
-                        <BookOpen
-                          className="absolute left-4 top-3.5 text-neutral-400"
-                          size={18}
-                        />
-                        <input
-                          type="text"
-                          value={department}
-                          onChange={(e) => setDepartment(e.target.value)}
-                          placeholder="উদাঃ দরসি কিতাব"
-                          className="w-full pl-12 pr-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium"
-                        />
-                      </div>
+                      <textarea
+                        value={experience}
+                        onChange={(e) => setExperience(e.target.value)}
+                        placeholder="আপনার পূর্বের শিক্ষকতার অভিজ্ঞতা বা অর্জিত খিদমতের বিবরণ লিখুন..."
+                        rows={3}
+                        className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all text-xs md:text-sm text-neutral-800 font-medium resize-none leading-relaxed"
+                      />
                     </div>
                   </div>
                 </motion.div>
               )}
+
+              {/* প্রোফাইল বাটন অ্যাকশন জোন */}
+              <div className="mt-10 pt-6 border-t border-neutral-50 flex justify-end">
+                <button
+                  onClick={handleProfileSubmit}
+                  disabled={loading}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0B5D3B] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 hover:bg-[#0d4d2e] transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed text-sm cursor-pointer"
+                  type="button"
+                >
+                  <Save size={18} />{" "}
+                  {loading ? "সংরক্ষণ করা হচ্ছে..." : "সংরক্ষণ করুন"}
+                </button>
+              </div>
             </div>
           ) : (
-            <div className="space-y-6">
-              <div className="p-4 bg-orange-50 rounded-2xl flex gap-4 items-start mb-4">
-                <ShieldCheck className="text-orange-600 shrink-0" size={24} />
+            /* নিরাপত্তা ও পাসওয়ার্ড ফর্ম সেকশন */
+            <form onSubmit={handlePasswordSubmit} className="space-y-6">
+              <div className="p-4 bg-emerald-50/60 border border-emerald-100/50 rounded-2xl flex gap-4 items-start mb-2">
+                <ShieldCheck
+                  className="text-emerald-700 shrink-0 mt-0.5"
+                  size={20}
+                />
                 <div>
-                  <h5 className="font-bold text-orange-800 text-sm">
-                    টু-ফ্যাক্টর অথেনটিকেশন
+                  <h5 className="font-bold text-emerald-900 text-sm">
+                    নিরাপত্তা গাইডলাইন
                   </h5>
-                  <p className="text-xs text-orange-700 mt-0.5">
-                    অ্যাকাউন্টের বাড়তি নিরাপত্তার জন্য এটি চালু করুন।
+                  <p className="text-xs text-emerald-800/80 mt-0.5 leading-relaxed">
+                    আপনার অ্যাকাউন্টের সুরক্ষার জন্য বর্তমান সঠিক পাসওয়ার্ডটি
+                    দিয়ে নতুন একটি শক্তিশালী পাসওয়ার্ড (সর্বনিম্ন ৬ অক্ষর)
+                    টাইপ করুন।
                   </p>
                 </div>
               </div>
 
-              <div className="space-y-4">
+              <div className="grid grid-cols-1 gap-5">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
                     বর্তমান পাসওয়ার্ড
                   </label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all"
-                  />
+                  <div className="relative">
+                    <Lock
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={16}
+                    />
+                    <input
+                      type={showOldPassword ? "text" : "password"}
+                      value={oldPassword}
+                      onChange={(e) => setOldPassword(e.target.value)}
+                      placeholder="••••••"
+                      className="w-full pl-11 pr-10 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-sm text-neutral-800"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowOldPassword(!showOldPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 cursor-pointer"
+                    >
+                      {showOldPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
                 </div>
+
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
                     নতুন পাসওয়ার্ড
                   </label>
-                  <input
-                    type="password"
-                    className="w-full px-4 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all"
-                  />
+                  <div className="relative">
+                    <Lock
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={16}
+                    />
+                    <input
+                      type={showNewPassword ? "text" : "password"}
+                      value={newPassword}
+                      onChange={(e) => setNewPassword(e.target.value)}
+                      placeholder="••••••"
+                      className="w-full pl-11 pr-10 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-sm text-neutral-800"
+                    />
+                    <button
+                      type="button"
+                      onClick={() => setShowNewPassword(!showNewPassword)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 cursor-pointer"
+                    >
+                      {showNewPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <label className="text-xs font-bold text-neutral-600 uppercase ml-1">
+                    নতুন পাসওয়ার্ড নিশ্চিত করুন
+                  </label>
+                  <div className="relative">
+                    <Lock
+                      className="absolute left-4 top-3.5 text-neutral-400"
+                      size={16}
+                    />
+                    <input
+                      type={showConfirmPassword ? "text" : "password"}
+                      value={confirmPassword}
+                      onChange={(e) => setConfirmPassword(e.target.value)}
+                      placeholder="••••••"
+                      className="w-full pl-11 pr-10 py-3.5 bg-neutral-50 border border-neutral-200 rounded-2xl focus:ring-2 focus:ring-[#0B5D3B] outline-none transition-all font-medium text-sm text-neutral-800"
+                    />
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setShowConfirmPassword(!showConfirmPassword)
+                      }
+                      className="absolute right-3 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-neutral-600 cursor-pointer"
+                    >
+                      {showConfirmPassword ? (
+                        <EyeOff size={16} />
+                      ) : (
+                        <Eye size={16} />
+                      )}
+                    </button>
+                  </div>
                 </div>
               </div>
-            </div>
-          )}
 
-          <div className="mt-10 pt-6 border-t border-neutral-50 flex justify-end">
-            <button
-              onClick={handleProfileSubmit}
-              disabled={loading}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 bg-[#0B5D3B] text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-green-900/20 active:scale-95 hover:bg-[#0d4d2e] transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed text-sm"
-              type="button"
-            >
-              <Save size={18} />{" "}
-              {loading ? "সংরক্ষণ করা হচ্ছে..." : "সংরক্ষণ করুন"}
-            </button>
-          </div>
+              <div className="mt-10 pt-6 border-t border-neutral-50 flex justify-end">
+                <button
+                  type="submit"
+                  disabled={passwordLoading}
+                  className="w-full sm:w-auto flex items-center justify-center gap-2 bg-slate-900 text-white px-8 py-3.5 rounded-2xl font-bold shadow-lg shadow-slate-900/10 active:scale-95 hover:bg-slate-800 transition-all disabled:bg-neutral-300 disabled:cursor-not-allowed text-sm cursor-pointer"
+                >
+                  {passwordLoading ? "রিসেট হচ্ছে..." : "পাসওয়ার্ড রিসেট করুন"}
+                </button>
+              </div>
+            </form>
+          )}
         </motion.div>
       </div>
     </>

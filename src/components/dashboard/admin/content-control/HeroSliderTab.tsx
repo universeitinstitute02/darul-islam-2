@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import Swal from "sweetalert2";
-import { Plus, Trash2, Eye, UploadCloud, Loader2, Edit, X } from "lucide-react";
+import { Plus, Trash2, UploadCloud, Loader2, Edit, X } from "lucide-react";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 
 export default function HeroSliderTab({ pageName }: { pageName: string }) {
@@ -13,7 +13,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [editingSlide, setEditingSlide] = useState<any | null>(null);
 
-  // TanStack Query দিয়ে স্লাইডার লিস্ট ফেচ করা
+  // TanStack Query দিয়ে স্লাইডার লিস্ট ফেচ করা
   const { data: sliders = [], isLoading } = useQuery({
     queryKey: ["adminSliders", pageName],
     queryFn: async () => {
@@ -39,7 +39,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
     },
   });
 
-  // স্লাইডার আপডেট মিউটেশন
+  // 🎯 স্লাইডার আপডেট মিউটেশন ফিক্স ও সফল ইন্টিগ্রেশন
   const updateMutation = useMutation({
     mutationFn: async ({
       id,
@@ -57,6 +57,13 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
       queryClient.invalidateQueries({ queryKey: ["adminSliders"] });
       Swal.fire("সফল!", "স্লাইডারটি সফলভাবে আপডেট হয়েছে।", "success");
       closeFormHandler();
+    },
+    onError: (error: any) => {
+      Swal.fire(
+        "ত্রুটি",
+        error?.response?.data?.message || "আপডেট করা সম্ভব হয়নি।",
+        "error",
+      );
     },
   });
 
@@ -91,16 +98,20 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (!selectedFile && !editingSlide)
+
+    // 🎯 ফিক্স: এডিট মোডে থাকলে ইমেজ আপলোড করা অপশনাল, ক্রিয়েট মোডে আবশ্যিক
+    if (!selectedFile && !editingSlide) {
       return Swal.fire(
         "ত্রুটি",
         "একটি ব্যাকগ্রাউন্ড ছবি সিলেক্ট করুন",
         "error",
       );
+    }
 
     const formData = new FormData(e.currentTarget);
     formData.append("pageName", pageName);
 
+    // 🎯 কন্ডিশনাল মিউটেশন ট্রিগার
     if (editingSlide) {
       updateMutation.mutate({ id: editingSlide._id, formData });
     } else {
@@ -155,6 +166,9 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="badgeText"
+              key={
+                editingSlide ? `edit-badge-${editingSlide._id}` : "create-badge"
+              }
               defaultValue={
                 editingSlide ? editingSlide.badgeText : "ভর্তি চলছে"
               }
@@ -168,6 +182,9 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             <input
               name="title"
               required
+              key={
+                editingSlide ? `edit-title-${editingSlide._id}` : "create-title"
+              }
               defaultValue={editingSlide ? editingSlide.title : ""}
               placeholder="যেমন: শুদ্ধভাবে কুরআন শিক্ষা"
               className="w-full p-3 bg-white border border-neutral-200 rounded-xl text-sm outline-none font-bold"
@@ -179,6 +196,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="subtitle"
+              key={editingSlide ? `edit-sub-${editingSlide._id}` : "create-sub"}
               defaultValue={editingSlide ? editingSlide.subtitle : ""}
               placeholder="যেমন: সহজ পদ্ধতিতে তাজবীদসহ কুরআন শিক্ষা ও হিফজ প্রোগ্রাম"
               className="w-full p-3 bg-white border border-neutral-200 rounded-xl text-sm outline-none font-bold"
@@ -191,6 +209,11 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="primaryBtnText"
+              key={
+                editingSlide
+                  ? `edit-btn1-txt-${editingSlide._id}`
+                  : "create-btn1-txt"
+              }
               defaultValue={
                 editingSlide
                   ? editingSlide.primaryBtnText
@@ -205,6 +228,11 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="primaryBtnLink"
+              key={
+                editingSlide
+                  ? `edit-btn1-lnk-${editingSlide._id}`
+                  : "create-btn1-lnk"
+              }
               defaultValue={
                 editingSlide ? editingSlide.primaryBtnLink : "/admission"
               }
@@ -218,6 +246,11 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="secondaryBtnText"
+              key={
+                editingSlide
+                  ? `edit-btn2-txt-${editingSlide._id}`
+                  : "create-btn2-txt"
+              }
               defaultValue={
                 editingSlide ? editingSlide.secondaryBtnText : "কোর্সসমূহ দেখুন"
               }
@@ -230,6 +263,11 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             </label>
             <input
               name="secondaryBtnLink"
+              key={
+                editingSlide
+                  ? `edit-btn2-lnk-${editingSlide._id}`
+                  : "create-btn2-lnk"
+              }
               defaultValue={
                 editingSlide ? editingSlide.secondaryBtnLink : "/education"
               }
@@ -241,7 +279,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
             <input
               type="file"
               name="image"
-              required={!editingSlide}
+              required={!editingSlide} // 🎯 এডিট করার সময় আগের ছবি বহাল রাখার সুবিধার্থে রিকোয়ার্ড ফিল্ড কন্ডিশনাল করা হলো
               accept="image/*"
               onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
               className="absolute inset-0 opacity-0 cursor-pointer"
@@ -280,7 +318,7 @@ export default function HeroSliderTab({ pageName }: { pageName: string }) {
               <tr className="bg-neutral-50 text-neutral-500 font-black text-xs border-b">
                 <th className="p-4">ছবি</th>
                 <th className="p-4">শিরোনাম</th>
-                <th className="p-4">ব্যাজ</th>
+                <th className="p-4">...</th>
                 <th className="p-4">অ্যাকশন</th>
               </tr>
             </thead>
