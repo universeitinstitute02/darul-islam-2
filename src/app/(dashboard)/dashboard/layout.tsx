@@ -286,7 +286,7 @@ export default function DashboardLayout({
       ],
     },
     { name: "নোটিশ বোর্ড", href: "/dashboard/admin/admin-notice", icon: Bell },
-    { name: "Application", href: "/dashboard/admin/application", icon: Bell },
+    // { name: "Application", href: "/dashboard/admin/application", icon: Bell },
     {
       name: "গ্যালারি ম্যনেজমেন্ট",
       href: "/dashboard/admin/gallery",
