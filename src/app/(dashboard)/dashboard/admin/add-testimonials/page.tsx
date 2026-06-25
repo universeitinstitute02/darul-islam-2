@@ -10,6 +10,9 @@ import {
   ArrowLeft,
   Send,
   ShieldAlert,
+  User,
+  Image as ImageIcon,
+  Users,
 } from "lucide-react";
 import Swal from "sweetalert2";
 
@@ -21,9 +24,23 @@ export default function CreateTestimonialPage() {
   const axiosSecure = useAxiosSecure();
   const { isStudent, isAdmin, isLoading: isRoleLoading } = useUserRole();
 
+  // 🎯 ডাইনামিক স্টেটসমুহ (সিনিয়র সলিউশন এলাইনড)
   const [text, setText] = useState("");
   const [rating, setRating] = useState(5);
+  const [userType, setUserType] = useState("student");
+  const [customName, setCustomName] = useState(""); // শুধুমাত্র অ্যাডমিনদের ব্যবহারের জন্য নাম
+  const [selectedImage, setSelectedImage] = useState<File | null>(null);
+  const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+
+  // ইমেজ সিলেক্ট এবং প্রিভিউ মেকানিজম
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      setSelectedImage(file);
+      setImagePreview(URL.createObjectURL(file));
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -39,35 +56,61 @@ export default function CreateTestimonialPage() {
       return;
     }
 
+    // অ্যাডমিন যদি নাম ইনপুট না দেয়
+    if (isAdmin && !customName.trim()) {
+      Swal.fire({
+        title: "দুঃখিত!",
+        text: "মতামতদাতার নামটি দেওয়া বাধ্যতামূলক ভাই।",
+        icon: "warning",
+        confirmButtonColor: "#105D38",
+        customClass: { popup: "rounded-[2rem] font-sans" },
+      });
+      return;
+    }
+
     try {
       setLoading(true);
 
-      const res = await axiosSecure.post("/testimonials", {
-        text: text,
-        rating: rating,
+      // 🎯 ব্যাকএন্ডের মাল্টার (Multer) আর্কিটেকচার অনুযায়ী FormData অবজেক্ট তৈরি
+      const formData = new FormData();
+      formData.append("text", text);
+      formData.append("rating", rating.toString());
+      formData.append("userType", userType);
+
+      if (isAdmin) {
+        formData.append("customName", customName); // ব্যাকএন্ডে রিসিভ করার জন্য নাম
+      }
+      if (selectedImage) {
+        formData.append("identityImage", selectedImage); // ব্যাকএন্ডের স্কিমা কি-ওয়ার্ড সিঙ্ক
+      }
+
+      const res = await axiosSecure.post("/testimonials", formData, {
+        headers: {
+          "Content-Type": "multipart/form-data",
+        },
       });
 
       if (res.status === 200 || res.status === 201) {
         Swal.fire({
           title: "মাশাআল্লাহ্!",
-          text: "টেস্টিমোনিয়ালটি সফলভাবে সাবমিট করা হয়েছে।",
+          text: "টেস্টিমোনিয়ালটি সফলভাবে সাবমিট করা হয়েছে।",
           icon: "success",
           confirmButtonColor: "#105D38",
           confirmButtonText: "ঠিক আছে",
           customClass: { popup: "rounded-[2rem] font-sans" },
         }).then(() => {
-          setText("");
-          setRating(5);
-          router.push("/dashboard/admin/testimonial");
+          router.push(
+            isAdmin
+              ? "/dashboard/admin/testimonial"
+              : "/dashboard/student/testimonial",
+          );
         });
       }
     } catch (error: any) {
       console.error("Submission Error:", error);
-
-      // এক্সিওস এরর হ্যান্ডেলিং এবং স্পষ্ট মেসেজ
       const serverMessage =
         error.response?.data?.message ||
-        "সার্ভারে কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।";
+        "সার্ভারে কোনো সমস্যা হয়েছে। আবার চেষ্টা করুন।";
 
       Swal.fire({
         title: "এরর এসেছে!",
@@ -81,7 +124,6 @@ export default function CreateTestimonialPage() {
     }
   };
 
-  // নেক্সট-অথ সেশন ও রোল লোড হওয়ার অপেক্ষা
   if (isRoleLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50/50">
@@ -95,18 +137,17 @@ export default function CreateTestimonialPage() {
     );
   }
 
-  // 🛡️ ডক সেফটি গার্ড: শুধুমাত্র স্টুডেন্ট বা অ্যাডমিন (লগইন থাকা ইউজার) রিভিউ দিতে পারবে
   if (!isAdmin && !isStudent) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-neutral-50/50 px-4 font-sans">
         <div className="max-w-md w-full bg-white border border-neutral-200 p-8 rounded-[2rem] text-center shadow-xs">
           <ShieldAlert className="w-12 h-12 text-red-500 mx-auto mb-3" />
           <h2 className="text-lg font-black text-neutral-900">
-            অ্যাক্সেস অনুমোদিত নয়
+            অ্যাক্সেস অনুমোদিত নয়
           </h2>
           <p className="text-xs text-neutral-500 font-medium mt-1 leading-relaxed">
-            রিভিউ বা টেস্টিমোনিয়াল পোস্ট করার জন্য আপনাকে অবশ্যই আপনার স্টুডেন্ট
-            বা অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করতে হবে।
+            রিভিউ বা টেস্টিমোনিয়াল পোস্ট করার জন্য আপনাকে অবশ্যই আপনার
+            স্টুডেন্ট বা অ্যাডমিন অ্যাকাউন্ট দিয়ে লগইন করতে হবে।
           </p>
           <button
             onClick={() => router.push("/login")}
@@ -134,12 +175,12 @@ export default function CreateTestimonialPage() {
 
           <h1 className="text-2xl md:text-3xl font-black text-neutral-950 tracking-tight flex items-center gap-2">
             <MessageSquare className="text-[#105D38] w-7 h-7" /> নতুন
-            টেস্টিমোনিয়াল যোগ করুন
+            টেস্টিমোনিয়াল যোগ করুন
           </h1>
           <p className="text-xs md:text-sm text-neutral-500 font-medium mt-1">
             {isAdmin
-              ? "অ্যাডমিন প্যানেল থেকে কাস্টম রিভিউ ইনপুট দিন।"
-              : "মাদরাসা সম্পর্কে আপনার মূল্যবান অনুভূতি শেয়ার করুন।"}
+              ? "অ্যাডমিন প্যানেল থেকে কাস্টম ইউজার ক্যাটাগরি অনুযায়ী রিভিউ ইনপুট দিন।"
+              : "মাদরাসা সম্পর্কে আপনার মূল্যবান অনুভূতি শেয়ার করুন।"}
           </p>
         </div>
 
@@ -150,6 +191,45 @@ export default function CreateTestimonialPage() {
           className="bg-white border border-neutral-200/60 rounded-[2.5rem] p-6 md:p-8 shadow-xs"
         >
           <form onSubmit={handleSubmit} className="space-y-6">
+            {/* 🎯 কন্ডিশনাল নাম ফিল্ড: শুধুমাত্র অ্যাডমিন লগইন থাকলে এই ফিল্ডটি দৃশ্যমান হবে */}
+            {isAdmin && (
+              <motion.div
+                initial={{ opacity: 0, x: -10 }}
+                animate={{ opacity: 1, x: 0 }}
+              >
+                <label className="block text-xs md:text-sm font-black text-neutral-800 uppercase mb-2 flex items-center gap-1.5">
+                  <User size={15} className="text-[#105D38]" /> মতামতদাতার নাম
+                </label>
+                <input
+                  type="text"
+                  required
+                  value={customName}
+                  onChange={(e) => setCustomName(e.target.value)}
+                  placeholder="যেমন: শায়খ আব্দুল আউয়াল হাফি বা মোঃ আব্দুর রহমান"
+                  className="w-full border border-neutral-200 bg-neutral-50/40 rounded-2xl p-4 text-xs md:text-sm focus:outline-none focus:border-[#105D38] focus:bg-white transition-all text-neutral-800 font-bold"
+                />
+              </motion.div>
+            )}
+
+            {/* 🎯 ইউজার টাইপ সিলেক্ট ফিল্ড (নতুন ফিল্টারিং আপডেট সিঙ্ক) */}
+            <div>
+              <label className="block text-xs md:text-sm font-black text-neutral-800 uppercase mb-2 flex items-center gap-1.5">
+                <Users size={15} className="text-[#105D38]" /> মতামতদাতার ধরণ
+              </label>
+              <select
+                value={userType}
+                onChange={(e) => setUserType(e.target.value)}
+                className="w-full border border-neutral-200 bg-neutral-50/40 rounded-2xl p-4 text-xs md:text-sm focus:outline-none focus:border-[#105D38] focus:bg-white transition-all text-neutral-800 font-bold cursor-pointer"
+              >
+                <option value="student">শিক্ষার্থী (Student)</option>
+                <option value="teacher">শিক্ষক / ওস্তাদ (Teacher)</option>
+                <option value="female_teacher">
+                  শিক্ষিকা / ওস্তাদা (Female Teacher)
+                </option>
+                <option value="parent">অভিভাবক (Parent)</option>
+              </select>
+            </div>
+
             {/* Rating Field */}
             <div>
               <label className="block text-xs md:text-sm font-black text-neutral-800 uppercase mb-2">
@@ -183,9 +263,41 @@ export default function CreateTestimonialPage() {
                 rows={5}
                 value={text}
                 onChange={(e) => setText(e.target.value)}
-                placeholder="মাদরাসা বা কোর্স সম্পর্কিত মতামতটি এখানে গুছিয়ে লিখুন..."
+                placeholder="মাদরাসা বা কোর্স সম্পর্কিত মতামতটি এখানে গুছিয়ে লিখুন..."
                 className="w-full border border-neutral-200 bg-neutral-50/40 rounded-2xl p-4 text-xs md:text-sm focus:outline-none focus:border-[#105D38] focus:bg-white transition-all text-neutral-800 font-medium leading-relaxed resize-none"
               />
+            </div>
+
+            {/* 🎯 নতুন ফাইল ইনপুট এবং লাইভ ইমেজ প্রিভিউ সেকশন */}
+            <div>
+              <label className="block text-xs md:text-sm font-black text-neutral-800 uppercase mb-2 flex items-center gap-1.5">
+                <ImageIcon size={15} className="text-[#105D38]" /> প্রোফাইল ছবি
+                আপলোড (ঐচ্ছিক)
+              </label>
+              <div className="flex items-center gap-4">
+                <label className="flex items-center justify-center gap-2 border-2 border-dashed border-neutral-200 hover:border-[#105D38] bg-neutral-50/40 px-4 py-3 rounded-2xl text-xs font-bold text-neutral-600 cursor-pointer transition-colors active:scale-98">
+                  <ImageIcon size={16} /> ছবি নির্বাচন করুন
+                  <input
+                    type="file"
+                    accept="image/*"
+                    className="hidden"
+                    onChange={handleImageChange}
+                  />
+                </label>
+                {imagePreview && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="relative w-12 h-12 rounded-xl border border-neutral-200 overflow-hidden shadow-3xs"
+                  >
+                    <img
+                      src={imagePreview}
+                      alt="Preview"
+                      className="w-full h-full object-cover"
+                    />
+                  </motion.div>
+                )}
+              </div>
             </div>
 
             {/* Interactive Submit Button */}

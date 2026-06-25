@@ -136,7 +136,7 @@ const GallerySection: React.FC = () => {
             <span>আমাদের ক্যাম্পাস লাইফ</span>
           </div>
           <h2 className="text-3xl md:text-4xl font-black text-gray-900 mb-4">
-            ফুটো গ্যালারি
+            ফটো গ্যালারি
           </h2>
           <div className="w-20 h-1.5 bg-[#0B5D3B] rounded-full"></div>
         </div>

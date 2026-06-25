@@ -1,6 +1,8 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
+import Link from "next/link"; // 🎯 ক্লায়েন্ট-সাইড রাউটিংয়ের জন্য ইমপোর্ট করা হলো
+import { ArrowUpRight } from "lucide-react"; // 🎯 বাটনে প্রফেশনাল লুক দেওয়ার জন্য আইকন
 import { MessageSquare } from "lucide-react";
 
 interface Testimonial {
@@ -82,10 +84,10 @@ export default function TestimonialsSection() {
           <div className="w-16 h-1 bg-[#0B5D3B] mx-auto rounded-full mt-3"></div>
         </div>
 
+        {/* গ্রিড লেআউট */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 items-start">
           {testimonials.map((item) => {
             const studentName = item.user?.name || "অজানা শিক্ষার্থী";
-            // নামের প্রথম অক্ষর বের করার লজিক (ফর এক্সাম্পল: "A")
             const initialLetter = studentName.trim().charAt(0).toUpperCase();
 
             return (
@@ -93,7 +95,7 @@ export default function TestimonialsSection() {
                 key={item._id}
                 className="bg-[#fcfdfd] border border-slate-100/80 rounded-2xl p-6 shadow-xs hover:shadow-md transition-all duration-300 flex flex-col justify-between h-full group relative overflow-hidden"
               >
-                {/* হোভার এফেক্ট টপ লাইন */}
+                {/* হোভার এফেক্ট টপ line */}
                 <div className="absolute top-0 left-0 right-0 h-1 bg-gradient-to-r from-emerald-600 to-green-400 opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                 <div>
@@ -117,7 +119,6 @@ export default function TestimonialsSection() {
 
                 {/* ইউজার প্রোফাইল সেকশন (item.user.name) */}
                 <div className="flex items-center gap-3 pt-4 border-t border-slate-100 mt-auto">
-                  {/* ছবির বদলে নামের প্রথম অক্ষর দিয়ে মডার্ন এভাটার */}
                   <div className="w-10 h-10 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0">
                     {initialLetter}
                   </div>
@@ -134,6 +135,20 @@ export default function TestimonialsSection() {
               </div>
             );
           })}
+        </div>
+
+        {/* --- 🎯 নতুন আপডেট: প্রফেশনাল ও স্লিক "আরও দেখুন" বাটন প্যানেল --- */}
+        <div className="text-center mt-12">
+          <Link
+            href="/testimonials"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border-2 border-green-800 hover:border-[#0B5D3B] text-[#0B5D3B] rounded-2xl text-sm font-black tracking-tight shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_25px_rgba(11,93,59,0.06)] hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 transform active:scale-98 group cursor-pointer"
+          >
+            সকল মতামত দেখুন
+            <MessageSquare
+              size={16}
+              className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
+            />
+          </Link>
         </div>
       </div>
     </section>

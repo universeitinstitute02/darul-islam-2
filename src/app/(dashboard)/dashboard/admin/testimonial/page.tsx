@@ -10,6 +10,7 @@ import {
   User,
   ShieldCheck,
   Filter,
+  Users,
 } from "lucide-react";
 import Swal from "sweetalert2";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
@@ -17,12 +18,17 @@ import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface Testimonial {
   _id: string;
-  user: {
+  user?: {
     _id: string;
     name: string;
+    email?: string;
   };
+  adminCustomName?: string; // 🎯 নতুন অ্যাডমিন কাস্টম নাম সাপোর্ট সিঙ্ক
+  adminCustomAvatar?: string;
+  identityImage?: string;
   text: string;
   rating: number;
+  userType: "student" | "teacher" | "female_teacher" | "parent"; // 🎯 নতুন ফিল্টারিং জোন
   isApproved: boolean;
   createdAt: string;
 }
@@ -37,13 +43,26 @@ const TestimonialAdmin: React.FC = () => {
   const [filterTab, setFilterTab] = useState<"all" | "pending" | "approved">(
     "all",
   );
+  const [selectedUserType, setSelectedUserType] = useState<string>(""); // 🎯 ওস্তাদ, ওস্তাদা, ছাত্র ফিল্টার স্টেট
 
   const fetchTestimonials = async () => {
     setLoading(true);
     try {
-      const res = await axiosSecure.get("/testimonials/admin");
+      // 🎯 নতুন ব্যাকএন্ড কুয়েরি আর্কিটেকচার অনুযায়ী প্যারামস পাসিং মেকানিজম
+      const params = new URLSearchParams();
+      if (selectedUserType) params.append("userType", selectedUserType);
+
+      const res = await axiosSecure.get(
+        `/testimonials/admin?${params.toString()}`,
+      );
+
+      // 🎯 মেগা ফিক্স লক: নতুন অবজেক্ট রেসপন্স এবং ওল্ড র-অ্যারে দুই ফরম্যাটকেই সেফলি রিসিভ করা হলো
       if (res.data) {
-        setTestimonials(res.data);
+        if (Array.isArray(res.data.data)) {
+          setTestimonials(res.data.data);
+        } else if (Array.isArray(res.data)) {
+          setTestimonials(res.data);
+        }
       }
     } catch (err: any) {
       console.error("Error fetching testimonials:", err);
@@ -62,7 +81,7 @@ const TestimonialAdmin: React.FC = () => {
 
   useEffect(() => {
     fetchTestimonials();
-  }, []);
+  }, [selectedUserType]); // 🎯 ইউজার টাইপ চেঞ্জ হলে অটো-রিফ্রেশ হবে
 
   const handleToggleApprove = async (id: string, currentStatus: boolean) => {
     const nextStatus = !currentStatus;
@@ -146,7 +165,7 @@ const TestimonialAdmin: React.FC = () => {
     });
   };
 
-  // 📊 ট্যাবের ওপর ভিত্তি করে রিভিউ ডাটা ফিল্টারিং লজিক
+  // 📊 ট্যাবের ওপর ভিত্তি করে মডারেশন ফিল্টারিং লজিক
   const filteredTestimonials = testimonials.filter((item) => {
     if (filterTab === "pending") return !item.isApproved;
     if (filterTab === "approved") return item.isApproved;
@@ -166,8 +185,8 @@ const TestimonialAdmin: React.FC = () => {
               প্যানেল
             </h1>
             <p className="text-xs text-gray-500 mt-1 font-medium">
-              শিক্ষার্থীদের সাবমিট করা টেস্টীমোনিয়ালগুলো ভেরিফাই করুন এবং
-              হোমপেজের জন্য ম্যানেজ করুন।
+              শিক্ষার্থী, ওস্তাদ ও অভিভাবকদের সাবমিট করা টেস্টীমোনিয়ালগুলো
+              ভেরিফাই করুন এবং হোমপেজের জন্য ম্যানেজ করুন।
             </p>
           </div>
 
@@ -183,8 +202,8 @@ const TestimonialAdmin: React.FC = () => {
           </button>
         </div>
 
-        {/* 🎛️ ফিল্টারিং কন্ট্রোল বার */}
-        <div className="flex flex-wrap items-center justify-between gap-3 mb-6 bg-white border border-gray-200/60 p-2 rounded-2xl shadow-xs">
+        {/* 🎛️ ফিল্টারিং কন্ট্রোল বার কম্বো প্যানেল */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 bg-white border border-gray-200/60 p-3 rounded-2xl shadow-xs">
           <div className="flex items-center gap-1 overflow-x-auto w-full sm:w-auto">
             <button
               onClick={() => setFilterTab("all")}
@@ -200,7 +219,7 @@ const TestimonialAdmin: React.FC = () => {
               onClick={() => setFilterTab("pending")}
               className={`px-4 py-2 cursor-pointer rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "pending"
-                  ? "bg-amber-500 text-white shadow-md shadow-amber-500/10"
+                  ? "bg-amber-500 text-white shadow-sm"
                   : "text-gray-600 hover:bg-amber-50 text-amber-700"
               }`}
             >
@@ -210,15 +229,28 @@ const TestimonialAdmin: React.FC = () => {
               onClick={() => setFilterTab("approved")}
               className={`px-4 py-2 cursor-pointer rounded-xl text-xs font-black transition-all whitespace-nowrap ${
                 filterTab === "approved"
-                  ? "bg-emerald-600 text-white shadow-md shadow-emerald-600/10"
+                  ? "bg-emerald-600 text-white shadow-sm"
                   : "text-gray-600 hover:bg-emerald-50 text-emerald-700"
               }`}
             >
               অ্যাপ্রুভড ({testimonials.filter((i) => i.isApproved).length})
             </button>
           </div>
-          <div className="hidden sm:flex items-center gap-1 text-gray-400 text-xs font-bold pr-2">
-            <Filter className="w-3.5 h-3.5" /> ফিল্টার মোড
+
+          {/* 🎯 নতুন সংযোজিত ইউজার টাইপ সার্ভার-সাইড ড্রপডাউন ফিল্টার */}
+          <div className="flex items-center gap-2 w-full sm:w-auto border-t sm:border-t-0 pt-2 sm:pt-0">
+            <Users size={14} className="text-gray-400 shrink-0" />
+            <select
+              value={selectedUserType}
+              onChange={(e) => setSelectedUserType(e.target.value)}
+              className="w-full sm:w-44 border border-gray-200/80 rounded-xl px-3 py-2 text-xs font-bold focus:outline-none focus:border-[#0B5D3B] bg-gray-50/50 cursor-pointer"
+            >
+              <option value="">সকল ধরণ (All Types)</option>
+              <option value="student">শিক্ষার্থী (Student)</option>
+              <option value="teacher">ওস্তাদ (Teacher)</option>
+              <option value="female_teacher">ওস্তাদা (Female Teacher)</option>
+              <option value="parent">অভিভাবক (Parent)</option>
+            </select>
           </div>
         </div>
 
@@ -232,99 +264,132 @@ const TestimonialAdmin: React.FC = () => {
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTestimonials.map((item) => (
-              <div
-                key={item._id}
-                className={`bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden group ${
-                  !item.isApproved
-                    ? "border-l-4 border-l-amber-500"
-                    : "border-l-4 border-l-emerald-600"
-                }`}
-              >
-                <div>
-                  <div className="flex items-center justify-between gap-3 mb-4">
-                    <div className="flex items-center gap-2.5">
-                      <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500">
-                        <User className="w-4 h-4" />
+            {filteredTestimonials.map((item) => {
+              // 🎯 ডাইনামিক ইউজার টাইপ এবং ছবির আর্কিটেকচারাল ফলব্যাক লকিং
+              const displayName =
+                item.adminCustomName || item.user?.name || "অজানা ব্যবহারকারী";
+              let userTypeLabel = "শিক্ষার্থী";
+              if (item.userType === "teacher")
+                userTypeLabel = "শিক্ষক (ওস্তাদ)";
+              if (item.userType === "female_teacher")
+                userTypeLabel = "শিক্ষিকা (ওস্তাদা)";
+              if (item.userType === "parent") userTypeLabel = "অভিভাবক";
+
+              return (
+                <div
+                  key={item._id}
+                  className={`bg-white rounded-3xl p-5 border border-gray-100 shadow-sm flex flex-col justify-between transition-all duration-300 relative overflow-hidden group ${
+                    !item.isApproved
+                      ? "border-l-4 border-l-amber-500"
+                      : "border-l-4 border-l-emerald-600"
+                  }`}
+                >
+                  <div>
+                    <div className="flex items-center justify-between gap-3 mb-4">
+                      <div className="flex items-center gap-2.5">
+                        {/* প্রোফাইল বা কাস্টম এভাটার ছবি শো করার প্রিমিয়াম জোন */}
+                        <div className="w-9 h-9 rounded-full bg-gray-50 border border-gray-200 flex items-center justify-center text-gray-500 overflow-hidden shrink-0">
+                          {item.adminCustomAvatar ? (
+                            <img
+                              src={item.adminCustomAvatar}
+                              alt=""
+                              className="w-full h-full object-cover"
+                            />
+                          ) : (
+                            <User className="w-4 h-4" />
+                          )}
+                        </div>
+                        <div className="min-w-0">
+                          <h3
+                            className="text-xs font-black text-gray-900 truncate max-w-[120px]"
+                            title={displayName}
+                          >
+                            {displayName}
+                          </h3>
+                          <p className="text-[9px] text-[#0B5D3B] font-black uppercase tracking-wide mt-0.5">
+                            {userTypeLabel}
+                          </p>
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="text-xs font-black text-gray-900 line-clamp-1">
-                          {item.user?.name || "অজানা শিক্ষার্থী"}
-                        </h3>
-                        <p className="text-[10px] text-gray-400 font-bold mt-0.5">
-                          {new Date(item.createdAt).toLocaleDateString("bn-BD")}
-                        </p>
-                      </div>
+
+                      <span
+                        className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider ${
+                          item.isApproved
+                            ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
+                            : "bg-amber-50 text-amber-700 border border-amber-100"
+                        }`}
+                      >
+                        {item.isApproved ? "Approved" : "Pending"}
+                      </span>
                     </div>
 
-                    <span
-                      className={`px-2 py-0.5 rounded-md text-[9px] font-black uppercase tracking-wider ${
+                    <div className="flex items-center justify-between mb-3 bg-gray-50 px-2 py-1 rounded-md border border-gray-100">
+                      <div className="flex items-center gap-0.5">
+                        {Array.from({ length: 5 }, (_, index) => (
+                          <Star
+                            key={index}
+                            className={`w-3.5 h-3.5 ${
+                              index < item.rating
+                                ? "text-amber-400 fill-amber-400"
+                                : "text-gray-200"
+                            }`}
+                          />
+                        ))}
+                      </div>
+                      <span className="text-[9px] font-black text-gray-400 uppercase">
+                        {new Date(item.createdAt).toLocaleDateString("bn-BD")}
+                      </span>
+                    </div>
+
+                    <p className="text-xs text-gray-600 leading-relaxed font-medium italic bg-gray-50/40 p-3 rounded-xl border border-gray-100/50 line-clamp-4">
+                      "{item.text}"
+                    </p>
+
+                    {/* 🎯 যদি বাম পাশের বড় থাম্বনেইল ব্যানার ইমেজ থাকে তবে তার ইনডিকেটর */}
+                    {item.identityImage && (
+                      <div className="mt-3 flex items-center gap-1.5 text-[10px] text-emerald-700 bg-emerald-50/50 w-fit px-2 py-1 rounded-md border border-emerald-100/30 font-bold">
+                        <Filter size={11} /> ব্যানার ইমেজ সংযুক্ত আছে
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
+                    <button
+                      onClick={() =>
+                        handleToggleApprove(item._id, item.isApproved)
+                      }
+                      disabled={actionLoading}
+                      className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black transition-all shadow-xs ${
                         item.isApproved
-                          ? "bg-emerald-50 text-emerald-700 border border-emerald-100"
-                          : "bg-amber-50 text-amber-700 border border-amber-100"
+                          ? "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 cursor-pointer"
+                          : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-900/10 border border-transparent cursor-pointer"
                       }`}
                     >
-                      {item.isApproved ? "Approved" : "Pending"}
-                    </span>
+                      {item.isApproved ? (
+                        <>
+                          <XCircle className="w-3.5 h-3.5" /> ল্যান্ডিং থেকে
+                          হাইড করুন
+                        </>
+                      ) : (
+                        <>
+                          <CheckCircle className="w-3.5 h-3.5" />{" "}
+                          পাবলিশ/অ্যাপ্রুভ করুন
+                        </>
+                      )}
+                    </button>
+
+                    <button
+                      onClick={() => handleDeleteTestimonial(item._id)}
+                      disabled={actionLoading}
+                      className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 cursor-pointer rounded-xl border border-transparent hover:border-red-100 transition-all"
+                      title="রিভিউ ডিলিট করুন"
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </button>
                   </div>
-
-                  <div className="flex items-center gap-0.5 mb-3 bg-gray-50 w-fit px-2 py-1 rounded-md border border-gray-100">
-                    {Array.from({ length: 5 }, (_, index) => (
-                      <Star
-                        key={index}
-                        className={`w-3.5 h-3.5 ${
-                          index < item.rating
-                            ? "text-amber-400 fill-amber-400"
-                            : "text-gray-200"
-                        }`}
-                      />
-                    ))}
-                    <span className="text-[10px] font-black text-gray-500 ml-1">
-                      ({item.rating})
-                    </span>
-                  </div>
-
-                  <p className="text-xs text-gray-600 leading-relaxed font-medium italic bg-gray-50/40 p-3 rounded-xl border border-gray-100/50">
-                    "{item.text}"
-                  </p>
                 </div>
-
-                <div className="mt-5 pt-4 border-t border-gray-100 flex items-center justify-between gap-2">
-                  <button
-                    onClick={() =>
-                      handleToggleApprove(item._id, item.isApproved)
-                    }
-                    disabled={actionLoading}
-                    className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-[11px] font-black transition-all shadow-xs ${
-                      item.isApproved
-                        ? "bg-amber-50 text-amber-700 hover:bg-amber-100 border border-amber-200/60 cursor-pointer"
-                        : "bg-emerald-600 text-white hover:bg-emerald-700 shadow-md shadow-emerald-900/10 border border-transparent cursor-pointer"
-                    }`}
-                  >
-                    {item.isApproved ? (
-                      <>
-                        <XCircle className="w-3.5 h-3.5" /> ল্যান্ডিং থেকে হাইড
-                        করুন
-                      </>
-                    ) : (
-                      <>
-                        <CheckCircle className="w-3.5 h-3.5" /> পাবলিশ/অ্যাপ্রুভ
-                        করুন
-                      </>
-                    )}
-                  </button>
-
-                  <button
-                    onClick={() => handleDeleteTestimonial(item._id)}
-                    disabled={actionLoading}
-                    className="p-2 text-gray-400 hover:text-red-500 hover:bg-red-50 cursor-pointer rounded-xl border border-transparent hover:border-red-100 transition-all"
-                    title="রিভিউ ডিলিট করুন"
-                  >
-                    <Trash2 className="w-4 h-4" />
-                  </button>
-                </div>
-              </div>
-            ))}
+              );
+            })}
           </div>
         )}
       </div>

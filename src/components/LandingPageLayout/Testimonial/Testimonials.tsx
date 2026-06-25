@@ -1,6 +1,6 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, MessageSquare } from "lucide-react";
+import { ChevronLeft, ChevronRight, MessageSquare, Quote } from "lucide-react";
 import axios from "axios";
 
 interface TestimonialData {
@@ -11,6 +11,8 @@ interface TestimonialData {
   };
   text: string;
   rating: number;
+  userType?: "student" | "teacher" | "female_teacher" | "parent"; // 🎯 নতুন স্কিমা সিঙ্ক এলাইনমেন্ট
+  identityImage?: string;
   isApproved: boolean;
   createdAt: string;
 }
@@ -58,8 +60,14 @@ const Testimonials = () => {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/testimonials`,
         );
+        
+        // 🎯 মেগা ফিক্স লক: রিয়াল-টাইম অবজেক্ট ডাটা এবং ওল্ড র-অ্যারে দুই ফরম্যাটকেই সেফলি হ্যান্ডেল করা হলো
         if (res.data) {
-          setTestimonials(res.data);
+          if (Array.isArray(res.data.data)) {
+            setTestimonials(res.data.data);
+          } else if (Array.isArray(res.data)) {
+            setTestimonials(res.data);
+          }
         }
       } catch (err) {
         console.error("Error loading approved landing testimonials:", err);
@@ -96,7 +104,7 @@ const Testimonials = () => {
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-[11px] font-black text-green-800 mb-3">
               <MessageSquare className="w-3.5 h-3.5 text-[#0B5D3B]" />{" "}
-              Testimonials Feedback
+              অভিজ্ঞতা ও অনুভূতি
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
               অভিভাবক ও শিক্ষার্থীদের{" "}
@@ -139,6 +147,12 @@ const Testimonials = () => {
           ) : (
             testimonials.map((t) => {
               const initialLetter = t.user?.name ? t.user.name.charAt(0) : "শ";
+              
+              // 🎯 ডাইনামিক ইউজার টাইপ লেবেল কাস্টিং লজিক
+              let labelText = "শিক্ষার্থী";
+              if (t.userType === "teacher") labelText = "ওস্তাদ";
+              if (t.userType === "female_teacher") labelText = "ওস্তাদা";
+              if (t.userType === "parent") labelText = "অভিভাবক";
 
               return (
                 <div
@@ -149,13 +163,13 @@ const Testimonials = () => {
                 >
                   <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
-                  <span className="absolute -top-2 right-4 text-[7rem] font-serif leading-none text-green-50/70 select-none pointer-events-none">
-                    "
-                  </span>
+                  {/* <span > */}
+                    <Quote size={64} className="absolute top-2 right-4 font-serif leading-none text-green-50/70 select-none pointer-events-none" />
+                  {/* </span> */}
 
                   <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
                     <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 inline-block animate-pulse" />
-                    শিক্ষার্থী
+                    {labelText}
                   </span>
 
                   <div className="flex gap-0.5 relative z-10">
@@ -169,15 +183,20 @@ const Testimonials = () => {
                   </p>
 
                   <div className="flex items-center gap-3 border-t border-gray-50 pt-4 mt-auto">
-                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0">
-                      {initialLetter}
+                    {/* অপশনাল আইডেন্টিটি ইমেজ অথবা নামের আদ্যক্ষরের প্রিমিয়াম কম্বো */}
+                    <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0 overflow-hidden">
+                      {t.identityImage ? (
+                        <img src={t.identityImage} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        initialLetter
+                      )}
                     </div>
                     <div>
                       <p className="text-xs md:text-sm font-black text-gray-900">
-                        {t.user?.name || "অজানা শিক্ষার্থী"}
+                        {t.user?.name || "সম্মানিত সুধী"}
                       </p>
                       <p className="text-[10px] text-emerald-700 font-bold tracking-wider mt-0.5 uppercase">
-                        Verified Reviewer
+                        ভেরিফাইড রিভিউ
                       </p>
                     </div>
                   </div>
