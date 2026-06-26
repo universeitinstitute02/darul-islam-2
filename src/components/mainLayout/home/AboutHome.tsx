@@ -4,6 +4,7 @@ import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import Link from "next/link";
+import { ArrowRight, CheckCircle2, HelpCircle } from "lucide-react";
 
 const AboutHome = () => {
   const [showBanner, setShowBanner] = useState(false);
@@ -11,7 +12,7 @@ const AboutHome = () => {
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowBanner(true);
-    }, 5000); // 30 seconds
+    }, 3000); // ৫ সেকেন্ড পর স্লাইড-ইন করবে ভাই
 
     return () => clearTimeout(timer);
   }, []);
@@ -110,26 +111,59 @@ const AboutHome = () => {
           </div>
         </div>
 
-        {/* ── Animated Ads Banner (appears after 30s) ── */}
-        {/* ── Animated Ads Banner (appears after 30s) ── */}
+        {/* ── 🎯 আপগ্রেডেড প্রফেশনাল কুইজ প্রমোশন ব্যানার ── */}
         <AnimatePresence>
           {showBanner && (
             <motion.div
-              key="ads-banner"
-              initial={{ opacity: 0, y: 60, scale: 0.95 }}
+              key="quiz-promo-banner"
+              initial={{ opacity: 0, y: 50, scale: 0.98 }}
               animate={{ opacity: 1, y: 0, scale: 1 }}
-              exit={{ opacity: 0, y: 60, scale: 0.95 }}
-              transition={{ duration: 0.6, ease: "easeOut" }}
-              className="mt-10 overflow-hidden rounded-2xl border border-green-200 bg-white shadow-lg"
+              exit={{ opacity: 0, y: 50, scale: 0.98 }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="mt-12 overflow-hidden rounded-[2rem] border border-emerald-100 bg-[#EAF7F4] p-6 md:p-8 shadow-[0_15px_40px_rgba(11,93,59,0.03)] flex flex-col md:flex-row md:items-center justify-between gap-6 relative"
             >
-              <div className="relative">
-                <Image
-                  src="/about-image.webp"
-                  width={1200}
-                  height={220}
-                  alt="Ads Banner"
-                  className="h-40 w-full object-cover"
-                />
+              {/* মডার্ন ব্যাকগ্রাউন্ড ডেকোরেশন শেপ */}
+              <div className="absolute -left-10 -bottom-10 w-36 h-36 bg-[#0B5D3B]/5 rounded-full blur-xl pointer-events-none" />
+
+              {/* বাম পাশের কন্টেন্ট এরিয়া */}
+              <div className="space-y-4 max-w-2xl relative z-10">
+                <h3 className="text-xl md:text-2xl font-black text-slate-900 leading-tight">
+                  মাত্র ২ মিনিটের ফ্রি টেস্টে জেনে নিন আপনি কতটুকু কুরআন পারেন
+                </h3>
+                <p className="text-xs md:text-sm text-slate-500 font-bold">
+                  ১২টি ছোট ও সহজ প্রশ্নের উত্তর দিয়েই জেনে নিন আপনার কুরআন পড়ার
+                  বর্তমান লেভেল কোনটি।
+                </p>
+
+                {/* ইনলাইন ফিচার বুলেটস (স্ক্রিনশটের হুবহু রি-ডিজাইন) */}
+                <div className="flex flex-wrap items-center gap-x-5 gap-y-2 pt-1">
+                  <div className="flex items-center gap-1.5 text-xs font-black text-[#0B5D3B]">
+                    <CheckCircle2 size={14} className="fill-[#EAF7F4]" />{" "}
+                    তাৎক্ষণিক ফলাফল
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs font-black text-[#0B5D3B]">
+                    <CheckCircle2 size={14} className="fill-[#EAF7F4]" />{" "}
+                    পার্সোনালাইজড সাজেশন
+                  </div>
+                  <div className="flex items-center gap-1.5 text-xs font-black text-[#0B5D3B]">
+                    <CheckCircle2 size={14} className="fill-[#EAF7F4]" />{" "}
+                    সম্পূর্ণ ফ্রি টেস্ট
+                  </div>
+                </div>
+              </div>
+
+              {/* ডান পাশের গেমিফাইড কল-টু-অ্যাকশন বাটন */}
+              <div className="shrink-0 relative z-10 flex items-center">
+                <Link
+                  href="/quiz-test"
+                  className="w-full md:w-auto px-6 py-4 bg-[#0B5D3B] hover:bg-[#074229] text-white text-xs md:text-sm font-black rounded-2xl transition-all flex items-center justify-center gap-2 group shadow-md shadow-emerald-950/10 active:scale-[0.98] cursor-pointer"
+                >
+                  ফ্রি টেস্ট শুরু করুন
+                  <ArrowRight
+                    size={16}
+                    className="transition-transform group-hover:translate-x-0.5"
+                  />
+                </Link>
               </div>
             </motion.div>
           )}

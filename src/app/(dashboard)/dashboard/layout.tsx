@@ -22,6 +22,9 @@ import {
   House,
   Settings2,
   ChevronDown,
+  HelpCircle,
+  ListChecks,
+  Users2,
 } from "lucide-react";
 import useUserRole from "../../hooks/useUserRole";
 
@@ -282,6 +285,22 @@ export default function DashboardLayout({
           name: "টেস্টিমোনিয়াল ম্যনেজমেন্ট",
           href: "/dashboard/admin/testimonial",
           icon: FolderKanban,
+        },
+      ],
+    },
+    {
+      name: "কুইজ ম্যনেজমেন্ট",
+      icon: HelpCircle, // Import from 'lucide-react'
+      children: [
+        {
+          name: "কুইজ প্রশ্নসমূহ",
+          href: "/dashboard/admin/quiz-manage",
+          icon: ListChecks,
+        },
+        {
+          name: "কুইজ সাবমিশন",
+          href: "/dashboard/admin/quiz-submissions",
+          icon: Users2,
         },
       ],
     },

@@ -20,6 +20,7 @@ import {
   CheckCircle,
   PlayCircle,
   BookmarkCheck,
+  HelpCircle,
 } from "lucide-react";
 import { getAllCourses } from "@/src/lib/data";
 import { motion, AnimatePresence } from "framer-motion";
@@ -64,20 +65,17 @@ export default function CourseDetailPage() {
         setLoading(true);
         const res = await getAllCourses();
 
-        // 🔹 ফিক্স ১: রেসপন্স অবজেক্ট থেকে কোর্স সেকশন অ্যারেটি রিড করা
         const sections = res?.courseSections || [];
         if (!Array.isArray(sections)) return;
 
         let foundCourse = null;
         for (const section of sections) {
-          // 🔹 ফিক্স ২: c.id এবং c._id দুটো ফরম্যাটই সুরক্ষিতভাবে ম্যাপ করা
           const match = section.courses.find(
             (c: any) =>
               String(c.id) === String(id) || String(c._id) === String(id),
           );
 
           if (match) {
-            // 🔹 ফিক্স ৩: categoryName প্রোপার্টি অ্যাসাইন করা
             foundCourse = {
               ...match,
               category: section.categoryName || section.category,
@@ -114,7 +112,7 @@ export default function CourseDetailPage() {
     if (role && role.toLowerCase() !== "student") {
       return Swal.fire(
         "অ্যাক্সেস অস্বীকৃত",
-        "দুঃখিত, শিক্ষক বা অ্যাডমিন অ্যাকাউন্ট থেকে কোর্সে এনরোল করা সম্ভব নয়। অনুগ্রহ করে শিক্ষার্থী অ্যাকাউন্ট ব্যবহার করুন।",
+        "দুঃখিত, শিক্ষক বা অ্যাডমিন অ্যাকাউন্ট থেকে কোর্সে এনরোল করা সম্ভব নয়। অনুগ্রহ করে শিক্ষার্থী অ্যাকাউন্ট ব্যবহার করুন।",
         "warning",
       );
     }
@@ -128,7 +126,7 @@ export default function CourseDetailPage() {
       <div className="min-h-screen flex flex-col items-center justify-center gap-6 bg-[#f8fafc] p-4">
         <div className="text-center space-y-2">
           <h2 className="text-2xl font-black text-neutral-800">
-            কোর্সটি পাওয়া যায়নি!
+            کোর্সটি পাওয়া যায়নি!
           </h2>
           <p className="text-neutral-500">
             সম্ভবত লিংকটি ভুল অথবা কোর্সটি বর্তমানে উপলব্ধ নেই।
@@ -147,7 +145,7 @@ export default function CourseDetailPage() {
   const { details, image, category, title, price } = course;
 
   return (
-    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 antialiased">
+    <main className="min-h-screen bg-[#f8fafc] pb-20 pt-16 md:pt-20 antialiased font-sans">
       {/* Navigation Sub-header Bar */}
       <nav
         className="bg-white/80 backdrop-blur-md border-b sticky top-0 z-40 px-4 py-3"
@@ -376,7 +374,7 @@ export default function CourseDetailPage() {
                           />
                           <span>
                             আলহামদুলিল্লাহ্‌! আপনার অ্যাসাইনমেন্টটি সফলভাবে জমা
-                            নেওয়া হয়েছে। ওস্তাদ খুব দ্রুত এটি মূল্যায়ন করবেন।
+                            নেওয়া হয়েছে। ওস্তাদ খুব দ্রুত এটি মূল্যায়ন করবেন।
                           </span>
                         </div>
                       )}
@@ -438,8 +436,7 @@ export default function CourseDetailPage() {
           </article>
 
           {/* Right Column Area: Progress Registry & Curriculum Tracking Panel */}
-          <aside className="space-y-6 lg:sticky lg:top-28 h-fit">
-            {/* Action Checkout CTA & Progress Panel Configuration Layer */}
+          <aside className="space-y-6 lg:sticky lg:top-24 h-fit">
             <motion.div
               initial={{ opacity: 0, scale: 0.95 }}
               animate={{ opacity: 1, scale: 1 }}
@@ -448,9 +445,7 @@ export default function CourseDetailPage() {
               {!isEnrolled ? (
                 <>
                   <div className="space-y-1">
-                    <p className="text-xs font-black">
-                      ভর্তি ফি সর্বমোট
-                    </p>
+                    <p className="text-xs font-black">ভর্তি ফি সর্বমোট</p>
                     <div className="flex items-baseline gap-3">
                       <span className="text-4xl md:text-5xl font-black text-[#0B5D3B]">
                         {details?.admissionFee === 0 ||
@@ -469,12 +464,12 @@ export default function CourseDetailPage() {
                   <div className="space-y-3">
                     <button
                       onClick={handleEnrollAction}
-                      className="w-full bg-[#0B5D3B] text-white font-black py-4 rounded-2xl hover:bg-[#0d4d2e] hover:shadow-lg hover:shadow-[#0B5D3B]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
+                      className="w-full bg-[#0B5D3B] text-white font-black py-4 rounded-2xl hover:bg-[#074229] hover:shadow-lg hover:shadow-[#0B5D3B]/30 transition-all text-base active:scale-95 flex items-center justify-center gap-2 cursor-pointer"
                     >
                       এখনী ভর্তি হবো{" "}
                       <CheckCircle2 size={20} aria-hidden="true" />
                     </button>
-                    <p className="text-[10px] text-center text-neutral-400 font-medium">
+                    <p className="text--------- text-center text-neutral-400 font-medium">
                       নিরাপদ পেমেন্ট গেটওয়ের মাধ্যমে ইনস্ট্যান্ট অ্যাক্সেস পান
                     </p>
                   </div>
@@ -633,77 +628,37 @@ export default function CourseDetailPage() {
                     </h4>
                   </div>
                 </div>
-
-                <div
-                  onClick={() => isEnrolled && setActiveTab("live")}
-                  className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
-                    !isEnrolled
-                      ? "cursor-not-allowed opacity-60"
-                      : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "live" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
-                >
-                  <div
-                    onClick={(e) =>
-                      isEnrolled && toggleItemComplete("session-01", e)
-                    }
-                    className="mt-0.5 shrink-0"
-                  >
-                    {completedItems.includes("session-01") ? (
-                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
-                    ) : (
-                      <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-slate-800 leading-tight">
-                      ০১. অরিয়েন্টেশন ও ড্যাশবোর্ড সেটআপ
-                    </h4>
-                    <span className="text-[10px] text-[#0B5D3B] font-bold inline-flex items-center gap-1 bg-white px-2 py-0.5 rounded-md border border-[#0B5D3B]/10">
-                      <Video size={10} /> লাইভ ক্লাস - একটিভ
-                    </span>
-                  </div>
-                </div>
-
-                <div
-                  onClick={() => isEnrolled && setActiveTab("assignment")}
-                  className={`p-4 flex items-start gap-3.5 transition-all border-l-4 ${
-                    !isEnrolled
-                      ? "cursor-not-allowed opacity-60"
-                      : "cursor-pointer"
-                  } ${isEnrolled && activeTab === "assignment" ? "bg-[#0B5D3B]/5 border-[#0B5D3B]" : "border-transparent hover:bg-slate-50"}`}
-                >
-                  <div className="mt-0.5 shrink-0">
-                    {assignmentSubmitted ? (
-                      <CheckCircle2 size={18} className="text-[#0B5D3B]" />
-                    ) : (
-                      <div className="w-[18px] h-[18px] rounded-full border-2 border-neutral-300"></div>
-                    )}
-                  </div>
-                  <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-slate-800 leading-tight">
-                      ০২. মডিউল ১ টাস্ক: হোমওয়ার্ক সাবমিশন
-                    </h4>
-                    <span
-                      className={`text-[10px] font-bold inline-flex items-center gap-1 px-2 py-0.5 rounded-md ${assignmentSubmitted ? "bg-emerald-50 text-emerald-700" : "bg-amber-50 text-amber-700"}`}
-                    >
-                      <FileText size={10} />{" "}
-                      {assignmentSubmitted
-                        ? "সাবমিট সম্পন্ন"
-                        : "অ্যাসাইনমেন্ট পেন্ডিং"}
-                    </span>
-                  </div>
-                </div>
-
-                <div className="p-4 flex items-start gap-3.5 text-slate-400 bg-slate-50/40">
-                  <Lock size={15} className="mt-0.5 shrink-0 text-slate-300" />
-                  <div className="space-y-1">
-                    <h4 className="text-xs font-bold text-slate-400 leading-snug">
-                      ০৩. অ্যাডভান্সড আর্কিটেকচার ও প্রজেক্ট রিভিউ
-                    </h4>
-                  </div>
-                </div>
               </div>
             </section>
+            {/* ── 🎯 ইউনিক এবং স্লিক কুইজ কল-টু-অ্যাকশন উইজেট ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[#EAF7F4] border border-[#D1EDE4] p-5 rounded-[2rem] shadow-xs relative overflow-hidden group"
+            >
+              <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-[#0B5D3B]/5 rounded-full pointer-events-none" />
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-[#0B5D3B] uppercase bg-white border border-[#0B5D3B]/10 px-2.5 py-1 rounded-lg w-fit">
+                  <HelpCircle size={12} /> নিজের লেভেল জানেন তো?
+                </div>
+                <h4 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                  ভর্তি হওয়ার আগে মাত্র ২ মিনিটে দিন একটি ফ্রি পরীক্ষা!
+                </h4>
+                <p className="text-[11px] font-medium leading-normal">
+                  কুরআন পড়ার সঠিক লেভেল অনুযায়ী কোন ব্যাচটি আপনার জন্য সবচেয়ে
+                  উপযোগী হবে তা তাৎক্ষণিক মূল্যায়ন রিপোর্টে জেনে নিন।
+                </p>
+                <Link
+                  href="/quiz-test"
+                  className="mt-2 w-full py-3 bg-[#0B5D3B] hover:bg-[#074229] text-white text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 group/btn shadow-xs cursor-pointer"
+                >
+                  ফ্রি কুইজ টেস্ট শুরু করুন
+                  <span className="transition-transform group-hover/btn:translate-x-0.5">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </motion.div>
           </aside>
         </div>
       </div>

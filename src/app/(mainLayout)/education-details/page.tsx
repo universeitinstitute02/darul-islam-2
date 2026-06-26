@@ -2,12 +2,20 @@
 
 import React, { useState, useEffect, Suspense } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { ArrowLeft, Calendar, FileText, CheckCircle2 } from "lucide-react";
+import {
+  ArrowLeft,
+  Calendar,
+  FileText,
+  CheckCircle2,
+  HelpCircle,
+} from "lucide-react";
 import CourseTabsDashboard from "@/src/components/Education/EducationDetails/page";
 import TestimonialsSection from "@/src/components/Education/EducationTestimonial/EducationalTestimonial";
 import Image from "next/image";
 import Swal from "sweetalert2";
 import useUserRole from "@/src/app/hooks/useUserRole"; // 🔹 ইউজার রোল ট্র্যাক করার হুক যুক্ত করা হয়েছে
+import Link from "next/link";
+import { motion, AnimatePresence } from "framer-motion";
 
 function CourseDetailsContent() {
   const router = useRouter();
@@ -237,6 +245,37 @@ function CourseDetailsContent() {
                   )}
               </div>
             </div>
+
+            {/* ── 🎯 ইউনিক এবং স্লিক কুইজ কল-টু-অ্যাকশন উইজেট ── */}
+            <motion.div
+              initial={{ opacity: 0, y: 15 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="bg-[#EAF7F4] border border-[#D1EDE4] p-5 rounded-[2rem] shadow-xs relative overflow-hidden group col-span-1 lg:col-span-2"
+            >
+              <div className="absolute -right-6 -bottom-6 w-20 h-20 bg-[#0B5D3B]/5 rounded-full pointer-events-none" />
+              <div className="space-y-3 relative z-10">
+                <div className="flex items-center gap-1.5 text-[10px] font-black text-[#0B5D3B] uppercase bg-white border border-[#0B5D3B]/10 px-2.5 py-1 rounded-lg w-fit">
+                  <HelpCircle size={12} /> নিজের লেভেল জানেন তো?
+                </div>
+                <h4 className="text-xs sm:text-sm font-black text-slate-900 leading-snug">
+                  ভর্তি হওয়ার আগে মাত্র ২ মিনিটে দিন একটি ফ্রি পরীক্ষা!
+                </h4>
+                <p className="text-[11px] font-medium leading-normal">
+                  কুরআন পড়ার সঠিক লেভেল অনুযায়ী কোন ব্যাচটি আপনার জন্য সবচেয়ে
+                  উপযোগী হবে তা তাৎক্ষণিক মূল্যায়ন রিপোর্টে জেনে নিন।
+                </p>
+                <Link
+                  href="/quiz-test"
+                  className="mt-2 w-full py-3 bg-[#0B5D3B] hover:bg-[#074229] text-white text-xs font-black rounded-xl transition-all flex items-center justify-center gap-1 group/btn shadow-xs cursor-pointer"
+                >
+                  ফ্রি কুইজ টেস্ট শুরু করুন
+                  <span className="transition-transform group-hover/btn:translate-x-0.5">
+                    →
+                  </span>
+                </Link>
+              </div>
+            </motion.div>
+
           </div>
         </div>
       </div>
