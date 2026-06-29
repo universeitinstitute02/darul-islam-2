@@ -10,7 +10,7 @@ const BestSellingProducts = () => {
   const [visibleCount, setVisibleCount] = useState(8);
 
   useEffect(() => {
-    fetch("https://darulislam-server-v2.vercel.app/api/products/shop")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/shop`)
       .then((res) => res.json())
       .then((data) => {
         setProducts(data.products || []);

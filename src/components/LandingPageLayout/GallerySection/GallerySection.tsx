@@ -9,6 +9,8 @@ import {
   ChevronRight,
 } from "lucide-react";
 import Link from "next/link";
+// 🎯 নেক্সট জেএস অপ্টিমাইজড ইমেজ কম্পোনেন্ট ইমপোর্ট ভাই
+import Image from "next/image";
 
 interface GalleryAlbum {
   _id: string;
@@ -39,7 +41,6 @@ const getImageUrl = (imgUrl: string) => {
   if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
     return imgUrl;
   }
-  // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: BASE_URL এর সম্ভাব্য undefined ভ্যালু এবং এরর হ্যান্ডেল করা হয়েছে
   const cleanBaseUrl = BASE_URL
     ? BASE_URL.replace("/api", "")
     : "https://darulislam-server-v2.vercel.app";
@@ -66,7 +67,6 @@ const GallerySkeleton = () => {
 };
 
 const GallerySection: React.FC = () => {
-  // 🔹 সব প্রয়োজনীয় স্টেট এখানে ডিফাইন করা হয়েছে
   const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
   const [page, setPage] = useState(1);
   const [loading, setLoading] = useState(false);
@@ -77,7 +77,6 @@ const GallerySection: React.FC = () => {
   const [selectedAlbum, setSelectedAlbum] = useState<GalleryAlbum | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  // 🔹 API থেকে ডাটা ফেচ করার জন্য useEffect আলাদা করা হয়েছে
   useEffect(() => {
     if (!BASE_URL) return;
     setLoading(true);
@@ -98,7 +97,6 @@ const GallerySection: React.FC = () => {
       .finally(() => setLoading(false));
   }, [page]);
 
-  // গ্যালারি লাইটবক্স ওপেন/ক্লোজ হ্যান্ডলার
   const openGallery = (album: GalleryAlbum, imageIndex = 0) => {
     setSelectedAlbum(album);
     setCurrentImageIndex(imageIndex);
@@ -164,16 +162,19 @@ const GallerySection: React.FC = () => {
                     onClick={() => openGallery(album, 0)}
                     className={`group relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-gray-100 transition-all duration-700 hover:shadow-2xl hover:shadow-emerald-900/20 cursor-pointer ${getGridSize(i)}`}
                   >
-                    {/* ছবি */}
-                    <img
+                    {/* 🎯 র-ইমেজ রিপ্লেস করে নেক্সট ইমেজ লক ভাই */}
+                    <Image
                       src={displayImage}
                       alt={album.title}
-                      className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1"
-                      loading="lazy"
+                      fill
+                      sizes="(max-w-768px) 100vw, (max-w-1024px) 50vw, 33vw"
+                      className="object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1"
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
                     />
 
                     {/* প্রিমিয়াম ওভারলে */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500">
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
                       <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex items-end justify-between translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
                         <div>
                           <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-1">
@@ -190,7 +191,7 @@ const GallerySection: React.FC = () => {
                     </div>
 
                     {/* মোবাইল ইন্ডিকেটর আইকন */}
-                    <div className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full md:hidden">
+                    <div className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full md:hidden z-10">
                       <Expand className="w-4 h-4 text-white" />
                     </div>
                   </div>
@@ -202,7 +203,7 @@ const GallerySection: React.FC = () => {
             <div className="mt-14 mb-6 text-center">
               <Link
                 href="/gallery"
-                className="inline-block px-12 py-5 bg-[#0B5D3B] text-white font-black rounded-full"
+                className="inline-block px-12 py-5 bg-[#0B5D3B] text-white font-black rounded-full hover:bg-[#08432a] transition-colors"
               >
                 সম্পূর্ণ গ্যালারি দেখুন
               </Link>
@@ -219,7 +220,7 @@ const GallerySection: React.FC = () => {
             {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute cursor-pointer top-6 right-6 text-white hover:text-red-400 transition"
+              className="absolute cursor-pointer top-6 right-6 text-white hover:text-red-400 transition z-50"
             >
               <X size={36} />
             </button>
@@ -231,7 +232,7 @@ const GallerySection: React.FC = () => {
                   e.stopPropagation();
                   prevImage();
                 }}
-                className="absolute left-3 md:left-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition"
+                className="absolute left-3 md:left-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition z-50"
               >
                 <ChevronLeft size={32} />
               </button>
@@ -239,14 +240,19 @@ const GallerySection: React.FC = () => {
 
             {/* Image Container */}
             <div
-              className="max-w-7xl max-h-[90vh] px-4 text-center"
+              className="max-w-7xl w-full max-h-[90vh] px-4 text-center relative flex flex-col justify-center h-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <img
-                src={getImageUrl(selectedAlbum.image[currentImageIndex])}
-                alt={selectedAlbum.title}
-                className="max-h-[80vh] w-auto mx-auto object-contain rounded-2xl shadow-2xl"
-              />
+              <div className="relative max-h-[80vh] h-[75vh] w-full max-w-4xl mx-auto">
+                <Image
+                  src={getImageUrl(selectedAlbum.image[currentImageIndex])}
+                  alt={selectedAlbum.title}
+                  fill
+                  sizes="(max-w-1200px) 100vw, 1200px"
+                  className="object-contain rounded-2xl"
+                  priority
+                />
+              </div>
 
               <div className="mt-6">
                 <h3 className="text-white text-xl md:text-2xl font-bold">
@@ -265,7 +271,7 @@ const GallerySection: React.FC = () => {
                   e.stopPropagation();
                   nextImage();
                 }}
-                className="absolute right-3 md:right-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition"
+                className="absolute right-3 md:right-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition z-50"
               >
                 <ChevronRight size={32} />
               </button>

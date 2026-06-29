@@ -22,10 +22,10 @@ import {
   ChevronLeft,
   ChevronRight,
   Edit,
-  Trash2,
   CheckCircle2,
-  IdCard,
+  XCircle,
   Star,
+  SlidersHorizontal,
 } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
@@ -33,6 +33,8 @@ import Swal from "sweetalert2";
 
 interface StudentProfile {
   _id?: string;
+  studentId?: string; // 🎯 ব্যাকএন্ড থেকে আসা ইউনিক আইডি
+  isApproved?: boolean; // 🎯 নতুন স্টুডেন্ট স্টেট ফ্ল্যাগ
   studentNameBn?: string;
   classLevel?: string;
   fatherName?: string;
@@ -64,6 +66,12 @@ export default function StudentManagement() {
   const [selectedStudent, setSelectedStudent] = useState<Student | null>(null);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
 
+  // 🎯 ফিল্টারিং স্টেট লজিক
+  const [statusFilter, setStatusFilter] = useState<
+    "all" | "approved" | "pending"
+  >("approved"); // রিকোয়ারমেন্ট অনুযায়ী ফার্স্ট Approved রাউটিং হবে
+  const [isFilterDropdownOpen, setIsFilterDropdownOpen] = useState(false);
+
   const [editFormData, setEditFormData] = useState({
     name: "",
     email: "",
@@ -78,33 +86,132 @@ export default function StudentManagement() {
 
   const itemsPerPage = 6;
 
+  // 🎯 ব্যাকএন্ড এপিআই রি-সিঙ্ক উইথ ফিল্টার প্যারামিটারস
   const {
     data: students = [],
     isLoading: isDataLoading,
     error,
     refetch,
   } = useQuery<Student[]>({
-    queryKey: ["adminAllStudents"],
+    queryKey: ["adminAllStudents", statusFilter],
     queryFn: async () => {
-      const response = await axiosSecure.get(
-        "/users/admin/all-users?role=student",
-      );
+      // ওল্ড ডাটা ট্র্যাকিং ঠিক রাখতে কুয়েরি প্যারামিটার ডাইনামিক পাস করা হয়েছে ভাই
+      const url =
+        statusFilter === "all"
+          ? "/users/admin/all-users?role=student"
+          : `/users/admin/all-users?role=student&status=${statusFilter}`;
+
+      const response = await axiosSecure.get(url);
       return response.data?.data || response.data || [];
     },
     enabled: !!isAdmin,
     staleTime: 3 * 60 * 1000,
   });
 
-  // 🔹 সিনিয়র লেভেল স্টুডেন্ট ফিচার্ড টগল মেথড (বাংলা অ্যালার্ট ও লাইভ এপিআই সিঙ্ক)
-  const handleToggleStudentFeatured = async (studentProfileId: string, currentStatus: boolean, studentName: string) => {
-    if (!studentProfileId) return;
+  // 🎯 নতুন এপিআই ইন্টিগ্রেশন: শিক্ষার্থী অ্যাপ্রুভাল হ্যান্ডলার (DIS-2026-0001 জেনারেটর ট্রিগার)
+  const handleApproveStudent = async (
+    studentId: string,
+    studentName: string,
+  ) => {
+    Swal.fire({
+      icon: "question",
+      title: "শিক্ষার্থী অনুমোদন করুন",
+      text: `আপনি কি নিশ্চিতভাবে ${studentName}-কে অ্যাপ্রুভ করতে চান? এটি শিক্ষার্থীর প্রোফাইলে একটি নতুন ইউনিক আইডি তৈরি করবে।`,
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, অনুমোদন করুন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#0B5D3B",
+      cancelButtonColor: "#d33",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosSecure.put(
+            `/users/admin/approve-student/${studentId}`,
+            {
+              isApproved: true,
+            },
+          );
 
+          if (res.status === 200 || res.data?.success) {
+            Swal.fire({
+              icon: "success",
+              title: "অনুমোদন সফল",
+              text: "মাশাআল্লাহ্! শিক্ষার্থী সফলভাবে অ্যাপ্রুভ হয়েছে এবং ইউনিক আইডি জেনারেট হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            refetch();
+            setSelectedStudent(null);
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "ব্যর্থ হয়েছে",
+            text: "শিক্ষার্থী অনুমোদন করা সম্ভব হয়নি। আবার চেষ্টা করুন।",
+            confirmButtonColor: "#0B5D3B",
+          });
+        }
+      }
+    });
+  };
+
+  // 🎯 নতুন এপিআই ইন্টিগ্রেশন: শিক্ষার্থী রিজেকশন/ডিজঅ্যাপ্রুভ মেথড ভাই
+  const handleRejectStudent = async (
+    studentId: string,
+    studentName: string,
+  ) => {
+    Swal.fire({
+      icon: "warning",
+      title: "অনুমোদন বাতিলকরণ",
+      text: `আপনি কি নিশ্চিতভাবে ${studentName}-এর অনুমোদন বাতিল বা পেন্ডিং করতে চান?`,
+      showCancelButton: true,
+      confirmButtonText: "হ্যাঁ, পেন্ডিং করুন",
+      cancelButtonText: "বাতিল",
+      confirmButtonColor: "#d33",
+      cancelButtonColor: "#3085d6",
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          const res = await axiosSecure.put(
+            `/users/admin/approve-student/${studentId}`,
+            {
+              isApproved: false,
+            },
+          );
+
+          if (res.status === 200 || res.data?.success) {
+            Swal.fire({
+              icon: "success",
+              title: "বাতিল সম্পন্ন",
+              text: "শিক্ষার্থীর প্রোফাইল স্টেট সফলভাবে পেন্ডিং করা হয়েছে।",
+              confirmButtonColor: "#0B5D3B",
+            });
+            refetch();
+            setSelectedStudent(null);
+          }
+        } catch (err) {
+          Swal.fire({
+            icon: "error",
+            title: "ব্যর্থ হয়েছে",
+            text: "অনুমোদন স্টেট পরিবর্তন করা সম্ভব হয়নি।",
+            confirmButtonColor: "#0B5D3B",
+          });
+        }
+      }
+    });
+  };
+
+  const handleToggleStudentFeatured = async (
+    studentProfileId: string,
+    currentStatus: boolean,
+    studentName: string,
+  ) => {
+    if (!studentProfileId) return;
     const nextStatus = !currentStatus;
 
     Swal.fire({
       icon: "question",
       title: nextStatus ? "হোমপেজে প্রদর্শন" : "হোমপেজ থেকে অপসারণ",
-      text: nextStatus 
+      text: nextStatus
         ? `আপনি কি শিক্ষার্থী ${studentName}-কে মূল হোমপেজে ফিচার্ড হিসেবে প্রদর্শন করতে চান?`
         : `আপনি কি শিক্ষার্থী ${studentName}-কে মূল হোমপেজের ফিচার্ড তালিকা থেকে বাদ দিতে চান?`,
       showCancelButton: true,
@@ -115,16 +222,19 @@ export default function StudentManagement() {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          const res = await axiosSecure.patch(`/students/featured/${studentProfileId}`, {
-            isFeatured: nextStatus,
-          });
+          const res = await axiosSecure.patch(
+            `/students/featured/${studentProfileId}`,
+            {
+              isFeatured: nextStatus,
+            },
+          );
 
           if (res.status === 200 || res.data?.success) {
             Swal.fire({
               icon: "success",
               title: "সফল হয়েছে",
-              text: nextStatus 
-                ? "শিক্ষার্থী প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।" 
+              text: nextStatus
+                ? "শিক্ষার্থী প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।"
                 : "ফিচার্ড স্ট্যাটাস সফলভাবে বাতিল করা হয়েছে।",
               confirmButtonColor: "#0B5D3B",
             });
@@ -220,9 +330,7 @@ export default function StudentManagement() {
       const res = await axiosSecure.put(
         `/users/admin/update-user/${selectedStudent._id}`,
         formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        },
+        { headers: { "Content-Type": "multipart/form-data" } },
       );
 
       if (res.status === 200) {
@@ -253,6 +361,7 @@ export default function StudentManagement() {
       student.name?.toLowerCase().includes(searchLower) ||
       student.email?.toLowerCase().includes(searchLower) ||
       student.phone?.includes(searchQuery) ||
+      student.profileData?.studentId?.toLowerCase().includes(searchLower) || // 🔍 ইউনিক আইডি দিয়ে লাইভ ড্রপডাউন ফিল্টার সার্চ
       student.profileData?.studentNameBn?.includes(searchQuery)
     );
   });
@@ -327,19 +436,85 @@ export default function StudentManagement() {
           </div>
         </section>
 
-        <section className="bg-white p-4 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between">
-          <div className="relative w-full md:max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
-            <input
-              type="text"
-              placeholder="নাম, বাংলা নাম, ইমেইল বা ফোন নম্বর দিয়ে খুঁজুন..."
-              value={searchQuery}
-              onChange={handleSearchChange}
-              className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#0B5D3B]/20 focus:border-[#0B5D3B] transition-all text-slate-700"
-            />
+        {/* 🎯 সার্চ বার এবং কাস্টম মডার্ন মিনিমাল ফিল্টার ইঞ্জিন সেকশন */}
+        <section className="bg-white p-4 rounded-[2.5rem] border border-slate-200 shadow-sm flex flex-col md:flex-row gap-4 items-center justify-between relative">
+          <div className="flex items-center gap-3 w-full md:max-w-xl">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-slate-400" />
+              <input
+                type="text"
+                placeholder="নাম, বাংলা নাম, স্টুডেন্ট আইডি বা মোবাইল নম্বর দিয়ে খুঁজুন..."
+                value={searchQuery}
+                onChange={handleSearchChange}
+                className="w-full pl-11 pr-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs font-bold focus:outline-none focus:ring-2 focus:ring-[#0B5D3B]/20 focus:border-[#0B5D3B] transition-all text-slate-700"
+              />
+            </div>
+
+            {/* 🎯 মডার্ন পপওভার ফিল্টার বাটন */}
+            <div className="relative">
+              <button
+                type="button"
+                onClick={() => setIsFilterDropdownOpen(!isFilterDropdownOpen)}
+                className={`p-2.5 rounded-xl border flex items-center gap-2 text-xs font-black transition-all cursor-pointer ${
+                  statusFilter !== "all"
+                    ? "bg-emerald-50 border-[#0B5D3B] text-[#0B5D3B]"
+                    : "bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100"
+                }`}
+              >
+                <SlidersHorizontal size={16} />
+                <span>ফিল্টার</span>
+              </button>
+
+              <AnimatePresence>
+                {isFilterDropdownOpen && (
+                  <motion.div
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: 10 }}
+                    className="absolute right-0 mt-2 w-56 bg-white border border-slate-200 rounded-2xl shadow-xl p-3 z-30 space-y-1.5"
+                  >
+                    <p className="text-[10px] font-black text-slate-400 uppercase tracking-wider px-2 pb-1 border-b border-slate-100">
+                      অনুমোদন স্থিতি ফিল্টার
+                    </p>
+                    <button
+                      onClick={() => {
+                        setStatusFilter("approved");
+                        setCurrentPage(1);
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl font-bold transition-colors ${statusFilter === "approved" ? "bg-[#0B5D3B] text-white" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      অনুমোদিত শিক্ষার্থী (Approved)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStatusFilter("pending");
+                        setCurrentPage(1);
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl font-bold transition-colors ${statusFilter === "pending" ? "bg-red-500 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      পেন্ডিং রিকোয়েস্ট (Pending)
+                    </button>
+                    <button
+                      onClick={() => {
+                        setStatusFilter("all");
+                        setCurrentPage(1);
+                        setIsFilterDropdownOpen(false);
+                      }}
+                      className={`w-full text-left px-3 py-2 text-xs rounded-xl font-bold transition-colors ${statusFilter === "all" ? "bg-slate-800 text-white" : "text-slate-600 hover:bg-slate-50"}`}
+                    >
+                      সর্বমোট তালিকা (All Users)
+                    </button>
+                  </motion.div>
+                )}
+              </AnimatePresence>
+            </div>
           </div>
+
           <div className="text-xs text-slate-400 w-full md:w-auto text-left md:text-right font-black tracking-wide uppercase">
-            সর্বমোট {totalItems} জনের মধ্যে {indexOfFirstItem + 1} -{" "}
+            সর্বমোট {totalItems} জনের মধ্যে{" "}
+            {totalItems > 0 ? indexOfFirstItem + 1 : 0} -{" "}
             {Math.min(indexOfLastItem, totalItems)} দেখানো হচ্ছে
           </div>
         </section>
@@ -358,7 +533,8 @@ export default function StudentManagement() {
                 কোন শিক্ষার্থীর তথ্য পাওয়া যায়নি!
               </p>
               <p className="text-slate-400 text-xs mt-1 font-medium">
-                অনুগ্রহ করে সঠিক বানানে বা অন্য কি-ওয়ার্ড দিয়ে চেষ্টা করুন।
+                অনুগ্রহ করে সঠিক বানানে বা অন্য ফিল্টার কি-ওয়ার্ড দিয়ে চেষ্টা
+                করুন।
               </p>
             </div>
           ) : (
@@ -370,6 +546,9 @@ export default function StudentManagement() {
                   student.profileImage ||
                   `https://api.dicebear.com/7.x/initials/svg?seed=${student.name}`;
                 const isFeatured = profile?.isFeatured === true;
+
+                // 🎯 ওল্ড ডাটার সেফটি কভার লক: যদি ডিবির স্কিমাতে 'isApproved' ফিল্ড না থাকে, তবে আমরা তাকে Approved ধরে নেব ভাই
+                const isApproved = profile.isApproved !== false;
 
                 return (
                   <article
@@ -390,9 +569,18 @@ export default function StudentManagement() {
                             />
                           </div>
                           <div className="space-y-0.5 min-w-0 flex-1">
-                            <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-50 text-[#0B5D3B] border border-emerald-100">
-                              <UserCheck className="h-3 w-3" /> Student
-                            </span>
+                            {/* 🎯 রিকোয়ারমেন্ট অনুযায়ী ডাইনামিক আইডি ব্যাজ অথবা রেড কালারড পেন্ডিং স্টেট ব্যাজ লোড */}
+                            {isApproved ? (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black bg-emerald-50 text-[#0B5D3B] border border-emerald-100 font-mono">
+                                <UserCheck className="h-3 w-3 text-[#0B5D3B]" />{" "}
+                                {profile.studentId || "APPROVED"}
+                              </span>
+                            ) : (
+                              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[9px] font-black bg-red-50 text-red-600 border border-red-100">
+                                <XCircle className="h-3 w-3 text-red-500" />{" "}
+                                PENDING
+                              </span>
+                            )}
                             <h2 className="font-black text-slate-800 text-base truncate group-hover:text-[#0B5D3B] transition-colors leading-tight pt-1">
                               {studentName}
                             </h2>
@@ -403,18 +591,27 @@ export default function StudentManagement() {
                         </div>
 
                         <div className="flex gap-1.5 items-center">
-                          {/* 🔹 প্রফেশনাল কন্ডিশনাল ফিচার্ড টগল বোতাম (বাংলা টেক্সট) */}
                           <button
                             type="button"
-                            onClick={() => handleToggleStudentFeatured(profile._id || student._id, isFeatured, studentName)}
+                            onClick={() =>
+                              handleToggleStudentFeatured(
+                                profile._id || student._id,
+                                isFeatured,
+                                studentName,
+                              )
+                            }
                             className={`p-2 rounded-xl border transition-all flex items-center justify-center cursor-pointer ${
-                              isFeatured 
-                                ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600" 
+                              isFeatured
+                                ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600"
                                 : "bg-neutral-50 border-neutral-100 text-neutral-400 hover:text-amber-500 hover:bg-amber-50/50"
                             }`}
-                            title={isFeatured ? "হোমপেজে প্রদর্শিত" : "হোমপেজে দেখান"}
+                            title={
+                              isFeatured ? "হোমপেজে প্রদর্শিত" : "হোমপেজে দেখান"
+                            }
                           >
-                            <Star size={13} className={isFeatured ? "fill-white" : ""} />
+                            <Star
+                              className={`h-3.5 w-3.5 ${isFeatured ? "fill-white" : ""}`}
+                            />
                           </button>
 
                           <button
@@ -426,7 +623,7 @@ export default function StudentManagement() {
                             className="p-2 bg-neutral-50 hover:bg-emerald-50 text-neutral-400 hover:text-[#0B5D3B] rounded-xl transition-all border border-neutral-100 cursor-pointer"
                             title="তথ্য পরিবর্তন করুন"
                           >
-                            <Edit size={14} />
+                            <Edit className="h-3.5 w-3.5" />
                           </button>
                         </div>
                       </div>
@@ -610,6 +807,12 @@ export default function StudentManagement() {
                           {selectedStudent.profileData?.classLevel ||
                             "General Student"}
                         </span>
+                        {/* মোডাল হেডারেও আইডি রিফ্লেকশন */}
+                        {selectedStudent.profileData?.studentId && (
+                          <span className="text-[10px] font-mono font-black bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md">
+                            ID: {selectedStudent.profileData.studentId}
+                          </span>
+                        )}
                       </div>
                     </div>
                   </div>
@@ -690,7 +893,7 @@ export default function StudentManagement() {
                       <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
                         ঠিকানা বিবরণী
                       </h4>
-                      <div className="bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100 flex items-start gap-2.5 text-xs font-bold text-neutral-700 leading-relaxed font-medium">
+                      <div className="bg-neutral-50/70 p-3.5 rounded-2xl border border-neutral-100 flex items-start gap-2.5 text-xs text-neutral-700 leading-relaxed font-medium">
                         <MapPin
                           size={14}
                           className="text-[#0B5D3B] shrink-0 mt-0.5"
@@ -702,7 +905,7 @@ export default function StudentManagement() {
 
                   <div className="space-y-4">
                     <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
-                      અধ্যয়নরত কোর্সসমূহ (
+                      અધ્યয়নরত কোর্সসমূহ (
                       {selectedStudent.profileData?.enrolledCourses?.length ||
                         0}
                       )
@@ -728,31 +931,77 @@ export default function StudentManagement() {
                     </div>
                   </div>
 
+                  {/* 🎯 রিকোয়ারমেন্ট অনুযায়ী ডাইনামিক সাইড-বাই-সাইড অ্যাপ্রুভ এবং রিজেক্ট বাটন ইন্টিগ্রেশন */}
                   <div className="pt-6 border-t border-neutral-100 flex flex-wrap items-center justify-between gap-3 bg-neutral-50/30 p-4 -mx-6 -mb-6">
-                    <div className="text-[10px] font-mono text-neutral-400">
-                      Student DB_ID: {selectedStudent._id}
+                    <div className="flex gap-2 w-full sm:w-auto justify-start">
+                      {selectedStudent.profileData?.isApproved === false ? (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleApproveStudent(
+                              selectedStudent._id,
+                              selectedStudent.profileData?.studentNameBn ||
+                                selectedStudent.name,
+                            )
+                          }
+                          className="px-4 py-2 bg-[#0B5D3B] hover:bg-[#0c462a] text-white rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        >
+                          <CheckCircle2 size={14} /> Approve Student
+                        </button>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() =>
+                            handleRejectStudent(
+                              selectedStudent._id,
+                              selectedStudent.profileData?.studentNameBn ||
+                                selectedStudent.name,
+                            )
+                          }
+                          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white rounded-xl text-xs font-black transition-all flex items-center gap-1.5 cursor-pointer shadow-sm"
+                        >
+                          <XCircle size={14} /> Mark Pending
+                        </button>
+                      )}
                     </div>
-                    <div className="flex items-center gap-2">
-                      {/* 🔹 মোডাল বডির ভেতরের ডাইনামিক ফিচার্ড বোতাম ফিক্স */}
+
+                    <div className="flex items-center gap-2 ml-auto">
                       <button
                         type="button"
-                        onClick={() => handleToggleStudentFeatured(selectedStudent.profileData?._id || selectedStudent._id, selectedStudent.profileData?.isFeatured === true, selectedStudent.profileData?.studentNameBn || selectedStudent.name)}
-                        className={`px-4 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 transition-all cursor-pointer border ${
+                        onClick={() =>
+                          handleToggleStudentFeatured(
+                            selectedStudent.profileData?._id ||
+                              selectedStudent._id,
+                            selectedStudent.profileData?.isFeatured === true,
+                            selectedStudent.profileData?.studentNameBn ||
+                              selectedStudent.name,
+                          )
+                        }
+                        className={`px-3 py-2 rounded-xl text-xs font-black shadow-sm flex items-center gap-1 transition-all cursor-pointer border ${
                           selectedStudent.profileData?.isFeatured
                             ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600"
                             : "bg-white border-neutral-200 text-neutral-600 hover:bg-neutral-50"
                         }`}
                       >
-                        <Star size={13} className={selectedStudent.profileData?.isFeatured ? "fill-white" : ""} />
-                        {selectedStudent.profileData?.isFeatured ? "হোমপেজে সচল" : "হোমপেজে দেখান"}
+                        <Star
+                          size={13}
+                          className={
+                            selectedStudent.profileData?.isFeatured
+                              ? "fill-white"
+                              : ""
+                          }
+                        />
+                        {selectedStudent.profileData?.isFeatured
+                          ? "ফিচার্ড"
+                          : "ফিচার্ড করুন"}
                       </button>
 
                       <button
                         type="button"
                         onClick={() => openEditModal(selectedStudent)}
-                        className="px-4 py-2 bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
+                        className="px-3 py-2 bg-white border border-neutral-200 text-neutral-600 hover:bg-neutral-50 rounded-xl text-xs font-bold transition-all cursor-pointer shadow-sm"
                       >
-                        Edit Profile
+                        Edit
                       </button>
                       <button
                         type="button"
@@ -762,9 +1011,9 @@ export default function StudentManagement() {
                             selectedStudent.name,
                           )
                         }
-                        className="px-4 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition-all cursor-pointer"
+                        className="px-3 py-2 bg-red-50 text-red-600 hover:bg-red-100 rounded-xl text-xs font-bold transition-all cursor-pointer"
                       >
-                        Delete Account
+                        Delete
                       </button>
                     </div>
                   </div>
@@ -794,7 +1043,7 @@ export default function StudentManagement() {
               >
                 <div className="bg-[#0B5D3B] p-6 text-white relative">
                   <h3 className="text-lg font-black flex flex-col gap-0.5">
-                    শিক্ষার্থী তথ্য পরিবর্তন
+                    নথিপত্র ও শিক্ষার্থী তথ্য পরিবর্তন
                     <span className="text-[10px] font-medium opacity-75 uppercase tracking-wider">
                       FILL STANDARD VALIDATION FIELDS
                     </span>
@@ -827,7 +1076,6 @@ export default function StudentManagement() {
                             name: e.target.value,
                           })
                         }
-                        placeholder="उदा: Stuart Hopkins"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -843,9 +1091,8 @@ export default function StudentManagement() {
                           setEditFormData({
                             ...editFormData,
                             studentNameBn: e.target.value,
-                        })
-                      }
-                        placeholder="उदा: স্টুয়ার্ট হপকিন্স"
+                          })
+                        }
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -866,7 +1113,6 @@ export default function StudentManagement() {
                             email: e.target.value,
                           })
                         }
-                        placeholder="student@example.com"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -884,7 +1130,6 @@ export default function StudentManagement() {
                             phone: e.target.value,
                           })
                         }
-                        placeholder="01XXXXXXXXX"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -905,7 +1150,6 @@ export default function StudentManagement() {
                             classLevel: e.target.value,
                           })
                         }
-                        placeholder="उदा: নবম শ্রেণী"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -923,7 +1167,6 @@ export default function StudentManagement() {
                             guardianPhone: e.target.value,
                           })
                         }
-                        placeholder="01XXXXXXXXX"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -944,7 +1187,6 @@ export default function StudentManagement() {
                             fatherName: e.target.value,
                           })
                         }
-                        placeholder="পিতার নাম লিখুন"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -962,7 +1204,6 @@ export default function StudentManagement() {
                             motherName: e.target.value,
                           })
                         }
-                        placeholder="মাতার নাম লিখুন"
                         className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                       />
                     </div>
@@ -981,7 +1222,6 @@ export default function StudentManagement() {
                           address: e.target.value,
                         })
                       }
-                      placeholder="বর্তমান ও স্থায়ী ঠিকানা লিখুন..."
                       rows={3}
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all resize-none"
                     />
@@ -991,7 +1231,7 @@ export default function StudentManagement() {
                     <button
                       type="button"
                       onClick={() => setIsEditModalOpen(false)}
-                      className="flex-1 py-3 bg-white border border-neutral-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all text-center cursor-pointer"
+                      className="flex-1 py-3 bg-white border border-slate-200 text-neutral-600 rounded-xl text-xs font-bold hover:bg-neutral-50 transition-all text-center cursor-pointer"
                     >
                       বাতিল
                     </button>

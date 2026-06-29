@@ -12,6 +12,7 @@ import {
   Phone,
   Trophy,
   CheckCircle2,
+  XCircle, // 🎯 পেন্ডিং আইকন ট্র্যাকিংয়ের জন্য যুক্ত করা হয়েছে ভাই
   Bell,
   Loader2,
   Video,
@@ -102,10 +103,9 @@ const StudentDashboard = () => {
     user?.profileImage ||
     `https://avatars.githubusercontent.com/u/198446517?v=4`;
 
-  const userSubtitle =
-    user?.role === "teacher"
-      ? `${user?.profile?.designation || "Senior Lecturer"} - ${user?.profile?.department?.name || "ইসলামিক স্টাডিজ"}`
-      : "হিফজ বিভাগ - লেভেল ৩";
+  const userSubtitle = user?.profile?.department?.name
+    ? `${user?.profile?.department?.name} ${user?.profile?.classLevel ? `- ${user?.profile?.classLevel}` : ""}`
+    : "সাধারণ বিভাগ";
 
   if (isUserLoading) {
     return (
@@ -128,6 +128,10 @@ const StudentDashboard = () => {
     profilePicture: "https://avatars.githubusercontent.com/u/198446517?v=4",
   };
 
+  // 🎯 ওল্ড ডাটাবেজ ক্র্যাশ প্রটেকশন সেফটি লক ভাই: যদি isApproved ফিল্ড ডিফাইন না থাকে, তবে সে ডিরেক্ট অনুমোদিত
+  const isApproved = user?.profile?.isApproved !== false;
+  const customStudentId = user?.profile?.studentId;
+
   return (
     <div className="min-h-screen bg-[#F4F7F5] pb-12 pt-16 lg:pt-18 font-sans">
       {/* 🟢 Header Section */}
@@ -138,11 +142,30 @@ const StudentDashboard = () => {
               <p className="text-white/80 text-xs lg:text-sm italic">
                 আসসালামু আলাইকুম,
               </p>
-              <Link href="/update-profile" className="hover:underline block">
-                <h1 className="text-xl lg:text-3xl font-black tracking-tight mt-0.5">
-                  {userName}
-                </h1>
-              </Link>
+              <div className="flex flex-col sm:flex-row sm:items-center gap-x-3 gap-y-1.5 mt-0.5">
+                <Link href="/update-profile" className="hover:underline block">
+                  <h1 className="text-xl lg:text-3xl font-black tracking-tight">
+                    {userName}
+                  </h1>
+                </Link>
+
+                {/* 🎯 রিকোয়ারমেন্ট অনুযায়ী চমৎকার টাইপোগ্রাফি স্টাইলিশ ব্যাজ রেন্ডারিং */}
+                {isApproved ? (
+                  customStudentId && (
+                    <div className="inline-block self-start sm:self-auto">
+                      <span className="inline-flex items-center text-[10px] font-mono font-black bg-white/10 text-emerald-300 px-2.5 py-0.5 rounded-md border border-white/10 shadow-inner">
+                        ID: {customStudentId}
+                      </span>
+                    </div>
+                  )
+                ) : (
+                  <div className="inline-block self-start sm:self-auto">
+                    <span className="inline-flex items-center gap-1 text-[10px] font-bold bg-amber-500 text-white px-2.5 py-0.5 rounded-md border border-amber-600/30 animate-pulse shadow-sm">
+                      <XCircle size={10} /> প্রোফাইল স্ট্যাটাস (Pending)
+                    </span>
+                  </div>
+                )}
+              </div>
               <p className="text-white/60 text-[10px] lg:text-xs mt-1 italic">
                 {userSubtitle}
               </p>
@@ -184,7 +207,7 @@ const StudentDashboard = () => {
                   <span className="relative inline-flex rounded-full h-2.5 w-2.5 bg-emerald-500"></span>
                 </span>
                 <h3 className="font-black text-neutral-800 text-sm lg:text-xl italic">
-                  ক্লাসসমূহ
+                  Class Schedule
                 </h3>
               </div>
               <p className="text-[11px] lg:text-xs text-neutral-400 font-medium leading-relaxed">
@@ -342,7 +365,7 @@ const StudentDashboard = () => {
           <div className="lg:col-span-6 bg-white p-3 sm:p-6 rounded-[1.5rem] lg:rounded-[2rem] shadow-sm border border-neutral-100 flex flex-col justify-between gap-3">
             <div>
               <h3 className="font-black text-neutral-400 text-[9px] sm:text-xs mb-3 italic uppercase tracking-wider">
-                শিক্ষক
+                Mentor
               </h3>
               <div className="flex flex-col sm:flex-row items-center sm:items-start text-center sm:text-left gap-2 sm:gap-4 mb-2">
                 <img
@@ -394,7 +417,7 @@ const StudentDashboard = () => {
               </div>
               <p className="text-[11px] text-neutral-400 font-medium leading-relaxed">
                 ড্যাশবোর্ড, ফি প্রদান বা ক্লাস সংক্রান্ত যেকোনো সমস্যার জন্য
-                সরাসরি আমাদের কল করুন অথবা ইমেইল পাঠাতে পারেন।
+                সরবরাহকৃত হেল্পলাইনে কল করুন অথবা ইমেইল পাঠাতে পারেন।
               </p>
             </div>
 

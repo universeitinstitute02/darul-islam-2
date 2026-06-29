@@ -15,11 +15,9 @@ import {
   Clock,
   X,
   Phone,
-  BookOpen,
   User,
   Edit,
   Trash2,
-  GraduationCap,
   Calendar,
   IdCard,
   Star,
@@ -59,6 +57,7 @@ const TeacherList = () => {
     experience: "",
     qualifications: "",
     departmentId: "",
+    teacherId: "", // 🎯 স্টেট ট্র্যাকিং ফিল্ড
   });
 
   useEffect(() => {
@@ -114,16 +113,18 @@ const TeacherList = () => {
     setCurrentPage(1);
   }, [fetchTeachers]);
 
-  // 🔹 সিনিয়র লেভেল ফিচার্ড টগল মেথড (বাংলা অ্যালার্ট ও লাইভ এপিআই সিঙ্ক)
-  const handleToggleFeatured = async (teacherProfileId: string, currentStatus: boolean, teacherName: string) => {
+  const handleToggleFeatured = async (
+    teacherProfileId: string,
+    currentStatus: boolean,
+    teacherName: string,
+  ) => {
     if (!token || !teacherProfileId) return;
-
     const nextStatus = !currentStatus;
 
     Swal.fire({
       icon: "question",
       title: nextStatus ? "হোমপেজে প্রদর্শন" : "হোমপেজ থেকে অপসারণ",
-      text: nextStatus 
+      text: nextStatus
         ? `আপনি কি শিক্ষক ${teacherName}-কে মূল হোমপেজে ফিচার্ড হিসেবে প্রদর্শন করতে চান?`
         : `আপনি কি শিক্ষক ${teacherName}-কে মূল হোমপেজের ফিচার্ড তালিকা থেকে বাদ দিতে চান?`,
       showCancelButton: true,
@@ -143,15 +144,15 @@ const TeacherList = () => {
                 Authorization: `Bearer ${token}`,
               },
               body: JSON.stringify({ isFeatured: nextStatus }),
-            }
+            },
           );
 
           if (res.ok) {
             Swal.fire({
               icon: "success",
               title: "সফল হয়েছে",
-              text: nextStatus 
-                ? "শিক্ষক প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।" 
+              text: nextStatus
+                ? "শিক্ষক প্রোফাইলটি সফলভাবে হোমপেজে ফিচার্ড করা হয়েছে।"
                 : "ফিচার্ড স্ট্যাটাস সফলভাবে বাতিল করা হয়েছে।",
               confirmButtonColor: "#0B5D3B",
             });
@@ -171,15 +172,16 @@ const TeacherList = () => {
     });
   };
 
-  const handleApproveTeacher = async (
-    teacherProfileId: string,
-    teacherName: string,
-  ) => {
-    if (!teacherProfileId) {
+  // approve teacher function
+  const handleApproveTeacher = async (teacherObj: any, teacherName: string) => {
+    const targetUserId =
+      teacherObj?._id || teacherObj?.user?._id || teacherObj?.user;
+
+    if (!targetUserId) {
       Swal.fire({
         icon: "error",
         title: "ত্রুটি",
-        text: "শিক্ষকের প্রোফাইল আইডি খুঁজে পাওয়া যায়নি।",
+        text: "শিক্ষকের ইউজার আইডি খুঁজে পাওয়া যায়নি ভাই।",
         confirmButtonColor: "#0B5D3B",
       });
       return;
@@ -188,7 +190,7 @@ const TeacherList = () => {
     Swal.fire({
       icon: "warning",
       title: "অনুমোদন নিশ্চিতকরণ",
-      text: `আপনি কি শিক্ষক ${teacherName}-কে অনুমোদন (Approve) করতে চান?`,
+      text: `আপনি কি শিক্ষক ${teacherName}-কে অনুমোদন (Approve) করতে চান? এটি একটি ইউনিক শিক্ষক আইডি জেনারেট করবে।`,
       showCancelButton: true,
       confirmButtonText: "হ্যাঁ, অনুমোদন করুন",
       cancelButtonText: "না",
@@ -198,10 +200,14 @@ const TeacherList = () => {
       if (result.isConfirmed) {
         try {
           const res = await fetch(
-            `${process.env.NEXT_PUBLIC_API_URL}/teachers/${teacherProfileId}/approve`,
+            `${process.env.NEXT_PUBLIC_API_URL}/users/admin/approve-teacher/${targetUserId}`,
             {
               method: "PUT",
-              headers: { Authorization: `Bearer ${token}` },
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer ${token}`,
+              },
+              body: JSON.stringify({ isApproved: true }),
             },
           );
 
@@ -209,7 +215,7 @@ const TeacherList = () => {
             Swal.fire({
               icon: "success",
               title: "সফল হয়েছে",
-              text: "শিক্ষক প্রোফাইলটি সফলভাবে অনুমোদন করা হয়েছে।",
+              text: "মাশাআল্লাহ্! শিক্ষক প্রোফাইলটি সফলভাবে অনুমোদন করা হয়েছে এবং আইডি তৈরি হয়েছে।",
               confirmButtonColor: "#0B5D3B",
             });
             fetchTeachers();
@@ -307,7 +313,7 @@ const TeacherList = () => {
     setModalLoading(true);
     try {
       const res = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/user/${userID}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/users/admin/single-user/${userID}`,
         {
           headers: { Authorization: `Bearer ${token}` },
         },
@@ -327,7 +333,6 @@ const TeacherList = () => {
 
   const openEditModal = (teacher: any) => {
     setSelectedTeacher(teacher);
-
     const profile = teacher.profileData || teacher;
     const userContext =
       teacher.user && typeof teacher.user === "object" ? teacher.user : teacher;
@@ -341,6 +346,7 @@ const TeacherList = () => {
       experience: profile.experience || "",
       qualifications: profile.qualifications || "",
       departmentId: profile.department?._id || profile.department || "",
+      teacherId: profile.teacherId || "", // 🎯 ডাটা রিড
     });
     setIsEditModalOpen(true);
   };
@@ -369,9 +375,7 @@ const TeacherList = () => {
         `${process.env.NEXT_PUBLIC_API_URL}/users/admin/update-user/${userID}`,
         {
           method: "PUT",
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
+          headers: { Authorization: `Bearer ${token}` },
           body: formData,
         },
       );
@@ -401,10 +405,40 @@ const TeacherList = () => {
 
   const filteredTeachers = teachers.filter((teacher: any) => {
     const profile = teacher.profileData || teacher;
+    const userContext =
+      teacher.user && typeof teacher.user === "object" ? teacher.user : teacher;
     const itemApproved = profile?.isApproved === true;
 
-    if (statusFilter === "approved") return itemApproved;
-    if (statusFilter === "pending") return !itemApproved;
+    // ১. স্ট্যাটাস ফিল্টার
+    if (statusFilter === "approved" && !itemApproved) return false;
+    if (statusFilter === "pending" && itemApproved) return false;
+
+    // ২. ডিপার্টমেন্ট ফিল্টার
+    if (
+      deptFilter &&
+      profile.department?._id !== deptFilter &&
+      profile.department !== deptFilter
+    )
+      return false;
+
+    // ৩. এক্সপেরিয়েন্স ফিল্টার
+    if (expFilter && profile.experience !== expFilter) return false;
+
+    // 🔍 ৪. সার্চ বার ফিল্টার উইথ কাস্টম শিক্ষক আইডি ট্র্যাকিং ভাই
+    if (searchTerm) {
+      const searchLower = searchTerm.toLowerCase();
+      const nameMatch = (teacher.name || userContext.name || "")
+        .toLowerCase()
+        .includes(searchLower);
+      const emailMatch = (teacher.email || userContext.email || "")
+        .toLowerCase()
+        .includes(searchLower);
+      const idMatch = (profile.teacherId || "")
+        .toLowerCase()
+        .includes(searchLower);
+      return nameMatch || emailMatch || idMatch;
+    }
+
     return true;
   });
 
@@ -435,33 +469,21 @@ const TeacherList = () => {
               <button
                 type="button"
                 onClick={() => setStatusFilter("")}
-                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
-                  statusFilter === ""
-                    ? "bg-white text-[#0B5D3B] shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-800"
-                }`}
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${statusFilter === "" ? "bg-white text-[#0B5D3B] shadow-sm" : "text-neutral-500 hover:text-neutral-800"}`}
               >
                 All
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter("approved")}
-                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
-                  statusFilter === "approved"
-                    ? "bg-white text-[#0B5D3B] shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-800"
-                }`}
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${statusFilter === "approved" ? "bg-white text-[#0B5D3B] shadow-sm" : "text-neutral-500 hover:text-neutral-800"}`}
               >
                 Approved
               </button>
               <button
                 type="button"
                 onClick={() => setStatusFilter("pending")}
-                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${
-                  statusFilter === "pending"
-                    ? "bg-white text-[#0B5D3B] shadow-sm"
-                    : "text-neutral-500 hover:text-neutral-800"
-                }`}
+                className={`px-5 py-2 cursor-pointer text-xs font-bold rounded-xl transition-all duration-300 ${statusFilter === "pending" ? "bg-white text-[#0B5D3B] shadow-sm" : "text-neutral-500 hover:text-neutral-800"}`}
               >
                 Pending
               </button>
@@ -479,7 +501,7 @@ const TeacherList = () => {
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="নাম বা ইমেইল খুঁজুন..."
+              placeholder="নাম, ইমেইল বা শিক্ষক আইডি খুঁজুন..."
               className="w-full pl-9 pr-4 py-2.5 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
             />
           </div>
@@ -582,11 +604,19 @@ const TeacherList = () => {
                             )}
                           </div>
                         </div>
-                        <div>
+                        <div className="space-y-1">
                           <h4 className="text-base font-black text-neutral-800 leading-tight">
                             {teacherName}
                           </h4>
-                          <p className="text-xs text-neutral-400 font-medium mt-1 lowercase break-all">
+                          {/* 🎯 রিকোয়ারমেন্ট অনুযায়ী সুন্দর ফ্ল্যাট মিনিমাল আইডি ব্যাজ ইনজেকশন */}
+                          {isApproved && profile.teacherId && (
+                            <div className="inline-block">
+                              <span className="inline-flex items-center px-2 py-0.5 rounded-md text-[10px] font-mono font-black bg-slate-100 text-slate-700 border border-slate-200/50">
+                                ID: {profile.teacherId}
+                              </span>
+                            </div>
+                          )}
+                          <p className="text-xs text-neutral-400 font-medium lowercase break-all">
                             {teacher.email || userContext.email}
                           </p>
                         </div>
@@ -653,18 +683,22 @@ const TeacherList = () => {
                         </span>
 
                         <div className="flex items-center gap-1.5">
-                          {/* 🔹 প্রফেশনাল কন্ডিশনাল ফিচার্ড টগল বোতাম (বাংলা টেক্সট) */}
                           {isApproved && (
                             <button
                               type="button"
-                              onClick={() => handleToggleFeatured(profile._id || teacher._id, isFeatured, teacherName)}
-                              className={`text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-all flex items-center gap-1 shadow-2xs cursor-pointer ${
-                                isFeatured 
-                                  ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600" 
-                                  : "bg-white border-neutral-200 text-neutral-500 hover:bg-neutral-50"
-                              }`}
+                              onClick={() =>
+                                handleToggleFeatured(
+                                  profile._id || teacher._id,
+                                  isFeatured,
+                                  teacherName,
+                                )
+                              }
+                              className={`text-xs font-medium px-2.5 py-1.5 rounded-xl border transition-all flex items-center gap-1 shadow-2xs cursor-pointer ${isFeatured ? "bg-amber-500 border-amber-600 text-white hover:bg-amber-600" : "bg-white border-neutral-200 text-neutral-500 hover:bg-neutral-50"}`}
                             >
-                              <Star size={11} className={isFeatured ? "fill-white" : ""} />
+                              <Star
+                                size={11}
+                                className={isFeatured ? "fill-white" : ""}
+                              />
                               {isFeatured ? "হোমপেজে সচল" : "হোমপেজে দেখান"}
                             </button>
                           )}
@@ -673,10 +707,7 @@ const TeacherList = () => {
                             <button
                               type="button"
                               onClick={() =>
-                                handleApproveTeacher(
-                                  profile._id || teacher._id,
-                                  teacherName,
-                                )
+                                handleApproveTeacher(teacher, teacherName)
                               }
                               className="text-[11px] font-black text-white bg-amber-600 hover:bg-emerald-700 px-3 py-1.5 rounded-xl shadow-sm flex items-center gap-1 transition-all"
                             >
@@ -768,7 +799,7 @@ const TeacherList = () => {
                   <span className="p-1.5 bg-emerald-50 rounded-md text-[#0B5D3B]">
                     <UserCheck size={16} />
                   </span>
-                   can বৃত্তামূলক ও বিস্তারিত তথ্য
+                  শিক্ষক বৃত্তামূলক ও বিস্তারিত তথ্য
                 </div>
                 <button
                   type="button"
@@ -846,6 +877,12 @@ const TeacherList = () => {
                               <span className="text-[10px] font-bold bg-neutral-100 text-neutral-600 px-2.5 py-0.5 rounded-md">
                                 {profile.department?.name || "সাধারণ বিভাগ"}
                               </span>
+                              {/* 🎯 বিস্তারিত মোডালে কাস্টম শিক্ষক আইডি প্রদর্শন */}
+                              {isApproved && profile.teacherId && (
+                                <span className="text-[10px] font-mono font-black bg-slate-100 text-slate-700 px-2.5 py-0.5 rounded-md">
+                                  ID: {profile.teacherId}
+                                </span>
+                              )}
                             </div>
                           </div>
                         </div>
@@ -894,7 +931,7 @@ const TeacherList = () => {
 
                           <div className="space-y-4">
                             <h4 className="text-xs font-black text-[#0B5D3B] border-b border-neutral-100 pb-2 uppercase tracking-wider">
-                              প্রাতিষ্ঠানিক ও শিক্ষাগত তথ্য
+                              प्राতিষ্ঠানিক ও শিক্ষাগত তথ্য
                             </h4>
                             <div className="space-y-3">
                               <div className="flex items-start gap-2 text-xs font-bold">
@@ -935,10 +972,7 @@ const TeacherList = () => {
                               <button
                                 type="button"
                                 onClick={() =>
-                                  handleApproveTeacher(
-                                    profile._id || selectedTeacher._id,
-                                    nameEn,
-                                  )
+                                  handleApproveTeacher(selectedTeacher, nameEn)
                                 }
                                 className="px-4 py-2 bg-amber-600 hover:bg-emerald-700 text-white rounded-xl text-xs font-black shadow-sm flex items-center gap-1 transition-all cursor-pointer"
                               >
@@ -1017,6 +1051,18 @@ const TeacherList = () => {
                 onSubmit={handleEditSubmit}
                 className="p-6 md:p-8 space-y-5 overflow-y-auto max-h-[75vh]"
               >
+                {/* 🎯 এডিট মোডালেও রিড-অনলি কাস্টম শিক্ষক আইডি লেবেল শো ভাই */}
+                {editFormData.teacherId && (
+                  <div className="bg-slate-50 p-3 rounded-xl border border-slate-200/60 flex items-center justify-between">
+                    <span className="text-xs font-bold text-neutral-500">
+                      নিবন্ধিত শিক্ষক আইডি:
+                    </span>
+                    <span className="text-xs font-mono font-black text-[#0B5D3B] bg-emerald-50 px-2.5 py-0.5 rounded-md">
+                      {editFormData.teacherId}
+                    </span>
+                  </div>
+                )}
+
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-bold text-neutral-500 mb-1.5">
@@ -1032,7 +1078,6 @@ const TeacherList = () => {
                           name: e.target.value,
                         })
                       }
-                      placeholder="उदा: Abu Bakar"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1050,7 +1095,6 @@ const TeacherList = () => {
                           teacherNameBn: e.target.value,
                         })
                       }
-                      placeholder="उदा: মাওলানা আবু বকর"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1071,7 +1115,6 @@ const TeacherList = () => {
                           email: e.target.value,
                         })
                       }
-                      placeholder="teacher@example.com"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1089,7 +1132,6 @@ const TeacherList = () => {
                           phone: e.target.value,
                         })
                       }
-                      placeholder="01XXXXXXXXX"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1110,7 +1152,6 @@ const TeacherList = () => {
                           designation: e.target.value,
                         })
                       }
-                      placeholder="उदा: সিনিয়র লেকচারার"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1128,7 +1169,6 @@ const TeacherList = () => {
                           experience: e.target.value,
                         })
                       }
-                      placeholder="उदा: ১০ বছরের অভিজ্ঞতা"
                       className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                     />
                   </div>
@@ -1171,7 +1211,6 @@ const TeacherList = () => {
                         qualifications: e.target.value,
                       })
                     }
-                    placeholder="उदा: কামিল (হাদিস), এম.এ"
                     className="w-full px-4 py-3 bg-neutral-50 border border-neutral-200 rounded-xl text-xs font-bold focus:ring-2 focus:ring-[#0B5D3B] focus:bg-white outline-none transition-all"
                   />
                 </div>
