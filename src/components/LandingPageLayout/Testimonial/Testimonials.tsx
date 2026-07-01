@@ -1,7 +1,8 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { ChevronLeft, ChevronRight, MessageSquare, Quote } from "lucide-react";
+import { ArrowRight, ChevronLeft, ChevronRight, MessageSquare, Quote } from "lucide-react";
 import axios from "axios";
+import Link from "next/link";
 
 interface TestimonialData {
   _id: string;
@@ -98,7 +99,6 @@ const Testimonials = () => {
   return (
     <section className="px-4 py-20 bg-gradient-to-b from-white to-gray-50/50 overflow-hidden relative">
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-[400px] h-[400px] bg-green-50 rounded-full blur-3xl pointer-events-none -z-10" />
-
       <div className="max-w-7xl mx-auto">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div className="text-center sm:text-left">
@@ -206,6 +206,21 @@ const Testimonials = () => {
           )}
         </div>
       </div>
+      <div className="flex justify-center mt-6 md:mt-10">
+          <Link href="/testimonials" passHref>
+            <button
+              className="inline-flex items-center justify-center gap-2 bg-[#0B5D3B] text-white hover:bg-[#0c4b2f] text-sm font-black px-7 py-4 rounded-2xl shadow-xl shadow-green-900/10 transition-all active:scale-[0.98] cursor-pointer group"
+              aria-label="দারুল ইসলামের সকল কোর্স দেখুন"
+            >
+              আরও দেখুন
+              <ArrowRight
+                size={16}
+                className="group-hover:translate-x-1 transition-transform duration-300"
+                aria-hidden="true"
+              />
+            </button>
+          </Link>
+        </div>
     </section>
   );
 };

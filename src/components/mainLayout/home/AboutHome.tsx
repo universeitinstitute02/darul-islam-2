@@ -54,7 +54,7 @@ const AboutHome = () => {
             {/* CTA Buttons */}
             <div className="mb-8 flex flex-wrap items-center gap-4">
               <Link
-                href="/about/history"
+                href="/about"
                 className="rounded-full cursor-pointer bg-green-700 px-7 py-2.5 text-sm font-semibold text-white transition-colors hover:bg-green-800"
               >
                 আরো পড়ুন

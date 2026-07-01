@@ -1,7 +1,7 @@
 "use client";
 
 import { useQuery } from "@tanstack/react-query";
-import { ArrowRight, Briefcase, GraduationCap } from "lucide-react";
+import { ArrowRight, Briefcase, GraduationCap, IdCard } from "lucide-react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import Image from "next/image";
@@ -27,6 +27,7 @@ interface TeacherData {
   designation: string;
   qualifications: string;
   experience: string;
+  teacherId: string;
 }
 
 const TeacherSkeletonCard = () => (
@@ -178,6 +179,20 @@ export default function TeacherSlider() {
 
                       {/* info */}
                       <div className="space-y-3 rounded-2xl bg-green-50 p-4 text-left">
+                        <div className="flex items-start gap-3">
+                          <IdCard
+                            size={18}
+                            className="mt-0.5 text-green-700 shrink-0"
+                          />
+                          <div>
+                            <p className="text-xs font-semibold text-green-700">
+                              শিক্ষক আইডি
+                            </p>
+                            <p className="text-sm text-neutral-700">
+                              {teacher?.teacherId || "N/A"}
+                            </p>
+                          </div>
+                        </div>
                         <div className="flex items-start gap-3">
                           <Briefcase
                             size={18}
