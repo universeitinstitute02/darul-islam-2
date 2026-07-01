@@ -60,7 +60,7 @@ const ProductSearchSection = () => {
       if (selectedCategory) queryParams.append("category", selectedCategory);
 
       fetch(
-        `https://darulislam-server-v2.vercel.app/api/products/shop?${queryParams.toString()}`,
+        `${process.env.NEXT_PUBLIC_API_URL}/products/shop?${queryParams.toString()}`,
       )
         .then((res) => res.json())
         .then((data) => {

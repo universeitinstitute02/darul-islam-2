@@ -71,7 +71,7 @@ const CategorySection = () => {
   ];
 
   useEffect(() => {
-    fetch("https://darulislam-server-v2.vercel.app/api/products/shop")
+    fetch(`${process.env.NEXT_PUBLIC_API_URL}/products/shop`)
       .then((res) => res.json())
       .then((data) => setAllProducts(data.products || []))
       .catch((err) => console.error(err));

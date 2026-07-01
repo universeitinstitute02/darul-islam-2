@@ -22,6 +22,7 @@ import {
   CheckCircle,
   XCircle,
   ShieldAlert,
+  IdCard,
 } from "lucide-react";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import Link from "next/link";
@@ -176,7 +177,7 @@ export default function Dashboard() {
                     })}
                   </span>
                 </div>
-                <div className="flex items-center justify-center sm:justify-start gap-2.5 sm:col-span-2 break-all">
+                <div className="flex items-center justify-center sm:justify-start gap-2.5 sm:col-span-1 break-all">
                   <Mail className="w-4 h-4 text-gray-400 flex-shrink-0" />
                   <span>
                     <span className="text-gray-400 font-medium">
@@ -184,6 +185,26 @@ export default function Dashboard() {
                     </span>{" "}
                     {profile.email}
                   </span>
+                </div>
+                <div className="flex items-center justify-center sm:justify-start gap-2.5">
+                  <IdCard className="w-4 h-4 text-gray-400 flex-shrink-0" />
+
+                  <div className="flex items-center gap-1.5 flex-wrap">
+                    <span className="text-gray-400 font-medium">
+                      টিচার আইডি:
+                    </span>{" "}
+                    {profile?.teacherId &&
+                    profile.teacherId !== "রিভিউাধীন (Pending)" &&
+                    profile.teacherId !== "ID জেনারেট হচ্ছে..." ? (
+                      <span className="text-[11px] md:text-xs font-mono font-black text-[#0B5D3B] bg-emerald-50 px-2 py-0.5 rounded border border-emerald-100">
+                        {profile.teacherId}
+                      </span>
+                    ) : (
+                      <span className="inline-flex items-center gap-1 text-[11px] font-black text-amber-600 bg-amber-50 px-2 py-0.5 rounded border border-amber-200 animate-pulse">
+                        ⏳ অনুমোদন পেন্ডিং আছে
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

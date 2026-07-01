@@ -12,6 +12,7 @@ import {
   LayoutList,
   Trash2,
   GraduationCap,
+  Layers, // 🎯 নতুন আইকন কোর্স টাইপের জন্য
 } from "lucide-react";
 import Swal from "sweetalert2";
 import { useSession } from "next-auth/react";
@@ -64,7 +65,7 @@ const AddCoursePage = () => {
     useForm<ICourseFormInputs>({
       defaultValues: {
         courseCategoryType: "general",
-        courseType: "Online",
+        courseType: "premium", // 🎯 ডিফল্ট টাইপ প্রিমিয়াম সেট করা হলো ভাই
         oldPrice: "0",
         price: "0",
         description: "",
@@ -149,11 +150,21 @@ const AddCoursePage = () => {
       didOpen: () => Swal.showLoading(),
     });
 
+    // 🎯 একাডেমিক হলে ব্যাকএন্ড লজিকের সাথে সামঞ্জস্য রেখে অটো টাইপ অ্যাসাইন
+    const finalCourseType =
+      data.courseCategoryType === "academic" ? "academic" : data.courseType;
+
     const detailsPayload = {
       fullTitle: data.fullTitle || data.title,
       description: data.description,
-      admissionFee: data.courseCategoryType === "academic" ? 0 : (Number(data.admissionFee) || 0),
-      monthlyFee: data.courseCategoryType === "academic" ? 0 : (Number(data.monthlyFee) || 0),
+      admissionFee:
+        data.courseCategoryType === "academic"
+          ? 0
+          : Number(data.admissionFee) || 0,
+      monthlyFee:
+        data.courseCategoryType === "academic"
+          ? 0
+          : Number(data.monthlyFee) || 0,
       highlights: data.highlights.filter((h) => h.label && h.value),
     };
 
@@ -166,15 +177,25 @@ const AddCoursePage = () => {
       formData.append("subCategory", data.subCategory);
       formData.append("courseCategoryType", data.courseCategoryType);
       formData.append("duration", data.duration);
-      formData.append("courseType", data.courseType);
-      formData.append("price", data.courseCategoryType === "academic" ? "0" : data.price);
-      formData.append("oldPrice", data.courseCategoryType === "academic" ? "0" : (data.oldPrice || "0"));
+      formData.append("courseType", finalCourseType); // 🎯 সেফ ও ডাইনামিক ভ্যালু সাবমিশন
+      formData.append(
+        "price",
+        data.courseCategoryType === "academic" ? "0" : data.price,
+      );
+      formData.append(
+        "oldPrice",
+        data.courseCategoryType === "academic" ? "0" : data.oldPrice || "0",
+      );
       formData.append("details", JSON.stringify(detailsPayload));
       formData.append("modules", JSON.stringify(data.modules));
 
-      const response = await axiosSecure.post("/courses/teacher/add-course", formData, {
-        headers: { "Content-Type": "multipart/form-data" },
-      });
+      const response = await axiosSecure.post(
+        "/courses/teacher/add-course",
+        formData,
+        {
+          headers: { "Content-Type": "multipart/form-data" },
+        },
+      );
 
       if (response.data) {
         Swal.fire("অভিনন্দন!", "কোর্সটি সফলভাবে তৈরি হয়েছে।", "success");
@@ -183,7 +204,11 @@ const AddCoursePage = () => {
         setPreviewUrl(null);
       }
     } catch (err: any) {
-      Swal.fire("ব্যর্থ হয়েছে", err?.response?.data?.message || "সার্ভার এরর", "error");
+      Swal.fire(
+        "ব্যর্থ হয়েছে",
+        err?.response?.data?.message || "সার্ভার এরর",
+        "error",
+      );
     } finally {
       setLoading(false);
     }
@@ -193,11 +218,18 @@ const AddCoursePage = () => {
     <div className="min-h-screen bg-[#F1F5F9] pb-12 pt-8 px-4">
       <div className="max-w-5xl mx-auto">
         <header className="mb-8 text-center md:text-left">
-          <h1 className="text-3xl font-black text-[#0B5D3B]">নতুন কোর্স তৈরি করুন</h1>
-          <p className="text-gray-500 text-sm mt-1">প্রয়োজনীয় তথ্য দিয়ে আপনার কোর্সটি পাবলিশ করুন</p>
+          <h1 className="text-3xl font-black text-[#0B5D3B]">
+            নতুন কোর্স তৈরি করুন
+          </h1>
+          <p className="text-gray-500 text-sm mt-1">
+            প্রয়োজনীয় তথ্য দিয়ে আপনার কোর্সটি পাবলিশ করুন
+          </p>
         </header>
 
-        <form onSubmit={handleSubmit(onSubmit)} className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <form
+          onSubmit={handleSubmit(onSubmit)}
+          className="grid grid-cols-1 lg:grid-cols-12 gap-8"
+        >
           <div className="lg:col-span-8 space-y-6">
             <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <h3 className="text-lg font-bold text-gray-800 mb-6 flex items-center gap-2 border-b pb-4">
@@ -211,29 +243,66 @@ const AddCoursePage = () => {
                     কোর্সের ধরণ (Course Category Type)
                   </label>
                   <div className="grid grid-cols-2 gap-4 bg-gray-50 p-1.5 rounded-2xl border border-gray-100">
-                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "general" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
-                      <input type="radio" value="general" {...register("courseCategoryType")} className="hidden" />
+                    <label
+                      className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "general" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}
+                    >
+                      <input
+                        type="radio"
+                        value="general"
+                        {...register("courseCategoryType")}
+                        className="hidden"
+                      />
                       সাধারণ কোর্স
                     </label>
-                    <label className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "academic" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}>
-                      <input type="radio" value="academic" {...register("courseCategoryType")} className="hidden" />
+                    <label
+                      className={`flex items-center justify-center gap-2 py-3 rounded-xl cursor-pointer text-[10px] md:text-xs font-black transition-all ${selectedCategoryType === "academic" ? "bg-white text-[#0B5D3B] shadow-sm border border-gray-100" : "text-gray-500"}`}
+                    >
+                      <input
+                        type="radio"
+                        value="academic"
+                        {...register("courseCategoryType")}
+                        className="hidden"
+                      />
                       <GraduationCap size={16} /> একাডেমিক সাবজেক্ট
                     </label>
                   </div>
                 </div>
 
-                <div>
-                  <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
-                    কোর্সের নাম (Title)
-                  </label>
-                  <input
-                    type="text"
-                    required
-                    {...register("title", { required: true })}
-                    className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none text-xs font-bold focus:ring-2 ring-emerald-500/20 focus:border-emerald-500 transition-all"
-                    placeholder="উদা: আরবী ভাষা শিক্ষা"
-                  />
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="sm:col-span-2">
+                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
+                      কোর্সের নাম (Title)
+                    </label>
+                    <input
+                      type="text"
+                      required
+                      {...register("title", { required: true })}
+                      className="w-full bg-gray-50 border border-gray-200 p-4 rounded-2xl outline-none text-xs font-bold focus:ring-2 ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                      placeholder="উদা: আরবী ভাষা শিক্ষা"
+                    />
+                  </div>
                 </div>
+
+                {/* 🎯 নতুন ডাইনামিক কোর্স সেকশন ড্রপডাউন (কন্ডিশনাল ইউআই লক) */}
+                {selectedCategoryType === "general" && (
+                  <div>
+                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider flex items-center gap-1">
+                      <Layers size={12} className="text-[#0B5D3B]" /> কোর্স টাইপ (Course Type)
+                    </label>
+                    <select
+                      required={selectedCategoryType === "general"}
+                      {...register("courseType")}
+                      className="w-full cursor-pointer rounded-2xl bg-gray-50 border border-gray-200 p-4 text-xs font-bold text-neutral-700 focus:outline-none focus:ring-2 ring-emerald-500/20 focus:border-emerald-500 transition-all"
+                    >
+                      <option value="premium">
+                        প্রিমিয়াম কোর্স
+                      </option>
+                      <option value="bundle">বান্ডেল কোর্স</option>
+                      <option value="free">ফ্রি কোর্স</option>
+                      <option value="short">শর্ট কোর্স</option>
+                    </select>
+                  </div>
+                )}
 
                 <div>
                   <label className="text-xs font-bold text-gray-500 mb-2 block uppercase tracking-wider">
@@ -258,11 +327,17 @@ const AddCoursePage = () => {
                       className="w-full cursor-pointer rounded-2xl bg-gray-50 border border-gray-200 p-4 text-xs font-bold text-neutral-700 focus:outline-none"
                     >
                       <option value="">
-                        {categoriesLoading ? "Loading..." : "Select Target Section"}
+                        {categoriesLoading
+                          ? "Loading..."
+                          : "Select Target Section"}
                       </option>
                       {categories.map((category) => (
                         <optgroup key={category._id} label={category.name}>
-                          {(category.subCategories || category.subCategory || []).map((sub) => (
+                          {(
+                            category.subCategories ||
+                            category.subCategory ||
+                            []
+                          ).map((sub) => (
                             <option key={sub._id} value={sub._id}>
                               {sub.name}
                             </option>
@@ -293,7 +368,10 @@ const AddCoursePage = () => {
                     name="description"
                     control={control}
                     render={({ field }) => (
-                      <TiptapEditor value={field.value} onChange={field.onChange} />
+                      <TiptapEditor
+                        value={field.value}
+                        onChange={field.onChange}
+                      />
                     )}
                   />
                 </div>
@@ -304,7 +382,8 @@ const AddCoursePage = () => {
             <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100">
               <div className="flex justify-between items-center mb-6">
                 <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2">
-                  <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্স হাইলাইটস
+                  <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্স
+                  হাইলাইটস
                 </h3>
                 <button
                   type="button"
@@ -316,7 +395,10 @@ const AddCoursePage = () => {
               </div>
               <div className="space-y-3">
                 {highlightFields.map((field, i) => (
-                  <div key={field.id} className="block space-y-3 md:space-y-0 md:flex gap-3 items-center">
+                  <div
+                    key={field.id}
+                    className="block space-y-3 md:space-y-0 md:flex gap-3 items-center"
+                  >
                     <input
                       placeholder="লেবেল (সময়)"
                       {...register(`highlights.${i}.label` as const)}
@@ -344,11 +426,15 @@ const AddCoursePage = () => {
             {/* Curriculum Modules */}
             <section className="bg-white p-8 rounded-[2rem] shadow-sm border border-gray-100 space-y-4">
               <h3 className="text-lg font-bold text-gray-800 flex items-center gap-2 border-b pb-4 mb-2">
-                <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্সের কারিকুলাম / মডিউল
+                <LayoutList className="w-5 h-5 text-emerald-600" /> কোর্সের
+                কারিকুলাম / মডিউল
               </h3>
 
               {moduleFields.map((field, index) => (
-                <div key={field.id} className="p-4 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50 relative space-y-3">
+                <div
+                  key={field.id}
+                  className="p-4 border border-dashed border-gray-200 rounded-2xl bg-gray-50/50 relative space-y-3"
+                >
                   <div className="flex items-center gap-3">
                     <span className="text-xs font-black text-gray-400 bg-white shadow-sm w-7 h-7 flex items-center justify-center rounded-full border border-gray-100">
                       {(index + 1).toString().padStart(2, "0")}
@@ -357,7 +443,9 @@ const AddCoursePage = () => {
                       type="text"
                       placeholder="মডিউলের নাম লিখুন"
                       required
-                      {...register(`modules.${index}.title` as const, { required: true })}
+                      {...register(`modules.${index}.title` as const, {
+                        required: true,
+                      })}
                       className="w-full bg-white border border-gray-200 rounded-xl px-4 py-2 text-xs font-bold focus:outline-none"
                     />
                   </div>
@@ -367,7 +455,9 @@ const AddCoursePage = () => {
                       type="text"
                       placeholder="স্ট্যাটাস টেক্সট"
                       required
-                      {...register(`modules.${index}.statusText` as const, { required: true })}
+                      {...register(`modules.${index}.statusText` as const, {
+                        required: true,
+                      })}
                       className="w-full bg-white border border-gray-200 rounded-xl px-3 py-2 text-xs font-bold"
                     />
                   </div>
@@ -387,7 +477,13 @@ const AddCoursePage = () => {
               <div className="flex justify-between items-center pt-2">
                 <button
                   type="button"
-                  onClick={() => appendModule({ title: "", statusType: "live_class", statusText: "" })}
+                  onClick={() =>
+                    appendModule({
+                      title: "",
+                      statusType: "live_class",
+                      statusText: "",
+                    })
+                  }
                   className="flex items-center gap-2 cursor-pointer text-sm font-semibold text-green-600 hover:text-green-700 transition"
                 >
                   + আরও মডিউল যোগ করুন
@@ -400,23 +496,36 @@ const AddCoursePage = () => {
           <aside className="lg:col-span-4 space-y-6">
             <div className="bg-white p-6 rounded-[2rem] shadow-sm border border-gray-100 text-center">
               <h3 className="text-sm font-bold text-gray-800 mb-4 flex items-center gap-2 justify-center">
-                <ImageIcon className="w-4 h-4 text-emerald-600" /> থাম্বনেইল ইমেজ
+                <ImageIcon className="w-4 h-4 text-emerald-600" /> থাম্বনেইল
+                ইমেজ
               </h3>
               <div
                 onClick={() => fileInputRef.current?.click()}
                 className="relative border-2 border-dashed border-gray-100 rounded-3xl aspect-square flex flex-col items-center justify-center cursor-pointer hover:bg-emerald-50/30 transition-all overflow-hidden group"
               >
                 {previewUrl ? (
-                  <img src={previewUrl} alt="Preview" className="w-full h-full object-cover group-hover:scale-105 transition-transform" />
+                  <img
+                    src={previewUrl}
+                    alt="Preview"
+                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                  />
                 ) : (
                   <>
                     <div className="p-4 bg-emerald-50 rounded-full mb-3 text-emerald-500">
                       <Upload className="w-6 h-6" />
                     </div>
-                    <p className="text-xs font-bold text-gray-400 uppercase">ইমেজে সিলেক্ট করুন</p>
+                    <p className="text-xs font-bold text-gray-400 uppercase">
+                      ইমেজে সিলেক্ট করুন
+                    </p>
                   </>
                 )}
-                <input type="file" ref={fileInputRef} onChange={handleImageChange} accept="image/*" className="hidden" />
+                <input
+                  type="file"
+                  ref={fileInputRef}
+                  onChange={handleImageChange}
+                  accept="image/*"
+                  className="hidden"
+                />
               </div>
             </div>
 
@@ -425,7 +534,9 @@ const AddCoursePage = () => {
               {selectedCategoryType === "general" ? (
                 <>
                   <div>
-                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">বর্তমান মূল্য</label>
+                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">
+                      বর্তমান মূল্য
+                    </label>
                     <div className="relative">
                       <DollarSign className="absolute left-4 top-4 w-4 h-4 text-gray-400" />
                       <input
@@ -439,7 +550,9 @@ const AddCoursePage = () => {
                   </div>
 
                   <div>
-                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">পূর্বের মূল্য (Old Price)</label>
+                    <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">
+                      পূর্বের মূল্য (Old Price)
+                    </label>
                     <div className="relative">
                       <DollarSign className="absolute left-4 top-4 w-4 h-4 text-gray-400" />
                       <input
@@ -453,12 +566,16 @@ const AddCoursePage = () => {
                 </>
               ) : (
                 <div className="p-4 bg-emerald-50/50 border border-emerald-100/60 rounded-2xl text-center text-xs text-emerald-800 font-bold leading-relaxed">
-                  📢 অ্যাকাডেমিক সাবজেক্টের মূল্য ও সাবস্ক্রিপশন ফি তার প্যারেন্ট শ্রেনী (Sub Category) প্যাকেজ থেকে অটোমেটিক এগ্রিগেশন হবে।
+                  📢 অ্যাকাডেমিক সাবজেক্টের মূল্য ও সাবস্ক্রিপশন ফি তার
+                  প্যারেন্ট শ্রেনী (Sub Category) প্যাকেজ থেকে অটোমেটিক
+                  এগ্রিগেশন হবে।
                 </div>
               )}
 
               <div>
-                <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">Duration / মেয়াদ</label>
+                <label className="text-xs font-bold text-gray-500 mb-2 block uppercase">
+                  Duration / মেয়াদ
+                </label>
                 <div className="relative">
                   <Clock className="absolute left-4 top-3.5 w-4 h-4 text-gray-400" />
                   <input
@@ -476,7 +593,11 @@ const AddCoursePage = () => {
                 disabled={loading}
                 className="w-full bg-[#0B5D3B] cursor-pointer text-white py-5 rounded-[1.5rem] font-black text-lg transition-all disabled:bg-gray-300 flex items-center justify-center gap-2"
               >
-                {loading ? <Loader2 className="animate-spin" /> : "কোর্স পাবলিশ করুন"}
+                {loading ? (
+                  <Loader2 className="animate-spin" />
+                ) : (
+                  "কোর্স পাবলিশ করুন"
+                )}
               </button>
             </div>
           </aside>

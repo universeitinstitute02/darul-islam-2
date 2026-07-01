@@ -56,6 +56,8 @@ const RegisterPage: React.FC = () => {
     fetchDepartments();
   }, []);
 
+  console.log(departments);
+
   const staticDivisions = [
     "ঢাকা",
     "চট্টগ্রাম",

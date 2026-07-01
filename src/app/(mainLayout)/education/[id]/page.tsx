@@ -395,10 +395,34 @@ export default function CourseDetailPage() {
               >
                 কোর্সের বিবরণ
               </h3>
-              <p className="text-xs sm:text-sm text-slate-600 leading-relaxed font-medium">
-                {details?.description ||
-                  "এই কোর্সটি আপনাকে সম্পূর্ণ জিরো থেকে অ্যাডভান্স লেভেল পর্যন্ত প্রফেশনালি গাইড করবে।"}
-              </p>
+
+              {/* 🎯 সিনিয়র রিচ-টেক্সট রেন্ডারিং ইঞ্জিন লক ভাই */}
+              <div
+                className="prose prose-sm sm:prose-base prose-emerald max-w-none text-slate-600 font-medium leading-relaxed
+      prose-p:mb-3 prose-p:leading-relaxed
+      prose-strong:font-black prose-strong:text-slate-900
+      prose-ul:list-disc prose-ul:pl-5 prose-ul:my-2
+      prose-ol:list-decimal prose-ol:pl-5 prose-ol:my-2
+      prose-li:my-0.5
+      prose-headings:text-slate-900 prose-headings:font-black prose-headings:mt-4 prose-headings:mb-2"
+              >
+                {details?.description &&
+                  (details.description.startsWith("<") &&
+                  details.description.endsWith(">") ? (
+                    <div
+                      dangerouslySetInnerHTML={{ __html: details.description }}
+                    />
+                  ) : (
+                    <p className="whitespace-pre-line">{details.description}</p>
+                  ))}
+
+                {!details?.description && (
+                  <p>
+                    এই কোর্সটি আপনাকে সম্পূর্ণ জিরো থেকে অ্যাডভান্স লেভেল
+                    পর্যন্ত প্রফেশনালি গাইড করবে।
+                  </p>
+                )}
+              </div>
             </section>
 
             {/* Core Course Meta Badges Feature Grid */}

@@ -18,6 +18,7 @@ import {
 } from "lucide-react";
 import Link from "next/link";
 import { getAllCourses } from "@/src/lib/data";
+import Image from "next/image";
 
 const iconMap: Record<string, React.ComponentType<any>> = {
   BookOpen,
@@ -34,7 +35,6 @@ const iconMap: Record<string, React.ComponentType<any>> = {
   Video,
 };
 
-// 🎯 ১️⃣ প্রিমিয়াম লেআউট শিফট প্রোটেকশন ক্যাটাগরি কার্ড স্কেলিটন কম্পোনেন্ট
 const CategorySkeleton = () => {
   return (
     <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 w-full animate-pulse">
@@ -130,12 +130,12 @@ export default function EduCategories() {
           দ্বীনী শিক্ষার একটি সুবিন্যস্ত এবং আধুনিক রূপরেখা
         </h2>
         <p className="mt-3 text-sm sm:text-base text-slate-500 max-w-2xl mx-auto">
-          বিভাগ অনুযায়ী আমাদের সকল курсসমূহ এমনভাবে সাজানো হয়েছে যা একজন
-          শিক্ষার্থীকে আদেশ ও নৈতিক শিক্ষায় উন্নত করবে।
+          বিভাগ অনুযায়ী আমাদের সকল কোর্সসমূহ এমনভাবে সাজানো হয়েছে যা একজন
+          শিক্ষার্থীকে আদর্শ ও নৈতিক শিক্ষায় উন্নত করবে।
         </p>
       </div>
 
-      {/* 🎯 ২️⃣ রেন্ডারিং কন্ডিশন লক: ডাটা লোড হওয়ার সময় আমাদের প্রিমিয়াম স্কেলিটন শো করবে */}
+      {/* 🎯 ২️⃣ রেন্ডারিং কন্ডিশন লক: ডাটা লোড হওয়ার সময় আমাদের প্রিমিয়াম স্কেলিটন শো করবে */}
       {loading ? (
         <CategorySkeleton />
       ) : (
@@ -152,13 +152,18 @@ export default function EduCategories() {
               >
                 <div>
                   <div className="h-44 w-full relative overflow-hidden bg-gradient-to-t from-[#064e3b] to-emerald-950/80">
-                    <img
+                    <Image
                       src={
                         section.image ||
                         "https://images.unsplash.com/photo-1609599006353-e629f1d50218?q=80&w=800&auto=format&fit=crop"
                       }
                       alt={section.name}
-                      className="w-full h-full object-cover opacity-40 group-hover:scale-105 transition-transform duration-500 mix-blend-overlay"
+                      fill
+                      sizes="(max-w-768px) 100vw, (max-w-1024px) 50vw, 33vw"
+                      className="object-cover opacity-40 group-hover:scale-105 transition-transform duration-500 mix-blend-overlay"
+                      priority={false}
+                      placeholder="blur"
+                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
                     />
                     <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/30" />
                   </div>
@@ -256,7 +261,7 @@ export default function EduCategories() {
               <button
                 type="button"
                 onClick={() => setActiveItem(null)}
-                className="bg-linear-to-r from-emerald-600 to-teal-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all"
+                className="bg-gradient-to-r from-emerald-600 to-teal-700 text-white text-sm font-semibold px-5 py-2.5 rounded-xl shadow-sm transition-all"
               >
                 ঠিক আছে, বন্ধ করুন
               </button>

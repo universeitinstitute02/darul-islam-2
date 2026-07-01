@@ -5,9 +5,9 @@ import { ChevronLeft, ChevronRight, PlayCircle, BookOpen } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import Link from "next/link";
-import LoadingSpinner from "../../shared/spinner/LoadingSpinner";
+// 🎯 নেক্সট জেএস অপ্টিমাইজড ইমেজ কম্পোনেন্ট ইমপোর্ট ভাই
+import Image from "next/image";
 
-// 🎯 আপনার প্রজেক্টের একচুয়াল হুক ইমপোর্ট (প্রয়োজনে আপনার সঠিক ফোল্ডার পাথটি মিলিয়ে নিন)
 import useUser from "@/src/app/hooks/useUser";
 import useUserRole from "@/src/app/hooks/useUserRole";
 
@@ -38,10 +38,10 @@ const fetchHeroSliders = async (): Promise<SlideType[]> => {
 export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
 
-  // 🎯 আপনার কাস্টম হুক থেকে ইউজার এবং রোল স্টেট স্ট্রাকচার এক্সট্রাক্ট করা হলো
   const { data: user } = useUser();
   const { role: userRole } = useUserRole();
 
+  // 🎯 রিঅ্যাক্ট কুয়েরি মেগা পারফরম্যান্স টিউনিং লক ভাই
   const {
     data: slides = [],
     isLoading,
@@ -49,8 +49,10 @@ export default function HeroSection() {
   } = useQuery<SlideType[]>({
     queryKey: ["publicHeroSliders"],
     queryFn: fetchHeroSliders,
-    staleTime: 1000 * 60 * 10,
+    staleTime: 1000 * 60 * 30, // ⏳ ৩০ মিনিট ক্যাশ জেনারেশন লক ভাই
+    gcTime: 1000 * 60 * 60,
     refetchOnWindowFocus: false,
+    refetchOnReconnect: false,
   });
 
   const nextSlide = () => {
@@ -71,41 +73,43 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
+  // 🎯 শিমার স্কেলিটন লোডার ভাই
   if (isLoading) {
-    return <LoadingSpinner fullScreen />;
+    return (
+      <section className="relative h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden bg-slate-900 animate-pulse">
+        <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D2E]/90 via-[#0b3d2e]/40 to-transparent z-10" />
+        <div className="absolute inset-0 z-20 flex items-center">
+          <div className="max-w-screen-xl mx-auto w-full px-3 lg:px-8 space-y-4">
+            <div className="h-4 w-24 md:h-6 md:w-36 bg-white/10 rounded-full" />
+            <div className="space-y-2">
+              <div className="h-6 w-[65%] sm:h-8 lg:h-16 bg-white/20 rounded-xl" />
+              <div className="h-6 w-[45%] sm:h-8 lg:h-12 bg-white/10 rounded-xl" />
+            </div>
+            <div className="h-3 w-[55%] lg:h-6 lg:w-[50%] bg-white/5 rounded-lg pt-1" />
+            <div className="flex gap-3 pt-2">
+              <div className="h-8 w-24 lg:h-14 lg:w-40 bg-white/20 rounded-md lg:rounded-xl" />
+              <div className="h-8 w-24 lg:h-14 lg:w-40 bg-white/10 rounded-md lg:rounded-xl" />
+            </div>
+          </div>
+        </div>
+      </section>
+    );
   }
 
   if (isError || slides.length === 0) {
     return null;
   }
 
-  // 🎯 কন্ডিশনাল বাটন ডিস্ট্রিবিউটর লজিক
   const getPrimaryButtonConfig = (slide: SlideType) => {
     if (user) {
-      // ১. ইউজার যদি এডমিন হন
       if (userRole === "admin") {
-        return {
-          text: "ড্যাশবোর্ডে যান",
-          link: "/dashboard/admin",
-        };
+        return { text: "ড্যাশবোর্ডে যান", link: "/dashboard/admin" };
       }
-
-      // ২. ইউজার যদি শিক্ষক হন
       if (userRole === "teacher") {
-        return {
-          text: "ড্যাশবোর্ডে যান",
-          link: "/dashboard/teacher",
-        };
+        return { text: "ড্যাশবোর্ডে যান", link: "/dashboard/teacher" };
       }
-
-      // ৩. ইউজার যদি ছাত্র (Student) হন বা অন্য কোনো রোল
-      return {
-        text: "ক্লাসে যোগ দিন",
-        link: "/my-course",
-      };
+      return { text: "ক্লাসে যোগ দিন", link: "/my-course" };
     }
-
-    // ৪. ইউজার লগইন না থাকলে অরিজিনাল অ্যাডমিশন ডাটা রেন্ডার হবে
     return {
       text: slide.primaryBtnText || "ভর্তি হতে ক্লিক করুন",
       link: slide.primaryBtnLink || "/admission",
@@ -113,7 +117,7 @@ export default function HeroSection() {
   };
 
   return (
-    <section className="relative h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden">
+    <section className="relative h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden bg-slate-950">
       {/* Slides */}
       {slides.map((slide, index) => {
         const primaryBtn = getPrimaryButtonConfig(slide);
@@ -128,12 +132,18 @@ export default function HeroSection() {
             {/* Overlay */}
             <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D2E]/92 via-[#0B3D2E]/62 to-transparent z-10" />
 
-            {/* Image */}
-            <img
-              src={slide.image}
-              alt={slide.title}
-              className="w-full h-full object-cover"
-            />
+            {/* 🎯 র-ইমেজ রিপ্লেস করে নেক্সট ইমেজ সিকিউর লক ভাই */}
+            <div className="absolute inset-0 w-full h-full">
+              <Image
+                src={slide.image}
+                alt={slide.title}
+                fill
+                sizes="100vw"
+                className="object-cover"
+                priority={index === 0}
+                unoptimized={slide.image.includes(".svg")}
+              />
+            </div>
 
             {/* Content */}
             <div className="absolute inset-0 z-20 flex items-center">
@@ -141,7 +151,7 @@ export default function HeroSection() {
                 <div className="max-w-2xl space-y-2 lg:space-y-2">
                   {/* Tag */}
                   {slide.badgeText && (
-                    <span className="inline-block bg-[#22c55e] text-white px-2 py-0.5 lg:px-4 lg:py-1 rounded-full font-bold text-[10px] lg:text-base">
+                    <span className="inline-block bg-[#22c55e] text-white px-2 py-0.5 lg:px-4 lg:py-1 rounded-full font-full-black text-[10px] lg:text-base font-bold">
                       {slide.badgeText}
                     </span>
                   )}
