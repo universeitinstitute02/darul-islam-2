@@ -11,6 +11,7 @@ import {
   Twitter,
   Instagram,
 } from "lucide-react";
+import Image from "next/image";
 
 export default function Footer() {
   return (
@@ -22,16 +23,22 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-16 lg:gap-8">
           {/* About */}
           <div className="space-y-8">
-            <Link href="/" className="flex items-center gap-4 group">
-              <div className="w-12 h-12 bg-green-400 rounded-xl flex items-center justify-center shadow-lg group-hover:rotate-6 transition-transform">
-                <span className="text-green-900 font-black text-2xl">DI</span>
+            <Link href="/" className="flex items-center gap-3 group">
+              <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
+                <Image
+                  src="/darulislaminstitute.jpeg"
+                  alt="Darul Islam Institute"
+                  className="rounded-full"
+                  width={40}
+                  height={40}
+                />
               </div>
-              <div>
-                <span className="text-white font-black text-xl">
-                  দারুল ইসলাম
+              <div className="flex flex-col text-left">
+                <span className="text-white font-bold text-lg lg:text-xl">
+                  দারুল ইসলাম ইনস্টিটিউট
                 </span>
-                <span className="block text-green-300 text-[10px] uppercase font-bold tracking-widest">
-                  Institute
+                <span className="text-white/60 text-[10px] hidden lg:block uppercase tracking-wider">
+                  Darul Islam Institute
                 </span>
               </div>
             </Link>

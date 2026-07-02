@@ -32,6 +32,7 @@ import {
 } from "lucide-react";
 import Swal from "sweetalert2";
 import useUserRole from "@/src/app/hooks/useUserRole";
+import Image from "next/image";
 
 interface SubmenuItem {
   name: string;
@@ -155,10 +156,16 @@ const Header = () => {
       <div className="max-w-screen-xl mx-auto flex items-center justify-between px-4 py-3 lg:px-8">
         <Link href="/" className="flex items-center gap-3 group">
           <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center group-hover:scale-110 transition-transform">
-            <span className="text-[#0B3D2E] font-bold text-xl">DI</span>
+            <Image
+              src="/darulislaminstitute.jpeg"
+              alt="Darul Islam Institute"
+              className="rounded-full"
+              width={40}
+              height={40}
+            />
           </div>
           <div className="flex flex-col text-left">
-            <span className="text-white font-bold text-lg lg:text-2xl">
+            <span className="text-white font-bold text-lg lg:text-xl">
               দারুল ইসলাম ইনস্টিটিউট
             </span>
             <span className="text-white/60 text-[10px] hidden lg:block uppercase tracking-wider">
