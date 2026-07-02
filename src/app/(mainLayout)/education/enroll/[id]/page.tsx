@@ -71,7 +71,6 @@ export default function EnrollPage() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
-  const searchParams = useSearchParams(); // 🎯 ইউআরএল রিডাইরেক্ট প্যারামস রিডার লক ভাই
   const axiosSecure = useAxiosSecure();
 
   const [paymentMethod, setPaymentMethod] = useState("bkash");

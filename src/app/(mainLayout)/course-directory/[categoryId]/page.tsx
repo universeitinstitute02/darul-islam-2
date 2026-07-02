@@ -71,6 +71,8 @@ function CourseCardSkeleton() {
   );
 }
 
+export const dynamic = "force-dynamic";
+
 function CourseDirectoryContent() {
   const searchParams = useSearchParams();
   const params = useParams();

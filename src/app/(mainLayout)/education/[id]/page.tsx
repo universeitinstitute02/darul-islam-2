@@ -100,13 +100,15 @@ function BatchCountdown({ targetDate }: { targetDate: string }) {
   );
 }
 
+export const dynamic = "force-dynamic";
+
 export default function CourseDetailPage() {
   const { id } = useParams();
   const router = useRouter();
 
   const [course, setCourse] = useState<any>(null);
   const [loading, setLoading] = useState(true);
-  const [batchModalOpen, setBatchModalOpen] = useState(false); // 🎯 মডাল স্টেট ভাই
+  const [batchModalOpen, setBatchModalOpen] = useState(false);
 
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [activeTab, setActiveTab] = useState<"live" | "assignment">("live");

@@ -91,6 +91,8 @@ function BatchCountdown({ targetDate }: { targetDate: string }) {
   );
 }
 
+export const dynamic = "force-dynamic";
+
 // 🎨 Premium Shimmer Skeleton Loader for Page Layout Components
 function CourseDetailsSkeleton() {
   return (

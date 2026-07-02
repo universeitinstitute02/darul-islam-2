@@ -18,7 +18,8 @@ import {
   Step4,
   Step5,
 } from "@/src/components/register/Fromsteps";
-import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+
+import dynamicImport from "next/dynamic";
 
 const RegisterPage: React.FC = () => {
   const searchParams = useSearchParams();
@@ -371,4 +372,8 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+const AntiBailoutLoginPage = dynamicImport(() => Promise.resolve(RegisterPage), {
+  ssr: false,
+});
+
+export default AntiBailoutLoginPage;
