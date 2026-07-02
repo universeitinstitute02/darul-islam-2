@@ -17,9 +17,16 @@ export async function proxy(req: NextRequest) {
   const isAuthPage =
     pathname === "/auth/login" || pathname === "/auth/register";
 
-  // 3. Auth Page Protection: Redirect already logged-in users away from login/register pages
+  // 3. Auth Page Protection: If already logged in, completely bounce them to their native dash to break loops
   if (isAuthPage && !!token) {
-    return NextResponse.redirect(new URL("/", req.url));
+    if (role === "admin") {
+      return NextResponse.redirect(new URL("/dashboard/admin", req.url));
+    }
+    if (role === "teacher") {
+      return NextResponse.redirect(new URL("/dashboard/teacher", req.url));
+    }
+    // Default fallback for students to avoid looping back to enroll page on reload
+    return NextResponse.redirect(new URL("/student-profile", req.url));
   }
 
   // 4. Global Protection: Redirect unauthenticated users to the login page
@@ -32,7 +39,9 @@ export async function proxy(req: NextRequest) {
     pathname.startsWith("/student-profile") &&
     (role === "teacher" || role === "admin")
   ) {
-    return NextResponse.redirect(new URL("/dashboard/teacher/profile", req.url));
+    return NextResponse.redirect(
+      new URL("/dashboard/teacher/profile", req.url),
+    );
   }
 
   // 5. Role-Based Protection: Restrict students from accessing any dashboard paths

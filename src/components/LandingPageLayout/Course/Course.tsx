@@ -93,16 +93,7 @@ export default function HomeFeaturedCourses() {
     return `/education/${course._id}`;
   };
 
-  if (isError) {
-    return (
-      <div className="max-w-7xl mx-auto px-4 py-12" role="alert">
-        <div className="bg-rose-50/60 border border-rose-100 rounded-3xl p-6 text-center text-rose-700 font-bold text-sm flex items-center justify-center gap-2 max-w-xl mx-auto">
-          <ShieldAlert size={16} /> বিশেষ কোর্স মডিউল লোড করা সম্ভব হয়নি।
-          অনুগ্রহ করে পেজটি রিফ্রেশ করুন।
-        </div>
-      </div>
-    );
-  }
+  if (isError) return null;
 
   return (
     <section
@@ -110,15 +101,17 @@ export default function HomeFeaturedCourses() {
       aria-label="ফিচার্ড কোর্সসমূহ"
     >
       <div className="bg-[#EDF5F1] max-w-7xl mx-auto px-5 py-6 rounded-2xl relative group">
-        <div className="text-center mb-10">
-          <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
+        <div className="mx-auto mb-12 max-w-lg space-y-3 text-center">
+          <h2 className="text-2xl font-extrabold text-green-800 lg:text-4xl">
             আমাদের বিশেষ কোর্সসমূহ
-            <span className="block h-1 bg-green-600 mt-2 mx-auto w-1/2 rounded-full" />
           </h2>
-          <p className="text-slate-500 font-medium text-xs md:text-sm mt-3 max-w-md mx-auto leading-relaxed">
-            দারুল ইসলামের অভিজ্ঞ উস্তাদগণের তত্ত্বাবধানে পরিচালিত সেরা কোর্সসমূহ
+
+          <p className="text-sm text-neutral-600 lg:text-base">
+            দারুল ইসলামের পরিচালিত সেরা কোর্সসমূহ
             থেকে আপনার পছন্দের বিষয়টি বেছে নিন।
           </p>
+
+          <div className="mx-auto h-1 w-16 rounded-full bg-green-500"></div>
         </div>
 
         {isLoading ? (
@@ -266,19 +259,16 @@ export default function HomeFeaturedCourses() {
         )}
 
         {/* সব কোর্স বোতাম */}
-        <div className="flex justify-center mt-6 md:mt-10">
-          <Link href="/education" passHref>
-            <button
-              className="inline-flex items-center justify-center gap-2 bg-[#0B5D3B] text-white hover:bg-[#0c4b2f] text-sm font-black px-7 py-4 rounded-2xl shadow-xl shadow-green-900/10 transition-all active:scale-[0.98] cursor-pointer group"
-              aria-label="দারুল ইসলামের সকল কোর্স দেখুন"
-            >
-              সব কোর্স দেখুন
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-                aria-hidden="true"
-              />
-            </button>
+        <div className="mt-10 flex justify-center">
+          <Link
+            href="/education"
+            className="group flex items-center gap-2 rounded-full bg-green-700 px-6 py-3 text-sm font-semibold text-white shadow-lg transition hover:bg-green-800"
+          >
+            আমাদের কোর্সসমূহ দেখুন
+            <ArrowRight
+              size={18}
+              className="transition group-hover:translate-x-1"
+            />
           </Link>
         </div>
       </div>
@@ -302,7 +292,7 @@ export default function HomeFeaturedCourses() {
           transition: all 0.3s ease;
         }
         .course-swiper-pagination .swiper-pagination-bullet-active {
-          background: #4EA44B !important;
+          background: #4ea44b !important;
           width: 24px !important;
           border-radius: 12px !important;
         }

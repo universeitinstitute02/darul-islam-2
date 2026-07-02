@@ -166,9 +166,7 @@ const StudentSlider = () => {
     retry: 2,
   });
 
-  if (isError) {
-    console.error("Error loading talented students data:", error);
-  }
+  if (isError) return null;
 
   return (
     <section className="overflow-hidden px-4 py-8 md:py-1 lg:px-8">
@@ -179,7 +177,7 @@ const StudentSlider = () => {
             মেধাবী শিক্ষার্থীরা
           </span>
 
-          <h2 className="mt-4 text-3xl font-extrabold text-green-800 md:text-5xl">
+          <h2 className="mt-4 text-2xl font-extrabold text-green-800 md:text-4xl">
             আমাদের কৃতি শিক্ষার্থীরা
           </h2>
 

@@ -1,10 +1,11 @@
 "use client";
+
 import React, { useState, useRef, useEffect } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronRight, ChevronLeft, ArrowLeft, Loader2 } from "lucide-react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import axios from "axios";
 import { signIn } from "next-auth/react";
 import Swal from "sweetalert2";
@@ -17,14 +18,19 @@ import {
   Step4,
   Step5,
 } from "@/src/components/register/Fromsteps";
-import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
+
+import dynamicImport from "next/dynamic";
 
 const RegisterPage: React.FC = () => {
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect");
+
   const {
     register,
     handleSubmit,
     watch,
     trigger,
+    setValue,
     formState: { errors },
   } = useForm<any>({
     defaultValues: { role: "student" },
@@ -41,6 +47,12 @@ const RegisterPage: React.FC = () => {
 
   const userRole = watch("role");
   const isTeacher = userRole === "teacher";
+
+  useEffect(() => {
+    if (redirectUrl) {
+      setValue("role", "student");
+    }
+  }, [redirectUrl, setValue]);
 
   useEffect(() => {
     const fetchDepartments = async () => {
@@ -147,7 +159,13 @@ const RegisterPage: React.FC = () => {
         confirmButtonColor: "#0B5D3B",
         customClass: { popup: "rounded-[2rem]" },
       }).then(() => {
-        router.push("/auth/login");
+        if (redirectUrl) {
+          router.push(
+            `/auth/login?redirect=${encodeURIComponent(redirectUrl)}`,
+          );
+        } else {
+          router.push("/auth/login");
+        }
       });
     } catch (error: any) {
       Swal.fire({
@@ -173,7 +191,7 @@ const RegisterPage: React.FC = () => {
     if (step === 2) return isTeacher ? "পেশাগত তথ্য" : "পিতার তথ্য";
     if (step === 3) return "মাতার তথ্য";
     if (step === 4) return "যোগাযোগ";
-    return "নিরাপত্তা";
+    return "নিয়ারত্তা";
   };
 
   return (
@@ -182,7 +200,6 @@ const RegisterPage: React.FC = () => {
         <Sidebar step={step} isTeacher={isTeacher} />
 
         <div className="flex-1 p-6 lg:p-12 relative">
-          {/* 📱 Mobile Top Step Progress Bar (Hidden on Desktop) */}
           <div className="lg:hidden mb-6 bg-slate-50 p-4 rounded-2xl border border-neutral-100">
             <div className="flex justify-between items-center mb-2">
               <span className="text-xs font-black text-[#0B5D3B] bg-[#0B5D3B]/10 px-2.5 py-1 rounded-md">
@@ -198,7 +215,6 @@ const RegisterPage: React.FC = () => {
                 {getMobileStepLabel()}
               </span>
             </div>
-            {/* Progress Bar Track */}
             <div className="w-full h-2 bg-neutral-200/70 rounded-full overflow-hidden">
               <div
                 className="h-full bg-[#0B5D3B] transition-all duration-300 rounded-full"
@@ -211,7 +227,11 @@ const RegisterPage: React.FC = () => {
 
           <div className="mb-6 lg:mb-8">
             <Link
-              href="/auth/login"
+              href={
+                redirectUrl
+                  ? `/auth/login?redirect=${encodeURIComponent(redirectUrl)}`
+                  : "/auth/login"
+              }
               className="inline-flex items-center gap-2 text-neutral-400 hover:text-[#0B5D3B] transition-colors group"
             >
               <div className="p-2 lg:p-0 bg-neutral-50 lg:bg-transparent rounded-full lg:rounded-none">
@@ -250,7 +270,6 @@ const RegisterPage: React.FC = () => {
                     register={register}
                     errors={errors}
                     watch={watch}
-                    departments={departments}
                     handleImageClick={() => fileInputRef.current?.click()}
                     handleImageChange={(e: any) => {
                       const file = e.target.files?.[0];
@@ -261,6 +280,8 @@ const RegisterPage: React.FC = () => {
                     }}
                     fileInputRef={fileInputRef}
                     selectedImage={selectedImage}
+                    departments={departments}
+                    hideRoleToggle={!!redirectUrl}
                   />
                 )}
                 {step === 2 && (
@@ -331,49 +352,18 @@ const RegisterPage: React.FC = () => {
               <p className="text-center text-sm font-bold text-neutral-500 mt-2">
                 ইতোমধ্যে অ্যাকাউন্ট আছে?{" "}
                 <Link
-                  href="/auth/login"
+                  href={
+                    redirectUrl
+                      ? `/auth/login?redirect=${encodeURIComponent(redirectUrl)}`
+                      : "/auth/login"
+                  }
                   className="text-[#0B5D3B] hover:underline font-black"
                 >
                   লগইন করুন
                 </Link>
               </p>
 
-              {step === 1 && (
-                <div className="mt-4">
-                  {/* <div className="relative flex items-center py-4">
-                    <div className="flex-grow border-t border-neutral-200"></div>
-                    <span className="flex-shrink-0 mx-4 text-neutral-400 text-sm font-bold">
-                      অথবা
-                    </span>
-                    <div className="flex-grow border-t border-neutral-200"></div>
-                  </div>
-                  <button
-                    type="button"
-                    onClick={handleGoogleSignIn}
-                    className="w-full flex items-center justify-center gap-3 py-3.5 border-2 border-neutral-200 rounded-2xl font-black text-neutral-600 hover:bg-neutral-50 transition-all shadow-sm"
-                  >
-                    <svg className="w-5 h-5" viewBox="0 0 24 24">
-                      <path
-                        fill="#4285F4"
-                        d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"
-                      />
-                      <path
-                        fill="#34A853"
-                        d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"
-                      />
-                      <path
-                        fill="#FBBC05"
-                        d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"
-                      />
-                      <path
-                        fill="#EA4335"
-                        d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"
-                      />
-                    </svg>
-                    Google-এর মাধ্যমে যুক্ত হোন
-                  </button> */}
-                </div>
-              )}
+              {step === 1 && <div className="mt-4"></div>}
             </div>
           </form>
         </div>
@@ -382,4 +372,8 @@ const RegisterPage: React.FC = () => {
   );
 };
 
-export default RegisterPage;
+const AntiBailoutLoginPage = dynamicImport(() => Promise.resolve(RegisterPage), {
+  ssr: false,
+});
+
+export default AntiBailoutLoginPage;

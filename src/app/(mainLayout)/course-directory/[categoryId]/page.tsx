@@ -1,14 +1,14 @@
 "use client";
 
-import React, { Suspense, useState, useEffect } from "react";
+import React, { Suspense, useState, useEffect, useMemo } from "react";
 import { useSearchParams, useRouter, useParams } from "next/navigation";
+import { useQuery } from "@tanstack/react-query";
 import {
   ArrowLeft,
   Clock,
   Tag,
   Users,
   BookOpen,
-  Loader2,
   Search,
   GraduationCap,
   Award,
@@ -41,125 +41,114 @@ interface CourseItem {
   price: number;
   oldPrice: number;
   image: string;
+  upcomingBatch: any;
   details: CourseDetails;
 }
+
+// 🎨 Professional Shimmer Skeleton Loader for enhanced UX
+function CourseCardSkeleton() {
+  return (
+    <div className="bg-white rounded-xl sm:rounded-2xl border border-slate-100 shadow-xs flex flex-col justify-between overflow-hidden animate-pulse">
+      <div>
+        <div className="h-28 sm:h-48 w-full bg-slate-200" />
+        <div className="p-3 sm:p-6 space-y-3">
+          <div className="h-4 sm:h-6 bg-slate-200 rounded-md w-3/4" />
+          <div className="space-y-1.5">
+            <div className="h-3 bg-slate-200 rounded-md w-full" />
+            <div className="h-3 bg-slate-200 rounded-md w-5/6" />
+          </div>
+          <div className="pt-3 border-t border-slate-100 space-y-2">
+            <div className="h-3 bg-slate-100 rounded-md w-1/2" />
+            <div className="h-3 bg-slate-100 rounded-md w-2/3" />
+          </div>
+        </div>
+      </div>
+      <div className="p-3 sm:p-6 pt-0 flex items-center justify-between gap-2 mt-auto">
+        <div className="h-6 bg-slate-200 rounded-md w-1/4" />
+        <div className="h-8 sm:h-10 bg-slate-200 rounded-lg w-24" />
+      </div>
+    </div>
+  );
+}
+
+export const dynamic = "force-dynamic";
 
 function CourseDirectoryContent() {
   const searchParams = useSearchParams();
   const params = useParams();
   const router = useRouter();
 
-  const [courses, setCourses] = useState<CourseItem[]>([]);
-  const [pageTitle, setPageTitle] = useState<string>(
-    "বিভাগীয় কোর্স সমূহের তালিকা",
-  );
   const [searchQuery, setSearchQuery] = useState<string>("");
-  const [loading, setLoading] = useState<boolean>(true);
-  const [error, setError] = useState<string | null>(null);
 
   const categoryId = params?.categoryId as string;
   const urlCategoryName = searchParams.get("name");
 
-  useEffect(() => {
-    if (urlCategoryName) {
-      setPageTitle(urlCategoryName);
-    }
-  }, [urlCategoryName]);
+  const {
+    data: courses = [],
+    isLoading: loading,
+    error,
+  } = useQuery<CourseItem[]>({
+    queryKey: ["categoryCourses", categoryId],
+    queryFn: async () => {
+      const res = await getAllCourses();
+      if (!res || !Array.isArray(res.dynamicCategories)) return [];
 
-  useEffect(() => {
-    if (pageTitle) {
-      document.title = `${pageTitle} | আমাদের অনলাইন মাদ্রাসা`;
-    }
-  }, [pageTitle]);
+      const currentCategory = res.dynamicCategories.find(
+        (value: any) => value._id === categoryId,
+      );
 
-  useEffect(() => {
-    const fetchCourses = async () => {
-      try {
-        setLoading(true);
-        const res = await getAllCourses();
+      if (!currentCategory) return [];
 
-        if (res && Array.isArray(res.dynamicCategories)) {
-          const currentCategory = res.dynamicCategories.find(
-            (cat: any) => cat._id === categoryId,
-          );
+      const rawSubCategories = currentCategory.subCategories;
+      if (!rawSubCategories) return [];
 
-          if (currentCategory) {
-            setPageTitle(currentCategory.name);
+      const cleanSubArray = Array.isArray(rawSubCategories)
+        ? rawSubCategories
+        : Object.values(rawSubCategories);
 
-            if (currentCategory) {
-              setPageTitle(currentCategory.name);
+      if (!cleanSubArray || typeof cleanSubArray.map !== "function") return [];
 
-              // 🔹 সিনিয়র ডিফেন্সিভ ফিক্স: ডাটা অবজেক্ট স্ট্রাকচার ১০০% ভেরিফাই করা হচ্ছে
-              const rawSubCategories = currentCategory.subCategories;
+      return cleanSubArray.map((sub: any) => ({
+        id: sub?._id || String(Math.random()),
+        title: sub?.name || "কোর্স টাইটেল",
+        price: sub?.admissionFee || 0,
+        oldPrice: sub?.oldAdmissionFee || 0,
+        image:
+          sub?.image && sub.image.trim() !== ""
+            ? sub.image
+            : currentCategory.image || "",
+        upcomingBatch: sub?.upcomingBatch || null,
+        details: {
+          fullTitle: sub?.fullTitle || sub?.name || "",
+          description: sub?.description || "",
+          admissionFee: sub?.admissionFee || 0,
+          oldAdmissionFee: sub?.oldAdmissionFee || 0,
+          monthlyFee: sub?.monthlyFee || null,
+          discount: sub?.discount || 0,
+          coupon: sub?.coupon || "",
+          batchInfo: sub?.classSchedule || "নতুন ব্যাচ শীঘ্রই শুরু হবে",
+          highlights: Array.isArray(sub?.highlights) ? sub.highlights : [],
+        },
+      }));
+    },
+    enabled: !!categoryId,
+    staleTime: 5 * 60 * 1000, // Cache clean data for 5 minutes
+    gcTime: 10 * 60 * 1000,
+  });
 
-              if (
-                rawSubCategories &&
-                (Array.isArray(rawSubCategories) ||
-                  typeof rawSubCategories === "object")
-              ) {
-                // যদি কোনো কারণে ব্যাকঅ্যান্ড থেকে রড অবজেক্ট আসে, সেটিকে অ্যারেতে রূপান্তর করার সেফটি গার্ড
-                const cleanSubArray = Array.isArray(rawSubCategories)
-                  ? rawSubCategories
-                  : Object.values(rawSubCategories);
+  const activePageTitle = urlCategoryName || "বিভাগীয় কোর্স সমূহের তালিকা";
 
-                // নিশ্চিত হওয়া যে এটি এখন একটি নিখুঁত অ্যারে এবং এর ওপর .map / .slice চালানো সম্ভব
-                if (cleanSubArray && typeof cleanSubArray.map === "function") {
-                  const transformSubCategories = cleanSubArray.map(
-                    (sub: any) => ({
-                      id: sub?._id || String(Math.random()),
-                      title: sub?.name || "কোর্স টাইটেল",
-                      price: sub?.admissionFee || 0,
-                      oldPrice: sub?.oldAdmissionFee || 0,
-                      image:
-                        sub?.image && sub.image.trim() !== ""
-                          ? sub.image
-                          : currentCategory.image || "",
-                      details: {
-                        fullTitle: sub?.fullTitle || sub?.name || "",
-                        description: sub?.description || "",
-                        admissionFee: sub?.admissionFee || 0,
-                        oldAdmissionFee: sub?.oldAdmissionFee || 0,
-                        monthlyFee: sub?.monthlyFee || null,
-                        discount: sub?.discount || 0,
-                        coupon: sub?.coupon || "",
-                        batchInfo:
-                          sub?.classSchedule || "নতুন ব্যাচ শীঘ্রই শুরু হবে",
-                        highlights: Array.isArray(sub?.highlights)
-                          ? sub.highlights
-                          : [],
-                      },
-                    }),
-                  );
-                  setCourses(transformSubCategories);
-                } else {
-                  setCourses([]);
-                }
-              } else {
-                setCourses([]); 
-              }
-            }
-          }
-        }
-      } catch (err: any) {
-        setError(err.message || "কিছু একটা ভুল হয়েছে");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    if (categoryId) {
-      fetchCourses();
-    }
-  }, [categoryId]);
-
-  const filteredCourses = courses.filter(
-    (course) =>
-      course.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      course.details?.description
-        ?.toLowerCase()
-        .includes(searchQuery.toLowerCase()) ||
-      course.id.toLowerCase().includes(searchQuery.toLowerCase()),
-  );
+  // 🚀 useMemo optimizes CPU cycles during filtering workflows
+  const filteredCourses = useMemo(() => {
+    const query = searchQuery.toLowerCase().trim();
+    if (!query) return courses;
+    return courses.filter(
+      (course) =>
+        course.title.toLowerCase().includes(query) ||
+        course.details?.description?.toLowerCase().includes(query) ||
+        course.id.toLowerCase().includes(query),
+    );
+  }, [courses, searchQuery]);
 
   return (
     <main className="bg-gradient-to-b from-[#f4fbf7] to-[#fcfdfd] min-h-screen pt-28 sm:pt-36 pb-12 px-2 sm:px-6 lg:px-8">
@@ -182,7 +171,7 @@ function CourseDirectoryContent() {
             </button>
             <ChevronRight className="w-3 h-3 text-slate-300" />
             <span className="text-emerald-600 font-medium truncate max-w-[150px] sm:max-w-none">
-              {pageTitle}
+              {activePageTitle}
             </span>
           </div>
 
@@ -200,7 +189,7 @@ function CourseDirectoryContent() {
           <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
               <h1 className="text-xl sm:text-3xl font-extrabold text-slate-900 tracking-tight">
-                {pageTitle}
+                {activePageTitle}
               </h1>
               <p className="mt-1 text-xs sm:text-base text-slate-500 max-w-3xl">
                 নিচে এই বিভাগের সকল অ্যাক্টিভ ও চলমান কোর্স দেওয়া হলো। আপনার
@@ -237,15 +226,16 @@ function CourseDirectoryContent() {
         )}
 
         {loading ? (
-          <div className="text-center py-24 flex flex-col items-center justify-center text-emerald-600 font-bold gap-3">
-            <Loader2 className="w-10 h-10 animate-spin" />
-            <span className="text-sm sm:text-base">
-              কোর্স লোড হচ্ছে, অনুগ্রহ করে অপেক্ষা করুন...
-            </span>
+          <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
+            {[...Array(6)].map((_, index) => (
+              <CourseCardSkeleton key={index} />
+            ))}
           </div>
         ) : error ? (
           <div className="text-center py-16 bg-red-50 rounded-2xl border border-red-100 m-2 p-8 text-red-600">
-            <p className="font-semibold">{error}</p>
+            <p className="font-semibold">
+              {(error as any)?.message || "কিছু একটা ভুল হয়েছে"}
+            </p>
           </div>
         ) : filteredCourses.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8">
@@ -289,7 +279,7 @@ function CourseDirectoryContent() {
                       <h3 className="text-sm sm:text-xl font-bold text-slate-900 group-hover:text-emerald-600 transition-colors line-clamp-1 mb-1 sm:mb-2">
                         {course.title}
                       </h3>
-                      <p className="text-[11px] sm:text-sm text-slate-500 line-clamp-2 mb-3 sm:mb-4 min-h-[32px] sm:min-h-[40px]">
+                      <p className="text-slate-500 text-[11px] sm:text-sm line-clamp-2 mb-3 sm:mb-4 min-h-[32px] sm:min-h-[40px]">
                         {course.details?.description}
                       </p>
 
@@ -300,8 +290,10 @@ function CourseDirectoryContent() {
                         </div>
                         <div className="flex items-center gap-1.5">
                           <Users className="w-3.5 h-3.5 text-emerald-500 shrink-0" />
-                          <span className="truncate">
-                            স্ট্যাটাস: {course.details?.batchInfo}
+                          <span>
+                            {course.upcomingBatch
+                              ? `ব্যাচ: ${course.upcomingBatch.batchName} (ভর্তি চলছে)`
+                              : `স্ট্যাটাস: ${course.details?.batchInfo}`}
                           </span>
                         </div>
                         {course.details?.coupon && (
@@ -309,7 +301,7 @@ function CourseDirectoryContent() {
                             <Tag className="w-3.5 h-3.5 text-amber-500 shrink-0" />
                             <span className="truncate">
                               কুপন:{" "}
-                              <span className="font-mono bg-amber-50 px-1 py-0.2 rounded text-amber-700 font-bold">
+                              <span className="font-mono bg-amber-50 px-1.5 py-0.5 rounded text-amber-700 font-bold">
                                 {course.details.coupon}
                               </span>
                             </span>
@@ -326,7 +318,7 @@ function CourseDirectoryContent() {
                           ৳{course.price}
                         </span>
                         {course.oldPrice > course.price && (
-                          <span className="text-[10px] sm:text-xs text-slate-400 line-through">
+                          <span className="text-slate-400 text-[10px] sm:text-xs line-through">
                             ৳{course.oldPrice}
                           </span>
                         )}
@@ -377,9 +369,10 @@ export default function CourseDirectoryPage() {
   return (
     <Suspense
       fallback={
-        <div className="text-center py-20 text-emerald-600 font-bold flex flex-col items-center justify-center gap-2">
-          <Loader2 className="w-8 h-8 animate-spin" />
-          <span>লোড হচ্ছে...</span>
+        <div className="max-w-7xl mx-auto pt-44 px-4 grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-6 lg:gap-8 animate-pulse">
+          {[...Array(6)].map((_, idx) => (
+            <div key={idx} className="bg-slate-100 h-72 rounded-2xl" />
+          ))}
         </div>
       }
     >

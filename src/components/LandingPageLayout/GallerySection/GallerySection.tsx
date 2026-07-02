@@ -1,5 +1,6 @@
 "use client";
-import React, { useEffect, useState } from "react";
+
+import React, { useState } from "react";
 import {
   ImageIcon,
   Expand,
@@ -8,8 +9,9 @@ import {
   ChevronLeft,
   ChevronRight,
 } from "lucide-react";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
 import Link from "next/link";
-// 🎯 নেক্সট জেএস অপ্টিমাইজড ইমেজ কম্পোনেন্ট ইমপোর্ট ভাই
 import Image from "next/image";
 
 interface GalleryAlbum {
@@ -21,9 +23,12 @@ interface GalleryAlbum {
 }
 
 const BASE_URL = process.env.NEXT_PUBLIC_API_URL;
-const LIMIT = 5;
 
-// গ্রিডের সাইজ নির্ধারণের কমন ফাংশন
+const fetchGallery = async (): Promise<GalleryAlbum[]> => {
+  const { data } = await axios.get(`${BASE_URL}/gallery?page=1&limit=5`);
+  return data?.data || [];
+};
+
 const getGridSize = (index: number) => {
   const sizes = [
     "lg:col-span-2 lg:row-span-2 md:col-span-2",
@@ -35,71 +40,45 @@ const getGridSize = (index: number) => {
   return sizes[index % sizes.length];
 };
 
-// ইমেজের URL ঠিক করার কমন ফাংশন
 const getImageUrl = (imgUrl: string) => {
   if (!imgUrl) return "/placeholder.jpg";
-  if (imgUrl.startsWith("http://") || imgUrl.startsWith("https://")) {
-    return imgUrl;
-  }
-  const cleanBaseUrl = BASE_URL
-    ? BASE_URL.replace("/api", "")
-    : "https://darulislam-server-v2.vercel.app";
+  if (imgUrl.startsWith("http")) return imgUrl;
+  const cleanBaseUrl =
+    BASE_URL?.replace("/api", "") || "https://darulislam-server-v2.vercel.app";
   return `${cleanBaseUrl}/${imgUrl}`;
 };
 
-// 💀 কঙ্কাল (Skeleton) লোডার কম্পোনেন্ট ফিক্সড
-const GallerySkeleton = () => {
-  return (
-    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 auto-rows-[250px] md:auto-rows-[300px]">
-      {Array.from({ length: 5 }).map((_, i) => (
-        <div
-          key={i}
-          className={`animate-pulse relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-gray-200 ${getGridSize(i)}`}
-        >
-          <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 space-y-2">
-            <div className="h-3 w-16 bg-neutral-300 rounded" />
-            <div className="h-5 w-3/4 bg-neutral-300 rounded" />
-          </div>
-        </div>
-      ))}
-    </div>
-  );
-};
+const GallerySkeleton = () => (
+  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 auto-rows-[250px] md:auto-rows-[300px]">
+    {Array.from({ length: 5 }).map((_, i) => (
+      <div
+        key={i}
+        className={`animate-pulse rounded-[1.5rem] bg-gray-200 ${getGridSize(i)}`}
+      />
+    ))}
+  </div>
+);
 
-const GallerySection: React.FC = () => {
-  const [albums, setAlbums] = useState<GalleryAlbum[]>([]);
-  const [page, setPage] = useState(1);
-  const [loading, setLoading] = useState(false);
-  const [hasMore, setHasMore] = useState(true);
-
-  // লাইটবক্স/মডাল স্টেট
+export default function GallerySection() {
   const [isOpen, setIsOpen] = useState(false);
   const [selectedAlbum, setSelectedAlbum] = useState<GalleryAlbum | null>(null);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
 
-  useEffect(() => {
-    if (!BASE_URL) return;
-    setLoading(true);
-    fetch(`${BASE_URL}/gallery?page=${page}&limit=${LIMIT}`)
-      .then((res) => res.json())
-      .then((resData) => {
-        if (resData && resData.data) {
-          setAlbums((prev) =>
-            page === 1 ? resData.data : [...prev, ...resData.data],
-          );
+  const {
+    data: albums = [],
+    isLoading,
+    isError,
+  } = useQuery({
+    queryKey: ["galleryData"],
+    queryFn: fetchGallery,
+    staleTime: 1000 * 60 * 30, // 30 mins cache
+  });
 
-          if (resData.currentPage >= resData.totalPages) {
-            setHasMore(false);
-          }
-        }
-      })
-      .catch((err) => console.error("Gallery fetching error:", err))
-      .finally(() => setLoading(false));
-  }, [page]);
+  if (isError) return null; // Error condition: hide whole section
 
-  const openGallery = (album: GalleryAlbum, imageIndex = 0) => {
+  const openGallery = (album: GalleryAlbum, index = 0) => {
     setSelectedAlbum(album);
-    setCurrentImageIndex(imageIndex);
+    setCurrentImageIndex(index);
     setIsOpen(true);
     document.body.style.overflow = "hidden";
   };
@@ -110,24 +89,9 @@ const GallerySection: React.FC = () => {
     document.body.style.overflow = "auto";
   };
 
-  const nextImage = () => {
-    if (!selectedAlbum) return;
-    setCurrentImageIndex((prev) =>
-      prev === selectedAlbum.image.length - 1 ? 0 : prev + 1,
-    );
-  };
-
-  const prevImage = () => {
-    if (!selectedAlbum) return;
-    setCurrentImageIndex((prev) =>
-      prev === 0 ? selectedAlbum.image.length - 1 : prev - 1,
-    );
-  };
-
   return (
     <section className="px-4 my-8">
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
-        {/* 📜 হেডার অংশ */}
         <div className="flex flex-col items-center mb-12 text-center">
           <div className="flex items-center gap-2 px-4 py-1.5 bg-emerald-50 text-[#0B5D3B] rounded-full text-xs font-bold mb-4">
             <ImageIcon className="w-4 h-4" />
@@ -139,71 +103,43 @@ const GallerySection: React.FC = () => {
           <div className="w-20 h-1.5 bg-[#0B5D3B] rounded-full"></div>
         </div>
 
-        {/* 🔄 কন্ডিশনাল রেন্ডারিং */}
-        {page === 1 && loading ? (
+        {isLoading ? (
           <GallerySkeleton />
         ) : albums.length === 0 ? (
           <div className="text-center py-12 text-gray-600 font-bold">
-            বর্তমানে কোনো ছবি আপলোড করা নেই।
+            বর্তমানে কোনো ছবি নেই।
           </div>
         ) : (
           <>
-            {/* 🖼️ মেইন ডাইনামিক বেন্টো গ্রিড লেআউট */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-3 md:gap-5 auto-rows-[250px] md:auto-rows-[300px]">
-              {albums.map((album, i) => {
-                const displayImage =
-                  album.image && album.image.length > 0
-                    ? getImageUrl(album.image[0])
-                    : "/placeholder.jpg";
-
-                return (
-                  <div
-                    key={album._id}
-                    onClick={() => openGallery(album, 0)}
-                    className={`group relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-gray-100 transition-all duration-700 hover:shadow-2xl hover:shadow-emerald-900/20 cursor-pointer ${getGridSize(i)}`}
-                  >
-                    {/* 🎯 র-ইমেজ রিপ্লেস করে নেক্সট ইমেজ লক ভাই */}
-                    <Image
-                      src={displayImage}
-                      alt={album.title}
-                      fill
-                      sizes="(max-w-768px) 100vw, (max-w-1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-1000 group-hover:scale-110 group-hover:rotate-1"
-                      placeholder="blur"
-                      blurDataURL="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkqAcAAIUAgUW0RjgAAAAASUVORK5CYII="
-                    />
-
-                    {/* প্রিমিয়াম ওভারলে */}
-                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-100 md:opacity-0 group-hover:opacity-100 transition-all duration-500 z-10">
-                      <div className="absolute bottom-0 left-0 right-0 p-6 md:p-8 flex items-end justify-between translate-y-2 group-hover:translate-y-0 transition-transform duration-500">
-                        <div>
-                          <p className="text-emerald-400 text-xs font-bold uppercase tracking-widest mb-1">
-                            {album.event || "স্মৃতি"}
-                          </p>
-                          <h3 className="text-white text-lg md:text-xl font-bold line-clamp-1">
-                            {album.title}
-                          </h3>
-                        </div>
-                        <div className="w-10 h-10 md:w-12 md:h-12 bg-white rounded-full flex items-center justify-center text-[#0B5D3B] scale-0 group-hover:scale-100 transition-transform duration-500 delay-100 flex-shrink-0">
-                          <ArrowUpRight className="w-5 h-5 md:w-6 md:h-6" />
-                        </div>
-                      </div>
-                    </div>
-
-                    {/* মোবাইল ইন্ডিকেটর আইকন */}
-                    <div className="absolute top-4 right-4 p-2 bg-white/20 backdrop-blur-md rounded-full md:hidden z-10">
-                      <Expand className="w-4 h-4 text-white" />
-                    </div>
+              {albums.map((album, i) => (
+                <div
+                  key={album._id}
+                  onClick={() => openGallery(album)}
+                  className={`group relative overflow-hidden rounded-[1.5rem] md:rounded-[2.5rem] bg-gray-100 cursor-pointer ${getGridSize(i)}`}
+                >
+                  <Image
+                    src={getImageUrl(album.image[0])}
+                    alt={album.title}
+                    fill
+                    sizes="(max-width: 1024px) 100vw, 33vw"
+                    className="object-cover transition-transform duration-1000 group-hover:scale-110"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-500 p-6 flex flex-col justify-end">
+                    <p className="text-emerald-400 text-xs font-bold uppercase">
+                      {album.event}
+                    </p>
+                    <h3 className="text-white text-lg font-bold">
+                      {album.title}
+                    </h3>
                   </div>
-                );
-              })}
+                </div>
+              ))}
             </div>
-
-            {/* বাটন */}
             <div className="mt-14 mb-6 text-center">
               <Link
                 href="/gallery"
-                className="inline-block px-12 py-5 bg-[#0B5D3B] text-white font-black rounded-full hover:bg-[#08432a] transition-colors"
+                className="px-12 py-5 bg-[#0B5D3B] text-white font-black rounded-full hover:bg-[#08432a]"
               >
                 সম্পূর্ণ গ্যালারি দেখুন
               </Link>
@@ -211,76 +147,31 @@ const GallerySection: React.FC = () => {
           </>
         )}
 
-        {/* 🗺️ লাইটবক্স / মোডাল ভিউ */}
         {isOpen && selectedAlbum && (
           <div
             className="fixed inset-0 z-[9999] bg-black/95 flex items-center justify-center"
             onClick={closeGallery}
           >
-            {/* Close Button */}
             <button
               onClick={closeGallery}
-              className="absolute cursor-pointer top-6 right-6 text-white hover:text-red-400 transition z-50"
+              className="absolute top-6 right-6 text-white cursor-pointer"
             >
               <X size={36} />
             </button>
-
-            {/* Previous Button */}
-            {selectedAlbum.image.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  prevImage();
-                }}
-                className="absolute left-3 md:left-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition z-50"
-              >
-                <ChevronLeft size={32} />
-              </button>
-            )}
-
-            {/* Image Container */}
             <div
-              className="max-w-7xl w-full max-h-[90vh] px-4 text-center relative flex flex-col justify-center h-full"
+              className="relative max-w-4xl h-[75vh] w-full"
               onClick={(e) => e.stopPropagation()}
             >
-              <div className="relative max-h-[80vh] h-[75vh] w-full max-w-4xl mx-auto">
-                <Image
-                  src={getImageUrl(selectedAlbum.image[currentImageIndex])}
-                  alt={selectedAlbum.title}
-                  fill
-                  sizes="(max-w-1200px) 100vw, 1200px"
-                  className="object-contain rounded-2xl"
-                  priority
-                />
-              </div>
-
-              <div className="mt-6">
-                <h3 className="text-white text-xl md:text-2xl font-bold">
-                  {selectedAlbum.title}
-                </h3>
-                <p className="text-gray-300 mt-2">
-                  ছবি {currentImageIndex + 1} / {selectedAlbum.image.length}
-                </p>
-              </div>
+              <Image
+                src={getImageUrl(selectedAlbum.image[currentImageIndex])}
+                alt="Gallery"
+                fill
+                className="object-contain"
+              />
             </div>
-
-            {/* Next Button */}
-            {selectedAlbum.image.length > 1 && (
-              <button
-                onClick={(e) => {
-                  e.stopPropagation();
-                  nextImage();
-                }}
-                className="absolute right-3 md:right-8 text-white bg-white/10 backdrop-blur-md p-3 rounded-full hover:bg-white/20 transition z-50"
-              >
-                <ChevronRight size={32} />
-              </button>
-            )}
           </div>
         )}
       </div>
     </section>
   );
-};
-
-export default GallerySection;
+}
