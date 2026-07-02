@@ -125,7 +125,7 @@ const GallerySection: React.FC = () => {
   };
 
   return (
-    <div className="px-4 my-8">
+    <section className="px-4 my-8">
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         {/* 📜 হেডার অংশ */}
         <div className="flex flex-col items-center mb-12 text-center">
@@ -279,7 +279,7 @@ const GallerySection: React.FC = () => {
           </div>
         )}
       </div>
-    </div>
+    </section>
   );
 };
 

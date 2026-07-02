@@ -14,43 +14,29 @@ import Testimonials from "@/src/components/LandingPageLayout/Testimonial/Testimo
 /* ── MAIN PAGE ── */
 export default function Home() {
   return (
-    <main
-      className="min-h-screen bg-white"
-      style={{ fontFamily: "'Hind Siliguri', sans-serif" }}
-    >
+    <>
       {/* Hero Section with Slides */}
       <HeroSection />
-
       {/* ── ABOUT SECTION ── */}
       <AboutHome />
-
       {/* ── COURSES ── */}
       <Course />
-
       {/* ── ACADEMIC DEPARTMENTS ── */}
-
       <Academic />
-
       {/* ── TEACHERS ── */}
       <AmaderTeacher />
-
       {/* ── STUDENTS ── */}
       <StudentSlider />
-
       {/* ──  ADMISSION INFO ── */}
       <AdmissionInfo />
-
       {/* ──  GALLERY ── */}
       <GallerySection />
-
       {/* ──  WHY CHOOSE US ── */}
       <WhyChoose />
-
       {/* ──  TESTIMONIALS ── */}
       <Testimonials />
-
       {/* Donation section */}
       <DonationSection />
-    </main>
+    </>
   );
 }

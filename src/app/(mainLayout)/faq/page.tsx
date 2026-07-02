@@ -31,9 +31,9 @@ export default function FAQPage() {
   const [openIndex, setOpenIndex] = useState<number | null>(0)
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
+    <section className="flex flex-col min-h-screen bg-[#F7FBF7]">
       {/* Hero Section */}
-      <section className="relative h-48 lg:h-64 bg-[#0B3D2E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <div className="relative h-48 lg:h-64 bg-[#0B3D2E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex items-center gap-4">
           <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-[#0B3D2E] shadow-lg">
@@ -44,9 +44,9 @@ export default function FAQPage() {
             <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">সচরাচর জিজ্ঞাসিত প্রশ্নের উত্তর</p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <main className="max-w-screen-xl mx-auto w-full px-4 py-16">
+      <div className="max-w-screen-xl mx-auto w-full px-4 py-16">
         <div className="max-w-3xl mx-auto space-y-4">
           {faqs.map((faq, i) => (
             <motion.div 
@@ -86,7 +86,7 @@ export default function FAQPage() {
         </div>
 
         {/* Contact CTA */}
-        <section className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+        <div className="mt-20 grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           <div className="bg-[#0B3D2E] p-8 rounded-[3rem] text-white space-y-4 flex flex-col items-center text-center">
             <div className="w-16 h-16 bg-[#8FE3A9] text-[#0B3D2E] rounded-2xl flex items-center justify-center">
               <MessageCircle size={32} />
@@ -103,8 +103,8 @@ export default function FAQPage() {
             <p className="text-[#0B3D2E]/60 text-sm">সরাসরি কথা বলতে ফোন করুন আমাদের হেল্পলাইনে।</p>
             <p className="text-3xl font-black text-[#0B3D2E]">০১৭১২-৩৪৫৬৭৮</p>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </div>
+    </section>
   )
 }

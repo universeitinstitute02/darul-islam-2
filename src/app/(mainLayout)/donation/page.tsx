@@ -4,7 +4,6 @@ import React, { useEffect, useState } from "react";
 import { HandHeart, AlertCircle } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
-import LoadingSpinner from "@/src/components/shared/spinner/LoadingSpinner";
 
 interface Campaign {
   _id: string;
@@ -48,7 +47,7 @@ export default function DonationPage() {
   }, []);
 
   return (
-    <div className="flex flex-col min-h-screen mt-16 lg:mt-18">
+    <section className="flex flex-col min-h-screen mt-16 lg:mt-18">
       {/* Hero Section */}
       <div className="relative h-48 lg:h-64 bg-green-800 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
@@ -178,6 +177,6 @@ export default function DonationPage() {
           </div>
         </div>
       </div>
-    </div>
+    </section>
   );
 }

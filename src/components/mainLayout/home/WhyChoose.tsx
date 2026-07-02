@@ -74,7 +74,7 @@ const Features = {
 };
 const WhyChoose = () => {
   return (
-    <div className="px-5">
+    <section className="px-5">
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
@@ -106,7 +106,7 @@ const WhyChoose = () => {
           ))}
         </div>
       </div>
-    </div>
+    </section>
   );
 };
 

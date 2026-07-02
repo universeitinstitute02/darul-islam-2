@@ -87,10 +87,10 @@ export default function CartPage() {
   if (!isMounted) return null;
 
   return (
-    <main className="min-h-screen bg-neutral-50/50 pt-24 pb-12 md:pt-32 md:pb-20 font-sans transition-all duration-300">
+    <section className="min-h-screen bg-neutral-50/50 pt-24 pb-12 md:pt-32 md:pb-20 font-sans transition-all duration-300">
       <div className="max-w-6xl mx-auto px-4">
         {/* SEO Header - Semantic Structure */}
-        <header className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+        <div className="mb-8 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
             <button
               onClick={() => router.push("/islamic-shop")}
@@ -109,7 +109,7 @@ export default function CartPage() {
               {cartItems.length} টি
             </span>
           </div>
-        </header>
+        </div>
 
         <AnimatePresence mode="wait">
           {cartItems.length === 0 ? (
@@ -141,7 +141,7 @@ export default function CartPage() {
             /* --- Cart Content Grid --- */
             <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-start">
               {/* Left: Product List */}
-              <section className="lg:col-span-8 space-y-4">
+              <div className="lg:col-span-8 space-y-4">
                 <AnimatePresence>
                   {cartItems.map((item) => (
                     <motion.article
@@ -215,10 +215,10 @@ export default function CartPage() {
                     </motion.article>
                   ))}
                 </AnimatePresence>
-              </section>
+              </div>
 
               {/* Right: Order Summary */}
-              <aside className="lg:col-span-4 bg-white border border-neutral-100 rounded-[2rem] p-6 md:p-8 shadow-xs lg:sticky lg:top-28 w-full">
+              <div className="lg:col-span-4 bg-white border border-neutral-100 rounded-[2rem] p-6 md:p-8 shadow-xs lg:sticky lg:top-28 w-full">
                 <h3 className="text-base font-black text-neutral-900 border-b border-neutral-100 pb-4 mb-5">
                   অর্ডার ডিটেইলস
                 </h3>
@@ -280,7 +280,7 @@ export default function CartPage() {
                     প্রোডাক্টের নিশ্চয়তা
                   </div>
                 </div>
-              </aside>
+              </div>
             </div>
           )}
         </AnimatePresence>
@@ -333,6 +333,6 @@ export default function CartPage() {
           </div>
         )}
       </AnimatePresence>
-    </main>
+    </section>
   );
 }

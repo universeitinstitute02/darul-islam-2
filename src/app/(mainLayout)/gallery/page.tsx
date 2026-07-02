@@ -93,7 +93,7 @@ export default function GalleryPage() {
   };
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
+    <section className="flex flex-col min-h-screen bg-[#F7FBF7]">
       <div className="relative h-48 lg:h-64 bg-green-800 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -111,7 +111,7 @@ export default function GalleryPage() {
         </div>
       </div>
 
-      <main className="max-w-screen-xl mx-auto w-full px-4 py-12 space-y-12">
+      <div className="max-w-screen-xl mx-auto w-full px-4 py-12 space-y-12">
         {/* Tab Switcher */}
         <div className="flex justify-center">
           <div className="bg-white p-1.5 rounded-2xl shadow-xl flex gap-1 border border-[#0B3D2E]/5">
@@ -140,7 +140,7 @@ export default function GalleryPage() {
         </div>
 
         {/* Content Grid */}
-        <section>
+        <div>
           {activeTab === "photos" ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {images.map((img, i) => (
@@ -203,10 +203,10 @@ export default function GalleryPage() {
               ))}
             </div>
           )}
-        </section>
+        </div>
 
         {/* CTA */}
-        <section className="bg-[#0B3D2E] rounded-[3rem] p-12 text-center text-white relative overflow-hidden">
+        <div className="bg-[#0B3D2E] rounded-[3rem] p-12 text-center text-white relative overflow-hidden">
           <div className="relative z-10 space-y-6">
             <h2 className="text-3xl font-black">
               আমাদের সম্পর্কে আরও জানতে চান?
@@ -225,8 +225,8 @@ export default function GalleryPage() {
               আমাদের ইউটিউব চ্যানেল <ExternalLink size={20} />
             </Link>
           </div>
-        </section>
-      </main>
+        </div>
+      </div>
 
       {/* Image Preview Modal */}
       {selectedImage && (
@@ -281,6 +281,6 @@ export default function GalleryPage() {
           </motion.div>
         </div>
       )}
-    </div>
+    </section>
   );
 }

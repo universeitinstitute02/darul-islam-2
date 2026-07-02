@@ -1,21 +1,29 @@
-"use client"
+"use client";
 
-import { motion } from "framer-motion"
-import { Mail, Phone, MapPin, Send, MessageSquare, Clock, Globe } from "lucide-react"
-import { useState } from "react"
+import { motion } from "framer-motion";
+import {
+  Mail,
+  Phone,
+  MapPin,
+  Send,
+  MessageSquare,
+  Clock,
+  Globe,
+} from "lucide-react";
+import { useState } from "react";
 
 export default function ContactPage() {
-  const [isSubmitted, setIsSubmitted] = useState(false)
+  const [isSubmitted, setIsSubmitted] = useState(false);
 
   const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsSubmitted(true)
-  }
+    e.preventDefault();
+    setIsSubmitted(true);
+  };
 
   return (
     <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
       {/* Hero Section */}
-      <section className="relative h-48 lg:h-64 bg-[#0B3D2E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <div className="relative h-48 lg:h-64 bg-[#0B3D2E] flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex items-center gap-4">
           <div className="w-16 h-16 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-[#0B3D2E] shadow-lg">
@@ -23,16 +31,18 @@ export default function ContactPage() {
           </div>
           <div>
             <h1 className="text-2xl lg:text-4xl font-black">যোগাযোগ</h1>
-            <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">আমাদের সাথে সংযুক্ত হোন</p>
+            <p className="text-sm font-bold text-[#F5EFE1]/80 uppercase tracking-widest mt-1">
+              আমাদের সাথে সংযুক্ত হোন
+            </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <main className="max-w-screen-xl mx-auto w-full px-4 py-16">
+      <div className="max-w-screen-xl mx-auto w-full px-4 py-16">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
           {/* Contact Info Cards */}
           <div className="lg:col-span-1 space-y-6">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -43,13 +53,15 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-black text-[#0B3D2E]">ঠিকানা</h3>
               <p className="text-sm font-medium text-[#0B3D2E]/60 leading-relaxed">
-                দারুল ইসলাম ইনস্টিটিউট ক্যাম্পাস,<br />
-                বাড়ি নং-৪৫, রোড-০৭, ব্লক-ডি,<br />
+                দারুল ইসলাম ইনস্টিটিউট ক্যাম্পাস,
+                <br />
+                বাড়ি নং-৪৫, রোড-০৭, ব্লক-ডি,
+                <br />
                 উত্তরা, ঢাকা-১২৩০।
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -59,14 +71,17 @@ export default function ContactPage() {
               <div className="w-12 h-12 bg-green-50 text-green-600 rounded-2xl flex items-center justify-center">
                 <Phone size={24} />
               </div>
-              <h3 className="text-xl font-black text-[#0B3D2E]">ফোন ও মোবাইল</h3>
+              <h3 className="text-xl font-black text-[#0B3D2E]">
+                ফোন ও মোবাইল
+              </h3>
               <p className="text-sm font-medium text-[#0B3D2E]/60 leading-relaxed">
-                হেল্পলাইন: ০১৭০০-০০০০০০<br />
+                হেল্পলাইন: ০১৭০০-০০০০০০
+                <br />
                 অফিস: ০২-৯৮৭৬৫৪৩
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -78,12 +93,13 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-black text-[#0B3D2E]">ইমেইল</h3>
               <p className="text-sm font-medium text-[#0B3D2E]/60 leading-relaxed">
-                info@darulislam.com<br />
+                info@darulislam.com
+                <br />
                 admission@darulislam.com
               </p>
             </motion.div>
 
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
@@ -95,7 +111,8 @@ export default function ContactPage() {
               </div>
               <h3 className="text-xl font-black text-white">অফিস সময়</h3>
               <p className="text-sm opacity-80 leading-relaxed">
-                শনিবার - বৃহস্পতিবার<br />
+                শনিবার - বৃহস্পতিবার
+                <br />
                 সকাল ৯:০০ - বিকাল ৫:০০
               </p>
             </motion.div>
@@ -103,7 +120,7 @@ export default function ContactPage() {
 
           {/* Contact Form */}
           <div className="lg:col-span-2">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -114,9 +131,14 @@ export default function ContactPage() {
                   <div className="w-20 h-20 bg-green-100 text-green-600 rounded-full flex items-center justify-center mx-auto">
                     <Send size={40} />
                   </div>
-                  <h2 className="text-3xl font-black text-[#0B3D2E]">ধন্যবাদ!</h2>
-                  <p className="text-lg text-[#0B3D2E]/60 font-medium">আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই আপনার সাথে যোগাযোগ করব।</p>
-                  <button 
+                  <h2 className="text-3xl font-black text-[#0B3D2E]">
+                    ধন্যবাদ!
+                  </h2>
+                  <p className="text-lg text-[#0B3D2E]/60 font-medium">
+                    আপনার বার্তাটি সফলভাবে পাঠানো হয়েছে। আমরা শীঘ্রই আপনার সাথে
+                    যোগাযোগ করব।
+                  </p>
+                  <button
                     onClick={() => setIsSubmitted(false)}
                     className="bg-[#0B3D2E] text-[#F5EFE1] px-8 py-3 rounded-2xl font-bold"
                   >
@@ -127,43 +149,53 @@ export default function ContactPage() {
                 <form onSubmit={handleSubmit} className="space-y-8">
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">আপনার নাম</label>
-                      <input 
+                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">
+                        আপনার নাম
+                      </label>
+                      <input
                         required
-                        type="text" 
+                        type="text"
                         placeholder="নাম লিখুন"
                         className="w-full bg-[#0B3D2E]/5 p-4 rounded-2xl font-bold border-2 border-transparent focus:border-[#0B3D2E]/20 outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-3">
-                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">মোবাইল নম্বর</label>
-                      <input 
+                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">
+                        মোবাইল নম্বর
+                      </label>
+                      <input
                         required
-                        type="tel" 
+                        type="tel"
                         placeholder="০১৭XXXXXXXX"
                         className="w-full bg-[#0B3D2E]/5 p-4 rounded-2xl font-bold border-2 border-transparent focus:border-[#0B3D2E]/20 outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-3 md:col-span-2">
-                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">ইমেইল (ঐচ্ছিক)</label>
-                      <input 
-                        type="email" 
+                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">
+                        ইমেইল (ঐচ্ছিক)
+                      </label>
+                      <input
+                        type="email"
                         placeholder="example@gmail.com"
                         className="w-full bg-[#0B3D2E]/5 p-4 rounded-2xl font-bold border-2 border-transparent focus:border-[#0B3D2E]/20 outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-3 md:col-span-2">
-                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">বার্তার বিষয়</label>
-                      <input 
+                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">
+                        বার্তার বিষয়
+                      </label>
+                      <input
                         required
-                        type="text" 
+                        type="text"
                         placeholder="বিষয় লিখুন"
                         className="w-full bg-[#0B3D2E]/5 p-4 rounded-2xl font-bold border-2 border-transparent focus:border-[#0B3D2E]/20 outline-none transition-all"
                       />
                     </div>
                     <div className="space-y-3 md:col-span-2">
-                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">আপনার বার্তা</label>
-                      <textarea 
+                      <label className="text-sm font-black text-[#0B3D2E]/60 uppercase tracking-widest">
+                        আপনার বার্তা
+                      </label>
+                      <textarea
                         required
                         rows={5}
                         placeholder="এখানে আপনার বার্তা লিখুন..."
@@ -171,7 +203,7 @@ export default function ContactPage() {
                       />
                     </div>
                   </div>
-                  <button 
+                  <button
                     type="submit"
                     className="w-full bg-[#0B3D2E] text-[#F5EFE1] py-5 rounded-[1.5rem] font-black text-xl flex items-center justify-center gap-3 shadow-xl hover:translate-y-[-2px] active:translate-y-[2px] transition-all"
                   >
@@ -182,7 +214,7 @@ export default function ContactPage() {
             </motion.div>
 
             {/* Map Placeholder */}
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 20 }}
               whileInView={{ opacity: 1, y: 0 }}
               viewport={{ once: true }}
@@ -191,12 +223,14 @@ export default function ContactPage() {
             >
               <div className="absolute inset-0 bg-[#F5EFE1]/20 flex flex-col items-center justify-center gap-4">
                 <Globe size={48} className="text-[#0B3D2E]/20" />
-                <p className="text-[#0B3D2E]/40 font-bold uppercase tracking-widest">Google Map Integration Here</p>
+                <p className="text-[#0B3D2E]/40 font-bold uppercase tracking-widest">
+                  Google Map Integration Here
+                </p>
               </div>
             </motion.div>
           </div>
         </div>
-      </main>
+      </div>
     </div>
-  )
+  );
 }

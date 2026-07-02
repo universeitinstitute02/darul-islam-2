@@ -71,7 +71,7 @@ const Academic = () => {
   }
 
   return (
-    <div className="px-5">
+    <section className="px-5">
       <div className="bg-gray-300 max-w-7xl mx-auto px-5 py-6 rounded-2xl relative group">
         <div className="text-center mb-10">
           <h2 className="text-2xl md:text-3xl font-bold text-green-800 inline-block relative">
@@ -189,7 +189,7 @@ const Academic = () => {
           }
         `}</style>
       </div>
-    </div>
+    </section>
   );
 };
 

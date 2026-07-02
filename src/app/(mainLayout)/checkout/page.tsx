@@ -381,9 +381,9 @@ const CheckoutContent = () => {
 const CheckoutPage = () => (
   <Suspense
     fallback={
-      <div className="h-screen flex items-center justify-center bg-white">
+      <section className="h-screen flex items-center justify-center bg-white">
         <div className="w-10 h-10 border-4 border-[#0B5D3B] border-t-transparent rounded-full animate-spin"></div>
-      </div>
+      </section>
     }
   >
     <CheckoutContent />

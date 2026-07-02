@@ -108,9 +108,9 @@ export default function AdmissionPage() {
   }
 
   return (
-    <div className="flex flex-col min-h-screen bg-[#F7FBF7]">
+    <section className="flex flex-col min-h-screen bg-[#F7FBF7]">
       {/* Hero Section */}
-      <section className="relative h-40 lg:h-48 bg-gradient-to-r from-emerald-800 to-teal-900 flex items-end p-6 lg:p-12 text-white overflow-hidden">
+      <div className="relative h-40 lg:h-48 bg-gradient-to-r from-emerald-800 to-teal-900 flex items-end p-6 lg:p-12 text-white overflow-hidden">
         <div className="absolute inset-0 opacity-10 bg-[url('https://www.transparenttextures.com/patterns/arabesque.png')] bg-repeat" />
         <div className="relative z-10 w-full max-w-screen-xl mx-auto flex items-center gap-4">
           <div className="w-14 h-14 bg-[#8FE3A9] rounded-2xl flex items-center justify-center text-[#0B3D2E] shadow-lg">
@@ -123,9 +123,9 @@ export default function AdmissionPage() {
             </p>
           </div>
         </div>
-      </section>
+      </div>
 
-      <main className="max-w-screen-xl mx-auto w-full px-4 py-12 flex flex-col items-center">
+      <div className="max-w-screen-xl mx-auto w-full px-4 py-12 flex flex-col items-center">
         <motion.div
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
@@ -425,7 +425,7 @@ export default function AdmissionPage() {
         </motion.div>
 
         {/* Quick Info */}
-        <section className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
+        <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6 w-full max-w-3xl">
           <div className="bg-white p-6 rounded-3xl shadow-xl flex items-center gap-4 border border-[#0B3D2E]/5">
             <div className="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center">
               <Clock size={24} />
@@ -448,8 +448,8 @@ export default function AdmissionPage() {
               <p className="text-xl font-black text-[#0B3D2E]">০১৭১২-৩৪৫৬৭৮</p>
             </div>
           </div>
-        </section>
-      </main>
-    </div>
+        </div>
+      </div>
+    </section>
   );
 }
