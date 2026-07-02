@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import React, { useState, useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import useAxiosSecure from "@/src/app/hooks/useAxiosSecure";
 import Swal from "sweetalert2";
@@ -16,6 +16,7 @@ import {
   Clock,
   X,
   Layers,
+  Calendar, // 🎯 নতুন আইকন ডেট ফিল্ডের জন্য
 } from "lucide-react";
 
 interface Course {
@@ -37,6 +38,8 @@ interface Batch {
   maxSeats: number;
   enrolledStudents: string[];
   status: "upcoming" | "active" | "completed";
+  admissionStartDate?: string; // 🎯 নতুন ইন্টারফেস প্রোপার্টি
+  classStartDate?: string; // 🎯 নতুন ইন্টারফেস প্রোপার্টি
   createdAt: string;
 }
 
@@ -55,6 +58,8 @@ export default function AdminBatchManagement() {
     teacher: "",
     maxSeats: 30,
     status: "upcoming",
+    admissionStartDate: "", // 🎯 নতুন স্টেট ইনিশিয়েশন ভাই
+    classStartDate: "", // 🎯 নতুন স্টেট ইনিশিয়েশন ভাই
   });
 
   // Queries using the custom secure axios instance
@@ -69,7 +74,7 @@ export default function AdminBatchManagement() {
       const response = await axiosSecure.get(
         `/batches?course=${filterCourse}&status=${filterStatus}`,
       );
-      return response.data.data as Batch[]; 
+      return response.data.data as Batch[];
     },
   });
 
@@ -84,12 +89,12 @@ export default function AdminBatchManagement() {
   const { data: teachers = [] } = useQuery({
     queryKey: ["teachers"],
     queryFn: async (): Promise<Teacher[]> => {
-      const response = await axiosSecure.get("/users/admin/all-users?role=teacher");
+      const response = await axiosSecure.get(
+        "/users/admin/all-users?role=teacher",
+      );
       return (response.data.data || []) as Teacher[];
     },
   });
-
-  console.log(teachers);
 
   useEffect(() => {
     if (courses.length > 0 && !formData.course) {
@@ -105,10 +110,12 @@ export default function AdminBatchManagement() {
       teacher: string | null;
       maxSeats: number;
       status: string;
+      admissionStartDate: string | null; // 🎯
+      classStartDate: string | null; // 🎯
     }) => axiosSecure.post("/batches", newBatch),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["batches"] });
-      Swal.fire("সফল", "নতুন ব্যাচ সফলভাবে তৈরি হয়েছে", "success");
+      Swal.fire("সফল", "নতুন ব্যাচ সফলভাবে তৈরি হয়েছে", "success");
       setModalOpen(false);
     },
     onError: (error: any) => {
@@ -125,7 +132,7 @@ export default function AdminBatchManagement() {
       axiosSecure.put(`/batches/${updatedData.id}`, updatedData.payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["batches"] });
-      Swal.fire("সফল", "ব্যাচ কনফিগারেশন সফলভাবে আপডেট হয়েছে", "success");
+      Swal.fire("সফল", "ব্যাচ কনফিগারেশন সফলভাবে আপডেট হয়েছে", "success");
       setModalOpen(false);
     },
     onError: (error: any) => {
@@ -141,7 +148,7 @@ export default function AdminBatchManagement() {
     mutationFn: (id: string) => axiosSecure.delete(`/batches/${id}`),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["batches"] });
-      Swal.fire("ডিলিট হয়েছে", "ব্যাচ রেকর্ডটি মুছে ফেলা হয়েছে।", "success");
+      Swal.fire("ডিলিট হয়েছে", "ব্যাচ রেকর্ডটি মুছে ফেলা হয়েছে।", "success");
     },
     onError: (error: any) => {
       Swal.fire(
@@ -160,8 +167,16 @@ export default function AdminBatchManagement() {
       teacher: "",
       maxSeats: 30,
       status: "upcoming",
+      admissionStartDate: "", // 🎯
+      classStartDate: "", // 🎯
     });
     setModalOpen(true);
+  };
+
+  // ডেট ফরম্যাট সেফটি চেকার ইউটিলিটি ভাই
+  const formatInputDate = (dateStr?: string) => {
+    if (!dateStr) return "";
+    return dateStr.split("T")[0]; // ISO স্ট্রিং থেকে YYYY-MM-DD ফরম্যাট ফিল্টার
   };
 
   const handleOpenEditModal = (batch: Batch) => {
@@ -172,6 +187,8 @@ export default function AdminBatchManagement() {
       teacher: batch.teacher?._id || "",
       maxSeats: batch.maxSeats,
       status: batch.status,
+      admissionStartDate: formatInputDate(batch.admissionStartDate), // 🎯
+      classStartDate: formatInputDate(batch.classStartDate), // 🎯
     });
     setModalOpen(true);
   };
@@ -179,17 +196,15 @@ export default function AdminBatchManagement() {
   const handleFormSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (!formData.batchName.trim()) {
-      return Swal.fire(
-        "নির্দেশনা",
-        "দয়া করে ব্যাচের নাম প্রদান করুন",
-        "warning",
-      );
+      return Swal.fire("指示", "দয়া করে ব্যাচের নাম প্রদান করুন", "warning");
     }
 
     const payload = {
       ...formData,
       maxSeats: Number(formData.maxSeats),
       teacher: formData.teacher || null,
+      admissionStartDate: formData.admissionStartDate || null, // 🎯
+      classStartDate: formData.classStartDate || null, // 🎯
     };
 
     if (editingId) {
@@ -200,6 +215,8 @@ export default function AdminBatchManagement() {
           teacher: payload.teacher,
           maxSeats: payload.maxSeats,
           status: payload.status,
+          admissionStartDate: payload.admissionStartDate, // 🎯
+          classStartDate: payload.classStartDate, // 🎯
         },
       });
     } else {
@@ -286,7 +303,7 @@ export default function AdminBatchManagement() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4 bg-white p-4 rounded-2xl border border-black/5 shadow-sm mb-6">
         <div>
           <label className="text-[10px] md:text-xs font-medium text-gray-500 uppercase mb-1 block">
-            কোর্স অনুযায়ী ফিল্টার
+            কোর্স অনুযায়ী ফিল্টার
           </label>
           <select
             value={filterCourse}
@@ -329,7 +346,7 @@ export default function AdminBatchManagement() {
         <div className="text-center py-20 bg-white rounded-3xl border border-black/5 shadow-sm">
           <BookOpen className="mx-auto text-gray-300 mb-3" size={48} />
           <h3 className="text-lg font-bold text-gray-700">
-            কোনো ব্যাচ খুঁজে পাওয়া যায়নি
+            কোনো ব্যাচ খুঁজে পাওয়া যায়নি
           </h3>
           <p className="text-xs text-gray-400 max-w-xs mx-auto mt-1">
             ফিল্টার পরিবর্তন করে অথবা নতুন ব্যাচ তৈরি করে ট্র্যাকিং শুরু করুন।
@@ -381,14 +398,44 @@ export default function AdminBatchManagement() {
                         শিক্ষক
                       </p>
                       <p
-                        className={`font-bold mt-0.5 ${batch.teacher ? "text-gray-700" : "text-red-500 italic text-xs"}`}
+                        className={`font-bold mt-0.5 ${batch.teacher ? "text-gray-700" : "text-red-500 text-xs"}`}
                       >
                         {batch.teacher
                           ? batch.teacher.name
-                          : "শিক্ষক নিযুক্ত করা হয়নি"}
+                          : "শিক্ষক নিযুক্ত করা হয়নি"}
                       </p>
                     </div>
                   </div>
+
+                  {/* 🎯 টাইমলাইন ডিসপ্লে ট্র্যাকার উইজেট ভাই */}
+                  {(batch.admissionStartDate || batch.classStartDate) && (
+                    <div className="pt-2 mt-2 border-t border-dashed border-gray-100 grid grid-cols-2 gap-2 text-[11px] text-gray-500 font-medium">
+                      {batch.admissionStartDate && (
+                        <div>
+                          <span className="block text-[9px] text-gray-400 font-bold uppercase">
+                            ভর্তি শুরু
+                          </span>
+                          <span>
+                            {new Date(
+                              batch.admissionStartDate,
+                            ).toLocaleDateString("bn-BD")}
+                          </span>
+                        </div>
+                      )}
+                      {batch.classStartDate && (
+                        <div>
+                          <span className="block text-[9px] text-gray-400 font-bold uppercase">
+                            ক্লাস শুরু
+                          </span>
+                          <span>
+                            {new Date(batch.classStartDate).toLocaleDateString(
+                              "bn-BD",
+                            )}
+                          </span>
+                        </div>
+                      )}
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -425,29 +472,35 @@ export default function AdminBatchManagement() {
 
       {modalOpen && (
         <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-black/5 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200">
+          <div className="bg-white w-full max-w-lg rounded-[2.5rem] shadow-2xl border border-gray-100 overflow-hidden transform transition-all animate-in fade-in zoom-in-95 duration-200">
+            {/* মডাল হেডার এরিয়া */}
             <div className="bg-green-800 text-white p-6 flex items-center justify-between">
               <div>
-                <h2 className="text-xl font-black">
+                <h2 className="text-xl font-black tracking-tight">
                   {editingId
                     ? "ব্যাচ কনফিগারেশন পরিবর্তন"
                     : "নতুন ব্যাচ সংযোজন"}
                 </h2>
-                <p className="text-[10px] text-white/60 tracking-wider font-bold uppercase mt-0.5">
-                  Fill standard validation fields
+                <p className="text-[11px] tracking-wider font-medium uppercase mt-0.5">
+                  প্রয়োজনীয় তথ্য দিয়ে ফর্মটি পূরণ করুন
                 </p>
               </div>
               <button
                 onClick={() => setModalOpen(false)}
-                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all"
+                className="p-2 bg-white/10 hover:bg-white/20 text-white rounded-xl transition-all cursor-pointer active:scale-95"
               >
                 <X size={16} />
               </button>
             </div>
 
-            <form onSubmit={handleFormSubmit} className="p-6 space-y-4">
+            {/* মডাল মেইন ফর্ম */}
+            <form
+              onSubmit={handleFormSubmit}
+              className="p-6 space-y-4 max-h-[75vh] overflow-y-auto selection:bg-emerald-100"
+            >
+              {/* ব্যাচের নাম ইনপুট */}
               <div>
-                <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+                <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide">
                   ব্যাচের নাম (Batch Name)
                 </label>
                 <input
@@ -457,14 +510,15 @@ export default function AdminBatchManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, batchName: e.target.value })
                   }
-                  className="w-full p-3.5 bg-gray-50 border border-transparent focus:border-gray-200 rounded-xl text-sm font-bold outline-none transition-all"
+                  className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-800 outline-none transition-all"
                   required
                 />
               </div>
 
+              {/* কোর্স সিলেকশন (কন্ডিশনাল লক) */}
               {!editingId && (
                 <div>
-                  <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+                  <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide">
                     কোর্স নির্বাচন করুন
                   </label>
                   <select
@@ -472,7 +526,7 @@ export default function AdminBatchManagement() {
                     onChange={(e) =>
                       setFormData({ ...formData, course: e.target.value })
                     }
-                    className="w-full p-3.5 bg-gray-50 border border-transparent focus:border-gray-200 rounded-xl text-sm font-bold text-gray-700 outline-none transition-all"
+                    className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-700 outline-none transition-all cursor-pointer"
                     required
                   >
                     {courses.map((c) => (
@@ -484,8 +538,9 @@ export default function AdminBatchManagement() {
                 </div>
               )}
 
+              {/* শিক্ষক সিলেকশন */}
               <div>
-                <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+                <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide">
                   শিক্ষক নির্বাচন করুন (ঐচ্ছিক)
                 </label>
                 <select
@@ -493,9 +548,9 @@ export default function AdminBatchManagement() {
                   onChange={(e) =>
                     setFormData({ ...formData, teacher: e.target.value })
                   }
-                  className="w-full p-3.5 bg-gray-50 border border-transparent focus:border-gray-200 rounded-xl text-sm font-bold text-gray-700 outline-none transition-all"
+                  className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-700 outline-none transition-all cursor-pointer"
                 >
-                  <option value="">শিক্ষক ছাড়া রাখুন</option>
+                  <option value="">শিক্ষক ছাড়া রাখুন</option>
                   {teachers.map((t) => (
                     <option key={t._id} value={t._id}>
                       {t.name} ({t.email})
@@ -504,10 +559,50 @@ export default function AdminBatchManagement() {
                 </select>
               </div>
 
+              {/* 📅 ডাইনামিক ডেট ট্র্যাকার সেকশন */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide flex items-center gap-1.5">
+                    <Calendar size={14} className="text-green-700" /> ভর্তি
+                    শুরুর তারিখ
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.admissionStartDate}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        admissionStartDate: e.target.value,
+                      })
+                    }
+                    className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-700 outline-none transition-all tracking-wide"
+                  />
+                </div>
+
+                <div>
+                  <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide flex items-center gap-1.5">
+                    <Calendar size={14} className="text-green-700" /> ক্লাস
+                    শুরুর তারিখ
+                  </label>
+                  <input
+                    type="date"
+                    value={formData.classStartDate}
+                    onChange={(e) =>
+                      setFormData({
+                        ...formData,
+                        classStartDate: e.target.value,
+                      })
+                    }
+                    className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-700 outline-none transition-all tracking-wide"
+                  />
+                </div>
+              </div>
+
+              {/* সিট এবং স্ট্যাটাস কনফিগারেশন */}
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
-                    সর্বোচ্চ আসন সংখ্যা
+                  <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide">
+                    সর্বোচ্চ আসন সংখ্যা (Max Seats)
                   </label>
                   <input
                     type="number"
@@ -519,12 +614,12 @@ export default function AdminBatchManagement() {
                         maxSeats: Number(e.target.value),
                       })
                     }
-                    className="w-full p-3.5 bg-gray-50 border border-transparent focus:border-gray-200 rounded-xl text-sm font-bold outline-none transition-all"
+                    className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-800 outline-none transition-all"
                     required
                   />
                 </div>
                 <div>
-                  <label className="text-[10px] font-bold text-gray-400 uppercase mb-1 block">
+                  <label className="text-xs font-bold text-gray-600 uppercase mb-1.5 block tracking-wide">
                     অবস্থা (Status)
                   </label>
                   <select
@@ -532,7 +627,7 @@ export default function AdminBatchManagement() {
                     onChange={(e) =>
                       setFormData({ ...formData, status: e.target.value })
                     }
-                    className="w-full p-3.5 bg-gray-50 border border-transparent focus:border-gray-200 rounded-xl text-sm font-bold text-gray-700 outline-none transition-all"
+                    className="w-full p-3.5 bg-gray-50 border border-gray-200/60 focus:border-green-600 focus:bg-white rounded-xl text-sm font-bold text-slate-700 outline-none transition-all cursor-pointer"
                     required
                   >
                     <option value="upcoming">আসন্ন (Upcoming)</option>
@@ -542,6 +637,7 @@ export default function AdminBatchManagement() {
                 </div>
               </div>
 
+              {/* 🔘 অ্যাকশন বাটন গ্রুপ */}
               <div className="flex items-center gap-3 pt-4 border-t border-gray-100 mt-6">
                 <button
                   type="button"
@@ -567,6 +663,7 @@ export default function AdminBatchManagement() {
           </div>
         </div>
       )}
+      
     </div>
   );
 }

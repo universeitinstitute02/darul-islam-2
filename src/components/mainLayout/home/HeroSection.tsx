@@ -25,25 +25,50 @@ type SlideType = {
   isActive: boolean;
 };
 
+const LOCAL_STORAGE_KEY = "fallback_hero_sliders";
+
 const fetchHeroSliders = async (): Promise<SlideType[]> => {
   const res = await axios.get(
     `${process.env.NEXT_PUBLIC_API_URL}/content/sliders`,
   );
-  return res.data.filter(
+  const filteredData = res.data.filter(
     (slide: SlideType) =>
       slide.pageName === "landing" && slide.isActive !== false,
   );
+
+  // 🎯 ডাটা সফলভাবে ফেচ হলে লোকাল স্টোরেজে ব্যাকআপ রেখে দিচ্ছি ভাই
+  if (typeof window !== "undefined" && filteredData.length > 0) {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(filteredData));
+  }
+
+  return filteredData;
 };
 
 export default function HeroSection() {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMounted, setIsMounted] = useState(false); // 🎯 Hydration safety mount lock
 
   const { data: user } = useUser();
   const { role: userRole } = useUserRole();
 
+  // 🎯 ব্রাউজার এনভায়রনমেন্টে ক্যাশড ডাটা রিড করার ইনিশিয়াল মেকানিজম ভাই
+  const getCachedSlides = (): SlideType[] => {
+    if (typeof window !== "undefined") {
+      const cached = localStorage.getItem(LOCAL_STORAGE_KEY);
+      if (cached) {
+        try {
+          return JSON.parse(cached);
+        } catch (e) {
+          return [];
+        }
+      }
+    }
+    return [];
+  };
+
   // 🎯 রিঅ্যাক্ট কুয়েরি মেগা পারফরম্যান্স টিউনিং লক ভাই
   const {
-    data: slides = [],
+    data: fetchedSlides,
     isLoading,
     isError,
   } = useQuery<SlideType[]>({
@@ -54,6 +79,17 @@ export default function HeroSection() {
     refetchOnWindowFocus: false,
     refetchOnReconnect: false,
   });
+
+  useEffect(() => {
+    setIsMounted(true);
+  }, []);
+
+  // 🎯 HYDRATION GUARD: সার্ভার বা আনমাউন্টেড স্টেটে ক্যাশ চেক স্কিপ করে খালি অ্যারে রাখা হলো ভাই
+  const slides = !isMounted
+    ? []
+    : isError || !fetchedSlides || fetchedSlides.length === 0
+      ? getCachedSlides()
+      : fetchedSlides;
 
   const nextSlide = () => {
     if (slides.length > 0) {
@@ -73,8 +109,8 @@ export default function HeroSection() {
     return () => clearInterval(timer);
   }, [slides.length]);
 
-  // 🎯 শিমার স্কেলিটন লোডার ভাই
-  if (isLoading) {
+  // 🎯 শিমার স্কেলিটন লোডার ভাই (শুধুমাত্র তখনই দেখাবে যখন একদম প্রথমবার লোড হচ্ছে এবং ক্যাশেও কোনো ডাটা নেই)
+  if (!isMounted || (isLoading && slides.length === 0)) {
     return (
       <section className="relative h-[220px] md:h-[300px] lg:h-[500px] mt-16 lg:mt-18 overflow-hidden bg-slate-900 animate-pulse">
         <div className="absolute inset-0 bg-gradient-to-r from-[#0B3D2E]/90 via-[#0b3d2e]/40 to-transparent z-10" />
@@ -96,7 +132,8 @@ export default function HeroSection() {
     );
   }
 
-  if (isError || slides.length === 0) {
+  // যদি ক্যাশ এবং API দুইটাতেই কোনো ডাটা না থাকে, শুধু তখনই নাল রিটার্ন করবে
+  if (slides.length === 0) {
     return null;
   }
 
@@ -199,6 +236,7 @@ export default function HeroSection() {
       {slides.length > 1 && (
         <>
           <button
+            type="button"
             onClick={prevSlide}
             className="absolute left-2 lg:left-4 top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/40 p-2 lg:p-3 rounded-full text-white backdrop-blur-md transition-all hidden lg:block"
           >
@@ -206,6 +244,7 @@ export default function HeroSection() {
           </button>
 
           <button
+            type="button"
             onClick={nextSlide}
             className="absolute right-2 lg:right-4 top-1/2 -translate-y-1/2 z-30 bg-white/20 hover:bg-white/40 p-2 lg:p-3 rounded-full text-white backdrop-blur-md transition-all hidden lg:block"
           >
@@ -220,6 +259,7 @@ export default function HeroSection() {
           {slides.map((_, index) => (
             <button
               key={index}
+              type="button"
               onClick={() => setCurrentSlide(index)}
               className={`h-2 lg:h-3 rounded-full transition-all ${
                 index === currentSlide

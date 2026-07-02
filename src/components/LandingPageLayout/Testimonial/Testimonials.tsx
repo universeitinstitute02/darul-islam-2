@@ -1,6 +1,12 @@
 "use client";
 import React, { useEffect, useState, useRef } from "react";
-import { ArrowRight, ChevronLeft, ChevronRight, MessageSquare, Quote } from "lucide-react";
+import {
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquare,
+  Quote,
+} from "lucide-react";
 import axios from "axios";
 import Link from "next/link";
 
@@ -61,7 +67,7 @@ const Testimonials = () => {
         const res = await axios.get(
           `${process.env.NEXT_PUBLIC_API_URL}/testimonials`,
         );
-        
+
         // 🎯 মেগা ফিক্স লক: রিয়াল-টাইম অবজেক্ট ডাটা এবং ওল্ড র-অ্যারে দুই ফরম্যাটকেই সেফলি হ্যান্ডেল করা হলো
         if (res.data) {
           if (Array.isArray(res.data.data)) {
@@ -103,8 +109,8 @@ const Testimonials = () => {
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
           <div className="text-center sm:text-left">
             <div className="inline-flex items-center gap-1.5 px-3 py-1 bg-green-50 border border-green-100 rounded-full text-[11px] font-black text-green-800 mb-3">
-              <MessageSquare className="w-3.5 h-3.5 text-[#0B5D3B]" />{" "}
-              অভিজ্ঞতা ও অনুভূতি
+              <MessageSquare className="w-3.5 h-3.5 text-[#0B5D3B]" /> অভিজ্ঞতা
+              ও অনুভূতি
             </div>
             <h2 className="text-2xl md:text-3xl font-black text-gray-900 tracking-tight">
               অভিভাবক ও শিক্ষার্থীদের{" "}
@@ -147,7 +153,7 @@ const Testimonials = () => {
           ) : (
             testimonials.map((t) => {
               const initialLetter = t.user?.name ? t.user.name.charAt(0) : "শ";
-              
+
               // 🎯 ডাইনামিক ইউজার টাইপ লেবেল কাস্টিং লজিক
               let labelText = "শিক্ষার্থী";
               if (t.userType === "teacher") labelText = "ওস্তাদ";
@@ -164,7 +170,10 @@ const Testimonials = () => {
                   <div className="absolute top-0 left-0 right-0 h-1.5 bg-gradient-to-r from-emerald-600 via-green-400 to-emerald-600 rounded-t-3xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
 
                   {/* <span > */}
-                    <Quote size={64} className="absolute top-2 right-4 font-serif leading-none text-green-50/70 select-none pointer-events-none" />
+                  <Quote
+                    size={64}
+                    className="absolute top-2 right-4 font-serif leading-none text-green-50/70 select-none pointer-events-none"
+                  />
                   {/* </span> */}
 
                   <span className="inline-flex items-center gap-1.5 self-start bg-green-50 border border-green-100 text-green-700 text-[10px] font-black px-3 py-1 rounded-full uppercase">
@@ -186,7 +195,11 @@ const Testimonials = () => {
                     {/* অপশনাল আইডেন্টিটি ইমেজ অথবা নামের আদ্যক্ষরের প্রিমিয়াম কম্বো */}
                     <div className="w-11 h-11 rounded-full bg-gradient-to-br from-emerald-600 to-emerald-500 flex items-center justify-center text-white font-black text-sm ring-4 ring-emerald-50 shrink-0 overflow-hidden">
                       {t.identityImage ? (
-                        <img src={t.identityImage} alt="" className="w-full h-full object-cover" />
+                        <img
+                          src={t.identityImage}
+                          alt=""
+                          className="w-full h-full object-cover"
+                        />
                       ) : (
                         initialLetter
                       )}
@@ -205,22 +218,19 @@ const Testimonials = () => {
             })
           )}
         </div>
-      </div>
-      <div className="flex justify-center mt-6 md:mt-10">
-          <Link href="/testimonials" passHref>
-            <button
-              className="inline-flex items-center justify-center gap-2 bg-[#0B5D3B] text-white hover:bg-[#0c4b2f] text-sm font-black px-7 py-4 rounded-2xl shadow-xl shadow-green-900/10 transition-all active:scale-[0.98] cursor-pointer group"
-              aria-label="দারুল ইসলামের সকল কোর্স দেখুন"
-            >
-              আরও দেখুন
-              <ArrowRight
-                size={16}
-                className="group-hover:translate-x-1 transition-transform duration-300"
-                aria-hidden="true"
-              />
-            </button>
+        <div className="text-center mt-6">
+          <Link
+            href="/testimonials"
+            className="inline-flex items-center gap-2 px-7 py-3.5 bg-white border-2 border-green-800 hover:border-[#0B5D3B] text-[#0B5D3B] rounded-2xl text-sm font-black tracking-tight shadow-[0_4px_20px_rgba(0,0,0,0.02)] hover:shadow-[0_10px_25px_rgba(11,93,59,0.06)] hover:bg-[#0B5D3B] hover:text-white transition-all duration-300 transform active:scale-98 group cursor-pointer"
+          >
+            সকল মতামত দেখুন
+            <MessageSquare
+              size={16}
+              className="transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5 transition-transform duration-200"
+            />
           </Link>
         </div>
+      </div>
     </section>
   );
 };

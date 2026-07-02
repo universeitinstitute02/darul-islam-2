@@ -60,15 +60,7 @@ const Academic = () => {
     return `${cat.subCategories?.length || 0}টি উপ-বিভাগ`;
   };
 
-  if (isError) {
-    return (
-      <div className="max-w-7xl mx-auto px-5 py-4" role="alert">
-        <div className="bg-rose-50/60 border border-rose-100 rounded-2xl p-5 text-center text-rose-700 font-bold text-sm flex items-center justify-center gap-2 max-w-md mx-auto">
-          <ShieldAlert size={16} /> একাডেমিক বিভাগ মডিউল লোড করা সম্ভব হয়নি।
-        </div>
-      </div>
-    );
-  }
+  if (isError) return null;
 
   return (
     <div className="px-5">

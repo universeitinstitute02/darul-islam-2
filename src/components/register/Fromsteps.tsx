@@ -21,6 +21,7 @@ export const Step1 = ({
   fileInputRef,
   selectedImage,
   departments,
+  hideRoleToggle,
 }: any) => {
   const currentRole = watch("role");
 
@@ -35,35 +36,37 @@ export const Step1 = ({
         </p>
       </div>
 
-      <div className="space-y-2 mb-4">
-        <label className="text-[11px] font-black text-neutral-400 uppercase">
-          অ্যাক্যাউন্টের ধরন
-        </label>
-        <div className="flex gap-3">
-          <label
-            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "student" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
-          >
-            <input
-              type="radio"
-              value="student"
-              {...register("role")}
-              className="hidden"
-            />{" "}
-            ছাত্র (Student)
+      {!hideRoleToggle && (
+        <div className="space-y-2 mb-4">
+          <label className="text-[11px] font-black text-neutral-400 uppercase">
+            অ্যাক্যাউন্টের ধরন
           </label>
-          <label
-            className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "teacher" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
-          >
-            <input
-              type="radio"
-              value="teacher"
-              {...register("role")}
-              className="hidden"
-            />{" "}
-            শিক্ষক (Teacher)
-          </label>
+          <div className="flex gap-3">
+            <label
+              className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "student" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
+            >
+              <input
+                type="radio"
+                value="student"
+                {...register("role")}
+                className="hidden"
+              />{" "}
+              ছাত্র (Student)
+            </label>
+            <label
+              className={`flex-1 flex items-center justify-center gap-2 p-3.5 border-2 rounded-2xl cursor-pointer transition-all font-bold text-sm ${currentRole === "teacher" ? "border-[#0B5D3B] bg-green-50 text-[#0B5D3B]" : "border-neutral-100 text-neutral-400"}`}
+            >
+              <input
+                type="radio"
+                value="teacher"
+                {...register("role")}
+                className="hidden"
+              />{" "}
+              শিক্ষক (Teacher)
+            </label>
+          </div>
         </div>
-      </div>
+      )}
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         <InputField
@@ -119,7 +122,7 @@ export const Step1 = ({
             ))}
           </div>
           {errors.gender && (
-            <span className="text-[10px] text-red-500 font-bold block">
+            <span className="text-[10px] text-red-500 font-bold block ">
               {errors.gender.message}
             </span>
           )}
@@ -206,6 +209,7 @@ export const Step1 = ({
         >
           <input
             type="file"
+            box-input="true"
             ref={fileInputRef}
             onChange={handleImageChange}
             accept="image/*"
@@ -336,11 +340,11 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
               </span>
             )}
           </div>
-
           <InputField
-            label="শিক্ষাগত যোগ্যতা"
-            placeholder="যেমন: B.Sc in CSE"
+            label="শিক্ষাগত যোগ্যতা *"
+            placeholder="Qualifications"
             register={register("qualifications")}
+            error={errors.qualifications}
           />
         </div>
       </div>
@@ -349,123 +353,88 @@ export const Step2 = ({ register, errors, isTeacher, departments }: any) => {
 
   return (
     <div className="space-y-5">
-      <h3 className="text-xl font-black text-neutral-800 mb-4">পিতার তথ্য</h3>
       <InputField
         label="পিতার নাম *"
-        placeholder="পিতার পূর্ণ নাম লিখুন"
+        placeholder="পিতার নাম লিখুন"
         register={register("fatherName", { required: "পিতার নাম আবশ্যক" })}
         error={errors.fatherName}
       />
       <InputField
-        label="মোবাইল নম্বর *"
-        placeholder="01XXXXXXXXX"
-        type="tel"
-        isNumberOnly={true}
-        icon={<Phone size={18} />}
+        label="পিতার মোবাইল নম্বর *"
+        placeholder="০১৭XXXXXXXX"
+        register={register("fatherMobile", { required: "মোবাইল নম্বর আবশ্যক" })}
         error={errors.fatherMobile}
-        register={register("fatherMobile", {
-          required: "পিতার মোবাইল আবশ্যক",
-          pattern: {
-            value: /^\d{11}$/,
-            message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
-          },
-        })}
       />
       <InputField
-        label="পেশা"
-        placeholder="পিতার পেশা লিখুন"
+        label="পিতার পেশা"
+        placeholder="পিতার পেশা"
         register={register("fatherJob")}
+        error={errors.fatherJob}
       />
     </div>
   );
 };
 
-export const Step3 = ({ register, errors }: any) => (
-  <div className="space-y-5">
-    <h3 className="text-xl font-black text-neutral-800 mb-4">মাতার তথ্য</h3>
-    <InputField
-      label="মাতার নাম *"
-      placeholder="মাতার পূর্ণ নাম লিখুন"
-      register={register("motherName", { required: "মাতার নাম আবশ্যক" })}
-      error={errors.motherName}
-    />
-    <InputField
-      label="মোবাইল নম্বর"
-      placeholder="01XXXXXXXXX"
-      type="tel"
-      isNumberOnly={true}
-      icon={<Phone size={18} />}
-      error={errors.motherMobile}
-      register={register("motherMobile", {
-        pattern: {
-          value: /^\d{11}$/,
-          message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
-        },
-      })}
-    />
-    <InputField
-      label="পেশা"
-      placeholder="মাতার পেশা লিখুন"
-      register={register("motherJob")}
-    />
-  </div>
-);
-
-export const Step4 = ({ register, errors, divisions }: any) => (
-  <div className="space-y-5">
-    <h3 className="text-xl font-black text-neutral-800 mb-4">
-      ঠিকানা ও যোগাযোগ
-    </h3>
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <SelectField
-        label="বিভাগ *"
-        options={divisions}
-        register={register("presentDivision", {
-          required: "বিভাগ নির্বাচন করুন",
-        })}
-        error={errors.presentDivision}
+export const Step3 = ({ register, errors }: any) => {
+  return (
+    <div className="space-y-5">
+      <InputField
+        label="মাতার নাম *"
+        placeholder="মাতার নাম লিখুন"
+        register={register("motherName", { required: "মাতার নাম আবশ্যক" })}
+        error={errors.motherName}
       />
-      <SelectField
-        label="জেলা *"
-        options={["রংপুর", "ঢাকা"]}
-        register={register("district", { required: "জেলা নির্বাচন করুন" })}
-        error={errors.district}
+      <InputField
+        label="মাতার মোবাইল নম্বর"
+        placeholder="০১৭XXXXXXXX"
+        register={register("motherMobile")}
+        error={errors.motherMobile}
+      />
+      <InputField
+        label="মাতার পেশা"
+        placeholder="মাতার পেশা"
+        register={register("motherJob")}
+        error={errors.motherJob}
       />
     </div>
-    <InputField
-      label="স্থায়ী ঠিকানা"
-      placeholder="গ্রাম, ডাকঘর, উপজেলা"
-      register={register("permanentAddress")}
-    />
+  );
+};
 
-    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      {/* 🔄 আপনার দেওয়া নতুন /^\d{11}$/ প্যাটার্ন এখানে যুক্ত করা হয়েছে */}
+export const Step4 = ({ register, errors }: any) => {
+  return (
+    <div className="space-y-5">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <InputField
+          label="জেলা *"
+          placeholder="আপনার জেলা"
+          register={register("district", { required: "জেলা আবশ্যক" })}
+          error={errors.district}
+        />
+        <InputField
+          label="স্থায়ী ঠিকানা *"
+          placeholder="গ্রাম, পোস্ট অফিস"
+          register={register("permanentAddress", { required: "ঠিকানা আবশ্যক" })}
+          error={errors.permanentAddress}
+        />
+      </div>
       <InputField
-        label="মোবাইল নম্বর *"
-        placeholder="01XXXXXXXXX"
-        type="tel"
-        isNumberOnly={true}
-        icon={<Phone size={18} />}
-        error={errors.studentMobile}
+        label="শিক্ষার্থীর মোবাইল নম্বর *"
+        placeholder="০১৭XXXXXXXX"
         register={register("studentMobile", {
           required: "মোবাইল নম্বর আবশ্যক",
-          pattern: {
-            value: /^\d{11}$/,
-            message: "সঠিক ১১ ডিজিটের মোবাইল নম্বরটি দিন",
-          },
         })}
+        error={errors.studentMobile}
       />
       <InputField
-        label="ইমেইল অ্যাড্রেস *"
+        label="ইমেল ঠিকানা *"
+        placeholder="example@email.com"
         type="email"
-        placeholder="example@gmail.com"
-        register={register("email", { required: "ইমেইল আবশ্যক" })}
+        register={register("email", { required: "ইমেল আবশ্যক" })}
         error={errors.email}
-        icon={<Mail size={18} />}
       />
     </div>
-  </div>
-);
+  );
+};
 
 export const Step5 = ({ register, errors, watch }: any) => {
   const [showPassword, setShowPassword] = useState(false);
@@ -481,9 +450,9 @@ export const Step5 = ({ register, errors, watch }: any) => {
 
       <div className="relative">
         <InputField
-          label="পাসওয়ার্ড *"
-          type={showPassword ? "text" : "password"}
+          label="পাসওয়ার্ড নির্ধারণ করুন *"
           placeholder="••••••••"
+          type={showPassword ? "text" : "password"}
           register={register("password", {
             required: "পাসওয়ার্ড আবশ্যক",
             minLength: {
@@ -492,37 +461,43 @@ export const Step5 = ({ register, errors, watch }: any) => {
             },
           })}
           error={errors.password}
-          icon={<Lock size={18} />}
         />
-        <button
-          type="button"
-          onClick={() => setShowPassword(!showPassword)}
-          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#0B5D3B] transition-colors"
-        >
-          {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+        <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-3 text-neutral-300 pt-5">
+          <button
+            type="button"
+            onClick={() => setShowPassword(!showPassword)}
+            className="hover:text-[#0B5D3B] transition-colors p-1"
+          >
+            {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+          <div className="w-[1px] h-4 bg-neutral-200"></div>
+          <Lock size={20} />
+        </div>
       </div>
 
       <div className="relative">
         <InputField
-          label="পাসওয়ার্ড পুনরায় নিশ্চিত করুন *"
-          type={showConfirmPassword ? "text" : "password"}
+          label="পাসওয়ার্ডটি নিশ্চিত করুন *"
           placeholder="••••••••"
+          type={showConfirmPassword ? "text" : "password"}
           register={register("confirmPassword", {
-            required: "পুনরায় পাসওয়ার্ড দিন",
+            required: "কনফার্ম পাসওয়ার্ড আবশ্যক",
             validate: (value: string) =>
               value === password || "পাসওয়ার্ড দুটি মিলছে না",
           })}
           error={errors.confirmPassword}
-          icon={<Lock size={18} />}
         />
-        <button
-          type="button"
-          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          className="absolute right-12 top-[38px] lg:top-[42px] text-neutral-400 hover:text-[#0B5D3B] transition-colors"
-        >
-          {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-        </button>
+        <div className="absolute right-5 top-1/2 -translate-y-1/2 flex items-center gap-3 text-neutral-300 pt-5">
+          <button
+            type="button"
+            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+            className="hover:text-[#0B5D3B] transition-colors p-1"
+          >
+            {showConfirmPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+          </button>
+          <div className="w-[1px] h-4 bg-neutral-200"></div>
+          <Lock size={20} />
+        </div>
       </div>
 
       <div className="bg-green-50 p-5 rounded-2xl border border-green-100 flex gap-4 mt-6">

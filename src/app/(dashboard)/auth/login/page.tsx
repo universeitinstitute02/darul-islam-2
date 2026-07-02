@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useForm, SubmitHandler } from "react-hook-form";
 import { motion } from "framer-motion";
 import {
@@ -15,11 +15,15 @@ import {
 } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
+import { useSearchParams } from "next/navigation";
 import { signIn } from "next-auth/react";
 import login1 from "../../../../../public/images/login1.png";
 import useUserRole from "@/src/app/hooks/useUserRole";
 
 const LoginPage = () => {
+  const searchParams = useSearchParams();
+  const redirectUrl = searchParams.get("redirect");
+
   const {
     register,
     handleSubmit,
@@ -45,11 +49,15 @@ const LoginPage = () => {
     }
 
     try {
-      // 🔹 প্রো-লেভেল ফিক্স: কন্ডিশনাল রেস কন্ডিশন এড়াতে সেশন এপিআই থেকে সরাসরি রিয়েল-টাইম রোল এক্সট্র্যাক্ট করা
       const sessionRes = await fetch("/api/auth/session");
       const sessionData = await sessionRes.json();
 
       const userRole = sessionData?.user?.role || sessionData?.role || role;
+
+        if (redirectUrl) {
+          window.location.href = decodeURIComponent(redirectUrl);
+          return;
+        }
 
       if (String(userRole).toLowerCase() === "admin") {
         window.location.href = "/dashboard/admin";
@@ -61,7 +69,9 @@ const LoginPage = () => {
         window.location.href = "/";
       }
     } catch (err) {
-      window.location.href = "/";
+      window.location.href = redirectUrl
+        ? decodeURIComponent(redirectUrl)
+        : "/";
     }
   };
 
@@ -119,7 +129,7 @@ const LoginPage = () => {
           transition={{ type: "spring", damping: 25, stiffness: 200 }}
           className="w-full max-w-md bg-white rounded-[2.5rem] lg:rounded-none lg:shadow-none border border-neutral-100 lg:border-none p-8 md:p-10 lg:p-0 my-auto"
         >
-          {/* Header Action Bar: Back and Register buttons on same level for mobile */}
+          {/* Header Action Bar */}
           <div className="flex items-center justify-between mb-8 lg:mb-10">
             <Link
               href="/"
@@ -138,7 +148,11 @@ const LoginPage = () => {
 
             <div className="lg:hidden text-right">
               <Link
-                href={"/auth/register"}
+                href={
+                  redirectUrl
+                    ? `/auth/register?redirect=${encodeURIComponent(redirectUrl)}`
+                    : "/auth/register"
+                }
                 className="text-[#0B5D3B] font-black text-sm flex items-center gap-1 hover:underline transition-all"
               >
                 রেজিস্টার <ArrowRight size={16} />
@@ -165,13 +179,17 @@ const LoginPage = () => {
                 </p>
               </div>
 
-              {/* Desktop Register Link (Visible only on Desktop) */}
+              {/* Desktop Register Link */}
               <div className="hidden lg:block text-right">
                 <p className="text-[10px] text-neutral-400 font-bold mb-1 uppercase tracking-tighter">
                   নতুন ইউজার?
                 </p>
                 <Link
-                  href={"/auth/register"}
+                  href={
+                    redirectUrl
+                      ? `/auth/register?redirect=${encodeURIComponent(redirectUrl)}`
+                      : "/auth/register"
+                  }
                   className="text-[#0B5D3B] font-black text-sm flex items-center gap-1 hover:underline group transition-all"
                 >
                   রেজিস্টার{" "}

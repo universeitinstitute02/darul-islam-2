@@ -12,6 +12,8 @@ import {
   Plus,
   GraduationCap,
   Star,
+  Clock1,
+  Calendar1,
 } from "lucide-react";
 
 interface CourseTabsSectionProps {
@@ -154,7 +156,7 @@ export default function CourseTabsSection({
                             <GraduationCap className="w-7 h-7 text-white" />
                           )}
                         </div>
-                        <p className="text-xs md:text-sm font-bold text-slate-800 leading-relaxed text-center px-1">
+                        <p className="text-xs md:text-sm font-semibold text-slate-800 leading-relaxed text-center px-1">
                           {text}
                         </p>
                       </motion.div>
@@ -174,9 +176,9 @@ export default function CourseTabsSection({
                     ].map((text, idx) => (
                       <div
                         key={idx}
-                        className="bg-[#191e1b] text-amber-100/90 p-6 rounded-2xl border border-amber-500/10 flex items-center shadow-xs"
+                        className="bg-[#191e1b] text-amber-50/90 p-6 rounded-2xl border border-amber-500/10 flex items-center shadow-xs"
                       >
-                        <p className="text-xs md:text-sm font-semibold leading-relaxed text-center w-full italic">
+                        <p className="text-xs md:text-sm font-medium leading-relaxed text-center w-full">
                           {text}
                         </p>
                       </div>
@@ -197,7 +199,7 @@ export default function CourseTabsSection({
               >
                 <div className="bg-gradient-to-tr from-emerald-50/70 via-white to-teal-50/70 border border-emerald-100/70 p-6 sm:p-8 rounded-3xl shadow-xs relative overflow-hidden">
                   <div className="w-14 h-14 bg-white rounded-full flex items-center justify-center mx-auto shadow-xs text-2xl mb-4">
-                    ⏰
+                    <Calendar1 />
                   </div>
                   <h2 className="text-lg md:text-2xl font-black text-[#0f2942] leading-snug mb-3">
                     {courseData?.batchStartDate
@@ -253,7 +255,7 @@ export default function CourseTabsSection({
                       className="w-full flex items-center justify-between p-4 bg-slate-50/60 hover:bg-slate-50 transition-colors text-left cursor-pointer"
                     >
                       <div className="flex items-center gap-2.5">
-                        <span className="text-base">📖</span>
+                        <span className="text-base"><BookOpen /></span>
                         <h3 className="text-sm md:text-base font-black text-slate-800">
                           {courseData.title} এর মূল পাঠ্যসমূহ
                         </h3>
@@ -313,7 +315,7 @@ export default function CourseTabsSection({
                 className="space-y-8"
               >
                 <div className="text-center">
-                  <span className="bg-pink-50 border border-pink-100 text-pink-700 text-[11px] font-black px-3.5 py-1.5 rounded-full inline-block mb-2">
+                  <span className="bg-pink-50 border border-pink-100 text-pink-700 text-xs font-semibold px-3.5 py-1.5 rounded-full inline-block mb-2">
                     ফিমেল উইং বিশেষায়িত ক্লাসরুম
                   </span>
                   <h2 className="text-lg md:text-2xl font-black text-slate-900 tracking-tight">

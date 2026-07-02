@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useEffect } from "react";
-import { useParams, useRouter } from "next/navigation";
+import { useParams, useRouter, useSearchParams } from "next/navigation";
 import Image from "next/image";
 import { useQuery } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
@@ -71,6 +71,7 @@ export default function EnrollPage() {
   const params = useParams();
   const id = params?.id;
   const router = useRouter();
+  const searchParams = useSearchParams(); // 🎯 ইউআরএল রিডাইরেক্ট প্যারামস রিডার লক ভাই
   const axiosSecure = useAxiosSecure();
 
   const [paymentMethod, setPaymentMethod] = useState("bkash");
@@ -132,6 +133,17 @@ export default function EnrollPage() {
     enabled: !!id,
   });
 
+  // 🎯 মেগা লুপ ও হোমপেজ রিডাইরেক্ট প্রোটেকশন গেটওয়ে লক ভাই
+  useEffect(() => {
+    if (isUserLoading || courseLoading) return;
+
+    if (!user && id) {
+      router.replace(
+        `/auth/register?redirect=${encodeURIComponent(`/education/enroll/${id}`)}`,
+      );
+    }
+  }, [user, isUserLoading, courseLoading, id, router]);
+
   useEffect(() => {
     const fetchSubCategoryCourses = async () => {
       if (!id) return;
@@ -162,6 +174,27 @@ export default function EnrollPage() {
       fetchSubCategoryCourses();
     }
   }, [id, currentSource, setValue]);
+
+  //  History Stack Cleanser for Redirect Funnel
+  useEffect(() => {
+    // Check if the user arrived here via the redirect funnel link
+    const hasRedirectFunnel = window.location.href.includes("enroll");
+
+    if (hasRedirectFunnel && user) {
+      // Overwrite the current intermediate history frame with the clean course details path
+      const cleanDetailsPath = `/education`;
+
+      // Inject the clean path into history so clicking back bypasses login/register entirely
+      window.history.pushState(null, "", window.location.href);
+      window.onpopstate = function () {
+        window.location.replace(cleanDetailsPath);
+      };
+    }
+
+    return () => {
+      window.onpopstate = null;
+    };
+  }, [user]);
 
   const handleCopyClipboard = async (text: string) => {
     try {
@@ -259,7 +292,7 @@ export default function EnrollPage() {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#0B5D3B] group"
+            className="flex cursor-pointer items-center gap-2 text-neutral-600 font-bold text-sm hover:text-[#0B5D3B] group"
           >
             <ArrowLeft
               size={18}
@@ -290,7 +323,7 @@ export default function EnrollPage() {
                     {role || "Student"}
                   </span>
                   <span className="text-xs font-medium text-neutral-400">
-                    অ্যাকাউন্ট ভেরিফাইড
+                    অ্যাকউন্ট ভেরিফাইড
                   </span>
                 </div>
                 <h2 className="text-base font-bold text-neutral-800 mt-0.5">
@@ -328,7 +361,7 @@ export default function EnrollPage() {
                 ) : (
                   <div className="text-xs font-bold text-amber-700 bg-amber-50 p-3 rounded-xl border border-amber-100">
                     ⚠️ এই সাব-ক্যাটাগরির অধীনে এই মুহূর্তে কোনো অ্যাক্টিভ কোর্স
-                    পাওয়া যায়নি।
+                    পায়নি।
                   </div>
                 )}
               </div>

@@ -86,9 +86,7 @@ export default function TeacherSlider() {
     retry: 2,
   });
 
-  if (isError) {
-    console.error("React Query Error:", error);
-  }
+  if (isError) return null;
 
   return (
     <section className="relative overflow-hidden px-4 py-8 md:py-12 lg:px-8">

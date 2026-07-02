@@ -34,9 +34,7 @@ export default function NoticeBoard() {
   } = useQuery({
     queryKey: ["studentNotices", selectedCourseIds],
     queryFn: async () => {
-      const url = selectedCourseIds
-        ? `/notices/student/my-notices?courseIds=${selectedCourseIds}`
-        : "/notices/student/my-notices";
+      const url = `/notices`;
       const res = await axiosSecure.get(url);
       return res.data;
     },
